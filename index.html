@@ -17,7 +17,8 @@
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-:root{--red:#ed1c24;--red-dark:#b71c17;--bg:#0d0d0f;--bg2:#17171b;--bg3:#212127;--line:#33333b;--txt:#f3f3f5;--muted:#9a9aa6;--cream:#f6f2ea;--cream2:#efe9dd;--ok:#2ec26b;--warn:#f5a623;--blue:#4a90e2;}
+:root{--red:#ed1c24;--red-dark:#b71c17;--redDeep:#b71c17;--bg:#0d0d0f;--bg2:#17171b;--bg3:#212127;--line:#33333b;--txt:#f3f3f5;--muted:#9a9aa6;--cream:#f6f2ea;--cream2:#efe9dd;--ok:#2ec26b;--warn:#f5a623;--blue:#4a90e2;}
+html.light{--bg:#eef0f3;--bg2:#ffffff;--bg3:#e7e9ee;--line:#d3d6de;--txt:#1a1a20;--muted:#6a6a76;}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;}
 body{font-family:'Heebo',system-ui,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:96px;}
@@ -25,9 +26,15 @@ button{font-family:inherit;cursor:pointer;}
 input,select,textarea{font-family:inherit;}
 .hidden{display:none!important;}
 
-#splash{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 35%,#222228,#0a0a0c);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s;}
-#splash .t{font-size:16px;color:var(--red);font-weight:800;margin-top:22px;letter-spacing:1px;}
-#splash .s{font-size:12px;color:var(--muted);margin-top:6px;}
+#splash{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 30%,#222228,#0a0a0c);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:14vh;transition:opacity .5s;}
+#splash .t{font-size:20px;color:#fff;font-weight:900;margin-top:24px;}
+#splash .s{font-size:13px;color:var(--muted);margin-top:6px;}
+#slider{position:absolute;bottom:9vh;width:86%;max-width:420px;}
+#slider-track{position:relative;height:62px;border-radius:34px;background:#1b1b21;border:1px solid var(--line);overflow:hidden;box-shadow:inset 0 2px 10px rgba(0,0,0,.5);}
+#slider-fill{position:absolute;top:0;right:0;height:100%;width:62px;background:linear-gradient(90deg,var(--redDeep),var(--red));border-radius:34px;}
+#slider-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:800;font-size:16px;letter-spacing:.5px;animation:shimmer 2s infinite;}
+@keyframes shimmer{50%{color:#fff;}}
+#slider-knob{position:absolute;top:5px;right:5px;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.5);touch-action:none;}
 
 .topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#141417,#0d0d0f);border-bottom:1px solid var(--line);padding:12px 14px 10px;}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -180,12 +187,23 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 </style>
 </head>
 <body>
-<div id="splash"><div id="splash-logo"></div><div class="t">תודה לרמי 🙏</div><div class="s">מחשבון הצעת מחיר · 2026</div></div>
+<div id="splash">
+  <div id="splash-logo"></div>
+  <div class="t">מחשבון הצעת מחיר</div>
+  <div class="s">יהודה שיפוצים · 2026</div>
+  <div id="slider">
+    <div id="slider-track">
+      <div id="slider-fill"></div>
+      <div id="slider-label">בשם ה׳ נעשה ונצליח</div>
+      <div id="slider-knob">‹</div>
+    </div>
+  </div>
+</div>
 <div id="root"></div>
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='4.1';
+const VERSION='4.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -209,102 +227,78 @@ function logoBlock(dark,scale){scale=scale||1;
 
 /* ===== CATALOG ===== */
 const CATALOG=[
- {id:'demo',title:'הריסה ובנייה',emoji:'🧱',hot:true,items:[
-   {id:'d1',name:'פתיחת פתח דלת 210/120 (הכנה לדלת זכוכית/עץ)',price:2500,unit:'יח׳',range:'2,500 ₪'},
-   {id:'d2',name:'הריסת קיר בלוקים / גבס ופינוי',price:150,unit:'מ"ר',range:'120–180 ₪ / מ"ר'},
-   {id:'d3',name:'בניית קיר בלוק 10 ס"מ (כולל טיח)',price:300,unit:'מ"ר',range:'250–350 ₪ / מ"ר'},
-   {id:'d4',name:'פירוק ופינוי ריצוף/חיפוי קיים',price:60,unit:'מ"ר',range:'45–75 ₪ / מ"ר'},
-   {id:'d5',name:'הובלה ופינוי פסולת (מכולה)',price:1400,unit:'גלובלי',range:'1,200–1,800 ₪'},
+ {id:'demo',title:'הריסה ופינוי',emoji:'🧱',hot:true,items:[
+   {id:'dm1',name:'הריסת קיר בלוקים/בטון לא תומך',price:120,unit:'מ"ר',range:'80–160 ₪ / מ"ר',hot:true},
+   {id:'dm2',name:'פירוק ריצוף קיים כולל פינוי מצע',price:100,unit:'מ"ר',range:'70–130 ₪ / מ"ר',hot:true},
+   {id:'dm3',name:'ניסור קיר בטון מזוין בדיסק יהלום (עד 20 ס"מ)',price:350,unit:'מ"א',range:'250–450 ₪ / מ"א'},
+   {id:'dm4',name:'פינוי פסולת במכולה (8 קוב · 7 ימים)',price:1700,unit:'יח׳',range:'1,300–2,100 ₪',hot:true},
+   {id:'dm5',name:'הקמת שרוול פינוי פסולת (עד קומה 3)',price:2200,unit:'גלובלי',range:'1,500–3,000 ₪'},
+   {id:'dm6',name:'פתיחת פתח דלת 210/120 (הכנה לדלת)',price:2500,unit:'יח׳',range:'2,000–3,000 ₪'},
  ]},
- {id:'floor',title:'ריצוף ואיטום',emoji:'🪨',hot:true,items:[
-   {id:'f1',name:'אספקה והתקנת ריצוף 60x120',price:350,unit:'מ"ר',range:'320–400 ₪ / מ"ר'},
-   {id:'f2',name:'אספקה והתקנת ריצוף 60x60',price:280,unit:'מ"ר',range:'240–320 ₪ / מ"ר'},
-   {id:'f3',name:'חיפוי קיר קרמיקה/פורצלן',price:290,unit:'מ"ר',range:'250–350 ₪ / מ"ר'},
-   {id:'f4',name:'מריחת רובה אקרילית / אפוקסית',price:45,unit:'מ"ר',range:'30–60 ₪ / מ"ר'},
-   {id:'f5',name:'איטום חדרים רטובים (לפני ריצוף)',price:3500,unit:'גלובלי',range:'2,500–4,500 ₪'},
-   {id:'f6',name:'התקנת פנלים / סוקל',price:35,unit:'מ"א',range:'25–45 ₪ / מ"א'},
+ {id:'plumb',title:'אינסטלציה',emoji:'🚰',hot:true,items:[
+   {id:'pl1',name:'נקודת אינסטלציה קרה/חמה + ניקוז',price:1600,unit:'נקודה',range:'1,300–1,900 ₪',hot:true},
+   {id:'pl2',name:'התקנת תשתית אסלה סמויה (ניאגרה)',price:1300,unit:'יח׳',range:'1,000–1,600 ₪',hot:true},
+   {id:'pl3',name:'מרכזת מים דירתית (חנוכייה + ארון)',price:2500,unit:'יח׳',range:'1,800–3,200 ₪'},
+   {id:'pl4',name:'הכנת צנרת נחושת וניקוז למיזוג אוויר',price:210,unit:'מ"א',range:'160–260 ₪ / מ"א'},
+   {id:'pl5',name:'התקנת כלים סניטריים (אסלה/כיור/ברז)',price:350,unit:'יח׳',range:'250–450 ₪'},
  ]},
- {id:'paint',title:'שפכטל וצבע',emoji:'🎨',hot:true,items:[
-   {id:'p1',name:'שפכטל אמריקאי וצבע (3 שכבות)',price:140,unit:'מ"ר',range:'120–160 ₪ / מ"ר'},
-   {id:'p2',name:'צביעת דירת 4 חדרים (קירות + תקרה)',price:7500,unit:'גלובלי',range:'6,000–9,000 ₪'},
-   {id:'p3',name:'צביעה בלבד (ללא שפכטל) — שכבתיים',price:35,unit:'מ"ר',range:'25–45 ₪ / מ"ר'},
-   {id:'p4',name:'שפכטל וצבע אלמנט / קיר יחיד',price:4500,unit:'גלובלי',range:'לפי פרויקט'},
+ {id:'elec',title:'חשמל ותקשורת',emoji:'⚡',hot:true,items:[
+   {id:'el1',name:'נקודת חשמל רגילה (מאור / שקע חד-פאזי)',price:350,unit:'נקודה',range:'280–420 ₪',hot:true},
+   {id:'el2',name:'נקודת כוח ישירה מהלוח (מכונה/תנור)',price:600,unit:'נקודה',range:'450–750 ₪',hot:true},
+   {id:'el3',name:'נקודת תלת-פאזי (כיריים / מזגן גדול)',price:1100,unit:'נקודה',range:'800–1,400 ₪',hot:true},
+   {id:'el4',name:'החלפת לוח חשמל + תשתית תלת-פאזי',price:6000,unit:'גלובלי',range:'4,000–8,500 ₪'},
+   {id:'el5',name:'נקודת תקשורת / רשת CAT7',price:450,unit:'נקודה',range:'350–550 ₪'},
+   {id:'el6',name:'מערכת סינון ואוורור לממ"ד',price:4200,unit:'יח׳',range:'3,500–5,000 ₪'},
+   {id:'el7',name:'התקנת גוף תאורה / ספוט LED',price:120,unit:'יח׳',range:'90–160 ₪'},
  ]},
- {id:'elec',title:'חשמל ואינסטלציה',emoji:'⚡',hot:true,items:[
-   {id:'e1',name:'נקודת חשמל חדשה (חציבה + חיווט)',price:400,unit:'יח׳',range:'350–450 ₪ / יח׳'},
-   {id:'e2',name:'נקודת אינסטלציה קומפלט (דלוחין + הזנה)',price:1500,unit:'יח׳',range:'1,200–1,800 ₪'},
-   {id:'e3',name:'החלפת לוח חשמל דירתי',price:2800,unit:'יח׳',range:'2,200–3,500 ₪'},
-   {id:'e4',name:'התקנת גוף תאורה / ספוט LED',price:120,unit:'יח׳',range:'90–160 ₪ / יח׳'},
-   {id:'e5',name:'התקנת אסלה תלויה + ניאגרה',price:900,unit:'יח׳',range:'700–1,200 ₪'},
-   {id:'e6',name:'התקנת ברז/כיור/סוללה',price:350,unit:'יח׳',range:'250–450 ₪'},
+ {id:'finish',title:'עבודות גמר ועיצוב פנים',emoji:'🎨',hot:true,items:[
+   {id:'fn1',name:'בניית קיר גבס (לוח כפול + צמר סלעים)',price:230,unit:'מ"ר',range:'190–280 ₪ / מ"ר',hot:true},
+   {id:'fn2',name:'הנמכת תקרת גבס (מיזוג / תאורה נסתרת)',price:270,unit:'מ"ר',range:'220–320 ₪ / מ"ר',hot:true},
+   {id:'fn3',name:'שפכטל אמריקאי (3 שכבות) + צבע',price:135,unit:'מ"ר',range:'110–160 ₪ / מ"ר',hot:true},
+   {id:'fn4',name:'צביעת דירה קומפלט אקרילי (לפי חדר)',price:1150,unit:'יח׳',range:'800–1,500 ₪ / חדר',hot:true},
+   {id:'fn5',name:'ריצוף בהדבקה ישירה (על רצפה ישרה)',price:190,unit:'מ"ר',range:'140–240 ₪ / מ"ר',hot:true},
+   {id:'fn6',name:'ריצוף על מצע חול/שומשום (כולל פילוס)',price:315,unit:'מ"ר',range:'250–380 ₪ / מ"ר',hot:true},
+   {id:'fn7',name:'חיפוי קירות אריחים (רחצה / מטבח)',price:230,unit:'מ"ר',range:'180–280 ₪ / מ"ר',hot:true},
+   {id:'fn8',name:'איטום צמנטי דו-רכיבי בחדר רטוב',price:175,unit:'מ"ר',range:'130–220 ₪ / מ"ר',hot:true},
+   {id:'fn9',name:'איטום גג ביריעות ביטומניות 5 מ"מ',price:115,unit:'מ"ר',range:'90–140 ₪ / מ"ר'},
  ]},
- {id:'gypsum',title:'גבס ותקרות',emoji:'🏗️',hot:true,items:[
-   {id:'g1',name:'תקרת גבס מונמכת כולל בידוד',price:250,unit:'מ"ר',range:'220–280 ₪ / מ"ר'},
-   {id:'g2',name:'סינר גבס לתאורה נסתרת / מיזוג',price:210,unit:'מ"א',range:'180–250 ₪ / מ"א'},
-   {id:'g3',name:'קיר גבס כפול כולל בידוד',price:230,unit:'מ"ר',range:'190–270 ₪ / מ"ר'},
-   {id:'g4',name:'נישת גבס / מדף דקורטיבי',price:650,unit:'יח׳',range:'450–900 ₪'},
+ {id:'alum',title:'נגרות, מסגרות ואלומיניום',emoji:'🪟',hot:true,items:[
+   {id:'al1',name:'חלון אלומיניום + זכוכית בידודית',price:2000,unit:'מ"ר',range:'1,400–2,600 ₪ / מ"ר',hot:true},
+   {id:'al2',name:'התקנת דלת פנים (עבודה בלבד)',price:450,unit:'יח׳',range:'350–550 ₪',hot:true},
+   {id:'al3',name:'ארונות מטבח (נגרות בהתאמה אישית)',price:4600,unit:'מ"א',range:'2,800–6,500 ₪ / מ"א',hot:true},
+   {id:'al4',name:'מעקה בטיחות ברזל מגולוון',price:900,unit:'מ"א',range:'600–1,200 ₪ / מ"א'},
+   {id:'al5',name:'פרגולת אלומיניום קבועה/חשמלית',price:1500,unit:'מ"ר',range:'900–2,200 ₪ / מ"ר'},
  ]},
- {id:'pro',title:'בעלי מקצוע ורגולציה',emoji:'🧑‍💼',hot:true,items:[
-   {id:'pr1',name:'ביטוח עבודות קבלניות (לפרויקט)',price:2500,unit:'גלובלי',range:'0.7%–1.5% מהפרויקט'},
-   {id:'pr2',name:'מהנדס / יועץ קונסטרוקציה',price:3500,unit:'גלובלי',range:'2,000–6,000 ₪'},
-   {id:'pr3',name:'אדריכל — תכנון מלא',price:12000,unit:'גלובלי',range:'8,000–25,000 ₪'},
-   {id:'pr4',name:'אדריכל — לפי מ"ר',price:130,unit:'מ"ר',range:'90–200 ₪ / מ"ר'},
-   {id:'pr5',name:'מעצב/ת פנים',price:8000,unit:'גלובלי',range:'5,000–20,000 ₪'},
-   {id:'pr6',name:'אדריכל נוף / מעצב חוץ',price:6000,unit:'גלובלי',range:'4,000–12,000 ₪'},
-   {id:'pr7',name:'מפקח בנייה (פיקוח צמוד)',price:5000,unit:'גלובלי',range:'5%–8% מהפרויקט'},
-   {id:'pr8',name:'היתר בנייה / הגשה לוועדה',price:4000,unit:'גלובלי',range:'2,500–8,000 ₪'},
-   {id:'pr9',name:'מודד מוסמך / מפה טופוגרפית',price:1800,unit:'גלובלי',range:'1,200–3,000 ₪'},
+ {id:'plan',title:'תכנון, ניהול ורישוי',emoji:'📐',items:[
+   {id:'pn1',name:'אדריכלות ועיצוב פנים (תכנון מלא 4 חד׳)',price:25000,unit:'גלובלי',range:'15,000–35,000 ₪',hot:true},
+   {id:'pn2',name:'תוכנית שינויים בלבד (ללא ליווי)',price:8000,unit:'גלובלי',range:'5,000–12,000 ₪'},
+   {id:'pn3',name:'הנדסת קונסטרוקציה (אישור פתיחת קיר תומך)',price:4000,unit:'יח׳',range:'2,500–6,000 ₪',hot:true},
+   {id:'pn4',name:'ניהול ופיקוח בנייה (ריטיינר חודשי)',price:7500,unit:'חודשי',range:'5,500–9,500 ₪'},
+   {id:'pn5',name:'מדידת נכס ע"י מודד מוסמך (עד 100 מ"ר)',price:2100,unit:'יח׳',range:'1,500–2,800 ₪'},
+   {id:'pn6',name:'טיפול בהיתר בנייה/תוספת (ללא אגרות)',price:18000,unit:'גלובלי',range:'12,000–25,000 ₪'},
  ]},
- {id:'kitchen',title:'מטבחים ונגרות',emoji:'🍳',items:[
-   {id:'k1',name:'ארון מטבח תחתון (מטר רץ)',price:1600,unit:'מ"א',range:'1,200–2,200 ₪'},
-   {id:'k2',name:'ארון מטבח עליון (מטר רץ)',price:1100,unit:'מ"א',range:'800–1,600 ₪'},
-   {id:'k3',name:'משטח קוורץ/אבן קיסר',price:1200,unit:'מ"א',range:'900–1,800 ₪'},
-   {id:'k4',name:'ארון אמבטיה תפור',price:2500,unit:'יח׳',range:'1,800–3,500 ₪'},
+ {id:'struct',title:'שלד ותשתית כבדה',emoji:'🏗️',items:[
+   {id:'st1',name:'חפירה ופינוי עפר במחפר',price:3500,unit:'יום',range:'2,500–4,500 ₪'},
+   {id:'st2',name:'קידוח כלונסאות (כולל החדרת ברזל)',price:475,unit:'מ"א',range:'350–600 ₪ / מ"א'},
+   {id:'st3',name:'יציקת בטון קונסטרוקטיבי (טפסנות + ברזל)',price:3600,unit:'מ"ק',range:'2,800–4,500 ₪ / מ"ק'},
+   {id:'st4',name:'בניית קיר בלוק 10 ס"מ',price:220,unit:'מ"ר',range:'180–260 ₪ / מ"ר'},
+   {id:'st5',name:'בניית קיר איטונג 15/20 ס"מ (בידוד גבוה)',price:295,unit:'מ"ר',range:'240–350 ₪ / מ"ר',hot:true},
+   {id:'st6',name:'בנייה קלה — קונסטרוקציית פלדה (LGS)',price:1700,unit:'מ"ר',range:'1,200–2,200 ₪ / מ"ר'},
  ]},
- {id:'alum',title:'אלומיניום ומסגרות',emoji:'🪟',items:[
-   {id:'a1',name:'חלון אלומיניום כנף כפולה',price:1900,unit:'מ"ר',range:'1,500–2,500 ₪'},
-   {id:'a2',name:'דלת הזזה אלומיניום',price:2400,unit:'מ"ר',range:'1,800–3,200 ₪'},
-   {id:'a3',name:'סורגים/מעקה מגולוון',price:550,unit:'מ"א',range:'400–800 ₪'},
-   {id:'a4',name:'מעקה זכוכית + נירוסטה',price:900,unit:'מ"א',range:'700–1,400 ₪'},
- ]},
- {id:'doors',title:'דלתות פנים וכניסה',emoji:'🚪',items:[
-   {id:'dr1',name:'התקנת דלת פנים כולל משקוף',price:1200,unit:'יח׳',range:'900–1,600 ₪'},
-   {id:'dr2',name:'דלת פלדלת (כניסה)',price:3800,unit:'יח׳',range:'3,000–6,000 ₪'},
-   {id:'dr3',name:'דלת זכוכית פנימית',price:2600,unit:'יח׳',range:'2,000–4,000 ₪'},
- ]},
- {id:'hvac',title:'מיזוג אוויר',emoji:'❄️',items:[
-   {id:'h1',name:'התקנת מזגן עילי',price:900,unit:'יח׳',range:'700–1,300 ₪'},
-   {id:'h2',name:'מיני מרכזי כולל תעלות',price:6500,unit:'יח׳',range:'5,000–9,000 ₪'},
-   {id:'h3',name:'נקודת מיזוג / תעלה נוספת',price:800,unit:'יח׳',range:'600–1,100 ₪'},
- ]},
- {id:'seal',title:'איטום וגגות',emoji:'🛡️',items:[
-   {id:'s1',name:'איטום גג בטון (יריעות/פולימרי)',price:110,unit:'מ"ר',range:'80–160 ₪ / מ"ר'},
-   {id:'s2',name:'איטום מרפסת + ריצוף מחדש',price:4500,unit:'גלובלי',range:'3,500–7,000 ₪'},
-   {id:'s3',name:'תיקון רטיבות נקודתי',price:1500,unit:'גלובלי',range:'900–2,500 ₪'},
- ]},
- {id:'stone',title:'אבן וחיפוי חוץ',emoji:'⛰️',items:[
-   {id:'st1',name:'חיפוי אבן טבעית חוץ',price:420,unit:'מ"ר',range:'320–600 ₪ / מ"ר'},
-   {id:'st2',name:'טיח חוץ אקרילי',price:150,unit:'מ"ר',range:'110–200 ₪ / מ"ר'},
- ]},
- {id:'garden',title:'גינון ופיתוח',emoji:'🌿',items:[
-   {id:'gd1',name:'דק סינטטי/עץ',price:450,unit:'מ"ר',range:'350–650 ₪ / מ"ר'},
-   {id:'gd2',name:'פרגולה אלומיניום',price:1200,unit:'מ"ר',range:'900–1,800 ₪'},
-   {id:'gd3',name:'דשא סינטטי כולל הכנה',price:180,unit:'מ"ר',range:'120–250 ₪ / מ"ר'},
-   {id:'gd4',name:'ריצוף חוץ אבן משתלבת',price:220,unit:'מ"ר',range:'160–300 ₪ / מ"ר'},
- ]},
- {id:'floors2',title:'פרקט וריצופים מיוחדים',emoji:'🪵',items:[
-   {id:'fp1',name:'פרקט למינציה כולל הכנה',price:160,unit:'מ"ר',range:'120–220 ₪ / מ"ר'},
-   {id:'fp2',name:'ריצוף SPC/ויניל',price:190,unit:'מ"ר',range:'140–260 ₪ / מ"ר'},
-   {id:'fp3',name:'שטיח מקיר לקיר',price:120,unit:'מ"ר',range:'80–180 ₪ / מ"ר'},
+ {id:'outdoor',title:'פיתוח חוץ וסביבה',emoji:'🌿',items:[
+   {id:'od1',name:'יציקת משטח בטון מוחלק לחצר',price:365,unit:'מ"ר',range:'280–450 ₪ / מ"ר',hot:true},
+   {id:'od2',name:'ריצוף חוץ אבנים משתלבות (כולל תשתית)',price:235,unit:'מ"ר',range:'180–290 ₪ / מ"ר'},
+   {id:'od3',name:'מערכת השקיה ממוחשבת (מחשב 4 קווים)',price:2650,unit:'יח׳',range:'1,800–3,500 ₪'},
+   {id:'od4',name:'דשא סינתטי איכותי (כולל מצע מהודק)',price:220,unit:'מ"ר',range:'160–280 ₪ / מ"ר',hot:true},
  ]},
 ];
-const UNITS=['מ"ר','יח׳','גלובלי','מ"א'];
+const UNITS=['מ"ר','יח׳','נקודה','מ"א','גלובלי','מ"ק','יום','חודשי'];
 const WHITE_MAT=['אסלה תלויה','אסלה רגילה','ניאגרה סמויה','כיור אמבטיה','כיור מטבח','ברז אמבטיה','ברז מטבח','אמבטיה','אגנית מקלחון','מקלחון זכוכית','ארון אמבטיה','מראה'];
 const BLACK_MAT=['בלוקים','מלט ובטון','חול וחצץ','טיח','ברזל זיון','צנרת מים','צנרת ביוב','כבלים וחשמל','דבק ורובה','גבס ופרופילים','בידוד','חומרי איטום'];
 const PRESETS=[
-  {name:'שיפוץ אמבטיה קומפלט',pick:{demo:{d2:{q:8},d4:{q:6}},floor:{f3:{q:22},f4:{q:22},f5:{q:1},f6:{q:12}},elec:{e5:{q:1},e6:{q:2}}}},
-  {name:'צביעת דירה 4 חד׳',pick:{paint:{p2:{q:1}}}},
-  {name:'מטבח בסיסי',pick:{kitchen:{k1:{q:4},k2:{q:3},k3:{q:4}},elec:{e6:{q:1}}}},
+  {name:'שיפוץ אמבטיה קומפלט',pick:{demo:{dm1:{q:8},dm2:{q:6},dm4:{q:1}},plumb:{pl1:{q:3},pl2:{q:1},pl5:{q:2}},finish:{fn7:{q:22},fn8:{q:8},fn5:{q:6}},elec:{el1:{q:3}}}},
+  {name:'צביעת דירה 4 חד׳',pick:{finish:{fn3:{q:120},fn4:{q:4}}}},
+  {name:'מטבח בסיסי',pick:{alum:{al3:{q:5}},plumb:{pl5:{q:1}},elec:{el2:{q:2},el1:{q:4}}}},
 ];
 const WA='972543013389'; // עותק קבלן
 
@@ -312,7 +306,7 @@ const WA='972543013389'; // עותק קבלן
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','drafts','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','drafts','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','theme','targetQuotes'];}};
 })();
 
 /* ===== IndexedDB for photos ===== */
@@ -403,6 +397,7 @@ const App={
     <button class="chip" data-modal="tools">🧰 כלים</button>
     <button class="chip" data-modal="drafts">🗂️ טיוטות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
+    <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${s.vatOn?'כולל':'ללא'} מע"מ</div>
@@ -423,7 +418,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -437,7 +432,8 @@ const App={
    <div class="field"><label>שם הלקוח</label><input id="c_name" value="${c.name}" placeholder="שם מלא"/></div>
    <div class="row2"><div class="field"><label>טלפון</label><input id="c_phone" value="${c.phone||''}" placeholder="050-…" inputmode="tel"/></div>
      <div class="field"><label>פרויקט</label><input id="c_project" value="${c.project}" placeholder="שיפוץ דירה…"/></div></div>
-   <div class="field"><label>כתובת</label><input id="c_address" value="${c.address}" placeholder="עיר, רחוב ומספר"/></div>
+   <div class="row2"><div class="field"><label>כתובת</label><input id="c_address" value="${c.address}" placeholder="עיר, רחוב"/></div>
+     <div class="field"><label>מקור הלקוח</label><select id="c_source">${['','המלצה','פייסבוק','גוגל','לקוח חוזר','שלט/רכב','אחר'].map(o=>`<option ${((c.source||'')===o)?'selected':''}>${o||'— בחר —'}</option>`).join('')}</select></div></div>
    <div class="row2"><div class="field"><label>מס׳ הצעה</label><input id="q_no" value="${s.quoteNo}"/></div>
      <div class="field"><label>בתוקף עד</label><input id="q_valid" value="${s.valid}"/></div></div>
    <div class="field"><label>תאריך יעד לפרויקט (מופיע בלוח 📅)</label><input id="c_due" type="date" value="${c.dueDate||''}"/></div>
@@ -477,6 +473,9 @@ const App={
    <div class="field"><label>apiTokenInstance</label><div style="display:flex;gap:8px"><input id="ga-token" type="password" value="${Store.get('gaToken','')}" placeholder="הדבק את הטוקן" style="flex:1"/><button class="mini2" id="ga-eye" type="button">👁</button></div></div>
    <button class="btn-ghost" id="ga-save">💾 שמור</button>
    <button class="btn-ghost" id="ga-test">📤 בדיקת חיבור</button>
+   <div class="sec-title" style="margin-top:16px">🤖 Gemini (עוזר AI)</div>
+   <div class="field"><label>Gemini API Key</label><div style="display:flex;gap:8px"><input id="gem-key" type="password" value="${Store.get('geminiKey','')}" placeholder="AIza…" style="flex:1"/><button class="mini2" id="gem-eye" type="button">👁</button></div></div>
+   <button class="btn-ghost" id="gem-save">💾 שמור מפתח Gemini</button>
    <div class="sec-title" style="margin-top:16px">Google Drive</div>
    <div class="field"><label>Google OAuth Client ID</label><input id="g-cid" value="${Store.get('gClientId','')}" placeholder="xxxx.apps.googleusercontent.com"/></div>
    <button class="btn-ghost" id="g-save">💾 שמור Client ID</button>
@@ -497,7 +496,10 @@ const App={
    <div class="sec-title">🔒 אזור מאובטח (GREEN-API · Drive)</div>
    ${unlocked?gaBlock:lockCard}
    <div class="sec-title">כללי</div>
+   <div class="toggle"><div><div style="font-weight:700">מצב בהיר ☀️</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
+   <div class="field"><label>יעד חודשי — מספר הצעות (מופיע בדו"ח)</label><input id="target-quotes" type="number" inputmode="numeric" value="${Store.get('targetQuotes','')||''}" placeholder="לדוגמה: 20"/></div>
    <button class="btn-ghost" id="reset-catalog">♻️ אפס מחירון לברירת מחדל 2026</button>
+   <button class="btn-ghost" id="reset-data" style="color:var(--red);border-color:var(--red)">🧪 איפוס נתוני טסטים (הצעות/לקוחות/דשבורד)</button>
    <div style="margin-top:16px;text-align:center">${logoBlock(true,.8)}</div>
    <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · 054-5718316<br>yehuda-shipuzim.netlify.app</div>`;
  },
@@ -540,6 +542,23 @@ const App={
      <button class="del" data-delclient="${cl.id}">🗑️</button></div>`).join(''):'<div class="empty">אין לקוחות שמורים.<br>נשמרים אוטומטית ביצירת הצעה.</div>'}`;
  },
 
+ geminiModal(){const hasKey=!!Store.get('geminiKey','');
+  const acts=[['📝 נסח הודעה ללקוח','נסח הודעת וואטסאפ קצרה, מנומסת ומקצועית בעברית ללקוח בשם הקבלן "יהודה שיפוצים", בנוגע להצעת מחיר ששלחתי.'],
+   ['🔨 הצע סעיפי עבודה','אני קבלן שיפוצים. הצע רשימת סעיפי עבודה (line items) לפרויקט הבא, כולל יחידת מידה מקובלת בישראל. תאר בקצרה:'],
+   ['📄 תיאור עבודה מקצועי','כתוב תיאור עבודה מקצועי וברור בעברית להצעת מחיר עבור העבודה הבאה:'],
+   ['💡 טיפ ייעול','תן לי טיפ אחד קצר וקונקרטי לניהול יעיל יותר של עסק שיפוצים.']];
+  return `<h2>🤖 עוזר Gemini <button class="x" data-close>✕</button></h2>
+   ${hasKey?'':'<div class="empty" style="padding:14px">כדי להשתמש, הזן Gemini API Key ב-⚙️ הגדרות ← אזור מאובטח.</div>'}
+   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">${acts.map((a,i)=>`<button class="chip" data-gem="${i}">${a[0]}</button>`).join('')}</div>
+   <div class="field"><textarea id="gem-in" placeholder="כתוב שאלה או תיאור עבודה…" style="min-height:70px"></textarea></div>
+   <button class="btn-block" id="gem-run" ${hasKey?'':'disabled style="opacity:.5"'}>שאל את Gemini</button>
+   <div id="gem-out" style="margin-top:12px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px;line-height:1.6;white-space:pre-wrap;min-height:40px;color:var(--txt)"></div>
+   <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">📥 איסוף חשבוניות מהמייל (${'yuda090581@gmail.com'}) דורש חיבור Gmail מאובטח (OAuth) — נבנה בשלב נפרד.</div>`;
+ },
+ async geminiAsk(prompt){const key=Store.get('geminiKey','');if(!key){this.toast('הזן מפתח Gemini בהגדרות');return;}const out=document.getElementById('gem-out');if(out)out.textContent='חושב…';
+  try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+   const d=await r.json();const txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||d.error?.message||'לא התקבלה תשובה';if(out)out.textContent=txt;}catch(e){if(out)out.textContent='שגיאת רשת/מפתח';}
+ },
  calendarModal(){const list=Store.get('clients',[]).filter(c=>c.dueDate).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));const now=new Date();now.setHours(0,0,0,0);const lbl={q:'הצעה',doing:'בביצוע',sent:'נשלח',done:'בוצע'};
   return `<h2>לוח פרויקטים 📅 <button class="x" data-close>✕</button></h2>
    ${list.length?list.map(c=>{const d=new Date(c.dueDate);const over=d<now&&c.status!=='done';return `<div class="list-item"><span class="status ${c.status||'q'}">${lbl[c.status||'q']}</span><div class="info"><div class="t">${c.name}</div><div class="s" style="${over?'color:var(--red);font-weight:700':''}">🗓️ ${c.dueDate}${over?' · חורג מהיעד!':''}</div></div></div>`;}).join(''):'<div class="empty">אין פרויקטים עם תאריך יעד.<br>הוסף "תאריך יעד" בעת יצירת הצעה.</div>'}`;
@@ -586,12 +605,20 @@ const App={
    <div class="stat" style="margin-top:10px">${card(d.feedbacks,'פידבקים שהתקבלו',1)}${card(d.reviews,'בקשות משוב שנשלחו',1)}</div>
    <div class="stat" style="margin-top:10px">${card(d.newClients,'לקוחות חדשים',1)}${card(d.conv+'%','אחוז סגירה',1)}</div>
    <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף כספי (הצעות)',1)}${card(nis(d.avg),'הצעה ממוצעת',1)}</div>
+   ${(()=>{const tg=+Store.get('targetQuotes',0);if(!tg)return '';const pct=Math.min(100,Math.round(d.quotes/tg*100));return `<div class="sec-title">יעד חודשי</div><div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span>${d.quotes} מתוך ${tg} הצעות</span><b style="color:var(--red)">${pct}%</b></div><div style="height:10px;background:var(--line);border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--red),#ff6b6b)"></div></div></div>`;})()}
    <button class="btn-ghost" id="rep-send">📲 שלח לי את הסיכום בוואטסאפ</button>
    <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.6">הנתונים נצברים מרגע השדרוג. "נסגר"=סטטוס בוצע, "פידבק"=לקוח שהגיב אחרי בקשת משוב.</div>`;
  },
 
  bind(){const $=s=>document.querySelectorAll(s);const on=(sel,ev,fn)=>$(sel).forEach(e=>e.addEventListener(ev,fn));
-  on('[data-cat]','click',e=>{const id=e.currentTarget.dataset.cat;this.state.open[id]=!this.state.open[id];this.render();});
+  on('[data-cat]','click',e=>{if(this._lpFired){this._lpFired=false;return;}const id=e.currentTarget.dataset.cat;this.state.open[id]=!this.state.open[id];this.render();});
+  document.querySelectorAll('[data-cat]').forEach(el=>{
+    const id=el.dataset.cat;if(id==='custom')return;
+    const start=()=>{this._lpTimer=setTimeout(()=>{this._lpFired=true;const c=this.state.catalog.find(x=>x.id===id);if(c){c.hot=!c.hot;this.save();if(navigator.vibrate)navigator.vibrate(30);this.toast(c.hot?'סומן כ-🔥 חם':'הוסר מ-חם');this.render();}},600);};
+    const cancel=()=>{clearTimeout(this._lpTimer);};
+    el.addEventListener('touchstart',start,{passive:true});el.addEventListener('touchend',cancel);el.addEventListener('touchmove',cancel);
+    el.addEventListener('mousedown',start);el.addEventListener('mouseup',cancel);el.addEventListener('mouseleave',cancel);
+  });
   on('[data-chip]','click',e=>{this.state.showAll=e.currentTarget.dataset.chip==='all';this.render();});
   const sb=document.getElementById('search');if(sb)sb.addEventListener('input',e=>{this.state.search=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}});
   const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
@@ -618,6 +645,11 @@ const App={
   const ia=document.getElementById('install-app');if(ia)ia.onclick=()=>doInstall();
   const cu=document.getElementById('check-update');if(cu)cu.onclick=()=>this.checkUpdate();
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{this.state.catalog=JSON.parse(JSON.stringify(CATALOG));this.save();this.toast('המחירון אופס');this.render();};
+  const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
+  const tq=document.getElementById('target-quotes');if(tq)tq.oninput=e=>Store.set('targetQuotes',+e.target.value||0);
+  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות, הלקוחות והטיוטות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}['quotes','clients','drafts','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.toast('הנתונים אופסו ✓');this.render();};
+  const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());this.toast('מפתח Gemini נשמר ✓');};
+  const gemEye=document.getElementById('gem-eye');if(gemEye)gemEye.onclick=()=>{const t=document.getElementById('gem-key');if(t)t.type=t.type==='password'?'text':'password';};
   const gcs=document.getElementById('g-save');if(gcs)gcs.onclick=()=>{Store.set('gClientId',(document.getElementById('g-cid').value||'').trim());this.toast('נשמר ✓');};
   const gcn=document.getElementById('g-connect');if(gcn)gcn.onclick=()=>{Store.set('gClientId',(document.getElementById('g-cid').value||'').trim());this.driveConnect();};
   const gbk=document.getElementById('g-backup');if(gbk)gbk.onclick=()=>this.driveBackup();
@@ -648,6 +680,8 @@ const App={
 
   const cg=document.getElementById('calc-go');if(cg)cg.onclick=()=>{const l=+document.getElementById('calc-l').value||0,w=+document.getElementById('calc-w').value||0,n=+document.getElementById('calc-n').value||1;const a=Math.round(l*w*n*100)/100;document.getElementById('calc-out').textContent=a?a+' מ"ר':'';};
   on('[data-preset]','click',e=>this.loadPreset(+e.currentTarget.dataset.preset));
+  const gemRun=document.getElementById('gem-run');if(gemRun)gemRun.onclick=()=>{const v=(document.getElementById('gem-in').value||'').trim();if(!v){this.toast('כתוב שאלה');return;}this.geminiAsk(v);};
+  on('[data-gem]','click',e=>{const acts=['נסח הודעת וואטסאפ קצרה, מנומסת ומקצועית בעברית ללקוח בשם הקבלן "יהודה שיפוצים", בנוגע להצעת מחיר ששלחתי.','אני קבלן שיפוצים. הצע רשימת סעיפי עבודה (line items) לפרויקט, כולל יחידת מידה מקובלת בישראל, עבור: ','כתוב תיאור עבודה מקצועי וברור בעברית להצעת מחיר עבור: ','תן לי טיפ אחד קצר וקונקרטי לניהול יעיל יותר של עסק שיפוצים.'];const i=+e.currentTarget.dataset.gem;const ta=document.getElementById('gem-in');if(i===0||i===3){this.geminiAsk(acts[i]);}else if(ta){ta.value=acts[i];ta.focus();}});
   const bk=document.getElementById('backup');if(bk)bk.onclick=()=>this.backup();
   const rb=document.getElementById('restore-btn');if(rb)rb.onclick=()=>document.getElementById('restore-file').click();
   const rf=document.getElementById('restore-file');if(rf)rf.onchange=e=>this.restore(e);
@@ -685,7 +719,7 @@ const App={
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);return this.state.catalog.find(c=>c.id===cid).items.find(i=>i.id===iid);},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else this.save();},
 
- captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;},
+ captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;},
  saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
  saveDraft(){const list=Store.get('drafts',[]);list.unshift({id:uid(),savedAt:new Date().toLocaleString('he-IL'),grand:this.grand(),client:{...this.state.client},quoteNo:this.state.quoteNo,valid:this.state.valid,discount:this.state.discount,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:[...this.state.whiteItems],blackOn:this.state.blackOn,blackItems:[...this.state.blackItems],catalog:JSON.parse(JSON.stringify(this.state.catalog)),custom:JSON.parse(JSON.stringify(this.state.custom)),vatOn:this.state.vatOn,vatPct:this.state.vatPct});Store.set('drafts',list.slice(0,80));this.toast('הטיוטה נשמרה ✓');},
  loadDraft(id){const d=Store.get('drafts',[]).find(x=>x.id===id);if(!d)return;Object.assign(this.state,{catalog:JSON.parse(JSON.stringify(d.catalog)),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:d.quoteNo,valid:d.valid,discount:d.discount||0,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[],vatOn:d.vatOn,vatPct:d.vatPct});this.save();this.state.modal=null;this.toast('הטיוטה נטענה');this.render();},
@@ -697,7 +731,20 @@ const App={
   if(!sent){if(cl.phone)window.open(waLink(cl.phone,msg),'_blank');else if(navigator.share)navigator.share({text:msg}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');}
   cl.status='sent';cl.reviewSentAt=Date.now();Store.set('clients',list);this.toast(sent?'משוב נשלח אוטומטית · סטטוס: נשלח':'לינק המשוב מוכן · סטטוס: נשלח');this.render();},
 
- checkUpdate(){this.toast('בודק עדכונים…');fetch('https://yehuda-shipuzim.netlify.app/version.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{if(d&&d.version&&d.version!==VERSION){if(confirm('קיימת גרסה חדשה ('+d.version+'). לעדכן עכשיו?'))location.reload(true);}else this.toast('האפליקציה מעודכנת ✓ (v'+VERSION+')');}).catch(()=>this.toast('אין חיבור או קובץ גרסה. פרסם version.json באתר.'));},
+ async checkUpdate(){this.toast('בודק עדכונים…');try{
+   const reg=('serviceWorker' in navigator)?await navigator.serviceWorker.getRegistration():null;
+   if(reg)try{await reg.update();}catch(e){}
+   const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});const d=await r.json();
+   if(d&&d.version&&d.version!==VERSION){
+     if(confirm('קיימת גרסה חדשה ('+d.version+'). לעדכן עכשיו?')){
+       this.toast('מעדכן…');
+       try{const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}
+       if(reg&&reg.waiting)reg.waiting.postMessage('SKIP_WAITING');
+       setTimeout(()=>location.reload(),400);
+     }
+   } else this.toast('האפליקציה מעודכנת ✓ (v'+VERSION+')');
+  }catch(e){this.toast('אין חיבור לבדיקת עדכון');}
+ },
 
  backup(){const data={_v:VERSION};Store.keys().forEach(k=>data[k]=Store.get(k,null));const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yehuda-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();this.toast('גיבוי נוצר ✓');},
  restore(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);Object.keys(d).forEach(k=>{if(k!=='_v'&&d[k]!==null)Store.set(k,d[k]);});this.state.catalog=Store.get('catalog',this.state.catalog);this.state.custom=Store.get('customItems',[]);this.toast('שוחזר בהצלחה ✓');this.state.modal=null;this.render();}catch(x){this.toast('קובץ לא תקין');}};rd.readAsText(f);},
@@ -784,6 +831,8 @@ window.addEventListener('popstate',()=>{
   if(App.state.modal){App.state.modal=null;App._pushedModal=false;App.render();}
 });
 
+function applyTheme(){try{document.documentElement.classList.toggle('light',Store.get('theme','dark')==='light');}catch(e){}}
+applyTheme();
 document.getElementById('splash-logo').innerHTML=logoBlock(true,1);
 /* ===== Service Worker: offline + auto-update ===== */
 if('serviceWorker' in navigator){
@@ -807,8 +856,18 @@ if('serviceWorker' in navigator){
   });
 }
 document.addEventListener('DOMContentLoaded',()=>{App.render();
- setTimeout(()=>{const sp=document.getElementById('splash');if(sp){sp.style.opacity='0';setTimeout(()=>sp.remove(),500);}},1900);
- const sp=document.getElementById('splash');if(sp)sp.addEventListener('click',()=>{sp.style.opacity='0';setTimeout(()=>sp.remove(),400);});
+ // splash: slide-to-unlock (RTL: drag knob leftwards)
+ const sp=document.getElementById('splash');
+ const track=document.getElementById('slider-track'), knob=document.getElementById('slider-knob'), fill=document.getElementById('slider-fill');
+ if(sp&&track&&knob){
+   let dragging=false, startX=0, max=0;
+   const setPos=px=>{px=Math.max(0,Math.min(max,px));knob.style.right=(5+px)+'px';fill.style.width=(62+px)+'px';};
+   const begin=e=>{dragging=true;max=track.clientWidth-62-10;startX=(e.touches?e.touches[0].clientX:e.clientX);e.preventDefault();};
+   const move=e=>{if(!dragging)return;const x=(e.touches?e.touches[0].clientX:e.clientX);setPos(startX-x);};
+   const end=e=>{if(!dragging)return;dragging=false;const cur=parseFloat(knob.style.right||'5')-5;if(cur>max*0.75){sp.style.opacity='0';setTimeout(()=>sp.remove(),450);}else{knob.style.transition=fill.style.transition='all .2s';setPos(0);setTimeout(()=>{knob.style.transition=fill.style.transition='';},220);}};
+   knob.addEventListener('mousedown',begin);window.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
+   knob.addEventListener('touchstart',begin,{passive:false});window.addEventListener('touchmove',move,{passive:false});window.addEventListener('touchend',end);
+ }
 });
 </script>
 </body>
