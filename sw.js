@@ -2,7 +2,7 @@
    מטרה: עבודה אופליין + עדכון אוטומטי.
    בכל שדרוג: העלה את מספר הגרסה כאן (CACHE) והאפליקציה תתעדכן לבד אצל כל המשתמשים.
 */
-const CACHE = 'ys-cache-v4.0';
+const CACHE = 'ys-cache-v4.1';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './version.json'];
 
 self.addEventListener('install', e => {

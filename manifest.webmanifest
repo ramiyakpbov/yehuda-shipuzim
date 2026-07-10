@@ -1,6 +1,6 @@
 {
-  "name": "יהודה שיפוצים — מחשבון הצעות מחיר",
-  "short_name": "יהודה שיפוצים",
+  "name": "מחשבון הצעת מחיר יהודה שיפוצים",
+  "short_name": "הצעות מחיר",
   "description": "מחשבון שיפוצים והצעות מחיר מקצועיות",
   "start_url": "./index.html",
   "scope": "./",
@@ -10,10 +10,28 @@
   "theme_color": "#0d0d0f",
   "lang": "he",
   "dir": "rtl",
-  "categories": ["business", "productivity"],
+  "categories": [
+    "business",
+    "productivity"
+  ],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
