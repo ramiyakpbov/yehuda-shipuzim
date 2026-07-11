@@ -165,7 +165,12 @@ table.p-items tbody tr.line td{padding:9px 8px;text-align:center;border-bottom:1
 table.p-items tbody tr.line td.desc{text-align:right;}
 table.p-items tbody tr.alt td{background:#faf8f4;}
 .p-summary{display:flex;justify-content:flex-end;margin-top:20px;}
+.qmult{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;width:34px;height:34px;font-weight:800;font-size:12px;flex:none;cursor:pointer;}
+.qmult:active{background:var(--red);color:#fff;}
 .p-sumbox{width:360px;border:2px solid #1c1c1c;border-radius:4px;overflow:hidden;}
+.p-watermark{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);opacity:0.05;pointer-events:none;z-index:0;width:60%;}
+.p-watermark svg{width:100%;height:auto;}
+#pdf-page .p-head,#pdf-page .p-parties,#pdf-page .p-items,#pdf-page .p-summary,#pdf-page .p-sign,#pdf-page .p-cta,#pdf-page .p-foot,#pdf-page .p-extra{position:relative;z-index:1;}
 .p-sumrow{display:flex;justify-content:space-between;padding:8px 14px;font-size:14px;font-weight:700;background:var(--cream);}
 .p-sumrow.disc{color:var(--red);}
 .p-sumrow .v{font-weight:800;}
@@ -212,7 +217,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='4.3';
+const VERSION='4.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -353,7 +358,7 @@ const App={
    open:{},search:'',showAll:false,
    client:{name:'',project:'',address:'',phone:'',status:'q',dueDate:''},
    quoteNo:nextQuoteNo(),date:today(),valid:addMonth(),
-   vatOn:Store.get('vatOn',true),vatPct:Store.get('vatPct',18),discount:0,
+   vatOn:Store.get('vatOn',true),vatPct:Store.get('vatPct',18),discount:0,advance:0,
    lang:Store.get('lang','he'),docType:'quote',cost:0,
    secureUnlocked:false,reportMonth:new Date().toISOString().slice(0,7),
    showTerms:true,terms:Store.get('terms','תנאי תשלום: 30% מקדמה עם תחילת העבודה, יתרה בהתאם להתקדמות. ההצעה בתוקף עד התאריך הנקוב.'),
@@ -408,6 +413,7 @@ const App={
     <button class="chip" data-modal="drafts">🗂️ טיוטות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
+    <button class="chip" data-modal="quick">⚡ הצעה מהירה</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${s.vatOn?'כולל':'ללא'} מע"מ</div>
@@ -424,11 +430,11 @@ const App={
     <div class="fields">
       <div class="f"><label>מחיר ליח׳ (₪)</label><input type="number" inputmode="decimal" value="${i.price}" data-fld="price" data-k="${cid}|${i.id}"/></div>
       <div class="f"><label>יחידה</label><select data-fld="unit" data-k="${cid}|${i.id}">${UNITS.map(u=>`<option ${u===i.unit?'selected':''}>${u}</option>`).join('')}</select></div>
-      <div class="f"><label>כמות</label><input type="number" inputmode="decimal" value="${i.qty||''}" data-fld="qty" data-k="${cid}|${i.id}"/></div></div>
+      <div class="f"><label>כמות</label><div style="display:flex;gap:4px;align-items:center"><button class="qmult" data-mult="${cid}|${i.id}|0.5" type="button">÷2</button><input type="number" inputmode="decimal" value="${i.qty||''}" data-fld="qty" data-k="${cid}|${i.id}" style="flex:1;min-width:0"/><button class="qmult" data-mult="${cid}|${i.id}|2" type="button">×2</button></div></div></div>
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -447,8 +453,10 @@ const App={
    <div class="row2"><div class="field"><label>מס׳ הצעה</label><input id="q_no" value="${s.quoteNo}"/></div>
      <div class="field"><label>בתוקף עד</label><input id="q_valid" value="${s.valid}"/></div></div>
    <div class="field"><label>תאריך יעד לפרויקט (מופיע בלוח 📅)</label><input id="c_due" type="date" value="${c.dueDate||''}"/></div>
-   <div class="sec-title">הנחת לקוח</div>
-   <div class="field"><label>אחוז הנחה (%) — יופיע בהצעה אם > 0</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
+   <div class="field"><label>הערות פנימיות (לא מופיע בהצעה 🔒)</label><textarea id="c_notes" placeholder="לזיכרון שלך בלבד…" style="min-height:48px">${c.notes||''}</textarea></div>
+   <div class="sec-title">הנחת לקוח ומקדמה</div>
+   <div class="row2"><div class="field"><label>אחוז הנחה (%)</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
+     <div class="field"><label>מקדמה (%) — תופיע בהצעה</label><input id="q_adv" type="number" inputmode="decimal" value="${s.advance||''}" placeholder="0"/></div></div>
    <div class="sec-title">חומרים</div>
    ${matSec('white',WHITE_MAT,s.whiteCustom,s.whiteOn)}
    ${matSec('black',BLACK_MAT,s.blackCustom,s.blackOn)}
@@ -461,7 +469,8 @@ const App={
      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>סכום ביניים</span><b style="color:var(--txt)">${nis(this.subtotal())}</b></div>
      ${(+s.discount>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--red);margin-top:6px"><span>הנחה (${s.discount}%)</span><b>- ${nis(this.discountAmt())}</b></div>`:''}
      ${s.vatOn?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px"><span>מע"מ (${s.vatPct}%)</span><b style="color:var(--txt)">${nis(this.vat())}</b></div>`:''}
-     <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"><span style="font-weight:800">סה"כ לתשלום</span><b style="color:var(--red);font-size:19px">${nis(this.grand())}</b></div></div>
+     <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"><span style="font-weight:800">סה"כ לתשלום</span><b style="color:var(--red);font-size:19px">${nis(this.grand())}</b></div>
+     ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>
    <div class="sec-title">רווחיות (מוסתר מהלקוח 🔒)</div>
    <div class="field"><label>עלות משוערת לקבלן (₪)</label><input id="q_cost" type="number" inputmode="decimal" value="${s.cost||''}" placeholder="0"/></div>
    ${(+s.cost>0)?`<div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;font-size:14px"><span>רווח צפוי</span><b style="color:var(--ok)">${nis(this.afterDiscount()-(+s.cost||0))}</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px"><span>מרווח</span><b>${this.afterDiscount()>0?Math.round((this.afterDiscount()-(+s.cost||0))/this.afterDiscount()*100):0}%</b></div></div>`:''}
@@ -471,7 +480,8 @@ const App={
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="gen-share">📲 צור ושתף (WhatsApp / מייל)</button>
    <button class="btn-ghost" id="send-client">🟢 שלח PDF ללקוח (GREEN-API)</button>
-   <button class="btn-ghost" id="save-draft">💾 שמור כטיוטה</button>`;
+   <button class="btn-ghost" id="save-draft">💾 שמור כטיוטה</button>
+   <button class="btn-ghost" id="dup-quote">📋 שכפל הצעה זו (עותק חדש)</button>`;
  },
 
  settingsModal(){const s=this.state;const hasPin=!!Store.get('pin','');const unlocked=s.secureUnlocked;
@@ -544,16 +554,23 @@ const App={
    <canvas id="sigpad" class="sig-canvas"></canvas>
    <button class="btn-ghost" id="sig-clear">🧹 נקה</button><button class="btn-block" id="sig-save">שמור חתימה</button>`;},
 
- clientsModal(){const list=Store.get('clients',[]);const lbl={q:'הצעה',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
+ clientsModal(){let list=Store.get('clients',[]);const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
+  const q=(this.state.clientQ||'').trim();const f=this.state.clientFilter||'';
+  if(q)list=list.filter(cl=>((cl.name||'')+' '+(cl.phone||'')+' '+(cl.project||'')+' '+(cl.address||'')).toLowerCase().includes(q.toLowerCase()));
+  if(f)list=list.filter(cl=>(cl.status||'q')===f);
+  const filters=[['','הכל'],['q','הצעה'],['pending','ממתין'],['doing','בביצוע'],['sent','משוב'],['done','בוצע']];
   return `<h2>מאגר לקוחות <button class="x" data-close>✕</button></h2>
+   <div class="field"><input id="cl-search" value="${this.state.clientQ||''}" placeholder="🔍 חיפוש לפי שם / טלפון / פרויקט…"/></div>
+   <div class="chips" style="padding:0 0 8px">${filters.map(x=>`<button class="chip ${f===x[0]?'on':''}" data-clfilter="${x[0]}">${x[1]}</button>`).join('')}</div>
+   <button class="btn-ghost" id="export-clients" style="margin-bottom:10px">📊 ייצוא לאקסל (CSV)</button>
    ${list.length?list.map(cl=>`<div class="list-item">
      <span class="status ${cl.status||'q'}">${lbl[cl.status||'q']}</span>
-     <div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${cl.phone?cl.phone+' · ':''}${cl.project||''}</div></div>
+     <div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${cl.phone?cl.phone+' · ':''}${cl.project||''}${cl.notes?' · 📝':''}</div></div>
      <button class="mini" data-cstatus="${cl.id}">סטטוס »</button>
      <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
      <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
      <button class="mini" data-review="${cl.id}">📩 משוב</button>
-     <button class="del" data-delclient="${cl.id}">🗑️</button></div>`).join(''):'<div class="empty">אין לקוחות שמורים.<br>נשמרים אוטומטית ביצירת הצעה.</div>'}`;
+     <button class="del" data-delclient="${cl.id}">🗑️</button></div>`).join(''):'<div class="empty">לא נמצאו לקוחות.</div>'}`;
  },
 
  geminiModal(){const prov=Store.get('aiProvider','gemini');const hasKey=prov==='claude'?!!Store.get('claudeKey',''):!!Store.get('geminiKey','');
@@ -582,13 +599,25 @@ const App={
   try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
    const d=await r.json();const txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||d.error?.message||'לא התקבלה תשובה';if(out)out.textContent=txt;}catch(e){if(out)out.textContent='שגיאת רשת/מפתח';}
  },
+ quickModal(){return `<h2>⚡ הצעה מהירה <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12px;color:var(--muted);margin-bottom:10px">לסעיף בודד — ממלאים ומקבלים הצעה מוכנה בשניות.</div>
+   <div class="field"><label>שם הלקוח</label><input id="qk_client" placeholder="שם מלא"/></div>
+   <div class="field"><label>טלפון</label><input id="qk_phone" inputmode="tel" placeholder="050-…"/></div>
+   <div class="field"><label>תיאור העבודה</label><input id="qk_name" placeholder="לדוגמה: צביעת דירה 4 חדרים"/></div>
+   <div class="row2"><div class="field"><label>מחיר (₪)</label><input id="qk_price" type="number" inputmode="decimal"/></div>
+     <div class="field"><label>כמות</label><input id="qk_qty" type="number" inputmode="decimal" value="1"/></div></div>
+   <button class="btn-block" id="qk-go">המשך להצעה ›</button>`;
+ },
  calendarModal(){const list=Store.get('clients',[]).filter(c=>c.dueDate).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));const now=new Date();now.setHours(0,0,0,0);const lbl={q:'הצעה',doing:'בביצוע',sent:'נשלח',done:'בוצע'};
   return `<h2>לוח פרויקטים 📅 <button class="x" data-close>✕</button></h2>
    ${list.length?list.map(c=>{const d=new Date(c.dueDate);const over=d<now&&c.status!=='done';return `<div class="list-item"><span class="status ${c.status||'q'}">${lbl[c.status||'q']}</span><div class="info"><div class="t">${c.name}</div><div class="s" style="${over?'color:var(--red);font-weight:700':''}">🗓️ ${c.dueDate}${over?' · חורג מהיעד!':''}</div></div></div>`;}).join(''):'<div class="empty">אין פרויקטים עם תאריך יעד.<br>הוסף "תאריך יעד" בעת יצירת הצעה.</div>'}`;
  },
  remindersModal(){const list=this.reminders();const lbl={q:'הצעה נשלחה — ממתין לתשובה',sent:'משוב נשלח — ממתין לתגובה'};
+  const now=Date.now();const EXP=14*864e5;
+  const expired=Store.get('clients',[]).filter(c=>(c.status||'q')==='q'&&c.createdAt&&(now-c.createdAt)>EXP);
   return `<h2>מעקב ותזכורות 🔔 <button class="x" data-close>✕</button></h2>
    <button class="btn-ghost" id="poll-replies" style="margin-top:0;margin-bottom:12px">🔄 בדוק תגובות לקוחות (GREEN-API)</button>
+   ${expired.length?`<div class="sec-title" style="color:var(--red)">⏰ הצעות שפג תוקפן (מעל 14 יום)</div>${expired.map(cl=>`<div class="list-item"><span class="status q" style="background:var(--red)">פג תוקף</span><div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${Math.floor((now-cl.createdAt)/864e5)} ימים · ${cl.project||''}</div></div><button class="mini" data-nudge="${cl.id}">📲 תזכורת</button><button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join('')}<div class="sec-title">מעקב שוטף</div>`:''}
    ${list.length?list.map(cl=>`<div class="list-item">
      <span class="status ${cl.status}">${cl.status==='q'?'הצעה':'משוב'}</span>
      <div class="info"><div class="t">${cl.name}</div><div class="s">${lbl[cl.status]||''}</div></div>
@@ -717,7 +746,13 @@ const App={
   const rf=document.getElementById('restore-file');if(rf)rf.onchange=e=>this.restore(e);
 
   on('[data-loadclient]','click',e=>{const cl=JSON.parse(e.currentTarget.dataset.loadclient);this.state.client={name:cl.name,project:cl.project,address:cl.address,phone:cl.phone||'',status:cl.status||'q'};this.state.modal='quote';this.render();});
-  on('[data-cstatus]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.cstatus);const o=['q','doing','sent','done'];cl.status=o[(o.indexOf(cl.status||'q')+1)%4];if(cl.status==='done'&&!cl.doneAt)cl.doneAt=Date.now();Store.set('clients',list);this.render();});
+  on('[data-cstatus]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.cstatus);const o=['q','pending','doing','sent','done'];cl.status=o[(o.indexOf(cl.status||'q')+1)%5];if(cl.status==='done'&&!cl.doneAt)cl.doneAt=Date.now();Store.set('clients',list);this.render();});
+  const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
+  on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
+  const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
+  on('[data-mult]','click',e=>{const[cid,iid,f]=e.currentTarget.dataset.mult.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,Math.round((+it.qty||1)*(+f)*100)/100);it.selected=true;this.saveActive(cid);this.render();}});
+  const dq=document.getElementById('dup-quote');if(dq)dq.onclick=()=>{this.captureQuote();this.saveDraft();this.state.quoteNo=nextQuoteNo();this.toast('שוכפל — נשמר כטיוטה עם מס׳ הצעה חדש ✓');this.render();};
+  const qkg=document.getElementById('qk-go');if(qkg)qkg.onclick=()=>{const g=id=>(document.getElementById(id)||{}).value||'';const nm=g('qk_name').trim();if(!nm){this.toast('הזן תיאור עבודה');return;}const item={id:uid(),name:nm,price:+g('qk_price')||0,unit:'גלובלי',qty:+g('qk_qty')||1,selected:true};this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.state.client.name=g('qk_client');this.state.client.phone=g('qk_phone');this.state.modal='quote';this.toast('נוצרה הצעה מהירה — בדוק והפק ✓');this.render();};
   on('[data-review]','click',e=>this.sendReview(e.currentTarget.dataset.review));
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
   on('[data-delclient]','click',e=>{Store.set('clients',Store.get('clients',[]).filter(c=>c.id!==e.currentTarget.dataset.delclient));this.render();});
@@ -749,10 +784,20 @@ const App={
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
- captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;},
+ captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;},
  saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
- saveDraft(){const list=Store.get('drafts',[]);list.unshift({id:uid(),savedAt:new Date().toLocaleString('he-IL'),grand:this.grand(),client:{...this.state.client},quoteNo:this.state.quoteNo,valid:this.state.valid,discount:this.state.discount,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:[...this.state.whiteItems],blackOn:this.state.blackOn,blackItems:[...this.state.blackItems],catalog:JSON.parse(JSON.stringify(this.state.catalog)),custom:JSON.parse(JSON.stringify(this.state.custom)),vatOn:this.state.vatOn,vatPct:this.state.vatPct});Store.set('drafts',list.slice(0,80));this.toast('הטיוטה נשמרה ✓');},
- loadDraft(id){const d=Store.get('drafts',[]).find(x=>x.id===id);if(!d)return;Object.assign(this.state,{catalog:JSON.parse(JSON.stringify(d.catalog)),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:d.quoteNo,valid:d.valid,discount:d.discount||0,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[],vatOn:d.vatOn,vatPct:d.vatPct});this.save();this.state.modal=null;this.toast('הטיוטה נטענה');this.render();},
+ exportClients(){const list=Store.get('clients',[]);if(!list.length){this.toast('אין לקוחות לייצוא');return;}
+  const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const rows=[['שם','טלפון','פרויקט','כתובת','מקור','סטטוס','תאריך יעד','הערות']];
+  list.forEach(c=>rows.push([c.name,c.phone,c.project,c.address,c.source,lbl[c.status||'q'],c.dueDate,c.notes]));
+  const csv='\uFEFF'+rows.map(r=>r.map(esc).join(',')).join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='לקוחות-יהודה-שיפוצים.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  this.toast('קובץ CSV נוצר ✓');
+ },
+ saveDraft(){const list=Store.get('drafts',[]);list.unshift({id:uid(),savedAt:new Date().toLocaleString('he-IL'),grand:this.grand(),client:{...this.state.client},quoteNo:this.state.quoteNo,valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:[...this.state.whiteItems],blackOn:this.state.blackOn,blackItems:[...this.state.blackItems],catalog:JSON.parse(JSON.stringify(this.state.catalog)),custom:JSON.parse(JSON.stringify(this.state.custom)),vatOn:this.state.vatOn,vatPct:this.state.vatPct});Store.set('drafts',list.slice(0,80));this.toast('הטיוטה נשמרה ✓');},
+ loadDraft(id){const d=Store.get('drafts',[]).find(x=>x.id===id);if(!d)return;Object.assign(this.state,{catalog:JSON.parse(JSON.stringify(d.catalog)),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:d.quoteNo,valid:d.valid,discount:d.discount||0,advance:d.advance||0,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[],vatOn:d.vatOn,vatPct:d.vatPct});this.save();this.state.modal=null;this.toast('הטיוטה נטענה');this.render();},
  loadPreset(idx){const p=PRESETS[idx];for(const cid in p.pick){const cat=this.state.catalog.find(c=>c.id===cid);if(!cat)continue;for(const iid in p.pick[cid]){const it=cat.items.find(i=>i.id===iid);if(it){it.selected=true;it.qty=p.pick[cid][iid].q;}}}this.save();this.state.modal=null;this.toast('התבנית נטענה — בדוק כמויות');this.render();},
 
  async sendReview(clientId){const list=Store.get('clients',[]);const cl=list.find(c=>c.id===clientId);if(!cl)return;const url='https://yehuda-shipuzim.netlify.app/review';const msg=`שלום ${cl.name||''}, תודה שבחרת ב-יהודה שיפוצים! 🙏 נשמח מאוד למשוב קצר על העבודה: ${url}`;
@@ -787,7 +832,8 @@ const App={
   if(s.showTerms&&s.terms&&s.terms.trim())extra+=`<div class="blk"><b>${L.terms}:</b> ${s.terms}</div>`;
   if(s.whiteOn||s.blackOn){const wl=s.whiteOn?(s.whiteItems.length?s.whiteItems.join(', '):L.incl):L.notincl;const bl=s.blackOn?(s.blackItems.length?s.blackItems.join(', '):L.incl):L.notincl;extra+=`<div class="blk">${s.whiteOn?`<b>${L.white}:</b> ${wl}`:''}${s.whiteOn&&s.blackOn?'<br>':''}${s.blackOn?`<b>${L.black}:</b> ${bl}`:''}</div>`;}
   if(isC)extra+=`<div class="blk"><b>${L.orderclause}</b></div>`;
-  return `<div class="page" id="pdf-page" style="direction:${dir}">
+  return `<div class="page" id="pdf-page" style="direction:${dir};position:relative">
+   <div class="p-watermark">${logoBlock(false,2.6)}</div>
    <div class="p-head">
      <div class="p-logo">${logoBlock(false,.85)}<div class="contact">${L.contractor}: יהודה יעקובוב<br>054-5718316 · yuda090581@gmail.com</div></div>
      <div class="p-title-c"><div class="big">${isC?L.order:L.quote}</div><div class="en">${L.sub}</div></div>
@@ -801,7 +847,8 @@ const App={
      <div class="p-sumrow"><span>${L.subtotal}</span><span class="v">${nis(this.subtotal())}</span></div>
      ${(+s.discount>0)?`<div class="p-sumrow disc"><span>${L.discount} (${s.discount}%)</span><span class="v">- ${nis(this.discountAmt())}</span></div>`:''}
      ${s.vatOn?`<div class="p-sumrow"><span>${L.vat} (${s.vatPct}%)</span><span class="v">${nis(this.vat())}</span></div>`:''}
-     <div class="p-sumtotal"><span>${L.grand}</span><span class="v">${nis(this.grand())}</span></div></div></div>
+     <div class="p-sumtotal"><span>${L.grand}</span><span class="v">${nis(this.grand())}</span></div>
+     ${(+s.advance>0)?`<div class="p-sumrow"><span>מקדמה (${s.advance}%)</span><span class="v">${nis(Math.round(this.grand()*(+s.advance)/100))}</span></div>`:''}</div></div>
    ${extra?`<div class="p-extra">${extra}</div>`:''}
    <div class="p-sign"><div class="s"><div class="sh">${L.signc}</div><div class="sigimg"></div><div class="sl">יהודה יעקובוב</div></div>
      <div class="s"><div class="sh">${L.signk}</div><div class="sigimg">${s.clientSig?`<img src="${s.clientSig}"/>`:''}</div><div class="sl">${c.name||'—'}</div></div></div>
