@@ -52,6 +52,8 @@ input,select,textarea{font-family:inherit;}
 .searchwrap input:focus{border-color:var(--red);}
 .searchwrap .mag{position:absolute;right:14px;top:24px;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none;}
 .mic{width:46px;border-radius:13px;border:1px solid var(--line);background:var(--bg3);color:var(--txt);font-size:18px;flex:none;}
+.voice-big{background:var(--red);color:#fff;border:none;border-radius:18px;padding:18px 28px;font-size:18px;font-weight:800;box-shadow:0 8px 22px rgba(237,28,36,.35);cursor:pointer;}
+.voice-big.on{animation:pulse 1s infinite;}
 .mic.rec{background:var(--red);border-color:var(--red);animation:pulse 1s infinite;}
 @keyframes pulse{50%{opacity:.55;}}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 2px;}
@@ -226,7 +228,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='4.7';
+const VERSION='4.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -246,6 +248,13 @@ const LOGO_PDF="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAvcAAAGkCAIAAAA675
 function logoBlock(dark,scale){scale=scale||1;
  const src=dark?LOGO_APP:LOGO_PDF;
  return `<img src="${src}" alt="יהודה שיפוצים" style="width:${130*scale}px;height:auto;display:inline-block"/>`;}
+
+/* ===== Voice helpers (Hebrew) ===== */
+const HE_NUM={'אפס':0,'אחת':1,'אחד':1,'שתיים':2,'שתים':2,'שניים':2,'שני':2,'שתי':2,'שלוש':3,'שלושה':3,'ארבע':4,'ארבעה':4,'חמש':5,'חמישה':5,'שש':6,'שישה':6,'שבע':7,'שבעה':7,'שמונה':8,'תשע':9,'תשעה':9,'עשר':10,'עשרה':10,'עשרים':20,'שלושים':30,'ארבעים':40,'חמישים':50,'שישים':60,'שבעים':70,'שמונים':80,'תשעים':90,'מאה':100,'מאתיים':200,'אלף':1000,'אלפיים':2000};
+function stripNiqqud(s){return (s||'').replace(/[\u0591-\u05C7]/g,'');}
+function voiceNum(text){text=stripNiqqud(text);const dm=text.match(/\d+(\.\d+)?/);if(dm)return parseFloat(dm[0]);const toks=text.split(/\s+/).map(t=>t.replace(/[^\u0590-\u05FF]/g,'')).filter(Boolean);let total=0,current=0,found=false;for(const t of toks){if(t==='אלף'||t==='אלפים'){current=(current||1)*1000;found=true;}else if(t==='מאה'||t==='מאות'){current=(current||1)*100;found=true;}else if(t in HE_NUM){current+=HE_NUM[t];found=true;}}total+=current;return found?total:null;}
+function voiceTokens(s){return stripNiqqud(s).replace(/["'׳״]/g,'').split(/[\s,\-\/()]+/).filter(w=>w.length>1);}
+function voiceMatch(text,cats){const q=voiceTokens(text);if(!q.length)return null;let best=null,bestScore=0;for(const c of cats){for(const it of c.items){const name=voiceTokens(it.name+' '+(it.range||''));let score=0;for(const w of q){for(const nw of name){if(nw===w)score+=2;else if(nw.includes(w)||w.includes(nw))score+=1;}}if(score>bestScore){bestScore=score;best={cid:c.id,iid:it.id,item:it};}}}return bestScore>=2?best:null;}
 
 /* ===== CATALOG ===== */
 const CATALOG=[
@@ -318,9 +327,12 @@ const UNITS=['מ"ר','יח׳','נקודה','מ"א','גלובלי','מ"ק','יו�
 const WHITE_MAT=['אסלה תלויה','אסלה רגילה','ניאגרה סמויה','כיור אמבטיה','כיור מטבח','ברז אמבטיה','ברז מטבח','אמבטיה','אגנית מקלחון','מקלחון זכוכית','ארון אמבטיה','מראה'];
 const BLACK_MAT=['בלוקים','מלט ובטון','חול וחצץ','טיח','ברזל זיון','צנרת מים','צנרת ביוב','כבלים וחשמל','דבק ורובה','גבס ופרופילים','בידוד','חומרי איטום'];
 const PRESETS=[
-  {name:'שיפוץ אמבטיה קומפלט',pick:{demo:{dm1:{q:8},dm2:{q:6},dm4:{q:1}},plumb:{pl1:{q:3},pl2:{q:1},pl5:{q:2}},finish:{fn7:{q:22},fn8:{q:8},fn5:{q:6}},elec:{el1:{q:3}}}},
-  {name:'צביעת דירה 4 חד׳',pick:{finish:{fn3:{q:120},fn4:{q:4}}}},
-  {name:'מטבח בסיסי',pick:{alum:{al3:{q:5}},plumb:{pl5:{q:1}},elec:{el2:{q:2},el1:{q:4}}}},
+  {name:'שיפוץ אמבטיה קומפלט',emoji:'🚿',pick:{demo:{dm1:{q:8},dm2:{q:6},dm4:{q:1}},plumb:{pl1:{q:3},pl2:{q:1},pl5:{q:2}},finish:{fn7:{q:22},fn8:{q:8},fn5:{q:6}},elec:{el1:{q:3}}}},
+  {name:'צביעת דירה 4 חד׳',emoji:'🎨',pick:{finish:{fn3:{q:120},fn4:{q:4}}}},
+  {name:'מטבח בסיסי',emoji:'🍳',pick:{alum:{al3:{q:5}},plumb:{pl5:{q:1}},elec:{el2:{q:2},el1:{q:4}}}},
+  {name:'חשמל – דירה מלאה',emoji:'⚡',pick:{elec:{el1:{q:18},el2:{q:2}}}},
+  {name:'אינסטלציה – דירה',emoji:'🚰',pick:{plumb:{pl1:{q:6},pl2:{q:2},pl5:{q:2}}}},
+  {name:'הריסה ופינוי',emoji:'🧱',pick:{demo:{dm1:{q:12},dm2:{q:40},dm4:{q:1}}}},
 ];
 const WA='972543013389'; // עותק קבלן
 
@@ -422,6 +434,8 @@ const App={
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="quick">⚡ הצעה מהירה</button>
+    <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
+    <button class="chip" data-modal="templates">📋 תבניות</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${s.vatOn?'כולל':'ללא'} מע"מ</div>
@@ -442,7 +456,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -530,6 +544,7 @@ const App={
    <div class="toggle"><div><div style="font-weight:700">מצב בהיר ☀️</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>יעד חודשי — מספר הצעות (מופיע בדו"ח)</label><input id="target-quotes" type="number" inputmode="numeric" value="${Store.get('targetQuotes','')||''}" placeholder="לדוגמה: 20"/></div>
    <button class="btn-ghost" id="reset-catalog">♻️ אפס מחירון לברירת מחדל 2026</button>
+   <button class="btn-ghost" id="restore-auto">↩️ שחזר מגיבוי אוטומטי אחרון</button>
    <button class="btn-ghost" id="reset-data" style="color:var(--red);border-color:var(--red)">🧪 איפוס נתוני טסטים (הצעות/לקוחות/דשבורד)</button>
    <div style="margin-top:16px;text-align:center">${logoBlock(true,.8)}</div>
    <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · 054-5718316<br>yehuda-shipuzim.netlify.app</div>`;
@@ -560,7 +575,8 @@ const App={
 
  signModal(){return `<h2>חתימת לקוח <button class="x" data-close>✕</button></h2>
    <canvas id="sigpad" class="sig-canvas"></canvas>
-   <button class="btn-ghost" id="sig-clear">🧹 נקה</button><button class="btn-block" id="sig-save">שמור חתימה</button>`;},
+   <button class="btn-ghost" id="sig-clear">🧹 נקה</button><button class="btn-block" id="sig-save">שמור חתימה</button>
+   <button class="btn-block" id="sig-send" style="background:var(--ok);margin-top:8px">✅ שמור ושלח אישור חתום אליי</button>`;},
 
  clientsModal(){let list=Store.get('clients',[]);const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
   const q=(this.state.clientQ||'').trim();const f=this.state.clientFilter||'';
@@ -615,6 +631,55 @@ const App={
    <div class="row2"><div class="field"><label>מחיר (₪)</label><input id="qk_price" type="number" inputmode="decimal"/></div>
      <div class="field"><label>כמות</label><input id="qk_qty" type="number" inputmode="decimal" value="1"/></div></div>
    <button class="btn-block" id="qk-go">המשך להצעה ›</button>`;
+ },
+ templatesModal(){return `<h2>📋 תבניות מוכנות <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">לחיצה טוענת סעיפים טיפוסיים — אפשר לערוך כמויות ומחירים אחרי כן.</div>
+   ${PRESETS.map((p,i)=>`<div class="list-item"><div class="info"><div class="t">${p.emoji||'📋'} ${p.name}</div><div class="s">${Object.keys(p.pick).length} קטגוריות</div></div><button class="mini" data-preset="${i}">טען »</button></div>`).join('')}`;
+ },
+ voiceModal(){const on=this._voiceOn;
+  return `<h2>🎤 עוזר קולי <button class="x" data-close>✕</button></h2>
+   <div style="text-align:center;margin:6px 0 14px">
+     <button id="voice-btn" class="voice-big ${on?'on':''}">${on?'⏹ עצור האזנה':'🎤 התחל לדבר'}</button>
+   </div>
+   <div id="voice-live" style="min-height:40px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;color:var(--txt);text-align:center">${on?'מקשיב…':'לחץ והתחל לדבר'}</div>
+   <div style="font-size:12px;color:var(--muted);margin:12px 0 6px;font-weight:700">דוגמאות פקודות:</div>
+   <div style="font-size:12.5px;color:var(--muted);line-height:1.9">
+     🔹 "תוסיף שלוש נקודות חשמל"<br>
+     🔹 "כמות חמש" (לסעיף האחרון)<br>
+     🔹 "מחיר שלוש מאות חמישים"<br>
+     🔹 "תוסיף צביעת דירה" · "הסר ריצוף"<br>
+     🔹 "פתח הצעה" · "טען תבנית אמבטיה"
+   </div>
+   <div id="voice-log" style="margin-top:12px"></div>`;
+ },
+ voiceStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
+  const r=new SR();r._stop=false;r.lang='he-IL';r.continuous=true;r.interimResults=true;this._voiceRec=r;this._voiceOn=true;
+  const live=()=>document.getElementById('voice-live');
+  r.onresult=e=>{let interim='',final='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)final+=t;else interim+=t;}
+    if(interim&&live())live().textContent='…'+interim;
+    if(final){if(live())live().textContent='✓ '+final;this.voiceHandle(final);}};
+  r.onerror=ev=>{if(ev.error==='not-allowed'){this.toast('אין הרשאת מיקרופון');this._voiceOn=false;this.render();}};
+  r.onend=()=>{if(this._voiceOn&&!r._stop){try{r.start();}catch(e){}}};
+  try{r.start();}catch(e){}this.render();
+ },
+ voiceStop(){this._voiceOn=false;if(this._voiceRec){this._voiceRec._stop=true;try{this._voiceRec.stop();}catch(e){}}this.render();},
+ voiceLog(msg,ok){const box=document.getElementById('voice-log');if(box){const d=document.createElement('div');d.style.cssText='font-size:13px;padding:8px 10px;margin-bottom:6px;border-radius:8px;background:'+(ok?'rgba(46,194,107,.12)':'rgba(237,28,36,.12)')+';color:'+(ok?'var(--ok)':'var(--red)');d.textContent=(ok?'✓ ':'✕ ')+msg;box.insertBefore(d,box.firstChild);}}
+ ,voiceHandle(text){text=stripNiqqud(text.trim());const cats=this.allCats();const has=w=>text.includes(w);
+  // open quote
+  if((has('פתח')||has('צור')||has('הפק'))&&has('הצע')){this.captureQuote&&this.captureQuote();this.state.modal='quote';this.voiceStop();this.toast('פותח הצעה');return;}
+  // preset
+  if(has('תבנית')||has('אמבטיה')||has('מטבח')||(has('צביע')&&has('דיר'))){const idx=PRESETS.findIndex(p=>voiceTokens(p.name).some(t=>text.includes(t)));if(idx>=0){this.loadPreset(idx);this.voiceLog('נטענה תבנית: '+PRESETS[idx].name,true);this.render();return;}}
+  // set qty
+  if(has('כמות')){const n=voiceNum(text);if(n!=null&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.qty=n;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('כמות '+n+' → '+it.name,true);this.render();return;}}this.voiceLog('לא זוהה סעיף לעדכון כמות',false);return;}
+  // set price
+  if(has('מחיר')){const n=voiceNum(text);if(n!=null&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.price=n;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('מחיר '+n+' ₪ → '+it.name,true);this.render();return;}}this.voiceLog('לא זוהה סעיף לעדכון מחיר',false);return;}
+  // remove
+  if(has('הסר')||has('תוריד')||has('מחק')){const m=voiceMatch(text,cats);if(m){const it=this.find(m.cid,m.iid);if(it){it.selected=false;this.saveActive(m.cid);this.voiceLog('הוסר: '+it.name,true);this.render();return;}}this.voiceLog('לא נמצא סעיף להסרה',false);return;}
+  // add (default)
+  const m=voiceMatch(text,cats);
+  if(m){const it=this.find(m.cid,m.iid);const n=voiceNum(text);it.selected=true;if(n!=null)it.qty=n;else if(!it.qty)it.qty=1;this.saveActive(m.cid);this.state.open[m.cid]=true;this._lastItem={cid:m.cid,iid:m.iid};this.voiceLog('נוסף: '+it.name+(n!=null?' (כמות '+n+')':''),true);this.render();return;}
+  // fallback → search
+  this.state.search=text;this.voiceLog('לא זוהתה פקודה — חיפוש: "'+text+'"',false);this.render();
  },
  calendarModal(){const list=Store.get('clients',[]).filter(c=>c.dueDate).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));const now=new Date();now.setHours(0,0,0,0);const lbl={q:'הצעה',doing:'בביצוע',sent:'נשלח',done:'בוצע'};
   return `<h2>לוח פרויקטים 📅 <button class="x" data-close>✕</button></h2>
@@ -682,6 +747,7 @@ const App={
   on('[data-chip]','click',e=>{this.state.showAll=e.currentTarget.dataset.chip==='all';this.render();});
   const sb=document.getElementById('search');if(sb)sb.addEventListener('input',e=>{this.state.search=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}});
   const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
+  const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
   on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
   on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if((f==='qty'||f==='price')&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(c);
     const row=e.currentTarget.closest('.item');const t=(+it.qty||0)*(+it.price||0);const v=row.querySelector('.item-total .val');if(v)v.textContent=nis(t);
@@ -689,7 +755,7 @@ const App={
     const cs=e.currentTarget.closest('.cat').querySelector('.cat-sum');const cObj=this.allCats().find(x=>x.id===c);if(cs)cs.textContent=nis(this.catTotal(cObj));this.updateBottom();});
   on('[data-fld]','change',e=>{if(e.currentTarget.dataset.fld==='unit'){const[c,i]=e.currentTarget.dataset.k.split('|');this.find(c,i).unit=e.currentTarget.value;this.saveActive(c);}});
   on('[data-modal]','click',e=>{this.state.modal=e.currentTarget.dataset.modal;this.render();});
-  on('[data-close]','click',e=>{if(e.target.hasAttribute('data-close')){this.captureQuote();this.state.modal=null;this.render();}});
+  on('[data-close]','click',e=>{if(e.target.hasAttribute('data-close')){if(this._voiceOn)this.voiceStop();this.captureQuote();this.state.modal=null;this.render();}});
 
   const ac=document.getElementById('add-custom');if(ac)ac.onclick=()=>{this.state.addTarget='custom';this.state.modal='addcustom';this.render();};
   on('[data-addsub]','click',e=>{this.state.addTarget=e.currentTarget.dataset.addsub;this.state.modal='addcustom';this.render();});
@@ -710,6 +776,7 @@ const App={
   const ia=document.getElementById('install-app');if(ia)ia.onclick=()=>doInstall();
   const cu=document.getElementById('check-update');if(cu)cu.onclick=()=>this.checkUpdate();
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{this.state.catalog=JSON.parse(JSON.stringify(CATALOG));this.save();this.toast('המחירון אופס');this.render();};
+  const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
   const tq=document.getElementById('target-quotes');if(tq)tq.oninput=e=>Store.set('targetQuotes',+e.target.value||0);
   const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות, הלקוחות והטיוטות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}['quotes','clients','drafts','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.toast('הנתונים אופסו ✓');this.render();};
@@ -787,7 +854,7 @@ const App={
 
  voiceSearch(btn){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('חיפוש קולי לא נתמך בדפדפן זה');return;}const r=new SR();r.lang='he-IL';r.interimResults=false;btn.classList.add('rec');r.onresult=e=>{this.state.search=e.results[0][0].transcript;this.render();};r.onerror=()=>{this.toast('לא זוהה קול');btn.classList.remove('rec');};r.onend=()=>{const b=document.getElementById('mic');if(b)b.classList.remove('rec');};try{r.start();}catch(e){}},
 
- initSigPad(){const cv=document.getElementById('sigpad');if(!cv)return;const r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';let d=false,has=false;const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);const cl=document.getElementById('sig-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);has=false;};const sv=document.getElementById('sig-save');if(sv)sv.onclick=()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.toast('החתימה נשמרה ✓');this.render();};},
+ initSigPad(){const cv=document.getElementById('sigpad');if(!cv)return;const r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';let d=false,has=false;const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);const cl=document.getElementById('sig-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);has=false;};const sv=document.getElementById('sig-save');if(sv)sv.onclick=()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.toast('החתימה נשמרה ✓');this.render();};const ss=document.getElementById('sig-send');if(ss)ss.onclick=async()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.render();await this.sendSignedConfirmation();};},
 
  updateBottom(){const b=document.querySelector('.bottombar .b');if(b)b.innerHTML=`${nis(this.grand())} <small>(ביניים ${nis(this.subtotal())})</small>`;const a=document.querySelector('.bottombar .a');if(a)a.textContent=`${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${this.state.vatOn?'כולל':'ללא'} מע"מ`;},
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
@@ -868,6 +935,11 @@ const App={
    <div class="p-foot">${L.foot} · ${s.date}</div></div>`;
  },
 
+ async sendSignedConfirmation(){this.captureQuote();const id=Store.get('gaId',''),tok=Store.get('gaToken','');const owner=Store.get('gaTo','0543013389');const txt=`✅ הצעה חתומה על ידי הלקוח\nלקוח: ${this.state.client.name||'—'}\nמס': ${this.state.quoteNo}\nסכום: ${nis(this.grand())}`;
+  if(!id||!tok){this.toast('הגדר GREEN-API לשליחת אישור');window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(txt),'_blank');return;}
+  this.toast('שולח אישור חתום אליך…');
+  try{const{blob,fname}=await this.makePdfBlob();const url=Store.get('gaUrl','https://api.green-api.com').replace(/\/$/,'');let p=owner.replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);const fd=new FormData();fd.append('chatId',p+'@c.us');fd.append('file',blob,fname);fd.append('caption',txt);const r=await fetch(url+'/waInstance'+id+'/sendFileByUpload/'+tok,{method:'POST',body:fd});this.toast(r.ok?'אישור חתום נשלח אליך ✓':'שליחה נכשלה');}catch(e){this.toast('שגיאת רשת/CORS');}
+ },
  async makePdfBlob(){const stage=document.getElementById('pdf-stage');stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');const canvas=await html2canvas(page,{scale:2,backgroundColor:'#ffffff',useCORS:true});const img=canvas.toDataURL('image/jpeg',0.95);const{jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');const w=210,h=canvas.height*w/canvas.width;pdf.addImage(img,'JPEG',0,0,w,Math.min(h,297));stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת-מחיר';return{pdf,blob:pdf.output('blob'),fname:`${label}-${this.state.quoteNo}.pdf`};},
 
  async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}this.toast('מכין PDF…');
@@ -922,6 +994,10 @@ window.addEventListener('popstate',()=>{
 
 function applyTheme(){try{document.documentElement.classList.toggle('light',Store.get('theme','dark')==='light');}catch(e){}}
 applyTheme();
+/* ===== auto-backup on every open (local snapshot, no friction) ===== */
+try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
+/* attempt silent Drive backup only if already authorized this session */
+try{if(Store.get('gClientId','')&&window.Drive&&Drive.token){setTimeout(()=>{try{App.driveBackup&&App.driveBackup();}catch(e){}},1500);}}catch(e){}
 document.getElementById('splash-logo').innerHTML=logoBlock(true,1);
 /* ===== Service Worker: offline + auto-update ===== */
 if('serviceWorker' in navigator){
