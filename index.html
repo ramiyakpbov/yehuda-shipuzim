@@ -228,7 +228,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='4.8';
+const VERSION='4.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -636,19 +636,22 @@ const App={
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">לחיצה טוענת סעיפים טיפוסיים — אפשר לערוך כמויות ומחירים אחרי כן.</div>
    ${PRESETS.map((p,i)=>`<div class="list-item"><div class="info"><div class="t">${p.emoji||'📋'} ${p.name}</div><div class="s">${Object.keys(p.pick).length} קטגוריות</div></div><button class="mini" data-preset="${i}">טען »</button></div>`).join('')}`;
  },
- voiceModal(){const on=this._voiceOn;
+ voiceModal(){const on=this._voiceOn;const last=this._lastItem?this.find(this._lastItem.cid,this._lastItem.iid):null;
   return `<h2>🎤 עוזר קולי <button class="x" data-close>✕</button></h2>
+   <div style="display:flex;justify-content:space-between;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:10px;font-size:14px"><span style="color:var(--muted)">סה"כ נוכחי</span><b style="color:var(--red)">${nis(this.grand())}</b></div>
+   ${last?`<div style="font-size:12px;color:var(--muted);margin-bottom:10px">סעיף אחרון: <b style="color:var(--txt)">${last.name.split('(')[0]}</b> · כמות ${last.qty||0}</div>`:''}
    <div style="text-align:center;margin:6px 0 14px">
      <button id="voice-btn" class="voice-big ${on?'on':''}">${on?'⏹ עצור האזנה':'🎤 התחל לדבר'}</button>
    </div>
-   <div id="voice-live" style="min-height:40px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;color:var(--txt);text-align:center">${on?'מקשיב…':'לחץ והתחל לדבר'}</div>
-   <div style="font-size:12px;color:var(--muted);margin:12px 0 6px;font-weight:700">דוגמאות פקודות:</div>
-   <div style="font-size:12.5px;color:var(--muted);line-height:1.9">
+   <div id="voice-live" style="min-height:40px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;color:var(--txt);text-align:center">${on?'מקשיב… דבר עכשיו':'לחץ והתחל לדבר'}</div>
+   ${this._lastItem?(()=>{const it=this.find(this._lastItem.cid,this._lastItem.iid);return it?`<div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px">📌 סעיף אחרון: <b style="color:var(--txt)">${it.name}</b> · "כמות/מחיר" יחולו עליו</div>`:'';})():''}
+   <div style="font-size:12px;color:var(--muted);margin:12px 0 6px;font-weight:700">פקודות שאפשר לומר:</div>
+   <div style="font-size:12.5px;color:var(--muted);line-height:1.95">
      🔹 "תוסיף שלוש נקודות חשמל"<br>
-     🔹 "כמות חמש" (לסעיף האחרון)<br>
-     🔹 "מחיר שלוש מאות חמישים"<br>
-     🔹 "תוסיף צביעת דירה" · "הסר ריצוף"<br>
-     🔹 "פתח הצעה" · "טען תבנית אמבטיה"
+     🔹 "כמות חמש" · "מחיר שלוש מאות חמישים"<br>
+     🔹 "הסר ריצוף" · "נקה הכל"<br>
+     🔹 "כמה זה עולה?" (אומר לך את הסכום)<br>
+     🔹 "טען תבנית אמבטיה" · "פתח הצעה"
    </div>
    <div id="voice-log" style="margin-top:12px"></div>`;
  },
@@ -664,20 +667,30 @@ const App={
  },
  voiceStop(){this._voiceOn=false;if(this._voiceRec){this._voiceRec._stop=true;try{this._voiceRec.stop();}catch(e){}}this.render();},
  voiceLog(msg,ok){const box=document.getElementById('voice-log');if(box){const d=document.createElement('div');d.style.cssText='font-size:13px;padding:8px 10px;margin-bottom:6px;border-radius:8px;background:'+(ok?'rgba(46,194,107,.12)':'rgba(237,28,36,.12)')+';color:'+(ok?'var(--ok)':'var(--red)');d.textContent=(ok?'✓ ':'✕ ')+msg;box.insertBefore(d,box.firstChild);}}
- ,voiceHandle(text){text=stripNiqqud(text.trim());const cats=this.allCats();const has=w=>text.includes(w);
+ ,voiceSpeak(t){try{if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(t);u.lang='he-IL';u.rate=1.05;speechSynthesis.cancel();speechSynthesis.speak(u);}}catch(e){}}
+ ,voiceHandle(text){text=stripNiqqud(text.trim());const cats=this.allCats();const has=w=>text.includes(w);const say=t=>this.voiceSpeak(t);
+  // close / stop by voice
+  if(/^(סיים|סגור|תסגור|עצור|די|תודה)$/.test(text.trim())){this.voiceStop();say('סוגר');return;}
+  // clear all
+  if(/נקה הכל|אפס הכל|התחל מחדש|מחק הכל/.test(text)){let n=0;cats.forEach(c=>c.items.forEach(it=>{if(it.selected){it.selected=false;n++;}}));this.save();Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);this._lastItem=null;this.voiceLog('נוקו כל הסעיפים ('+n+')',true);say('נוקה');this.render();return;}
+  // total query
+  if(/כמה זה עולה|מה הסכום|סך הכל|סך הכול|כמה סך|המחיר הכולל|כמה יוצא/.test(text)){const g=this.grand();this.voiceLog('סה"כ נוכחי: '+nis(g),true);say('סך הכל '+Math.round(g)+' שקל');this.render();return;}
   // open quote
-  if((has('פתח')||has('צור')||has('הפק'))&&has('הצע')){this.captureQuote&&this.captureQuote();this.state.modal='quote';this.voiceStop();this.toast('פותח הצעה');return;}
+  if((has('פתח')||has('צור')||has('הפק')||has('תפיק'))&&has('הצע')){this.captureQuote&&this.captureQuote();this.state.modal='quote';this.voiceStop();say('פותח הצעה');this.toast('פותח הצעה');return;}
   // preset
-  if(has('תבנית')||has('אמבטיה')||has('מטבח')||(has('צביע')&&has('דיר'))){const idx=PRESETS.findIndex(p=>voiceTokens(p.name).some(t=>text.includes(t)));if(idx>=0){this.loadPreset(idx);this.voiceLog('נטענה תבנית: '+PRESETS[idx].name,true);this.render();return;}}
+  if(has('תבנית')||has('אמבטיה')||has('מטבח')||(has('צביע')&&has('דיר'))){const idx=PRESETS.findIndex(p=>voiceTokens(p.name).some(t=>text.includes(t)));if(idx>=0){this.loadPreset(idx);this.voiceLog('נטענה תבנית: '+PRESETS[idx].name,true);say('טוען תבנית');this.render();return;}}
+  const bareNum=voiceNum(text);
   // set qty
-  if(has('כמות')){const n=voiceNum(text);if(n!=null&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.qty=n;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('כמות '+n+' → '+it.name,true);this.render();return;}}this.voiceLog('לא זוהה סעיף לעדכון כמות',false);return;}
+  if(has('כמות')||has('תכמת')){const n=voiceNum(text);if(n!=null&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.qty=n;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('כמות '+n+' → '+it.name,true);say('כמות '+n);this.render();return;}}this.voiceLog('לא זוהה סעיף לעדכון כמות',false);return;}
   // set price
-  if(has('מחיר')){const n=voiceNum(text);if(n!=null&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.price=n;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('מחיר '+n+' ₪ → '+it.name,true);this.render();return;}}this.voiceLog('לא זוהה סעיף לעדכון מחיר',false);return;}
+  if(has('מחיר')||has('עלות')){const n=voiceNum(text);if(n!=null&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.price=n;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('מחיר '+n+' ₪ → '+it.name,true);say('מחיר '+n+' שקל');this.render();return;}}this.voiceLog('לא זוהה סעיף לעדכון מחיר',false);return;}
   // remove
-  if(has('הסר')||has('תוריד')||has('מחק')){const m=voiceMatch(text,cats);if(m){const it=this.find(m.cid,m.iid);if(it){it.selected=false;this.saveActive(m.cid);this.voiceLog('הוסר: '+it.name,true);this.render();return;}}this.voiceLog('לא נמצא סעיף להסרה',false);return;}
+  if(has('הסר')||has('תוריד')||has('מחק')||has('בטל')||has('הורד')){const m=voiceMatch(text,cats);if(m){const it=this.find(m.cid,m.iid);if(it){it.selected=false;this.saveActive(m.cid);this.voiceLog('הוסר: '+it.name,true);say('הוסר');this.render();return;}}this.voiceLog('לא נמצא סעיף להסרה',false);return;}
+  // bare number → qty for last item
+  if(bareNum!=null&&text.replace(/[\d\s.\u0590-\u05FF]/g,'').length===0&&voiceTokens(text).every(t=>t.replace(/[^\u0590-\u05FF]/g,'') in HE_NUM||/^\d+$/.test(t))&&this._lastItem){const it=this.find(this._lastItem.cid,this._lastItem.iid);if(it){it.qty=bareNum;it.selected=true;this.saveActive(this._lastItem.cid);this.voiceLog('כמות '+bareNum+' → '+it.name,true);say('כמות '+bareNum);this.render();return;}}
   // add (default)
   const m=voiceMatch(text,cats);
-  if(m){const it=this.find(m.cid,m.iid);const n=voiceNum(text);it.selected=true;if(n!=null)it.qty=n;else if(!it.qty)it.qty=1;this.saveActive(m.cid);this.state.open[m.cid]=true;this._lastItem={cid:m.cid,iid:m.iid};this.voiceLog('נוסף: '+it.name+(n!=null?' (כמות '+n+')':''),true);this.render();return;}
+  if(m){const it=this.find(m.cid,m.iid);const n=voiceNum(text);it.selected=true;if(n!=null)it.qty=n;else if(!it.qty)it.qty=1;this.saveActive(m.cid);this.state.open[m.cid]=true;this._lastItem={cid:m.cid,iid:m.iid};this.voiceLog('נוסף: '+it.name+(n!=null?' (כמות '+n+')':''),true);say('נוסף');this.render();return;}
   // fallback → search
   this.state.search=text;this.voiceLog('לא זוהתה פקודה — חיפוש: "'+text+'"',false);this.render();
  },
@@ -825,7 +838,6 @@ const App={
   const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
-  on('[data-mult]','click',e=>{const[cid,iid,f]=e.currentTarget.dataset.mult.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,Math.round((+it.qty||1)*(+f)*100)/100);it.selected=true;this.saveActive(cid);this.render();}});
   on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=true;this.saveActive(cid);this.render();}});
   const dq=document.getElementById('dup-quote');if(dq)dq.onclick=()=>{this.captureQuote();this.saveDraft();this.state.quoteNo=nextQuoteNo();this.toast('שוכפל — נשמר כטיוטה עם מס׳ הצעה חדש ✓');this.render();};
   const qkg=document.getElementById('qk-go');if(qkg)qkg.onclick=()=>{const g=id=>(document.getElementById(id)||{}).value||'';const nm=g('qk_name').trim();if(!nm){this.toast('הזן תיאור עבודה');return;}const item={id:uid(),name:nm,price:+g('qk_price')||0,unit:'גלובלי',qty:+g('qk_qty')||1,selected:true};this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.state.client.name=g('qk_client');this.state.client.phone=g('qk_phone');this.state.modal='quote';this.toast('נוצרה הצעה מהירה — בדוק והפק ✓');this.render();};
