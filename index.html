@@ -97,6 +97,19 @@ input,select,textarea{font-family:inherit;}
 .addbtn{width:100%;background:var(--bg3);border:1px dashed var(--line);color:var(--txt);border-radius:12px;padding:12px;font-weight:700;font-size:14px;}
 .bottombar{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#141417;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
+.chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
+.pv-cat{margin-bottom:14px;}
+.pv-cat-h{font-size:13px;font-weight:800;color:var(--red);margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--line);}
+.pv-row{display:flex;align-items:center;gap:8px;padding:7px 0;font-size:14px;}
+.pv-row .n{flex:1;color:var(--txt);}
+.pv-row .q{color:var(--muted);font-size:12px;white-space:nowrap;}
+.pv-row .p{font-weight:700;color:var(--txt);white-space:nowrap;min-width:64px;text-align:left;}
+.pv-sum{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:8px;}
+.pv-line{display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:8px;}
+.pv-line b{color:var(--txt);}
+.pv-total{border-top:1px solid var(--line);padding-top:10px;margin-bottom:0;font-size:16px;}
+.pv-total span{font-weight:800;color:var(--txt);}
+.pv-total b{color:var(--red);font-size:20px;}
 .suggest-bar .sg-head{font-size:11px;color:var(--red);font-weight:800;margin-bottom:6px;}
 .suggest-bar .sg-chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;}
 .sg-chip{flex:none;background:var(--bg3);border:1px solid rgba(237,28,36,.4);color:var(--txt);border-radius:20px;padding:8px 12px;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;}
@@ -258,7 +271,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.1';
+const VERSION='5.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -545,10 +558,10 @@ const App={
  },
 
  view(){const s=this.state,q=s.search.trim();
-  const cats=this.allCats().map(c=>{
+  const ordered=this.allCats().slice().sort((a,b)=>(b.hot?1:0)-(a.hot?1:0)||(a.custom?1:0)-(b.custom?1:0));
+  const cats=ordered.map(c=>{
     const items=c.items.filter(i=>!q||i.name.includes(q)||c.title.includes(q));
-    const vis=s.showAll||q||c.hot||c.custom;
-    if((!items.length&&!c.custom)||!vis)return '';
+    if(!items.length&&!c.custom)return '';
     const open=s.open[c.id]||!!q;const t=this.catTotal(c);
     return `<div class="cat ${open?'open':''}"><div class="cat-head" data-cat="${c.id}">
       <span class="cat-emoji">${c.emoji}</span><span class="cat-title">${c.title}</span>
@@ -568,8 +581,7 @@ const App={
       <input id="search" placeholder="חיפוש חופשי: עבודה או קטגוריה…" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
   <div class="chips">
-    <button class="chip ${!s.showAll?'on':''}" data-chip="hot">🔥 מה שחם</button>
-    <button class="chip ${s.showAll?'on':''}" data-chip="all">כל הקטגוריות</button>
+    <button class="chip chip-ai" data-suggest-ai="1">🤖 עזרת AI</button>
     <button class="chip" data-modal="tools">🧰 כלים</button>
     <button class="chip" data-modal="drafts">🗂️ טיוטות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
@@ -580,9 +592,9 @@ const App={
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
-  <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${s.vatOn?'כולל':'ללא'} מע"מ</div>
-      <div class="b">${nis(this.grand())} <small>(ביניים ${nis(this.subtotal())})</small></div></div>
-    <button class="btn-primary" data-modal="quote">📄 הצעת מחיר</button></div>
+  <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
+      <div class="b">${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small></div></div>
+    <button class="btn-primary" data-modal="preview">📄 הצעת מחיר</button></div>
   ${s.modal?this.modalView():''}`;
  },
 
@@ -598,7 +610,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -778,6 +790,24 @@ const App={
      <div class="field"><label>כמות</label><input id="qk_qty" type="number" inputmode="decimal" value="1"/></div></div>
    <button class="btn-block" id="qk-go">המשך להצעה ›</button>`;
  },
+ previewModal(){const groups=this.chosen();
+  if(!groups.length)return `<h2>תצוגה מקדימה <button class="x" data-close>✕</button></h2><div class="empty" style="padding:20px">לא נבחרו סעיפים עדיין.<br>סמן סעיפים ותוכל לראות אותם כאן.</div>`;
+  const rows=groups.map(g=>`<div style="margin-bottom:14px"><div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:6px">${g.cat.emoji||''} ${g.cat.title}</div>${g.lines.map(l=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px"><span style="flex:1">${l.name} <span style="color:var(--muted)">×${l.qty}</span></span><b style="white-space:nowrap">${nis((+l.qty||0)*(+l.price||0))}</b></div>`).join('')}</div>`).join('');
+  const s=this.state;
+  return `<h2>👁 תצוגה מקדימה של ההצעה <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${groups.reduce((n,g)=>n+g.lines.length,0)} סעיפים · בדוק לפני המשך</div>
+   ${rows}
+   <div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px">
+     <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>סכום ביניים (לפני מע"מ)</span><b style="color:var(--txt)">${nis(this.subtotal())}</b></div>
+     ${(+s.discount>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--red);margin-top:6px"><span>הנחה (${s.discount}%)</span><b>- ${nis(this.discountAmt())}</b></div>`:''}
+     ${s.vatOn?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px"><span>מע"מ (${s.vatPct}%)</span><b style="color:var(--txt)">${nis(this.vat())}</b></div>`:''}
+     <div style="display:flex;justify-content:space-between;font-size:17px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"><span style="font-weight:800">סה"כ לתשלום</span><b style="color:var(--red);font-size:20px">${nis(this.grand())}</b></div>
+   </div>
+   <div style="display:flex;gap:10px;margin-top:16px">
+     <button class="btn-ghost" id="prev-back" style="flex:1">‹ חזרה לעריכה</button>
+     <button class="btn-block" id="prev-next" style="flex:1.4;margin:0">המשך להצעה ›</button>
+   </div>`;
+ },
  aiSuggestModal(){const list=this._aiSuggestions||[];return `<h2>🤖 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">ה-AI מציע סעיפים נלווים. לחיצה מוסיפה אותם כפריט מותאם (תוכל לתמחר אחר כך).</div>
    ${list.map((t,i)=>`<div class="list-item"><div class="info"><div class="t">${t}</div></div><button class="mini" data-addai="${i}">+ הוסף</button></div>`).join('')}`;
@@ -918,9 +948,11 @@ const App={
   const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
   on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
   on('[data-suggest]','click',e=>{const[c,i]=e.currentTarget.dataset.suggest.split('|');const it=this.find(c,i);if(it){it.selected=true;if(!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.state.open[c]=true;this.toast('נוסף: '+it.name);this.render();}});
-  const sai=document.querySelector('[data-suggest-ai]');if(sai)sai.onclick=()=>this.aiSuggest();
+  on('[data-suggest-ai]','click',()=>this.aiSuggest());
   on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){this.state.custom.push({id:uid(),name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.toast('נוסף: '+name);e.currentTarget.textContent='✓ נוסף';e.currentTarget.disabled=true;}});
-  on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if((f==='qty'||f==='price')&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(c);
+  const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
+  const pn=document.getElementById('prev-next');if(pn)pn.onclick=()=>{this.state.modal='quote';this.render();};
+  on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
     const row=e.currentTarget.closest('.item');const t=(+it.qty||0)*(+it.price||0);const v=row.querySelector('.item-total .val');if(v)v.textContent=nis(t);
     const chk=row.querySelector('.chk');if(chk){chk.classList.toggle('on',!!it.selected);chk.textContent=it.selected?'✓':'';}
     const cs=e.currentTarget.closest('.cat').querySelector('.cat-sum');const cObj=this.allCats().find(x=>x.id===c);if(cs)cs.textContent=nis(this.catTotal(cObj));this.updateBottom();});
@@ -998,7 +1030,7 @@ const App={
   const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
-  on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=true;this.saveActive(cid);this.render();}});
+  on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=(+it.qty>0);this.saveActive(cid);this.render();}});
   const dq=document.getElementById('dup-quote');if(dq)dq.onclick=()=>{this.captureQuote();this.saveDraft();this.state.quoteNo=nextQuoteNo();this.toast('שוכפל — נשמר כטיוטה עם מס׳ הצעה חדש ✓');this.render();};
   const wl=document.getElementById('weblink');if(wl)wl.onclick=()=>this.makeProposalLink();
   const qkg=document.getElementById('qk-go');if(qkg)qkg.onclick=()=>{const g=id=>(document.getElementById(id)||{}).value||'';const nm=g('qk_name').trim();if(!nm){this.toast('הזן תיאור עבודה');return;}const item={id:uid(),name:nm,price:+g('qk_price')||0,unit:'גלובלי',qty:+g('qk_qty')||1,selected:true};this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.state.client.name=g('qk_client');this.state.client.phone=g('qk_phone');this.state.modal='quote';this.toast('נוצרה הצעה מהירה — בדוק והפק ✓');this.render();};
@@ -1032,7 +1064,7 @@ const App={
 
  async loadPortfolio(){const grid=document.getElementById('pf-grid');if(!grid)return;const list=await Photos.list('__portfolio__');grid.innerHTML=list.length?list.map(p=>`<div class="ph"><img src="${p.data}"/><button class="del" data-delphoto="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין עדיין תמונות עבודה</div>';grid.querySelectorAll('[data-delphoto]').forEach(b=>b.addEventListener('click',async e=>{await Photos.del(e.currentTarget.dataset.delphoto);this.loadPortfolio();}));},
 
- updateBottom(){const b=document.querySelector('.bottombar .b');if(b)b.innerHTML=`${nis(this.grand())} <small>(ביניים ${nis(this.subtotal())})</small>`;const a=document.querySelector('.bottombar .a');if(a)a.textContent=`${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${this.state.vatOn?'כולל':'ללא'} מע"מ`;},
+ updateBottom(){const b=document.querySelector('.bottombar .b');if(b)b.innerHTML=`${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small>`;const a=document.querySelector('.bottombar .a');if(a)a.textContent=`${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ`;},
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
