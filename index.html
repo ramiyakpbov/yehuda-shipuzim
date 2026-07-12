@@ -59,7 +59,7 @@ input,select,textarea{font-family:inherit;}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 2px;}
 .chip{white-space:nowrap;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:7px 13px;font-size:13px;font-weight:600;}
 .chip.on{background:var(--red);color:#fff;border-color:var(--red);}
-.wrap{padding:8px 12px 4px;}
+.wrap{padding:8px 12px 150px;}
 .cat{background:radial-gradient(120% 100% at 100% 0,#232330,#15151a);border:1px solid #2c2c38;border-radius:22px;margin-bottom:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4);}
 .cat-head{display:flex;align-items:center;gap:11px;padding:16px 18px;user-select:none;background:linear-gradient(90deg,rgba(237,28,36,.10),transparent);}
 .cat-emoji{font-size:22px;width:auto;height:auto;background:none;display:inline-flex;align-items:center;justify-content:center;flex:none;}
@@ -96,6 +96,12 @@ input,select,textarea{font-family:inherit;}
 .item .del-custom{color:var(--red);background:none;border:none;font-size:15px;}
 .addbtn{width:100%;background:var(--bg3);border:1px dashed var(--line);color:var(--txt);border-radius:12px;padding:12px;font-weight:700;font-size:14px;}
 .bottombar{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#141417;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
+.suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
+.suggest-bar .sg-head{font-size:11px;color:var(--red);font-weight:800;margin-bottom:6px;}
+.suggest-bar .sg-chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px;}
+.sg-chip{flex:none;background:var(--bg3);border:1px solid rgba(237,28,36,.4);color:var(--txt);border-radius:20px;padding:8px 12px;font-size:12.5px;font-weight:600;white-space:nowrap;cursor:pointer;}
+.sg-chip:active{background:var(--red);color:#fff;}
+.sg-chip.sg-ai{border-color:var(--line);color:var(--muted);}
 .bottombar .tot{flex:1;}
 .bottombar .tot .a{font-size:11px;color:var(--muted);}
 .bottombar .tot .b{font-size:22px;font-weight:900;}
@@ -252,7 +258,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.0';
+const VERSION='5.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -289,6 +295,18 @@ const CATALOG=[
    {id:'dm4',name:'פינוי פסולת במכולה (8 קוב · 7 ימים)',price:1700,unit:'יח׳',range:'1,300–2,100 ₪',hot:true},
    {id:'dm5',name:'הקמת שרוול פינוי פסולת (עד קומה 3)',price:2200,unit:'גלובלי',range:'1,500–3,000 ₪'},
    {id:'dm6',name:'פתיחת פתח דלת 210/120 (הכנה לדלת)',price:2500,unit:'יח׳',range:'2,000–3,000 ₪'},
+   {id:'dm7',name:'פירוק אמבטיה שלמה (ריצוף + חיפוי + פינוי)',price:1500,unit:'גלובלי',range:'1,000–2,200 ₪',hot:true},
+   {id:'dm8',name:'פירוק ארונות מטבח ישנים + פינוי',price:800,unit:'גלובלי',range:'500–1,200 ₪',hot:true},
+   {id:'dm9',name:'פירוק מטבח שלם (ארונות + שיש + פינוי)',price:1100,unit:'גלובלי',range:'800–1,600 ₪',hot:true},
+   {id:'dm10',name:'הריסת קיר בטון תומך (כולל חיזוק זמני)',price:450,unit:'מ"ר',range:'350–650 ₪ / מ"ר'},
+   {id:'dm11',name:'פירוק דלת/חלון ישן + פינוי',price:150,unit:'יח׳',range:'100–250 ₪'},
+   {id:'dm12',name:'חיתוך פתח בקיר בלוק (חלון/מעבר)',price:800,unit:'יח׳',range:'600–1,200 ₪'},
+   {id:'dm13',name:'קרצוף/הסרת טיח מתפורר',price:45,unit:'מ"ר',range:'30–70 ₪ / מ"ר'},
+   {id:'dm14',name:'פינוי דירה מרהיטים ופסולת',price:1200,unit:'גלובלי',range:'800–2,000 ₪'},
+   {id:'dm15',name:'שבירת מדרגות/מבנה קטן',price:250,unit:'מ"ק',range:'180–400 ₪ / מ"ק'},
+   {id:'dm16',name:'הסרת טפטים/שכבות צבע ישנות',price:35,unit:'מ"ר',range:'25–55 ₪ / מ"ר'},
+   {id:'dm17',name:'פירוק תקרה אקוסטית/מונמכת ישנה',price:40,unit:'מ"ר',range:'30–60 ₪ / מ"ר'},
+   {id:'dm18',name:'ניקיון גס אחרי הריסה (הכנה לעבודה)',price:600,unit:'גלובלי',range:'400–900 ₪'},
  ]},
  {id:'plumb',title:'אינסטלציה',emoji:'🚰',hot:true,items:[
    {id:'pl1',name:'נקודת אינסטלציה קרה/חמה + ניקוז',price:1600,unit:'נקודה',range:'1,300–1,900 ₪',hot:true},
@@ -296,6 +314,18 @@ const CATALOG=[
    {id:'pl3',name:'מרכזת מים דירתית (חנוכייה + ארון)',price:2500,unit:'יח׳',range:'1,800–3,200 ₪'},
    {id:'pl4',name:'הכנת צנרת נחושת וניקוז למיזוג אוויר',price:210,unit:'מ"א',range:'160–260 ₪ / מ"א'},
    {id:'pl5',name:'התקנת כלים סניטריים (אסלה/כיור/ברז)',price:350,unit:'יח׳',range:'250–450 ₪'},
+   {id:'pl6',name:'נקודת ניקוז למכונת כביסה/מדיח',price:450,unit:'נקודה',range:'350–600 ₪',hot:true},
+   {id:'pl7',name:'התקנת דוד חשמלי (כולל חיבור)',price:900,unit:'יח׳',range:'700–1,300 ₪',hot:true},
+   {id:'pl8',name:'התקנת מקלחון/אמבטיה (עבודה)',price:650,unit:'יח׳',range:'450–950 ₪',hot:true},
+   {id:'pl9',name:'החלפת צנרת מים ראשית בדירה',price:4500,unit:'גלובלי',range:'3,500–6,500 ₪'},
+   {id:'pl10',name:'התקנת דוד שמש + קולטים',price:3800,unit:'יח׳',range:'3,000–5,000 ₪'},
+   {id:'pl11',name:'נקודת גז (הכנה לכיריים)',price:550,unit:'נקודה',range:'400–750 ₪'},
+   {id:'pl12',name:'איתור וטיפול בנזילה',price:650,unit:'יח׳',range:'450–1,000 ₪'},
+   {id:'pl13',name:'פתיחת סתימת ביוב/דלוחין + בדיקה',price:500,unit:'יח׳',range:'350–800 ₪'},
+   {id:'pl14',name:'מערכת סינון מים כללית לדירה',price:1400,unit:'יח׳',range:'1,000–2,000 ₪'},
+   {id:'pl15',name:'הזזת/הארכת נקודת מים קיימת',price:400,unit:'נקודה',range:'300–600 ₪'},
+   {id:'pl16',name:'התקנת משאבת ביוב (סניקה)',price:1800,unit:'יח׳',range:'1,300–2,600 ₪'},
+   {id:'pl17',name:'בדיקת לחץ ואיטום מערכת מים',price:450,unit:'גלובלי',range:'300–700 ₪'},
  ]},
  {id:'elec',title:'חשמל ותקשורת',emoji:'⚡',hot:true,items:[
    {id:'el1',name:'נקודת חשמל רגילה (מאור / שקע חד-פאזי)',price:350,unit:'נקודה',range:'280–420 ₪',hot:true},
@@ -305,6 +335,18 @@ const CATALOG=[
    {id:'el5',name:'נקודת תקשורת / רשת CAT7',price:450,unit:'נקודה',range:'350–550 ₪'},
    {id:'el6',name:'מערכת סינון ואוורור לממ"ד',price:4200,unit:'יח׳',range:'3,500–5,000 ₪'},
    {id:'el7',name:'התקנת גוף תאורה / ספוט LED',price:120,unit:'יח׳',range:'90–160 ₪'},
+   {id:'el8',name:'נקודת מיזוג (הכנת חשמל למזגן עילי)',price:550,unit:'נקודה',range:'400–750 ₪',hot:true},
+   {id:'el9',name:'החלפת שקע/מפסק (עבודה)',price:80,unit:'יח׳',range:'50–130 ₪',hot:true},
+   {id:'el10',name:'התקנת מזגן עילי (עבודה + ואקום)',price:900,unit:'יח׳',range:'700–1,300 ₪',hot:true},
+   {id:'el11',name:'נקודת חשמל חיצונית אטומה (מרפסת)',price:420,unit:'נקודה',range:'320–600 ₪'},
+   {id:'el12',name:'הכנה למטען רכב חשמלי',price:1800,unit:'יח׳',range:'1,300–2,800 ₪'},
+   {id:'el13',name:'מערכת אזעקה בסיסית (כולל התקנה)',price:2500,unit:'יח׳',range:'1,800–4,000 ₪'},
+   {id:'el14',name:'נקודת מצלמה/אינטרקום',price:400,unit:'נקודה',range:'300–600 ₪'},
+   {id:'el15',name:'החלפת/הוספת מאמ"ת בלוח',price:250,unit:'יח׳',range:'150–400 ₪'},
+   {id:'el16',name:'תאורת חוץ/גינה (נקודה + גוף)',price:550,unit:'נקודה',range:'400–800 ₪'},
+   {id:'el17',name:'הארקה ובדיקת חשמל (טופס בודק מוסמך)',price:850,unit:'יח׳',range:'600–1,300 ₪'},
+   {id:'el18',name:'נקודת רמקול/מולטירום (סאונד)',price:350,unit:'נקודה',range:'250–500 ₪'},
+   {id:'el19',name:'מפסק חכם/תריס חשמלי (נקודה)',price:480,unit:'נקודה',range:'350–700 ₪'},
  ]},
  {id:'finish',title:'עבודות גמר ועיצוב פנים',emoji:'🎨',hot:true,items:[
    {id:'fn1',name:'בניית קיר גבס (לוח כפול + צמר סלעים)',price:230,unit:'מ"ר',range:'190–280 ₪ / מ"ר',hot:true},
@@ -316,6 +358,20 @@ const CATALOG=[
    {id:'fn7',name:'חיפוי קירות אריחים (רחצה / מטבח)',price:230,unit:'מ"ר',range:'180–280 ₪ / מ"ר',hot:true},
    {id:'fn8',name:'איטום צמנטי דו-רכיבי בחדר רטוב',price:175,unit:'מ"ר',range:'130–220 ₪ / מ"ר',hot:true},
    {id:'fn9',name:'איטום גג ביריעות ביטומניות 5 מ"מ',price:115,unit:'מ"ר',range:'90–140 ₪ / מ"ר'},
+   {id:'fn10',name:'התקנת פרקט למינציה (כולל תשתית)',price:160,unit:'מ"ר',range:'120–220 ₪ / מ"ר',hot:true},
+   {id:'fn11',name:'שפכטל + צבע תקרה בלבד',price:55,unit:'מ"ר',range:'40–80 ₪ / מ"ר',hot:true},
+   {id:'fn12',name:'התקנת פנלים/פרופיל שוליים',price:35,unit:'מ"א',range:'25–55 ₪ / מ"א',hot:true},
+   {id:'fn13',name:'חיפוי אבן/קליפה דקורטיבית לקיר',price:280,unit:'מ"ר',range:'200–400 ₪ / מ"ר',hot:true},
+   {id:'fn14',name:'ריצוף/חיפוי מדרגות פנים (פורצלן/שיש)',price:550,unit:'מ"א',range:'400–800 ₪ / מ"א',hot:true},
+   {id:'fn15',name:'צביעת קיר דקורטיבי (אפקט)',price:180,unit:'מ"ר',range:'120–300 ₪ / מ"ר'},
+   {id:'fn16',name:'חיפוי מיקרוטופינג/בטון אדריכלי',price:320,unit:'מ"ר',range:'240–450 ₪ / מ"ר'},
+   {id:'fn17',name:'אדן/סף חלון (שיש/אבן)',price:350,unit:'מ"א',range:'250–500 ₪ / מ"א'},
+   {id:'fn18',name:'ריצוף פורצלן גדל-מידות',price:380,unit:'מ"ר',range:'280–520 ₪ / מ"ר'},
+   {id:'fn19',name:'הכנת שטח + פריימר לפני צבע',price:40,unit:'מ"ר',range:'25–65 ₪ / מ"ר'},
+   {id:'fn20',name:'טיח פנים/חוץ (יישור קירות)',price:85,unit:'מ"ר',range:'60–130 ₪ / מ"ר'},
+   {id:'fn21',name:'הדבקת טפט/פאנל תלת-ממד',price:120,unit:'מ"ר',range:'80–200 ₪ / מ"ר'},
+   {id:'fn22',name:'בניית נישה/מדף גבס דקורטיבי',price:450,unit:'יח׳',range:'300–700 ₪'},
+   {id:'fn23',name:'ליטוש והברקת ריצוף טרצו/שיש קיים',price:95,unit:'מ"ר',range:'70–140 ₪ / מ"ר'},
  ]},
  {id:'alum',title:'נגרות, מסגרות ואלומיניום',emoji:'🪟',hot:true,items:[
    {id:'al1',name:'חלון אלומיניום + זכוכית בידודית',price:2000,unit:'מ"ר',range:'1,400–2,600 ₪ / מ"ר',hot:true},
@@ -323,6 +379,18 @@ const CATALOG=[
    {id:'al3',name:'ארונות מטבח (נגרות בהתאמה אישית)',price:4600,unit:'מ"א',range:'2,800–6,500 ₪ / מ"א',hot:true},
    {id:'al4',name:'מעקה בטיחות ברזל מגולוון',price:900,unit:'מ"א',range:'600–1,200 ₪ / מ"א'},
    {id:'al5',name:'פרגולת אלומיניום קבועה/חשמלית',price:1500,unit:'מ"ר',range:'900–2,200 ₪ / מ"ר'},
+   {id:'al6',name:'דלת פנים מלאה (אספקה + התקנה)',price:1200,unit:'יח׳',range:'900–1,800 ₪',hot:true},
+   {id:'al7',name:'דלת כניסה פלדלת (אספקה + התקנה)',price:4500,unit:'יח׳',range:'3,500–6,500 ₪',hot:true},
+   {id:'al8',name:'שיש למטבח (אספקה + התקנה)',price:950,unit:'מ"א',range:'700–1,400 ₪ / מ"א',hot:true},
+   {id:'al9',name:'תריס גלילה חשמלי',price:1400,unit:'מ"ר',range:'1,000–2,000 ₪ / מ"ר'},
+   {id:'al10',name:'ויטרינה/מחיצת אלומיניום-זכוכית',price:2200,unit:'מ"ר',range:'1,600–3,000 ₪ / מ"ר'},
+   {id:'al11',name:'רשת נגד יתושים (חלון/דלת)',price:350,unit:'יח׳',range:'250–500 ₪'},
+   {id:'al12',name:'ארון אמבטיה בהתאמה',price:2500,unit:'יח׳',range:'1,800–3,500 ₪'},
+   {id:'al13',name:'שער כניסה/חניה מברזל',price:1800,unit:'מ"ר',range:'1,300–2,600 ₪ / מ"ר'},
+   {id:'al14',name:'החלפת משקוף עץ',price:650,unit:'יח׳',range:'450–950 ₪'},
+   {id:'al15',name:'דלת הזזה/כיס פנימית',price:2400,unit:'יח׳',range:'1,800–3,400 ₪'},
+   {id:'al16',name:'סורגים/סבכה לחלון (ברזל)',price:550,unit:'מ"ר',range:'400–800 ₪ / מ"ר'},
+   {id:'al17',name:'ארון קיר/הזזה בהתאמה (חדר שינה)',price:2800,unit:'מ"ר',range:'2,000–4,000 ₪ / מ"ר'},
  ]},
  {id:'plan',title:'תכנון, ניהול ורישוי',emoji:'📐',items:[
    {id:'pn1',name:'אדריכלות ועיצוב פנים (תכנון מלא 4 חד׳)',price:25000,unit:'גלובלי',range:'15,000–35,000 ₪',hot:true},
@@ -331,6 +399,13 @@ const CATALOG=[
    {id:'pn4',name:'ניהול ופיקוח בנייה (ריטיינר חודשי)',price:7500,unit:'חודשי',range:'5,500–9,500 ₪'},
    {id:'pn5',name:'מדידת נכס ע"י מודד מוסמך (עד 100 מ"ר)',price:2100,unit:'יח׳',range:'1,500–2,800 ₪'},
    {id:'pn6',name:'טיפול בהיתר בנייה/תוספת (ללא אגרות)',price:18000,unit:'גלובלי',range:'12,000–25,000 ₪'},
+   {id:'pn7',name:'הדמיה תלת-ממד (3D) לפרויקט',price:2500,unit:'גלובלי',range:'1,800–3,800 ₪',hot:true},
+   {id:'pn8',name:'פגישת תכנון/ייעוץ ראשונית',price:500,unit:'יח׳',range:'350–800 ₪'},
+   {id:'pn9',name:'תיאום מול ועד בית/שכנים',price:1500,unit:'גלובלי',range:'1,000–2,500 ₪'},
+   {id:'pn10',name:'בקשה לטופס 4 / אכלוס',price:3500,unit:'גלובלי',range:'2,500–5,500 ₪'},
+   {id:'pn11',name:'יועץ בטיחות/נגישות',price:2800,unit:'גלובלי',range:'2,000–4,000 ₪'},
+   {id:'pn12',name:'ייעוץ אקוסטי/תרמי לדירה',price:1800,unit:'גלובלי',range:'1,200–2,800 ₪'},
+   {id:'pn13',name:'לוח זמנים וכתב כמויות מפורט',price:2200,unit:'גלובלי',range:'1,500–3,500 ₪'},
  ]},
  {id:'struct',title:'שלד ותשתית כבדה',emoji:'🏗️',items:[
    {id:'st1',name:'חפירה ופינוי עפר במחפר',price:3500,unit:'יום',range:'2,500–4,500 ₪'},
@@ -339,12 +414,30 @@ const CATALOG=[
    {id:'st4',name:'בניית קיר בלוק 10 ס"מ',price:220,unit:'מ"ר',range:'180–260 ₪ / מ"ר'},
    {id:'st5',name:'בניית קיר איטונג 15/20 ס"מ (בידוד גבוה)',price:295,unit:'מ"ר',range:'240–350 ₪ / מ"ר',hot:true},
    {id:'st6',name:'בנייה קלה — קונסטרוקציית פלדה (LGS)',price:1700,unit:'מ"ר',range:'1,200–2,200 ₪ / מ"ר'},
+   {id:'st7',name:'קורת פלדה לחיזוק פתח (H-beam)',price:3500,unit:'יח׳',range:'2,500–5,500 ₪',hot:true},
+   {id:'st8',name:'יסודות/פלטת בטון למבנה',price:420,unit:'מ"ר',range:'320–600 ₪ / מ"ר',hot:true},
+   {id:'st9',name:'יציקת רצפת בטון (מרתף/תוספת)',price:320,unit:'מ"ר',range:'240–450 ₪ / מ"ר'},
+   {id:'st10',name:'בניית מדרגות בטון',price:4500,unit:'יח׳',range:'3,200–6,500 ₪'},
+   {id:'st11',name:'תוספת בנייה/הרחבת מרפסת (שלד)',price:4200,unit:'מ"ר',range:'3,200–6,000 ₪ / מ"ר'},
+   {id:'st12',name:'איטום ובידוד גג/מרתף',price:140,unit:'מ"ר',range:'100–220 ₪ / מ"ר'},
+   {id:'st13',name:'ממ"ד — יציקת קירות בטון מזוין',price:5500,unit:'מ"ק',range:'4,000–7,500 ₪ / מ"ק'},
+   {id:'st14',name:'קיר גבס עמיד אש/מבנה תעשייתי',price:260,unit:'מ"ר',range:'190–380 ₪ / מ"ר'},
+   {id:'st15',name:'הגבהת/תיקון גג רעפים',price:380,unit:'מ"ר',range:'280–550 ₪ / מ"ר'},
  ]},
  {id:'outdoor',title:'פיתוח חוץ וסביבה',emoji:'🌿',items:[
    {id:'od1',name:'יציקת משטח בטון מוחלק לחצר',price:365,unit:'מ"ר',range:'280–450 ₪ / מ"ר',hot:true},
    {id:'od2',name:'ריצוף חוץ אבנים משתלבות (כולל תשתית)',price:235,unit:'מ"ר',range:'180–290 ₪ / מ"ר'},
    {id:'od3',name:'מערכת השקיה ממוחשבת (מחשב 4 קווים)',price:2650,unit:'יח׳',range:'1,800–3,500 ₪'},
    {id:'od4',name:'דשא סינתטי איכותי (כולל מצע מהודק)',price:220,unit:'מ"ר',range:'160–280 ₪ / מ"ר',hot:true},
+   {id:'od5',name:'דק סינתטי/עץ (כולל מסגרת)',price:420,unit:'מ"ר',range:'320–600 ₪ / מ"ר',hot:true},
+   {id:'od6',name:'סככת צל/קירוי פוליקרבונט',price:480,unit:'מ"ר',range:'350–700 ₪ / מ"ר',hot:true},
+   {id:'od7',name:'בניית גדר/קיר תומך (בלוק/בטון)',price:380,unit:'מ"ר',range:'280–550 ₪ / מ"ר'},
+   {id:'od8',name:'גינון והכשרת קרקע + שתילה',price:180,unit:'מ"ר',range:'120–300 ₪ / מ"ר'},
+   {id:'od9',name:'פרגולת עץ לחצר',price:1300,unit:'מ"ר',range:'950–1,900 ₪ / מ"ר'},
+   {id:'od10',name:'תאורת גינה דקורטיבית (נקודה)',price:480,unit:'נקודה',range:'350–700 ₪'},
+   {id:'od11',name:'תשתית לבריכה/גקוזי',price:15000,unit:'גלובלי',range:'10,000–25,000 ₪'},
+   {id:'od12',name:'מחסן גינה/פרגולה מקורה',price:6500,unit:'גלובלי',range:'4,500–9,500 ₪'},
+   {id:'od13',name:'מערכת ניקוז/תיעול מי גשם לחצר',price:220,unit:'מ"א',range:'160–320 ₪ / מ"א'},
  ]},
 ];
 const UNITS=['מ"ר','יח׳','נקודה','מ"א','גלובלי','מ"ק','יום','חודשי'];
@@ -359,6 +452,19 @@ const PRESETS=[
   {name:'הריסה ופינוי',emoji:'🧱',pick:{demo:{dm1:{q:12},dm2:{q:40},dm4:{q:1}}}},
 ];
 const WA='972543013389'; // עותק קבלן
+/* ===== Missing-item suggestion rules: when an item is selected, suggest these related ids ===== */
+const SUGGEST_RULES={
+ fn5:['dm2','fn12','fn8'], fn6:['dm2','fn12','fn8'], fn18:['dm2','fn12'], fn10:['fn12','dm2'],
+ fn7:['fn8'], fn13:['fn8'], fn14:['fn8'],
+ fn3:['fn11','fn19'], fn4:['fn3','fn11'], fn15:['fn19'],
+ fn2:['fn11'],
+ el1:['el15'], el8:['el10','pl4'], el10:['el8','pl4'],
+ dm1:['dm4','dm14'], dm10:['dm4','dm14'], dm7:['pl1','pl8','fn8','fn7'],
+ dm6:['al6','al14'],
+ al3:['al8','pl6','el2'], al8:['al3'], al1:['al9','al11','fn17'], al6:['al14'], al7:['al14'],
+ pl1:['pl6'], pl6:['pl1'], pl8:['fn8'],
+};
+
 
 /* ===== storage ===== */
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
@@ -412,6 +518,17 @@ const App={
  },
  save(){Store.set('catalog',this.state.catalog);},
  allCats(){const sub=this.state.subItems||{};const c=this.state.catalog.map(cat=>({...cat,items:[...cat.items,...(sub[cat.id]||[])]}));c.push({id:'custom',title:'אחר (מותאם אישית)',emoji:'➕',custom:true,items:this.state.custom});return c;},
+ suggestions(){const cats=this.allCats();const sel=new Set();cats.forEach(c=>c.items.forEach(i=>{if(i.selected)sel.add(i.id);}));const out=[];const seen=new Set();sel.forEach(id=>{(SUGGEST_RULES[id]||[]).forEach(sid=>{if(sel.has(sid)||seen.has(sid))return;seen.add(sid);for(const c of cats){const it=c.items.find(x=>x.id===sid);if(it){out.push({cid:c.id,iid:sid,name:it.name});break;}}});});return out.slice(0,6);},
+ async aiSuggest(){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key){this.toast('להצעות AI — הגדר מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
+  const chosen=[];this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected)chosen.push(i.name);}));if(!chosen.length){this.toast('בחר קודם כמה סעיפים');return;}
+  this.toast('שואל את ה-AI על סעיפים חסרים…');
+  const prompt='אני קבלן שיפוצים בונה הצעת מחיר. הסעיפים שבחרתי: '+chosen.join(', ')+'. מהם עד 5 סעיפי עבודה נלווים שאולי שכחתי לכלול (כאלה שהולכים יחד עם מה שבחרתי)? החזר רק רשימה קצרה בעברית, כל סעיף בשורה, בלי הסברים ובלי מספור.';
+  try{let txt='';if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:400,messages:[{role:'user',content:prompt}]})});const d=await r.json();txt=(d.content&&d.content[0]&&d.content[0].text)||'';}else{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';}
+   const lines=txt.split('\n').map(l=>l.replace(/^[\d\-•*.\)\s]+/,'').trim()).filter(l=>l.length>2).slice(0,5);
+   if(!lines.length){this.toast('לא התקבלו הצעות');return;}
+   this._aiSuggestions=lines;this.state.modal='aisuggest';this.render();
+  }catch(e){this.toast('שגיאת רשת/מפתח AI');}
+ },
  chosen(){const out=[];this.allCats().forEach(c=>{const lines=c.items.filter(i=>i.selected&&(+i.qty>0));if(lines.length)out.push({cat:c,lines});});return out;},
  catTotal(c){return c.items.reduce((s,i)=>s+(i.selected?(+i.qty||0)*(+i.price||0):0),0);},
  subtotal(){return this.allCats().reduce((s,c)=>s+this.catTotal(c),0);},
@@ -462,6 +579,7 @@ const App={
     <button class="chip" data-modal="templates">📋 תבניות</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
+  ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · ${s.vatOn?'כולל':'ללא'} מע"מ</div>
       <div class="b">${nis(this.grand())} <small>(ביניים ${nis(this.subtotal())})</small></div></div>
     <button class="btn-primary" data-modal="quote">📄 הצעת מחיר</button></div>
@@ -480,7 +598,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -660,6 +778,10 @@ const App={
      <div class="field"><label>כמות</label><input id="qk_qty" type="number" inputmode="decimal" value="1"/></div></div>
    <button class="btn-block" id="qk-go">המשך להצעה ›</button>`;
  },
+ aiSuggestModal(){const list=this._aiSuggestions||[];return `<h2>🤖 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">ה-AI מציע סעיפים נלווים. לחיצה מוסיפה אותם כפריט מותאם (תוכל לתמחר אחר כך).</div>
+   ${list.map((t,i)=>`<div class="list-item"><div class="info"><div class="t">${t}</div></div><button class="mini" data-addai="${i}">+ הוסף</button></div>`).join('')}`;
+ },
  portfolioModal(){return `<h2>🖼️ גלריית עבודות <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">העלה תמונות של עבודות קודמות. ניתן לכלול אותן בתחתית ההצעה (עד 4 ראשונות).</div>
    <label class="btn-block" style="cursor:pointer;display:block;text-align:center">➕ הוסף תמונת עבודה<input type="file" id="pf-file" accept="image/*" style="display:none"/></label>
@@ -795,6 +917,9 @@ const App={
   const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
   const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
   on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
+  on('[data-suggest]','click',e=>{const[c,i]=e.currentTarget.dataset.suggest.split('|');const it=this.find(c,i);if(it){it.selected=true;if(!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.state.open[c]=true;this.toast('נוסף: '+it.name);this.render();}});
+  const sai=document.querySelector('[data-suggest-ai]');if(sai)sai.onclick=()=>this.aiSuggest();
+  on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){this.state.custom.push({id:uid(),name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.toast('נוסף: '+name);e.currentTarget.textContent='✓ נוסף';e.currentTarget.disabled=true;}});
   on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if((f==='qty'||f==='price')&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(c);
     const row=e.currentTarget.closest('.item');const t=(+it.qty||0)*(+it.price||0);const v=row.querySelector('.item-total .val');if(v)v.textContent=nis(t);
     const chk=row.querySelector('.chk');if(chk){chk.classList.toggle('on',!!it.selected);chk.textContent=it.selected?'✓':'';}
