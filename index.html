@@ -73,6 +73,8 @@ input,select,textarea{font-family:inherit;}
 .item:last-child{margin-bottom:4px;}
 .item.sel{background:linear-gradient(180deg,#241a1d,#181215);border-color:rgba(237,28,36,.5);box-shadow:0 8px 22px rgba(237,28,36,.16);}
 .item.sel::before{content:'';position:absolute;top:14px;bottom:14px;right:0;width:4px;border-radius:4px;background:var(--red);}
+.item.flash{animation:flashHi 1.6s ease;}
+@keyframes flashHi{0%{box-shadow:0 0 0 3px var(--red);}70%{box-shadow:0 0 0 3px rgba(237,28,36,.35);}100%{box-shadow:none;}}
 .item-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:13px;}
 .item-name{font-size:15px;font-weight:800;flex:1;line-height:1.3;}
 .item-range{font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:400;}
@@ -229,6 +231,43 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .prop-approve{display:block;width:100%;background:#2ec26b;color:#fff;border:none;border-radius:14px;padding:18px;font-size:18px;font-weight:800;margin-top:16px;box-shadow:0 8px 20px rgba(46,194,107,.3);text-align:center;text-decoration:none;}
 .prop-call{display:block;width:100%;background:#fff;color:#ed1c24;border:2px solid #ed1c24;border-radius:14px;padding:14px;font-size:15px;font-weight:800;margin-top:10px;text-align:center;text-decoration:none;}
 .prop-foot{text-align:center;font-size:11px;color:#aaa;padding:14px;}
+/* PDF-format proposal landing page */
+.pv2-wrap{min-height:100vh;background:#eceae6;padding:14px;display:flex;justify-content:center;align-items:flex-start;}
+.pv2-page{max-width:780px;width:100%;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.14);padding:22px 20px 18px;color:#1c1c1c;}
+.pv2-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;}
+.pv2-title .t{color:#ed1c24;font-size:30px;font-weight:900;line-height:1;}
+.pv2-title .e{color:#ed1c24;font-size:11px;letter-spacing:4px;font-weight:700;margin-top:2px;}
+.pv2-title .meta{font-size:12.5px;color:#333;margin-top:10px;line-height:1.8;}
+.pv2-title .meta b{color:#ed1c24;font-weight:800;}
+.pv2-logo{text-align:center;flex:none;max-width:220px;}
+.pv2-logo img{width:170px;height:auto;}
+.pv2-logo .c{font-size:10.5px;color:#555;margin-top:4px;line-height:1.5;}
+.pv2-line{height:4px;background:#ed1c24;border-radius:3px;margin:14px 0;}
+.pv2-parties{display:flex;gap:10px;background:#f6f2ea;border:1px solid #e8e0d2;border-radius:10px;padding:12px;margin-bottom:14px;}
+.pv2-parties .pp{flex:1;}
+.pv2-parties .h{color:#ed1c24;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:4px;}
+.pv2-parties .n{font-weight:800;font-size:15px;}
+.pv2-parties .s{font-size:11.5px;color:#666;margin-top:2px;line-height:1.5;}
+.pv2-tbl{width:100%;border-collapse:collapse;font-size:12.5px;}
+.pv2-tbl thead th{background:#1c1c1c;color:#fff;padding:9px 6px;font-weight:700;text-align:center;font-size:11.5px;}
+.pv2-tbl thead th.desc{text-align:right;}
+.pv2-tbl td{padding:9px 6px;text-align:center;border-bottom:1px solid #eee;}
+.pv2-tbl td.desc{text-align:right;font-weight:600;}
+.pv2-tbl td.num{color:#999;width:26px;}
+.pv2-tbl td.ltot{font-weight:800;white-space:nowrap;}
+.pv2-tbl tr.even td{background:#faf7f1;}
+.pv2-tbl tr.pv2-band td{background:#efe9dd;font-weight:800;text-align:right;color:#1c1c1c;border-bottom:1px solid #e2d9c8;}
+.pv2-tbl tr.pv2-band td.bs{text-align:left;color:#ed1c24;font-weight:900;white-space:nowrap;}
+.pv2-sumwrap{display:flex;justify-content:flex-start;margin-top:16px;}
+.pv2-sumbox{width:330px;max-width:100%;border:2px solid #1c1c1c;border-radius:6px;padding:12px 14px;background:#fffdf8;}
+.pv2-sumbox .r{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:#333;}
+.pv2-sumbox .r.red{color:#ed1c24;}
+.pv2-sumbox .r.total{border-top:2px solid #1c1c1c;margin-top:6px;padding-top:10px;font-weight:900;font-size:16px;}
+.pv2-sumbox .r.total b{color:#ed1c24;font-size:22px;}
+.pv2-sumbox .r.adv{color:#555;font-size:12px;}
+.pv2-cta{text-align:center;background:#f6f2ea;border:1px solid #e8e0d2;border-radius:10px;padding:12px;font-size:12.5px;color:#555;margin-top:14px;}
+.pv2-cta b{color:#ed1c24;}
+@media(max-width:520px){.pv2-top{flex-direction:column-reverse;align-items:center;text-align:center;}.pv2-title .meta{text-align:center;}.pv2-tbl{font-size:11px;}.pv2-tbl td{padding:7px 4px;}.pv2-page{padding:16px 12px;}}
 .p-gallery{margin-top:22px;border-top:2px dashed #e0d8c8;padding-top:14px;}
 .p-gallery .pg-title{color:var(--red);font-size:14px;font-weight:900;text-align:center;}
 .p-gallery .pg-sub{text-align:center;font-size:10px;color:#999;margin-bottom:10px;}
@@ -271,7 +310,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.2';
+const VERSION='5.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -532,6 +571,7 @@ const App={
  save(){Store.set('catalog',this.state.catalog);},
  allCats(){const sub=this.state.subItems||{};const c=this.state.catalog.map(cat=>({...cat,items:[...cat.items,...(sub[cat.id]||[])]}));c.push({id:'custom',title:'אחר (מותאם אישית)',emoji:'➕',custom:true,items:this.state.custom});return c;},
  suggestions(){const cats=this.allCats();const sel=new Set();cats.forEach(c=>c.items.forEach(i=>{if(i.selected)sel.add(i.id);}));const out=[];const seen=new Set();sel.forEach(id=>{(SUGGEST_RULES[id]||[]).forEach(sid=>{if(sel.has(sid)||seen.has(sid))return;seen.add(sid);for(const c of cats){const it=c.items.find(x=>x.id===sid);if(it){out.push({cid:c.id,iid:sid,name:it.name});break;}}});});return out.slice(0,6);},
+ gotoItem(cid,iid){this.state.open[cid]=true;this.render();setTimeout(()=>{const el=document.querySelector('.item[data-iid="'+iid+'"]');if(el){try{el.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700);}},90);},
  async aiSuggest(){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key){this.toast('להצעות AI — הגדר מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
   const chosen=[];this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected)chosen.push(i.name);}));if(!chosen.length){this.toast('בחר קודם כמה סעיפים');return;}
   this.toast('שואל את ה-AI על סעיפים חסרים…');
@@ -581,7 +621,7 @@ const App={
       <input id="search" placeholder="חיפוש חופשי: עבודה או קטגוריה…" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
   <div class="chips">
-    <button class="chip chip-ai" data-suggest-ai="1">🤖 עזרת AI</button>
+    <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
     <button class="chip" data-modal="tools">🧰 כלים</button>
     <button class="chip" data-modal="drafts">🗂️ טיוטות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
@@ -599,7 +639,7 @@ const App={
  },
 
  itemView(cid,i,custom){const total=(+i.qty||0)*(+i.price||0);
-  return `<div class="item ${i.selected?'sel':''}"><div class="item-top">
+  return `<div class="item ${i.selected?'sel':''}" data-iid="${i.id}"><div class="item-top">
       <div class="chk ${i.selected?'on':''}" data-sel="${cid}|${i.id}">${i.selected?'✓':''}</div>
       <div class="item-name">${i.name}<div class="item-range">${i.range||''}</div></div>
       ${custom?`<button class="del-custom" data-delcustom="${i.id}">🗑️</button>`:(i.sub?`<button class="del-custom" data-delsub="${cid}|${i.id}">🗑️</button>`:'')}</div>
@@ -947,9 +987,10 @@ const App={
   const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
   const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
   on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
-  on('[data-suggest]','click',e=>{const[c,i]=e.currentTarget.dataset.suggest.split('|');const it=this.find(c,i);if(it){it.selected=true;if(!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.state.open[c]=true;this.toast('נוסף: '+it.name);this.render();}});
+  on('[data-suggest]','click',e=>{const[c,i]=e.currentTarget.dataset.suggest.split('|');const it=this.find(c,i);if(it){it.selected=true;if(!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.toast('נוסף: '+it.name+' — עדכן מחיר/כמות');this.gotoItem(c,i);}});
   on('[data-suggest-ai]','click',()=>this.aiSuggest());
-  on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){this.state.custom.push({id:uid(),name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.toast('נוסף: '+name);e.currentTarget.textContent='✓ נוסף';e.currentTarget.disabled=true;}});
+  const cc=document.getElementById('chip-cats');if(cc)cc.onclick=()=>{const cats=this.allCats();const anyOpen=cats.some(c=>this.state.open[c.id]);if(anyOpen){this.state.open={};}else{cats.forEach(c=>this.state.open[c.id]=true);}this.render();};
+  on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){const nid=uid();this.state.custom.push({id:nid,name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.modal=null;this.toast('נוסף: '+name+' — עדכן מחיר ויחידה');this.gotoItem('custom',nid);}});
   const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
   const pn=document.getElementById('prev-next');if(pn)pn.onclick=()=>{this.state.modal='quote';this.render();};
   on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
@@ -1149,9 +1190,9 @@ const App={
   this.toast('שולח אישור חתום אליך…');
   try{const{blob,fname}=await this.makePdfBlob();const url=Store.get('gaUrl','https://api.green-api.com').replace(/\/$/,'');let p=owner.replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);const fd=new FormData();fd.append('chatId',p+'@c.us');fd.append('file',blob,fname);fd.append('caption',txt);const r=await fetch(url+'/waInstance'+id+'/sendFileByUpload/'+tok,{method:'POST',body:fd});this.toast(r.ok?'אישור חתום נשלח אליך ✓':'שליחה נכשלה');}catch(e){this.toast('שגיאת רשת/CORS');}
  },
- makeProposalLink(){this.captureQuote();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price})));
+ makeProposalLink(){this.captureQuote();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
-  const data={cn:c.name||'',pr:c.project||'',no:s.quoteNo,vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand()};
+  const data={cn:c.name||'',pr:c.project||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand()};
   let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.toast('שגיאה בקידוד');return;}
   const base=location.origin+location.pathname;const link=base+'#p='+b64;
   const msg='שלום'+(c.name?' '+c.name:'')+', הצעת המחיר שלך מ-יהודה שיפוצים מוכנה לצפייה ואישור:\n'+link;
@@ -1161,20 +1202,38 @@ const App={
  },
  proposalView(data){const nf=n=>'₪ '+Math.round(n).toLocaleString('he-IL');const owner=WA;
   const msg='שלום, אני מאשר את הצעת המחיר מס\' '+(data.no||'')+(data.cn?' עבור '+data.cn:'')+' בסך '+nf(data.tot)+'. אפשר להתקדם 🙂';
-  return `<div class="prop-wrap"><div class="prop-card">
-    <div class="prop-hdr"><img src="${LOGO_APP}" alt="לוגו"/><div class="co">יהודה שיפוצים</div><div class="sub">קבלן שיפוצים · דירות · משרדים · מרפאות</div></div>
-    <div class="prop-body">
-      <div class="prop-h">הצעת מחיר${data.cn?' עבור '+data.cn:''}</div>
-      <div class="prop-meta">${data.pr?'פרויקט: '+data.pr+' · ':''}הצעה ${data.no||''}${data.vd?' · בתוקף עד '+data.vd:''}</div>
-      ${data.it.map(i=>`<div class="prop-row"><span class="n">${i.n}</span><span class="q">×${i.q}</span><span class="p">${nf(i.q*i.p)}</span></div>`).join('')}
-      ${data.dis>0?`<div class="prop-row"><span class="n">הנחה ${data.dis}%</span><span class="q"></span><span class="p" style="color:var(--red)">-${nf(data.sub*data.dis/100)}</span></div>`:''}
-      ${data.vat>0?`<div class="prop-row"><span class="n">מע"מ ${data.vat}%</span><span class="q"></span><span class="p"></span></div>`:''}
-      <div class="prop-tot"><span class="l">סה"כ ${data.vat>0?'כולל מע"מ':''}</span><span class="v">${nf(data.tot)}</span></div>
-      ${data.adv>0?`<div style="text-align:center;font-size:13px;color:#666;margin-top:8px">מקדמה (${data.adv}%): ${nf(data.tot*data.adv/100)}</div>`:''}
-      <a class="prop-approve" href="https://wa.me/${owner}?text=${encodeURIComponent(msg)}" target="_blank">✅ אני מאשר את ההצעה</a>
-      <a class="prop-call" href="tel:0545718316">📞 יש לי שאלה — התקשר 054-571-8316</a>
+  // group items by category (backward compatible: items without c go to one group)
+  const groups=[];const gmap={};(data.it||[]).forEach(i=>{const key=i.c||'';if(!gmap[key]){gmap[key]={title:key,lines:[]};groups.push(gmap[key]);}gmap[key].lines.push(i);});
+  let rowNo=0;
+  const tbody=groups.map(g=>{
+    const gsum=g.lines.reduce((s,l)=>s+(+l.q||0)*(+l.p||0),0);
+    return (g.title?`<tr class="pv2-band"><td colspan="5">${g.title}</td><td class="bs">${nf(gsum)}</td></tr>`:'')+
+      g.lines.map(l=>{rowNo++;return `<tr class="${rowNo%2?'odd':'even'}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td><td>${nf(l.p)}</td><td class="ltot">${nf((+l.q||0)*(+l.p||0))}</td></tr>`;}).join('');
+  }).join('');
+  const vatAmt=data.vat>0?(data.sub-(data.sub*(data.dis||0)/100))*data.vat/100:0;
+  return `<div class="pv2-wrap"><div class="pv2-page">
+    <div class="pv2-top">
+      <div class="pv2-title"><div class="t">הצעת מחיר</div><div class="e">QUOTATION</div>
+        <div class="meta"><b>מס׳ הצעה:</b> ${data.no||''}<br>${data.dt?`<b>תאריך:</b> ${data.dt}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${data.vd}`:''}</div></div>
+      <div class="pv2-logo"><img src="${LOGO_PDF}" alt="יהודה שיפוצים"/><div class="c">קבלן מבצע: יהודה יעקובוב | טל׳ 054-5718316<br>yuda090581@gmail.com</div></div>
     </div>
-    <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים</div>
+    <div class="pv2-line"></div>
+    <div class="pv2-parties">
+      <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">יהודה יעקובוב · ח.פ 311834998<br>טל׳ 054-5718316</div></div>
+      <div class="pp"><div class="h">לכבוד</div><div class="n">${data.cn||'[שם הלקוח]'}</div><div class="s">${data.pr||''}</div></div>
+    </div>
+    <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">תיאור העבודה</th><th>כמות</th><th>יחידה</th><th>מחיר ליח׳</th><th>סה"כ</th></tr></thead><tbody>${tbody}</tbody></table>
+    <div class="pv2-sumwrap"><div class="pv2-sumbox">
+      <div class="r"><span>סכום ביניים</span><b>${nf(data.sub)}</b></div>
+      ${data.dis>0?`<div class="r red"><span>הנחה (${data.dis}%)</span><b>- ${nf(data.sub*data.dis/100)}</b></div>`:''}
+      ${data.vat>0?`<div class="r"><span>מע"מ (${data.vat}%)</span><b>${nf(vatAmt)}</b></div>`:''}
+      <div class="r total"><span>סה"כ לתשלום</span><b>${nf(data.tot)}</b></div>
+      ${data.adv>0?`<div class="r adv"><span>מקדמה (${data.adv}%)</span><b>${nf(data.tot*data.adv/100)}</b></div>`:''}
+    </div></div>
+    <a class="prop-approve" href="https://wa.me/${owner}?text=${encodeURIComponent(msg)}" target="_blank">✅ אני מאשר את ההצעה</a>
+    <a class="prop-call" href="tel:0545718316">📞 יש לי שאלה — התקשר 054-571-8316</a>
+    <div class="pv2-cta">רוצים לראות עוד מהעבודות שלנו? <b>yehuda-shipuzim.netlify.app</b></div>
+    <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
   </div></div>`;
  },
  async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');const canvas=await html2canvas(page,{scale:2,backgroundColor:'#ffffff',useCORS:true});const img=canvas.toDataURL('image/jpeg',0.95);const{jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');const w=210,h=canvas.height*w/canvas.width;pdf.addImage(img,'JPEG',0,0,w,Math.min(h,297));stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת-מחיר';return{pdf,blob:pdf.output('blob'),fname:`${label}-${this.state.quoteNo}.pdf`};},
