@@ -286,6 +286,14 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .p-cta .qr img,.p-cta .qr canvas{width:100%!important;height:100%!important;}
 .p-foot{text-align:center;font-size:10px;color:#999;margin-top:18px;border-top:1px solid #eee;padding-top:12px;}
 </style>
+<meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
+<meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
+<meta property="og:type" content="website"/>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",authDomain:"yehuda-shipuzim.firebaseapp.com",projectId:"yehuda-shipuzim",storageBucket:"yehuda-shipuzim.firebasestorage.app",messagingSenderId:"190196074120",appId:"1:190196074120:web:e998d30b6e2b0d26e6013d"});window._db=firebase.firestore();}catch(e){window._db=null;}
+</script>
 </head>
 <body>
 <div id="splash">
@@ -310,7 +318,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.3';
+const VERSION='5.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -1190,12 +1198,25 @@ const App={
   this.toast('שולח אישור חתום אליך…');
   try{const{blob,fname}=await this.makePdfBlob();const url=Store.get('gaUrl','https://api.green-api.com').replace(/\/$/,'');let p=owner.replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);const fd=new FormData();fd.append('chatId',p+'@c.us');fd.append('file',blob,fname);fd.append('caption',txt);const r=await fetch(url+'/waInstance'+id+'/sendFileByUpload/'+tok,{method:'POST',body:fd});this.toast(r.ok?'אישור חתום נשלח אליך ✓':'שליחה נכשלה');}catch(e){this.toast('שגיאת רשת/CORS');}
  },
- makeProposalLink(){this.captureQuote();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+ shortId(){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=a[Math.floor(Math.random()*a.length)];return s;},
+ async saveToCloud(data){if(!window._db)return null;try{const id=this.shortId();await window._db.collection('proposals').doc(id).set({data:data,createdAt:Date.now(),viewedAt:null,owner:'yehuda'});return id;}catch(e){return null;}},
+ async makeProposalLink(){this.captureQuote();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   const data={cn:c.name||'',pr:c.project||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand()};
-  let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.toast('שגיאה בקידוד');return;}
-  const base=location.origin+location.pathname;const link=base+'#p='+b64;
-  const msg='שלום'+(c.name?' '+c.name:'')+', הצעת המחיר שלך מ-יהודה שיפוצים מוכנה לצפייה ואישור:\n'+link;
+  const base=location.origin+location.pathname;
+  this.toast('יוצר לינק…');
+  let link,short=false;
+  const id=await this.saveToCloud(data);
+  if(id){link=base+'#id='+id;short=true;
+    // remember link on the client for view-tracking
+    try{const cl=Store.get('clients',[]);const rec=cl.find(x=>x.name===c.name&&c.name);if(rec){rec.proposalId=id;Store.set('clients',cl);}}catch(e){}
+  }else{
+    // fallback: long self-contained link (works offline / if Firestore not set up)
+    let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.toast('שגיאה');return;}
+    link=base+'#p='+b64;
+  }
+  const msg='שלום'+(c.name?' '+c.name:'')+' 👋\nהצעת המחיר שלך מ-יהודה שיפוצים מוכנה לצפייה ואישור:\n'+link;
+  if(!short)this.toast('אין חיבור ל-Firebase — נוצר לינק ארוך');else this.toast('לינק קצר נוצר ✓');
   if(navigator.share){navigator.share({title:'הצעת מחיר · יהודה שיפוצים',text:msg}).catch(()=>{});}
   else if(c.phone){window.open(waLink(c.phone,msg),'_blank');}
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק את הלינק:',link);}}
@@ -1317,7 +1338,20 @@ if('serviceWorker' in navigator){
   });
 }
 document.addEventListener('DOMContentLoaded',()=>{
- // client-facing proposal view via shared link (#p=...)
+ // client-facing proposal via SHORT link (#id=XXXX) — fetch from Firestore
+ if(location.hash&&location.hash.indexOf('#id=')===0){
+   const id=location.hash.slice(4).replace(/[^A-Za-z0-9]/g,'');
+   const sp=document.getElementById('splash');if(sp)sp.style.display='none';
+   document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;font-size:16px">טוען הצעה…</div>';
+   if(window._db){window._db.collection('proposals').doc(id).get().then(doc=>{
+     if(doc.exists){const d=doc.data();document.getElementById('root').innerHTML=App.proposalView(d.data);
+       try{if(!d.viewedAt)window._db.collection('proposals').doc(id).update({viewedAt:Date.now()});}catch(e){}
+     }else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">ההצעה לא נמצאה או שפג תוקפה.<br>אנא בקש/י לינק חדש מיהודה שיפוצים.</div>';}
+   }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסה/י לרענן את הדף.</div>';});}
+   else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">לא ניתן לטעון את ההצעה כרגע.<br>נסה/י לרענן את הדף או בקש/י לינק חדש.</div>';}
+   return;
+ }
+ // client-facing proposal view via self-contained LONG link (#p=...) — fallback / old links
  if(location.hash&&location.hash.indexOf('#p=')===0){try{let b64=location.hash.slice(3).replace(/-/g,'+').replace(/_/g,'/');const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));const data=JSON.parse(new TextDecoder().decode(bytes));const sp=document.getElementById('splash');if(sp)sp.style.display='none';document.getElementById('root').innerHTML=App.proposalView(data);return;}catch(e){}}
  App.render();
  // splash: slide-to-unlock (RTL: drag knob leftwards)
