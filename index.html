@@ -318,7 +318,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.4';
+const VERSION='5.5';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -530,7 +530,7 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','drafts','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','drafts','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates'];}};
 })();
 
 /* ===== IndexedDB for photos ===== */
@@ -764,8 +764,6 @@ const App={
    <div class="field"><label>כמות</label><input id="calc-n" type="number" inputmode="decimal" value="1"/></div>
    <button class="btn-ghost" id="calc-go">חשב שטח</button>
    <div id="calc-out" style="text-align:center;font-size:20px;font-weight:900;color:var(--red);margin-top:10px"></div>
-   <div class="sec-title">תבניות מהירות</div>
-   ${PRESETS.map((p,i)=>`<div class="list-item"><div class="info"><div class="t">${p.name}</div></div><button class="mini" data-preset="${i}">טען</button></div>`).join('')}
    <div class="sec-title">גיבוי / סנכרון ידני</div>
    <button class="btn-ghost" id="backup">⬇️ ייצא גיבוי (JSON)</button>
    <button class="btn-ghost" id="restore-btn">⬆️ שחזר מגיבוי (גם למכשיר אחר)</button>
@@ -865,9 +863,14 @@ const App={
    <label class="btn-block" style="cursor:pointer;display:block;text-align:center">➕ הוסף תמונת עבודה<input type="file" id="pf-file" accept="image/*" style="display:none"/></label>
    <div id="pf-grid" class="photo-grid" style="margin-top:12px"></div>`;
  },
- templatesModal(){return `<h2>📋 תבניות מוכנות <button class="x" data-close>✕</button></h2>
+ templatesModal(){const user=Store.get('userTemplates',[]);
+  const presetInfo=p=>{let n=0,sum=0;for(const cid in p.pick){for(const iid in p.pick[cid]){const it=this.find(cid,iid);if(it){n++;sum+=(+it.price||0)*(+p.pick[cid][iid].q||1);}}}return{n,sum};};
+  return `<h2>📋 תבניות <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">לחיצה טוענת סעיפים טיפוסיים — אפשר לערוך כמויות ומחירים אחרי כן.</div>
-   ${PRESETS.map((p,i)=>`<div class="list-item"><div class="info"><div class="t">${p.emoji||'📋'} ${p.name}</div><div class="s">${Object.keys(p.pick).length} קטגוריות</div></div><button class="mini" data-preset="${i}">טען »</button></div>`).join('')}`;
+   <button class="btn-block" id="save-tpl" style="margin-bottom:14px">💾 שמור את ההצעה הנוכחית כתבנית</button>
+   ${user.length?`<div class="sec-title">התבניות שלי</div>${user.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">⭐ ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-utpl="${i}">טען »</button><button class="del" data-deltpl="${i}">🗑️</button></div>`;}).join('')}`:''}
+   <div class="sec-title">תבניות מובנות</div>
+   ${PRESETS.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">${p.emoji||'📋'} ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-preset="${i}">טען »</button></div>`;}).join('')}`;
  },
  voiceModal(){const on=this._voiceOn;const last=this._lastItem?this.find(this._lastItem.cid,this._lastItem.iid):null;
   return `<h2>🎤 עוזר קולי <button class="x" data-close>✕</button></h2>
@@ -1068,6 +1071,9 @@ const App={
 
   const cg=document.getElementById('calc-go');if(cg)cg.onclick=()=>{const l=+document.getElementById('calc-l').value||0,w=+document.getElementById('calc-w').value||0,n=+document.getElementById('calc-n').value||1;const a=Math.round(l*w*n*100)/100;document.getElementById('calc-out').textContent=a?a+' מ"ר':'';};
   on('[data-preset]','click',e=>this.loadPreset(+e.currentTarget.dataset.preset));
+  on('[data-utpl]','click',e=>this.loadUserTemplate(+e.currentTarget.dataset.utpl));
+  on('[data-deltpl]','click',e=>{const i=+e.currentTarget.dataset.deltpl;const list=Store.get('userTemplates',[]);if(confirm('למחוק את התבנית "'+(list[i]&&list[i].name)+'"?')){list.splice(i,1);Store.set('userTemplates',list);this.render();}});
+  const st=document.getElementById('save-tpl');if(st)st.onclick=()=>this.saveAsTemplate();
   const gemRun=document.getElementById('gem-run');if(gemRun)gemRun.onclick=()=>{const v=(document.getElementById('gem-in').value||'').trim();if(!v){this.toast('כתוב שאלה');return;}this.geminiAsk(v);};
   on('[data-gem]','click',e=>{const acts=['נסח הודעת וואטסאפ קצרה, מנומסת ומקצועית בעברית ללקוח בשם הקבלן "יהודה שיפוצים", בנוגע להצעת מחיר ששלחתי.','אני קבלן שיפוצים. הצע רשימת סעיפי עבודה (line items) לפרויקט, כולל יחידת מידה מקובלת בישראל, עבור: ','כתוב תיאור עבודה מקצועי וברור בעברית להצעת מחיר עבור: ','תן לי טיפ אחד קצר וקונקרטי לניהול יעיל יותר של עסק שיפוצים.'];const i=+e.currentTarget.dataset.gem;const ta=document.getElementById('gem-in');if(i===0||i===3){this.geminiAsk(acts[i]);}else if(ta){ta.value=acts[i];ta.focus();}});
   const bk=document.getElementById('backup');if(bk)bk.onclick=()=>this.backup();
@@ -1132,6 +1138,11 @@ const App={
  saveDraft(){const list=Store.get('drafts',[]);list.unshift({id:uid(),savedAt:new Date().toLocaleString('he-IL'),grand:this.grand(),client:{...this.state.client},quoteNo:this.state.quoteNo,valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:[...this.state.whiteItems],blackOn:this.state.blackOn,blackItems:[...this.state.blackItems],catalog:JSON.parse(JSON.stringify(this.state.catalog)),custom:JSON.parse(JSON.stringify(this.state.custom)),vatOn:this.state.vatOn,vatPct:this.state.vatPct});Store.set('drafts',list.slice(0,80));this.toast('הטיוטה נשמרה ✓');},
  loadDraft(id){const d=Store.get('drafts',[]).find(x=>x.id===id);if(!d)return;Object.assign(this.state,{catalog:JSON.parse(JSON.stringify(d.catalog)),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:d.quoteNo,valid:d.valid,discount:d.discount||0,advance:d.advance||0,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[],vatOn:d.vatOn,vatPct:d.vatPct});this.save();this.state.modal=null;this.toast('הטיוטה נטענה');this.render();},
  loadPreset(idx){const p=PRESETS[idx];for(const cid in p.pick){const cat=this.state.catalog.find(c=>c.id===cid);if(!cat)continue;for(const iid in p.pick[cid]){const it=cat.items.find(i=>i.id===iid);if(it){it.selected=true;it.qty=p.pick[cid][iid].q;}}}this.save();this.state.modal=null;this.toast('התבנית נטענה — בדוק כמויות');this.render();},
+ loadUserTemplate(idx){const list=Store.get('userTemplates',[]);const p=list[idx];if(!p)return;for(const cid in p.pick){const cat=this.state.catalog.find(c=>c.id===cid);if(!cat)continue;for(const iid in p.pick[cid]){const it=cat.items.find(i=>i.id===iid);if(it){it.selected=true;it.qty=p.pick[cid][iid].q;}}}this.save();this.state.modal=null;this.toast('התבנית שלך נטענה ✓');this.render();},
+ saveAsTemplate(){const pick={};let count=0;this.state.catalog.forEach(cat=>{cat.items.forEach(it=>{if(it.selected){pick[cat.id]=pick[cat.id]||{};pick[cat.id][it.id]={q:+it.qty||1};count++;}});});
+  if(!count){this.toast('בחר קודם סעיפים לשמירה כתבנית');return;}
+  const name=prompt('שם התבנית:','ההצעה שלי');if(!name)return;
+  const list=Store.get('userTemplates',[]);list.push({name:name.trim(),emoji:'⭐',pick});Store.set('userTemplates',list);this.toast('נשמרה תבנית: '+name);this.render();},
 
  async sendReview(clientId){const list=Store.get('clients',[]);const cl=list.find(c=>c.id===clientId);if(!cl)return;const url='https://yehuda-shipuzim.netlify.app/review';const msg=`שלום ${cl.name||''}, תודה שבחרת ב-יהודה שיפוצים! 🙏 נשמח מאוד למשוב קצר על העבודה: ${url}`;
   let sent=false;
