@@ -176,6 +176,8 @@ input,select,textarea{font-family:inherit;}
 
 #pdf-stage{position:fixed;left:-10000px;top:0;}
 .page{width:794px;background:#fff;color:#2b2b2b;font-family:'Heebo',sans-serif;padding:40px 46px;direction:rtl;}
+.page tr,.page .p-sumbox,.page .p-sign,.page .p-cta,.page .p-gallery{page-break-inside:avoid;break-inside:avoid;}
+.page thead{display:table-header-group;}
 .p-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--red);padding-bottom:18px;gap:12px;}
 .p-title-c{flex:1;text-align:center;padding-top:8px;}
 .p-title-c .big{font-size:34px;font-weight:900;color:var(--red);line-height:1;}
@@ -318,7 +320,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.5';
+const VERSION='5.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -637,6 +639,7 @@ const App={
     <button class="chip" data-modal="quick">⚡ הצעה מהירה</button>
     <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
     <button class="chip" data-modal="templates">📋 תבניות</button>
+    <button class="chip" data-modal="sentquotes">📤 הצעות שנשלחו</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
@@ -658,7 +661,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -797,7 +800,7 @@ const App={
      <button class="mini" data-cstatus="${cl.id}">סטטוס »</button>
      <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
      <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
-     <button class="mini" data-review="${cl.id}">📩 משוב</button>
+     <button class="mini" data-cquotes="${(cl.name||'').replace(/'/g,'&#39;')}">📤 הצעות</button><button class="mini" data-review="${cl.id}">📩 משוב</button>
      <button class="del" data-delclient="${cl.id}">🗑️</button></div>`).join(''):'<div class="empty">לא נמצאו לקוחות.</div>'}`;
  },
 
@@ -853,6 +856,17 @@ const App={
      <button class="btn-ghost" id="prev-back" style="flex:1">‹ חזרה לעריכה</button>
      <button class="btn-block" id="prev-next" style="flex:1.4;margin:0">המשך להצעה ›</button>
    </div>`;
+ },
+ sentQuotesModal(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
+  const list=f?all.filter(q=>(q.client||'')===f):all;
+  const dt=ts=>new Date(ts).toLocaleDateString('he-IL')+' '+new Date(ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+  return `<h2>📤 הצעות שנשלחו${f?' · '+f:''} <button class="x" data-close>✕</button></h2>
+   ${f?`<button class="btn-ghost" data-qfilter="" style="margin-bottom:10px">↩️ הצג את כל ההצעות</button>`:''}
+   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">כל הצעה נשמרת אוטומטית עם הסעיפים — אפשר לפתוח, לתקן ולשלוח מחדש.</div>
+   ${list.length?list.map(q=>`<div class="list-item">
+     <div class="info"><div class="t">${q.client||'ללא שם'} — ${nis(q.grand)}</div><div class="s">${q.no} · ${dt(q.ts)}${q.project?' · '+q.project:''}${q.snap?'':' · (ללא נתונים)'}</div></div>
+     ${q.snap?`<button class="mini" data-loadq="${q.id}">✏️ ערוך</button><button class="mini" data-dupq="${q.id}">📋 עותק</button>`:''}
+     <button class="del" data-delq="${q.id}">🗑️</button></div>`).join(''):'<div class="empty">אין עדיין הצעות שנשלחו.</div>'}`;
  },
  aiSuggestModal(){const list=this._aiSuggestions||[];return `<h2>🤖 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">ה-AI מציע סעיפים נלווים. לחיצה מוסיפה אותם כפריט מותאם (תוכל לתמחר אחר כך).</div>
@@ -1030,7 +1044,7 @@ const App={
   const gte=document.getElementById('ga-test');if(gte)gte.onclick=async()=>{gaSaveFields();if(!Store.get('gaId','')||!Store.get('gaToken','')){this.toast('מלא idInstance וטוקן');return;}this.toast('שולח בדיקה…');const ok=await this.greenSend(Store.get('gaTo','0543013389'),'בדיקת חיבור מ-אפליקציית יהודה שיפוצים ✓');this.toast(ok?'נשלח בהצלחה ✓':'נכשל — בדוק apiUrl/טוקן (או חסימת CORS)');};
   const ia=document.getElementById('install-app');if(ia)ia.onclick=()=>doInstall();
   const cu=document.getElementById('check-update');if(cu)cu.onclick=()=>this.checkUpdate();
-  const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{this.state.catalog=JSON.parse(JSON.stringify(CATALOG));this.save();this.toast('המחירון אופס');this.render();};
+  const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{if(!confirm('לאפס את המחירון למחירי ברירת המחדל 2026?\nהכמויות יתאפסו · תתי-הסעיפים שהוספת יישארו (עם איפוס כמות).'))return;this.state.catalog=JSON.parse(JSON.stringify(CATALOG));const clr=arr=>{if(arr)arr.forEach(it=>{it.selected=false;it.qty='';});};Object.values(this.state.subItems||{}).forEach(clr);clr(this.state.custom);Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);this.save();this.toast('המחירון אופס · הכמויות אופסו · תתי-הסעיפים נשמרו ✓');this.render();};
   const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
   const tq=document.getElementById('target-quotes');if(tq)tq.oninput=e=>Store.set('targetQuotes',+e.target.value||0);
@@ -1081,6 +1095,11 @@ const App={
   const rf=document.getElementById('restore-file');if(rf)rf.onchange=e=>this.restore(e);
 
   on('[data-loadclient]','click',e=>{const cl=JSON.parse(e.currentTarget.dataset.loadclient);this.state.client={name:cl.name,project:cl.project,address:cl.address,phone:cl.phone||'',status:cl.status||'q'};this.state.modal='quote';this.render();});
+  on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
+  on('[data-dupq]','click',e=>this.duplicateQuoteAsNew(e.currentTarget.dataset.dupq));
+  on('[data-delq]','click',e=>{const id=e.currentTarget.dataset.delq;if(confirm('למחוק את ההצעה מההיסטוריה?')){const qs=Store.get('quotes',[]).filter(x=>x.id!==id);Store.set('quotes',qs);this.render();}});
+  on('[data-qfilter]','click',e=>{this.state.quoteClientFilter=e.currentTarget.dataset.qfilter;this.render();});
+  on('[data-cquotes]','click',e=>{this.state.quoteClientFilter=e.currentTarget.dataset.cquotes;this.state.modal='sentquotes';this.render();});
   on('[data-cstatus]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.cstatus);const o=['q','pending','doing','sent','done'];cl.status=o[(o.indexOf(cl.status||'q')+1)%5];if(cl.status==='done'&&!cl.doneAt)cl.doneAt=Date.now();Store.set('clients',list);this.render();});
   const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
@@ -1268,7 +1287,25 @@ const App={
     <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
   </div></div>`;
  },
- async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');const canvas=await html2canvas(page,{scale:2,backgroundColor:'#ffffff',useCORS:true});const img=canvas.toDataURL('image/jpeg',0.95);const{jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');const w=210,h=canvas.height*w/canvas.width;pdf.addImage(img,'JPEG',0,0,w,Math.min(h,297));stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת-מחיר';return{pdf,blob:pdf.output('blob'),fname:`${label}-${this.state.quoteNo}.pdf`};},
+ async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');
+   // High-res capture; scale adapts so tall documents stay sharp but memory-safe
+   const targetPx=page.scrollHeight;const scale=targetPx>4000?2:3;
+   const canvas=await html2canvas(page,{scale:scale,backgroundColor:'#ffffff',useCORS:true,windowWidth:page.scrollWidth,height:page.scrollHeight});
+   const{jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');const w=210,pageH=297;
+   const pxPerMm=canvas.width/w;                 // canvas px per mm
+   const sliceH=Math.floor(pageH*pxPerMm);        // px height of one A4 page
+   let y=0,first=true;
+   while(y<canvas.height){
+     const hSlice=Math.min(sliceH,canvas.height-y);
+     const c2=document.createElement('canvas');c2.width=canvas.width;c2.height=hSlice;
+     const ctx=c2.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,c2.width,c2.height);
+     ctx.drawImage(canvas,0,y,canvas.width,hSlice,0,0,canvas.width,hSlice);
+     const imgData=c2.toDataURL('image/jpeg',0.95);
+     if(!first)pdf.addPage();
+     pdf.addImage(imgData,'JPEG',0,0,w,hSlice/pxPerMm);
+     first=false;y+=hSlice;
+   }
+   stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת-מחיר';return{pdf,blob:pdf.output('blob'),fname:`${label}-${this.state.quoteNo}.pdf`};},
 
  async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}this.toast('מכין PDF…');
   const{pdf,blob,fname}=await this.makePdfBlob();this.recordQuote();
@@ -1291,7 +1328,15 @@ const App={
  },
  async driveConnect(){const ok=await Drive.ready();this.toast(ok?'מחובר ל-Google Drive ✓':'התחברות נכשלה');this.render();},
  async driveBackup(){const ok=await Drive.ready();if(!ok){this.toast('לא חובר ל-Drive');return;}this.toast('מגבה ל-Drive…');try{const folder=await Drive.ensureFolder('יהודה שיפוצים');const data={};Store.keys().forEach(k=>data[k]=Store.get(k,null));const blob=new Blob([JSON.stringify(data)],{type:'application/json'});const r=await Drive.uploadBlob('backup-'+new Date().toISOString().slice(0,10)+'.json',blob,folder);this.toast(r?'גובה ל-Drive ✓':'הגיבוי נכשל');}catch(e){this.toast('שגיאת Drive');}},
- recordQuote(){const qs=Store.get('quotes',[]);qs.unshift({ts:Date.now(),no:this.state.quoteNo,client:this.state.client.name,grand:this.grand()});Store.set('quotes',qs.slice(0,500));Store.set('qseq',Store.get('qseq',0)+1);this.state.quoteNo=nextQuoteNo();},
+ recordQuote(){const qs=Store.get('quotes',[]);
+  const snap={catalog:JSON.parse(JSON.stringify(this.state.catalog)),subItems:JSON.parse(JSON.stringify(this.state.subItems||{})),custom:JSON.parse(JSON.stringify(this.state.custom||[])),client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,blackOn:this.state.blackOn,blackItems:this.state.blackItems};
+  qs.unshift({id:uid(),ts:Date.now(),no:this.state.quoteNo,client:this.state.client.name,phone:this.state.client.phone||'',project:this.state.client.project||'',grand:this.grand(),snap:snap});
+  Store.set('quotes',qs.slice(0,200));Store.set('qseq',Store.get('qseq',0)+1);this.state.quoteNo=nextQuoteNo();},
+ loadQuote(id){const qs=Store.get('quotes',[]);const q=qs.find(x=>x.id===id);if(!q||!q.snap){this.toast('להצעה זו אין נתונים שמורים');return;}
+  const d=q.snap;Object.assign(this.state,{catalog:JSON.parse(JSON.stringify(d.catalog)),subItems:JSON.parse(JSON.stringify(d.subItems||{})),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:q.no,valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
+  this.save();Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
+  this.state.modal=null;this.toast('ההצעה נטענה לעריכה ✓');this.render();},
+ duplicateQuoteAsNew(id){this.loadQuote(id);this.state.quoteNo=nextQuoteNo();this.toast('נוצר עותק חדש לעריכה ✓');this.render();},
  async greenSend(number,message){const url=Store.get('gaUrl','https://api.green-api.com'),id=Store.get('gaId',''),tok=Store.get('gaToken','');if(!id||!tok)return false;let p=(number||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);if(p&&!p.startsWith('972'))p='972'+p;try{const r=await fetch(url.replace(/\/$/,'')+'/waInstance'+id+'/sendMessage/'+tok,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chatId:p+'@c.us',message})});return r.ok;}catch(e){return false;}},
  async notifySelf(){const txt=`📋 הצעת מחיר חדשה\nלקוח: ${this.state.client.name||'—'}\nטלפון: ${this.state.client.phone||'—'}\nסכום: ${nis(this.grand())}\nמס': ${this.state.quoteNo}`;if(Store.get('gaOn',true)&&Store.get('gaId','')){const ok=await this.greenSend(Store.get('gaTo','0543013389'),txt);if(ok){this.toast('עותק נשלח לקבלן ✓');return;}}setTimeout(()=>{try{window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(txt),'_blank');}catch(e){}},700);},
 };
