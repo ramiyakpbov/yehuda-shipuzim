@@ -320,7 +320,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.6';
+const VERSION='5.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -513,7 +513,7 @@ const PRESETS=[
   {name:'אינסטלציה – דירה',emoji:'🚰',pick:{plumb:{pl1:{q:6},pl2:{q:2},pl5:{q:2}}}},
   {name:'הריסה ופינוי',emoji:'🧱',pick:{demo:{dm1:{q:12},dm2:{q:40},dm4:{q:1}}}},
 ];
-const WA='972543013389'; // עותק קבלן
+const WA='972545718316'; // עותק קבלן — 054-571-8316
 /* ===== Missing-item suggestion rules: when an item is selected, suggest these related ids ===== */
 const SUGGEST_RULES={
  fn5:['dm2','fn12','fn8'], fn6:['dm2','fn12','fn8'], fn18:['dm2','fn12'], fn10:['fn12','dm2'],
@@ -532,8 +532,55 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','drafts','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn'];}};
 })();
+
+/* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates'];
+const Sync=(()=>{
+ let unsub=null,pushTimer=null,applying=false,lastPushed='';
+ const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
+ const localSnapshot=()=>{const o={};SYNC_KEYS.forEach(k=>{const v=Store.get(k,null);if(v!==null)o[k]=v;});return o;};
+ const applyRemote=(data)=>{if(!data)return 0;applying=true;let changed=0;
+   SYNC_KEYS.forEach(k=>{if(k in data){const cur=JSON.stringify(Store.get(k,null));const nxt=JSON.stringify(data[k]);if(cur!==nxt){Store.set(k,data[k]);changed++;}}});
+   applying=false;return changed;};
+ return{
+  status:'off',
+  enabled(){return !!(window._db&&Store.get('syncOn',true));},
+  deviceId(){let id=Store.get('deviceId','');if(!id){id='d'+Math.random().toString(36).slice(2,9);Store.set('deviceId',id);}return id;},
+  async init(onChange){
+    if(!this.enabled()){this.status='off';return false;}
+    const doc=DOC();if(!doc)return false;
+    try{
+      const snap=await doc.get();
+      if(snap.exists){
+        const d=snap.data()||{};
+        const remoteAt=d.updatedAt||0, localAt=Store.get('syncLocalAt',0);
+        if(remoteAt>localAt&&d.payload){applyRemote(d.payload);Store.set('syncLocalAt',remoteAt);}
+        else if(localAt>remoteAt){await this.push(true);}
+      }else{await this.push(true);}
+      unsub=doc.onSnapshot(s=>{
+        if(!s.exists)return;const d=s.data()||{};
+        if(d.device===this.deviceId())return;
+        if(d.payload){const n=applyRemote(d.payload);Store.set('syncLocalAt',d.updatedAt||Date.now());if(n&&onChange)onChange(n);}
+      },()=>{});
+      this.status='on';return true;
+    }catch(e){this.status='err';return false;}
+  },
+  async push(force){
+    if(!this.enabled())return false;const doc=DOC();if(!doc)return false;
+    const payload=localSnapshot();const str=JSON.stringify(payload);
+    if(!force&&str===lastPushed)return false;
+    const ts=Date.now();
+    try{await doc.set({payload:payload,updatedAt:ts,device:this.deviceId()});lastPushed=str;Store.set('syncLocalAt',ts);this.status='on';return true;}
+    catch(e){this.status='err';return false;}
+  },
+  schedulePush(){ if(applying||!this.enabled())return; clearTimeout(pushTimer); pushTimer=setTimeout(()=>this.push(),1200); },
+  stop(){if(unsub){try{unsub();}catch(e){}unsub=null;}this.status='off';}
+ };
+})();
+/* auto-push on any local change */
+(()=>{const _set=Store.set;Store.set=function(k,v){_set.call(Store,k,v);try{if(SYNC_KEYS.indexOf(k)>=0)Sync.schedulePush();}catch(e){}};})();
 
 /* ===== IndexedDB for photos ===== */
 const Photos=(()=>{let db=null;
@@ -633,7 +680,6 @@ const App={
   <div class="chips">
     <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
     <button class="chip" data-modal="tools">🧰 כלים</button>
-    <button class="chip" data-modal="drafts">🗂️ טיוטות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="quick">⚡ הצעה מהירה</button>
@@ -661,7 +707,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',drafts:'draftsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -709,9 +755,6 @@ const App={
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="gen-share">📲 צור ושתף (WhatsApp / מייל)</button>
-   <button class="btn-ghost" id="send-client">🟢 שלח PDF ללקוח (GREEN-API)</button>
-   <button class="btn-ghost" id="save-draft">💾 שמור כטיוטה</button>
-   <button class="btn-ghost" id="dup-quote">📋 שכפל הצעה זו (עותק חדש)</button>
    <button class="btn-ghost" id="weblink" style="border-color:var(--red);color:var(--red)">🔗 צור לינק הצעה לשליחה ללקוח</button>`;
  },
 
@@ -720,7 +763,7 @@ const App={
    <div class="toggle"><div><div style="font-weight:700">שליחה אוטומטית שקטה</div><div style="font-size:12px;color:var(--muted)">עותק לקבלן + משוב ללקוח</div></div><button class="switch ${Store.get('gaOn',true)?'on':''}" id="ga-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>apiUrl (מה-console שלך)</label><input id="ga-url" value="${Store.get('gaUrl','https://api.green-api.com')}" placeholder="https://7107.api.greenapi.com"/></div>
    <div class="row2"><div class="field"><label>idInstance</label><input id="ga-id" value="${Store.get('gaId','')}" placeholder="710701674968"/></div>
-     <div class="field"><label>מספר קבלן</label><input id="ga-to" value="${Store.get('gaTo','0543013389')}"/></div></div>
+     <div class="field"><label>מספר קבלן</label><input id="ga-to" value="${Store.get('gaTo','0545718316')}"/></div></div>
    <div class="field"><label>apiTokenInstance</label><div style="display:flex;gap:8px"><input id="ga-token" type="password" value="${Store.get('gaToken','')}" placeholder="הדבק את הטוקן" style="flex:1"/><button class="mini2" id="ga-eye" type="button">👁</button></div></div>
    <button class="btn-ghost" id="ga-save">💾 שמור</button>
    <button class="btn-ghost" id="ga-test">📤 בדיקת חיבור</button>
@@ -749,6 +792,10 @@ const App={
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
    <div class="sec-title">🔒 אזור מאובטח (GREEN-API · Drive)</div>
    ${unlocked?gaBlock:lockCard}
+   <div class="sec-title">☁️ סנכרון בין מכשירים</div>
+   <div class="toggle"><div><div style="font-weight:700">סנכרון ענן</div><div style="font-size:12px;color:var(--muted)">לקוחות · מחירון · הצעות · הגדרות — בכל המכשירים</div></div><button class="switch ${Store.get('syncOn',true)?'on':''}" id="sync-toggle"><span class="knob"></span></button></div>
+   <div style="font-size:12px;color:var(--muted);margin:6px 2px 8px">מצב: <b style="color:${Sync.status==='on'?'var(--ok)':(Sync.status==='err'?'var(--red)':'var(--muted)')}">${Sync.status==='on'?'מסונכרן ✓':(Sync.status==='err'?'שגיאת חיבור':'כבוי')}</b>${Store.get('syncLocalAt',0)?' · עודכן: '+new Date(Store.get('syncLocalAt',0)).toLocaleString('he-IL'):''}</div>
+   <button class="btn-ghost" id="sync-now">🔄 סנכרן עכשיו</button>
    <div class="sec-title">כללי</div>
    <div class="toggle"><div><div style="font-weight:700">מצב בהיר ☀️</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>יעד חודשי — מספר הצעות (מופיע בדו"ח)</label><input id="target-quotes" type="number" inputmode="numeric" value="${Store.get('targetQuotes','')||''}" placeholder="לדוגמה: 20"/></div>
@@ -961,12 +1008,6 @@ const App={
      <button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join(''):'<div class="empty">אין הצעות פתוחות במעקב 👌</div>'}`;
  },
 
- draftsModal(){const list=Store.get('drafts',[]);
-  return `<h2>טיוטות הצעות <button class="x" data-close>✕</button></h2>
-   ${list.length?list.map(d=>`<div class="list-item"><div class="info"><div class="t">${d.client.name||'ללא שם'} — ${nis(d.grand)}</div><div class="s">${d.savedAt}</div></div>
-     <button class="mini" data-loaddraft="${d.id}">טען</button><button class="mini" data-dupdraft="${d.id}">שכפל</button>
-     <button class="del" data-deldraft="${d.id}">🗑️</button></div>`).join(''):'<div class="empty">אין טיוטות שמורות</div>'}`;
- },
 
  photosModal(){const cl=Store.get('clients',[]).find(c=>c.id===this.state.photoClient)||{};
   return `<h2>תמונות — ${cl.name||''} <button class="x" data-close>✕</button></h2>
@@ -1041,14 +1082,16 @@ const App={
   const gaSaveFields=()=>{Store.set('gaUrl',gaV('ga-url').trim());Store.set('gaId',gaV('ga-id').trim());Store.set('gaToken',gaV('ga-token').trim());Store.set('gaTo',gaV('ga-to').trim());};
   const gto=document.getElementById('ga-toggle');if(gto)gto.onclick=()=>{Store.set('gaOn',!Store.get('gaOn',true));this.render();};
   const gsa=document.getElementById('ga-save');if(gsa)gsa.onclick=()=>{gaSaveFields();this.toast('נשמר ✓');};
-  const gte=document.getElementById('ga-test');if(gte)gte.onclick=async()=>{gaSaveFields();if(!Store.get('gaId','')||!Store.get('gaToken','')){this.toast('מלא idInstance וטוקן');return;}this.toast('שולח בדיקה…');const ok=await this.greenSend(Store.get('gaTo','0543013389'),'בדיקת חיבור מ-אפליקציית יהודה שיפוצים ✓');this.toast(ok?'נשלח בהצלחה ✓':'נכשל — בדוק apiUrl/טוקן (או חסימת CORS)');};
+  const gte=document.getElementById('ga-test');if(gte)gte.onclick=async()=>{gaSaveFields();if(!Store.get('gaId','')||!Store.get('gaToken','')){this.toast('מלא idInstance וטוקן');return;}this.toast('שולח בדיקה…');const ok=await this.greenSend(Store.get('gaTo','0545718316'),'בדיקת חיבור מ-אפליקציית יהודה שיפוצים ✓');this.toast(ok?'נשלח בהצלחה ✓':'נכשל — בדוק apiUrl/טוקן (או חסימת CORS)');};
   const ia=document.getElementById('install-app');if(ia)ia.onclick=()=>doInstall();
   const cu=document.getElementById('check-update');if(cu)cu.onclick=()=>this.checkUpdate();
+  const syt=document.getElementById('sync-toggle');if(syt)syt.onclick=async()=>{const on=!Store.get('syncOn',true);Store.set('syncOn',on);if(on){this.toast('מפעיל סנכרון…');await Sync.init(()=>{this.render();});await Sync.push(true);this.toast(Sync.status==='on'?'סנכרון פעיל ✓':'סנכרון נכשל');}else{Sync.stop();this.toast('סנכרון כובה');}this.render();};
+  const syn=document.getElementById('sync-now');if(syn)syn.onclick=async()=>{if(!Sync.enabled()){this.toast('הפעל סנכרון קודם');return;}this.toast('מסנכרן…');const ok=await Sync.push(true);await Sync.init(()=>this.render());this.toast(ok||Sync.status==='on'?'סונכרן ✓':'סנכרון נכשל');this.render();};
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{if(!confirm('לאפס את המחירון למחירי ברירת המחדל 2026?\nהכמויות יתאפסו · תתי-הסעיפים שהוספת יישארו (עם איפוס כמות).'))return;this.state.catalog=JSON.parse(JSON.stringify(CATALOG));const clr=arr=>{if(arr)arr.forEach(it=>{it.selected=false;it.qty='';});};Object.values(this.state.subItems||{}).forEach(clr);clr(this.state.custom);Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);this.save();this.toast('המחירון אופס · הכמויות אופסו · תתי-הסעיפים נשמרו ✓');this.render();};
   const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
   const tq=document.getElementById('target-quotes');if(tq)tq.oninput=e=>Store.set('targetQuotes',+e.target.value||0);
-  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות, הלקוחות והטיוטות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}['quotes','clients','drafts','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.toast('הנתונים אופסו ✓');this.render();};
+  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.toast('הנתונים אופסו ✓');this.render();};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
@@ -1064,7 +1107,7 @@ const App={
   const gEye=document.getElementById('ga-eye');if(gEye)gEye.onclick=()=>{const t=document.getElementById('ga-token');if(t)t.type=t.type==='password'?'text':'password';};
   // monthly report
   const rm=document.getElementById('rep-month');if(rm)rm.onchange=e=>{this.state.reportMonth=e.target.value;this.render();};
-  const rs=document.getElementById('rep-send');if(rs)rs.onclick=async()=>{const ym=this.state.reportMonth,d=this.reportData(ym);const msg=`📊 סיכום ${this.monthName(ym)}\nהצעות שהופקו: ${d.quotes}\nפרויקטים שנסגרו: ${d.closed}\nפידבקים: ${d.feedbacks}\nבקשות משוב: ${d.reviews}\nלקוחות חדשים: ${d.newClients}\nאחוז סגירה: ${d.conv}%\nהיקף כספי: ${nis(d.sum)}\n— יהודה שיפוצים`;let sent=false;if(Store.get('gaId','')&&Store.get('gaTo',''))sent=await this.greenSend(Store.get('gaTo','0543013389'),msg);if(sent)this.toast('הסיכום נשלח אליך ✓');else window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');};
+  const rs=document.getElementById('rep-send');if(rs)rs.onclick=async()=>{const ym=this.state.reportMonth,d=this.reportData(ym);const msg=`📊 סיכום ${this.monthName(ym)}\nהצעות שהופקו: ${d.quotes}\nפרויקטים שנסגרו: ${d.closed}\nפידבקים: ${d.feedbacks}\nבקשות משוב: ${d.reviews}\nלקוחות חדשים: ${d.newClients}\nאחוז סגירה: ${d.conv}%\nהיקף כספי: ${nis(d.sum)}\n— יהודה שיפוצים`;let sent=false;if(Store.get('gaId','')&&Store.get('gaTo',''))sent=await this.greenSend(Store.get('gaTo','0545718316'),msg);if(sent)this.toast('הסיכום נשלח אליך ✓');else window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');};
 
   const tgt=document.getElementById('tg-terms');if(tgt)tgt.onclick=()=>{this.captureQuote();this.state.showTerms=!this.state.showTerms;this.render();};
   ['white','black'].forEach(k=>{const t=document.getElementById('tg-'+k);if(t)t.onclick=()=>{this.captureQuote();this.state[k+'On']=!this.state[k+'On'];this.render();};});
@@ -1077,10 +1120,8 @@ const App={
   const opf=document.getElementById('open-portfolio');if(opf)opf.onclick=()=>{this.captureQuote();this.state.modal='portfolio';this.render();};
   const gp=document.getElementById('gen-pdf');if(gp)gp.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='quote';this.generatePDF(false);};
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
-  const scl=document.getElementById('send-client');if(scl)scl.onclick=()=>{this.state.docType='quote';this.sendPdfToClient();};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
   const gsh=document.getElementById('gen-share');if(gsh)gsh.onclick=()=>{this.captureQuote();this.saveClient();this.generatePDF(true);};
-  const sd=document.getElementById('save-draft');if(sd)sd.onclick=()=>{this.captureQuote();this.saveDraft();};
   if(this.state.modal==='sign')this.initSigPad();
 
   const cg=document.getElementById('calc-go');if(cg)cg.onclick=()=>{const l=+document.getElementById('calc-l').value||0,w=+document.getElementById('calc-w').value||0,n=+document.getElementById('calc-n').value||1;const a=Math.round(l*w*n*100)/100;document.getElementById('calc-out').textContent=a?a+' מ"ר':'';};
@@ -1105,15 +1146,11 @@ const App={
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
   on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=(+it.qty>0);this.saveActive(cid);this.render();}});
-  const dq=document.getElementById('dup-quote');if(dq)dq.onclick=()=>{this.captureQuote();this.saveDraft();this.state.quoteNo=nextQuoteNo();this.toast('שוכפל — נשמר כטיוטה עם מס׳ הצעה חדש ✓');this.render();};
   const wl=document.getElementById('weblink');if(wl)wl.onclick=()=>this.makeProposalLink();
   const qkg=document.getElementById('qk-go');if(qkg)qkg.onclick=()=>{const g=id=>(document.getElementById(id)||{}).value||'';const nm=g('qk_name').trim();if(!nm){this.toast('הזן תיאור עבודה');return;}const item={id:uid(),name:nm,price:+g('qk_price')||0,unit:'גלובלי',qty:+g('qk_qty')||1,selected:true};this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.state.client.name=g('qk_client');this.state.client.phone=g('qk_phone');this.state.modal='quote';this.toast('נוצרה הצעה מהירה — בדוק והפק ✓');this.render();};
   on('[data-review]','click',e=>this.sendReview(e.currentTarget.dataset.review));
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
   on('[data-delclient]','click',e=>{Store.set('clients',Store.get('clients',[]).filter(c=>c.id!==e.currentTarget.dataset.delclient));this.render();});
-  on('[data-loaddraft]','click',e=>this.loadDraft(e.currentTarget.dataset.loaddraft));
-  on('[data-dupdraft]','click',e=>{this.loadDraft(e.currentTarget.dataset.dupdraft);this.state.quoteNo=nextQuoteNo();this.toast('שוכפל — מספר חדש');});
-  on('[data-deldraft]','click',e=>{Store.set('drafts',Store.get('drafts',[]).filter(d=>d.id!==e.currentTarget.dataset.deldraft));this.render();});
 
   const pr=document.getElementById('poll-replies');if(pr)pr.onclick=()=>this.pollReplies();
   on('[data-nudge]','click',async e=>{const cl=Store.get('clients',[]).find(c=>c.id===e.currentTarget.dataset.nudge);const msg=`שלום ${cl.name}, רק מזכיר לגבי הצעת המחיר ששלחתי — אשמח לדעת אם יש שאלות 🙂 יהודה שיפוצים`;let sent=false;if(Store.get('gaOn',true)&&Store.get('gaId','')&&cl.phone)sent=await this.greenSend(cl.phone,msg);if(sent)this.toast('תזכורת נשלחה ✓');else window.open(waLink(cl.phone,msg),'_blank');});
@@ -1154,8 +1191,6 @@ const App={
   const a=document.createElement('a');a.href=url;a.download='לקוחות-יהודה-שיפוצים.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   this.toast('קובץ CSV נוצר ✓');
  },
- saveDraft(){const list=Store.get('drafts',[]);list.unshift({id:uid(),savedAt:new Date().toLocaleString('he-IL'),grand:this.grand(),client:{...this.state.client},quoteNo:this.state.quoteNo,valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:[...this.state.whiteItems],blackOn:this.state.blackOn,blackItems:[...this.state.blackItems],catalog:JSON.parse(JSON.stringify(this.state.catalog)),custom:JSON.parse(JSON.stringify(this.state.custom)),vatOn:this.state.vatOn,vatPct:this.state.vatPct});Store.set('drafts',list.slice(0,80));this.toast('הטיוטה נשמרה ✓');},
- loadDraft(id){const d=Store.get('drafts',[]).find(x=>x.id===id);if(!d)return;Object.assign(this.state,{catalog:JSON.parse(JSON.stringify(d.catalog)),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:d.quoteNo,valid:d.valid,discount:d.discount||0,advance:d.advance||0,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[],vatOn:d.vatOn,vatPct:d.vatPct});this.save();this.state.modal=null;this.toast('הטיוטה נטענה');this.render();},
  loadPreset(idx){const p=PRESETS[idx];for(const cid in p.pick){const cat=this.state.catalog.find(c=>c.id===cid);if(!cat)continue;for(const iid in p.pick[cid]){const it=cat.items.find(i=>i.id===iid);if(it){it.selected=true;it.qty=p.pick[cid][iid].q;}}}this.save();this.state.modal=null;this.toast('התבנית נטענה — בדוק כמויות');this.render();},
  loadUserTemplate(idx){const list=Store.get('userTemplates',[]);const p=list[idx];if(!p)return;for(const cid in p.pick){const cat=this.state.catalog.find(c=>c.id===cid);if(!cat)continue;for(const iid in p.pick[cid]){const it=cat.items.find(i=>i.id===iid);if(it){it.selected=true;it.qty=p.pick[cid][iid].q;}}}this.save();this.state.modal=null;this.toast('התבנית שלך נטענה ✓');this.render();},
  saveAsTemplate(){const pick={};let count=0;this.state.catalog.forEach(cat=>{cat.items.forEach(it=>{if(it.selected){pick[cat.id]=pick[cat.id]||{};pick[cat.id][it.id]={q:+it.qty||1};count++;}});});
@@ -1223,7 +1258,7 @@ const App={
    <div class="p-foot">${L.foot} · ${s.date}</div></div>`;
  },
 
- async sendSignedConfirmation(){this.captureQuote();const id=Store.get('gaId',''),tok=Store.get('gaToken','');const owner=Store.get('gaTo','0543013389');const txt=`✅ הצעה חתומה על ידי הלקוח\nלקוח: ${this.state.client.name||'—'}\nמס': ${this.state.quoteNo}\nסכום: ${nis(this.grand())}`;
+ async sendSignedConfirmation(){this.captureQuote();const id=Store.get('gaId',''),tok=Store.get('gaToken','');const owner=Store.get('gaTo','0545718316');const txt=`✅ הצעה חתומה על ידי הלקוח\nלקוח: ${this.state.client.name||'—'}\nמס': ${this.state.quoteNo}\nסכום: ${nis(this.grand())}`;
   if(!id||!tok){this.toast('הגדר GREEN-API לשליחת אישור');window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(txt),'_blank');return;}
   this.toast('שולח אישור חתום אליך…');
   try{const{blob,fname}=await this.makePdfBlob();const url=Store.get('gaUrl','https://api.green-api.com').replace(/\/$/,'');let p=owner.replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);const fd=new FormData();fd.append('chatId',p+'@c.us');fd.append('file',blob,fname);fd.append('caption',txt);const r=await fetch(url+'/waInstance'+id+'/sendFileByUpload/'+tok,{method:'POST',body:fd});this.toast(r.ok?'אישור חתום נשלח אליך ✓':'שליחה נכשלה');}catch(e){this.toast('שגיאת רשת/CORS');}
@@ -1314,12 +1349,6 @@ const App={
   if(!shared){pdf.save(fname);this.toast('ה-PDF נוצר ✓');}
   this.notifySelf();
  },
- async sendPdfToClient(){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}this.captureQuote();const c=this.state.client;if(!c.phone){this.toast('הזן טלפון ללקוח');return;}const id=Store.get('gaId',''),tok=Store.get('gaToken','');if(!id||!tok){this.toast('הגדר GREEN-API בהגדרות כדי לשלוח קובץ');return;}
-  this.toast('מכין ושולח PDF ללקוח…');const{blob,fname}=await this.makePdfBlob();this.saveClient();this.recordQuote();
-  let p=(c.phone).replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);if(p&&!p.startsWith('972'))p='972'+p;
-  const url=Store.get('gaUrl','https://api.green-api.com').replace(/\/$/,'');const fd=new FormData();fd.append('chatId',p+'@c.us');fd.append('caption',`מצורף ${this.state.docType==='contract'?'חוזה/הזמנת עבודה':'הצעת מחיר'} · יהודה שיפוצים`);fd.append('file',blob,fname);
-  try{const r=await fetch(url+'/waInstance'+id+'/sendFileByUpload/'+tok,{method:'POST',body:fd});this.toast(r.ok?'ה-PDF נשלח ללקוח ✓':'שליחה נכשלה — בדוק GREEN-API/CORS');}catch(e){this.toast('שגיאת רשת/CORS');}
- },
  async pollReplies(){const url=Store.get('gaUrl','https://api.green-api.com').replace(/\/$/,''),id=Store.get('gaId',''),tok=Store.get('gaToken','');if(!id||!tok){this.toast('הגדר GREEN-API');return;}this.toast('בודק תגובות…');let found=0;const clients=Store.get('clients',[]);
   for(let i=0;i<12;i++){let d;try{const r=await fetch(url+'/waInstance'+id+'/receiveNotification/'+tok);if(r.status===204)break;d=await r.json();}catch(e){break;}if(!d||!d.receiptId)break;
    try{const b=d.body||{};if(b.typeWebhook==='incomingMessageReceived'){const chat=((b.senderData&&b.senderData.chatId)||'').replace(/\D/g,'');const cl=clients.find(c=>{let p=(c.phone||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);return p&&chat.indexOf(p)>=0;});if(cl&&cl.status==='sent'){cl.status='done';cl.doneAt=Date.now();cl.feedbackAt=Date.now();found++;}}}catch(e){}
@@ -1338,7 +1367,7 @@ const App={
   this.state.modal=null;this.toast('ההצעה נטענה לעריכה ✓');this.render();},
  duplicateQuoteAsNew(id){this.loadQuote(id);this.state.quoteNo=nextQuoteNo();this.toast('נוצר עותק חדש לעריכה ✓');this.render();},
  async greenSend(number,message){const url=Store.get('gaUrl','https://api.green-api.com'),id=Store.get('gaId',''),tok=Store.get('gaToken','');if(!id||!tok)return false;let p=(number||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);if(p&&!p.startsWith('972'))p='972'+p;try{const r=await fetch(url.replace(/\/$/,'')+'/waInstance'+id+'/sendMessage/'+tok,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chatId:p+'@c.us',message})});return r.ok;}catch(e){return false;}},
- async notifySelf(){const txt=`📋 הצעת מחיר חדשה\nלקוח: ${this.state.client.name||'—'}\nטלפון: ${this.state.client.phone||'—'}\nסכום: ${nis(this.grand())}\nמס': ${this.state.quoteNo}`;if(Store.get('gaOn',true)&&Store.get('gaId','')){const ok=await this.greenSend(Store.get('gaTo','0543013389'),txt);if(ok){this.toast('עותק נשלח לקבלן ✓');return;}}setTimeout(()=>{try{window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(txt),'_blank');}catch(e){}},700);},
+ async notifySelf(){const txt=`📋 הצעת מחיר חדשה\nלקוח: ${this.state.client.name||'—'}\nטלפון: ${this.state.client.phone||'—'}\nסכום: ${nis(this.grand())}\nמס': ${this.state.quoteNo}`;if(Store.get('gaOn',true)&&Store.get('gaId','')){const ok=await this.greenSend(Store.get('gaTo','0545718316'),txt);if(ok){this.toast('עותק נשלח לקבלן ✓');return;}}setTimeout(()=>{try{window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(txt),'_blank');}catch(e){}},700);},
 };
 
 /* ===== התקנת אפליקציה (Install) ===== */
@@ -1410,6 +1439,8 @@ document.addEventListener('DOMContentLoaded',()=>{
  // client-facing proposal view via self-contained LONG link (#p=...) — fallback / old links
  if(location.hash&&location.hash.indexOf('#p=')===0){try{let b64=location.hash.slice(3).replace(/-/g,'+').replace(/_/g,'/');const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));const data=JSON.parse(new TextDecoder().decode(bytes));const sp=document.getElementById('splash');if(sp)sp.style.display='none';document.getElementById('root').innerHTML=App.proposalView(data);return;}catch(e){}}
  App.render();
+ // start cloud sync (all devices)
+ try{Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards)
  const sp=document.getElementById('splash');
  const track=document.getElementById('slider-track'), knob=document.getElementById('slider-knob'), fill=document.getElementById('slider-fill');
