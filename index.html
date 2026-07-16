@@ -320,7 +320,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.8';
+const VERSION='5.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
@@ -679,12 +679,10 @@ const App={
       <button class="mic" id="mic">🎤</button></div></div>
   <div class="chips">
     <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
-    <button class="chip" data-modal="tools">🧰 כלים</button>
+    <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
-    <button class="chip" data-modal="quick">⚡ הצעה מהירה</button>
     <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
-    <button class="chip" data-modal="templates">📋 תבניות</button>
     <button class="chip" data-modal="sentquotes">📤 הצעות שנשלחו</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
@@ -707,7 +705,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',tools:'toolsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',quick:'quickModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -799,6 +797,10 @@ const App={
    <div class="sec-title">כללי</div>
    <div class="toggle"><div><div style="font-weight:700">מצב בהיר ☀️</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>יעד חודשי — מספר הצעות (מופיע בדו"ח)</label><input id="target-quotes" type="number" inputmode="numeric" value="${Store.get('targetQuotes','')||''}" placeholder="לדוגמה: 20"/></div>
+   <div class="sec-title">גיבוי ידני</div>
+   <button class="btn-ghost" id="backup">⬇️ ייצא גיבוי (JSON)</button>
+   <button class="btn-ghost" id="restore-btn">⬆️ שחזר מגיבוי (גם למכשיר אחר)</button>
+   <input id="restore-file" type="file" accept="application/json" class="hidden"/>
    <button class="btn-ghost" id="reset-catalog">♻️ אפס מחירון לברירת מחדל 2026</button>
    <button class="btn-ghost" id="restore-auto">↩️ שחזר מגיבוי אוטומטי אחרון</button>
    <button class="btn-ghost" id="reset-data" style="color:var(--red);border-color:var(--red)">🧪 איפוס נתוני טסטים (הצעות/לקוחות/דשבורד)</button>
@@ -806,19 +808,6 @@ const App={
    <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · 054-5718316<br>yehuda-shipuzim.netlify.app</div>`;
  },
 
- toolsModal(){
-  return `<h2>כלים 🧰 <button class="x" data-close>✕</button></h2>
-   <div class="sec-title">מחשבון מ"ר מהיר</div>
-   <div class="row2"><div class="field"><label>אורך (מ')</label><input id="calc-l" type="number" inputmode="decimal"/></div>
-     <div class="field"><label>רוחב (מ')</label><input id="calc-w" type="number" inputmode="decimal"/></div></div>
-   <div class="field"><label>כמות</label><input id="calc-n" type="number" inputmode="decimal" value="1"/></div>
-   <button class="btn-ghost" id="calc-go">חשב שטח</button>
-   <div id="calc-out" style="text-align:center;font-size:20px;font-weight:900;color:var(--red);margin-top:10px"></div>
-   <div class="sec-title">גיבוי / סנכרון ידני</div>
-   <button class="btn-ghost" id="backup">⬇️ ייצא גיבוי (JSON)</button>
-   <button class="btn-ghost" id="restore-btn">⬆️ שחזר מגיבוי (גם למכשיר אחר)</button>
-   <input id="restore-file" type="file" accept="application/json" class="hidden"/>`;
- },
 
  addCustomModal(){const tgt=this.state.addTarget;const cat=tgt&&tgt!=='custom'?this.state.catalog.find(c=>c.id===tgt):null;
   return `<h2>${cat?'תת-סעיף · '+cat.title:'פריט מותאם חדש'} <button class="x" data-close>✕</button></h2>
@@ -858,7 +847,18 @@ const App={
    ['💡 טיפ ייעול','תן לי טיפ אחד קצר וקונקרטי לניהול יעיל יותר של עסק שיפוצים.']];
   const pname=prov==='claude'?'Claude':'Gemini';
   return `<h2>🤖 עוזר AI · ${pname} <button class="x" data-close>✕</button></h2>
-   ${hasKey?'':'<div class="empty" style="padding:14px">כדי להשתמש, הזן מפתח '+pname+' ב-⚙️ הגדרות ← אזור מאובטח (ובחר עוזר פעיל).</div>'}
+   ${hasKey?'':`<div style="background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px">
+     <div style="font-weight:800;font-size:15px;margin-bottom:6px">🔑 הפעלה חד-פעמית (2 דקות, חינם)</div>
+     <div style="font-size:12.5px;color:var(--muted);line-height:1.8;margin-bottom:10px">
+       לא ניתן להתחבר לאפליקציית ג'מיני שבמכשיר — צריך מפתח אישי חינמי:<br>
+       1️⃣ לחץ "קבל מפתח חינם" ← התחבר עם Google<br>
+       2️⃣ לחץ <b>Create API key</b> והעתק אותו<br>
+       3️⃣ חזור לכאן והדבק למטה — זהו, פעם אחת בלבד.
+     </div>
+     <a class="btn-block" href="https://aistudio.google.com/apikey" target="_blank" style="display:block;text-align:center;text-decoration:none;margin-bottom:8px">🔗 קבל מפתח חינם (Google AI Studio)</a>
+     <div class="field"><label>הדבק כאן את המפתח (מתחיל ב-AIza…)</label><input id="gem-key-quick" type="password" placeholder="AIza…"/></div>
+     <button class="btn-block" id="gem-key-save">💾 שמור והפעל</button>
+   </div>`}
    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">${acts.map((a,i)=>`<button class="chip" data-gem="${i}">${a[0]}</button>`).join('')}</div>
    <div class="field"><textarea id="gem-in" placeholder="כתוב שאלה או תיאור עבודה…" style="min-height:70px"></textarea></div>
    <button class="btn-block" id="gem-run" ${hasKey?'':'disabled style="opacity:.5"'}>שאל את ${pname}</button>
@@ -876,15 +876,6 @@ const App={
   const key=Store.get('geminiKey','');if(!key){this.toast('הזן מפתח Gemini בהגדרות');return;}if(out)out.textContent='חושב… (Gemini)';
   try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
    const d=await r.json();const txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||d.error?.message||'לא התקבלה תשובה';if(out)out.textContent=txt;}catch(e){if(out)out.textContent='שגיאת רשת/מפתח';}
- },
- quickModal(){return `<h2>⚡ הצעה מהירה <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12px;color:var(--muted);margin-bottom:10px">לסעיף בודד — ממלאים ומקבלים הצעה מוכנה בשניות.</div>
-   <div class="field"><label>שם הלקוח</label><input id="qk_client" placeholder="שם מלא"/></div>
-   <div class="field"><label>טלפון</label><input id="qk_phone" inputmode="tel" placeholder="050-…"/></div>
-   <div class="field"><label>תיאור העבודה</label><input id="qk_name" placeholder="לדוגמה: צביעת דירה 4 חדרים"/></div>
-   <div class="row2"><div class="field"><label>מחיר (₪)</label><input id="qk_price" type="number" inputmode="decimal"/></div>
-     <div class="field"><label>כמות</label><input id="qk_qty" type="number" inputmode="decimal" value="1"/></div></div>
-   <button class="btn-block" id="qk-go">המשך להצעה ›</button>`;
  },
  previewModal(){const groups=this.chosen();
   if(!groups.length)return `<h2>תצוגה מקדימה <button class="x" data-close>✕</button></h2><div class="empty" style="padding:20px">לא נבחרו סעיפים עדיין.<br>סמן סעיפים ותוכל לראות אותם כאן.</div>`;
@@ -926,11 +917,11 @@ const App={
  },
  templatesModal(){const user=Store.get('userTemplates',[]);
   const presetInfo=p=>{let n=0,sum=0;for(const cid in p.pick){for(const iid in p.pick[cid]){const it=this.find(cid,iid);if(it){n++;sum+=(+it.price||0)*(+p.pick[cid][iid].q||1);}}}return{n,sum};};
-  return `<h2>📋 תבניות <button class="x" data-close>✕</button></h2>
+  return `<h2>⚡ הצעות מהירות <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">לחיצה טוענת סעיפים טיפוסיים — אפשר לערוך כמויות ומחירים אחרי כן.</div>
-   <button class="btn-block" id="save-tpl" style="margin-bottom:14px">💾 שמור את ההצעה הנוכחית כתבנית</button>
-   ${user.length?`<div class="sec-title">התבניות שלי</div>${user.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">⭐ ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-utpl="${i}">טען »</button><button class="del" data-deltpl="${i}">🗑️</button></div>`;}).join('')}`:''}
-   <div class="sec-title">תבניות מובנות</div>
+   <button class="btn-block" id="save-tpl" style="margin-bottom:14px">💾 שמור את ההצעה הנוכחית לשימוש חוזר</button>
+   ${user.length?`<div class="sec-title">ההצעות שלי</div>${user.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">⭐ ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-utpl="${i}">טען »</button><button class="del" data-deltpl="${i}">🗑️</button></div>`;}).join('')}`:''}
+   <div class="sec-title">הצעות מוכנות</div>
    ${PRESETS.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">${p.emoji||'📋'} ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-preset="${i}">טען »</button></div>`;}).join('')}`;
  },
  voiceModal(){const on=this._voiceOn;const last=this._lastItem?this.find(this._lastItem.cid,this._lastItem.iid):null;
@@ -1124,12 +1115,12 @@ const App={
   const gsh=document.getElementById('gen-share');if(gsh)gsh.onclick=()=>{this.captureQuote();this.saveClient();this.generatePDF(true);};
   if(this.state.modal==='sign')this.initSigPad();
 
-  const cg=document.getElementById('calc-go');if(cg)cg.onclick=()=>{const l=+document.getElementById('calc-l').value||0,w=+document.getElementById('calc-w').value||0,n=+document.getElementById('calc-n').value||1;const a=Math.round(l*w*n*100)/100;document.getElementById('calc-out').textContent=a?a+' מ"ר':'';};
   on('[data-preset]','click',e=>this.loadPreset(+e.currentTarget.dataset.preset));
   on('[data-utpl]','click',e=>this.loadUserTemplate(+e.currentTarget.dataset.utpl));
   on('[data-deltpl]','click',e=>{const i=+e.currentTarget.dataset.deltpl;const list=Store.get('userTemplates',[]);if(confirm('למחוק את התבנית "'+(list[i]&&list[i].name)+'"?')){list.splice(i,1);Store.set('userTemplates',list);this.render();}});
   const st=document.getElementById('save-tpl');if(st)st.onclick=()=>this.saveAsTemplate();
   const gemRun=document.getElementById('gem-run');if(gemRun)gemRun.onclick=()=>{const v=(document.getElementById('gem-in').value||'').trim();if(!v){this.toast('כתוב שאלה');return;}this.geminiAsk(v);};
+  const gks=document.getElementById('gem-key-save');if(gks)gks.onclick=()=>{const v=(document.getElementById('gem-key-quick')||{}).value||'';if(!v.trim()){this.toast('הדבק מפתח קודם');return;}Store.set('geminiKey',v.trim());Store.set('aiProvider','gemini');this.toast('המפתח נשמר — ה-AI פעיל ✓');this.render();};
   on('[data-gem]','click',e=>{const acts=['נסח הודעת וואטסאפ קצרה, מנומסת ומקצועית בעברית ללקוח בשם הקבלן "יהודה שיפוצים", בנוגע להצעת מחיר ששלחתי.','אני קבלן שיפוצים. הצע רשימת סעיפי עבודה (line items) לפרויקט, כולל יחידת מידה מקובלת בישראל, עבור: ','כתוב תיאור עבודה מקצועי וברור בעברית להצעת מחיר עבור: ','תן לי טיפ אחד קצר וקונקרטי לניהול יעיל יותר של עסק שיפוצים.'];const i=+e.currentTarget.dataset.gem;const ta=document.getElementById('gem-in');if(i===0||i===3){this.geminiAsk(acts[i]);}else if(ta){ta.value=acts[i];ta.focus();}});
   const bk=document.getElementById('backup');if(bk)bk.onclick=()=>this.backup();
   const rb=document.getElementById('restore-btn');if(rb)rb.onclick=()=>document.getElementById('restore-file').click();
@@ -1147,7 +1138,6 @@ const App={
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
   on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=(+it.qty>0);this.saveActive(cid);this.render();}});
   const wl=document.getElementById('weblink');if(wl)wl.onclick=()=>this.makeProposalLink();
-  const qkg=document.getElementById('qk-go');if(qkg)qkg.onclick=()=>{const g=id=>(document.getElementById(id)||{}).value||'';const nm=g('qk_name').trim();if(!nm){this.toast('הזן תיאור עבודה');return;}const item={id:uid(),name:nm,price:+g('qk_price')||0,unit:'גלובלי',qty:+g('qk_qty')||1,selected:true};this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;this.state.client.name=g('qk_client');this.state.client.phone=g('qk_phone');this.state.modal='quote';this.toast('נוצרה הצעה מהירה — בדוק והפק ✓');this.render();};
   on('[data-review]','click',e=>this.sendReview(e.currentTarget.dataset.review));
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
   on('[data-delclient]','click',e=>{Store.set('clients',Store.get('clients',[]).filter(c=>c.id!==e.currentTarget.dataset.delclient));this.render();});
