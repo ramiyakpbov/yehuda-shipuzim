@@ -102,6 +102,8 @@ input,select,textarea{font-family:inherit;}
 .trk-alert .ta-h{font-size:13px;font-weight:800;color:var(--red);margin-bottom:8px;}
 .trk-alert .ta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--txt);padding:5px 0;}
 .trk-comment{flex-basis:100%;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--txt);margin-top:8px;line-height:1.5;}
+.statcard.clickable{cursor:pointer;border-color:rgba(237,28,36,.4);}
+.statcard.clickable:active{background:var(--red);}
 .trk-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
 .trk-box{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;}
 .trk-box .n{font-size:22px;font-weight:900;color:var(--txt);}
@@ -244,15 +246,14 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 /* PDF-format proposal landing page */
 .pv2-wrap{min-height:100vh;background:#eceae6;padding:14px;display:flex;justify-content:center;align-items:flex-start;}
 .pv2-page{max-width:780px;width:100%;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.14);padding:22px 20px 18px;color:#1c1c1c;}
-.pv2-top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;}
+.pv2-top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #ed1c24;padding-bottom:14px;gap:10px;margin-bottom:14px;}
+.pv2-meta{font-size:12px;color:#333;line-height:1.9;flex:none;min-width:132px;padding-top:6px;}
+.pv2-meta b{color:#ed1c24;font-weight:800;}
+.pv2-title{flex:1;text-align:center;padding-top:6px;}
 .pv2-title .t{color:#ed1c24;font-size:30px;font-weight:900;line-height:1;}
-.pv2-title .e{color:#ed1c24;font-size:11px;letter-spacing:4px;font-weight:700;margin-top:2px;}
-.pv2-title .meta{font-size:12.5px;color:#333;margin-top:10px;line-height:1.8;}
-.pv2-title .meta b{color:#ed1c24;font-weight:800;}
-.pv2-logo{text-align:center;flex:none;max-width:220px;}
-.pv2-logo img{width:170px;height:auto;}
-.pv2-logo .c{font-size:10.5px;color:#555;margin-top:4px;line-height:1.5;}
-.pv2-line{height:4px;background:#ed1c24;border-radius:3px;margin:14px 0;}
+.pv2-title .e{color:#ed1c24;font-size:9.5px;letter-spacing:3px;font-weight:700;margin-top:3px;}
+.pv2-logo{text-align:center;flex:none;min-width:130px;}
+.pv2-logo img{width:128px;height:auto;}
 .pv2-parties{display:flex;gap:10px;background:#f6f2ea;border:1px solid #e8e0d2;border-radius:10px;padding:12px;margin-bottom:14px;}
 .pv2-parties .pp{flex:1;}
 .pv2-parties .h{color:#ed1c24;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:4px;}
@@ -286,7 +287,7 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .pv2-ok{font-size:12.5px;color:#2ec26b;font-weight:700;margin-top:8px;text-align:center;}
 .pv2-cta{text-align:center;background:#f6f2ea;border:1px solid #e8e0d2;border-radius:10px;padding:12px;font-size:12.5px;color:#555;margin-top:14px;}
 .pv2-cta b{color:#ed1c24;}
-@media(max-width:520px){.pv2-top{flex-direction:column-reverse;align-items:center;text-align:center;}.pv2-title .meta{text-align:center;}.pv2-tbl{font-size:11px;}.pv2-tbl td{padding:7px 4px;}.pv2-page{padding:16px 12px;}}
+@media(max-width:520px){.pv2-title .t{font-size:22px;}.pv2-title .e{font-size:8px;letter-spacing:2px;}.pv2-logo{min-width:92px;}.pv2-logo img{width:92px;}.pv2-meta{min-width:96px;font-size:10px;line-height:1.7;}.pv2-tbl{font-size:11px;}.pv2-tbl td{padding:7px 4px;}.pv2-page{padding:16px 12px;}}
 .p-gallery{margin-top:22px;border-top:2px dashed #e0d8c8;padding-top:14px;}
 .p-gallery .pg-title{color:var(--red);font-size:14px;font-weight:900;text-align:center;}
 .p-gallery .pg-sub{text-align:center;font-size:10px;color:#999;margin-bottom:10px;}
@@ -337,7 +338,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='6.1';
+const VERSION='6.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -726,8 +727,7 @@ const App={
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
-    <button class="chip" data-modal="sentquotes">📤 הצעות שנשלחו</button>
-    <button class="chip" data-modal="tracking">👁 מעקב הצעות</button>
+    <button class="chip" data-modal="tracking">📤 הצעות ומעקב</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
@@ -749,7 +749,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -947,14 +947,41 @@ const App={
    ${list===null?'<div class="empty">טוען…</div>':(list.length?list.map(s=>`<div class="list-item"><div class="info"><div class="t">${s.id}</div><div class="s">${s.at?new Date(s.at).toLocaleString('he-IL'):''}</div></div><button class="mini" data-snaprestore="${s.id}">↩️ שחזר</button></div>`).join(''):'<div class="empty">אין עדיין גיבויי ענן.<br>גיבוי ראשון ייווצר אוטומטית.</div>')}`;
  },
  async loadSnaps(){this._snaps=await Sync.listSnapshots();if(this.state.modal==='snaps')this.render();},
- trackingModal(){const links=Store.get('sentLinks',[]);const live=this._trackData||{};
+ drillModal(){const k=this._drill||'quotes';const ym=this.state.reportMonth;
+  const inM=ts=>{if(!ts)return false;const d=new Date(ts);return (d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'))===ym;};
+  const titles={quotes:'הצעות שהופקו',closed:'פרויקטים שנסגרו',feedbacks:'פידבקים שהתקבלו',reviews:'בקשות משוב שנשלחו',newClients:'לקוחות חדשים'};
+  let rows='';
+  if(k==='quotes'){const list=Store.get('quotes',[]).filter(q=>inM(q.ts));
+    rows=list.length?list.map(q=>`<div class="list-item"><div class="info"><div class="t">${q.client||'—'} — ${nis(q.grand)}</div><div class="s">${q.no} · ${new Date(q.ts).toLocaleDateString('he-IL')}</div></div>${q.snap?`<button class="mini" data-loadq="${q.id}">✏️ ערוך</button>`:''}</div>`).join(''):'';
+  }else{
+    const cl=Store.get('clients',[]);
+    const f={closed:c=>c.status==='done'&&inM(c.doneAt),feedbacks:c=>c.status==='done'&&inM(c.doneAt),reviews:c=>c.status==='sent',newClients:c=>inM(c.createdAt)}[k]||(()=>false);
+    const list=cl.filter(f);
+    rows=list.length?list.map(c=>`<div class="list-item"><div class="info"><div class="t">${c.name||'—'}</div><div class="s">${c.phone||''}${c.project?' · '+c.project:''}</div></div>${c.phone?`<button class="mini" data-nudge="${c.id}">📲</button>`:''}</div>`).join(''):'';
+  }
+  return `<h2>${titles[k]||''} · ${this.monthName(ym)} <button class="x" data-close>✕</button></h2>
+   <button class="btn-ghost" data-modal2="stats" id="drill-back" style="margin-bottom:10px">‹ חזרה לדו"ח</button>
+   ${rows||'<div class="empty">אין נתונים לחודש זה.</div>'}`;
+ },
+ sigViewModal(){const s=this._sigView||{};
+  return `<h2>✍️ חתימת הלקוח <button class="x" data-close>✕</button></h2>
+   <div style="font-size:13px;color:var(--muted);margin-bottom:10px">${s.client||''} · ${s.no||''} · ${s.at?new Date(s.at).toLocaleString('he-IL'):''}</div>
+   ${s.img?`<div style="background:#fff;border-radius:12px;padding:12px;text-align:center"><img src="${s.img}" style="max-width:100%;height:auto"/></div>`:'<div class="empty">אין חתימה</div>'}
+   ${s.img?`<button class="btn-block" id="sig-pdf" style="margin-top:12px">📄 הפק PDF עם החתימה</button><button class="btn-ghost" id="sig-dl">⬇️ הורד תמונת חתימה</button>`:''}`;
+ },
+ trackingModal(){const tab=this.state.trkTab||'track';
+  if(tab==='all')return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
+   <div class="chips" style="padding:0 0 10px"><button class="chip" data-trktab="track">👁 מעקב לינקים</button><button class="chip on" data-trktab="all">📋 כל ההצעות</button></div>
+   ${this.sentQuotesBody()}`;
+  const links=Store.get('sentLinks',[]);const live=this._trackData||{};
   const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<1)return 'הרגע';if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';const d=Math.floor(hr/24);return 'לפני '+d+' ימים';};
   // stats (feature 9)
   let sent=links.length,viewed=0,approved=0,sumApproved=0;
   links.forEach(l=>{const d=live[l.id]||{};if(d.viewedAt)viewed++;if(d.approvedAt){approved++;sumApproved+=(+l.total||0);}});
   const pct=sent?Math.round(approved/sent*100):0;
   const vpct=sent?Math.round(viewed/sent*100):0;
-  return `<h2>👁 מעקב הצעות <button class="x" data-close>✕</button></h2>
+  return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
+   <div class="chips" style="padding:0 0 10px"><button class="chip on" data-trktab="track">👁 מעקב לינקים</button><button class="chip" data-trktab="all">📋 כל ההצעות</button></div>
    <div class="trk-stats">
      <div class="trk-box"><div class="n">${sent}</div><div class="l">נשלחו</div></div>
      <div class="trk-box"><div class="n" style="color:var(--blue)">${viewed}</div><div class="l">נצפו (${vpct}%)</div></div>
@@ -972,7 +999,8 @@ const App={
          <div class="s">${l.no} · נשלח ${ago(l.ts)}${d.viewedAt?' · נצפה '+ago(d.viewedAt):''}${d.approvedAt?' · אושר '+ago(d.approvedAt):''}</div></div>
        ${(!d.approvedAt&&l.phone)?`<button class="mini" data-trknudge="${l.id}">📲 תזכורת</button>`:''}
        <button class="del" data-trkdel="${l.id}">🗑️</button>
-       ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${d.comment}${d.signature?' · ✍️ חתם דיגיטלית':''}</div>`:(d.signature?`<div class="trk-comment">✍️ הלקוח חתם דיגיטלית</div>`:'')}
+       ${d.signature?`<button class="mini" data-trksig="${l.id}">✍️ הצג חתימה</button>`:''}
+       ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${d.comment}</div>`:''}
        </div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
  },
  async loadTracking(){const links=Store.get('sentLinks',[]);if(!links.length||!window._db)return;
@@ -980,11 +1008,11 @@ const App={
   try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||''};}}catch(e){}}));}catch(e){}
   this._trackData=out;if(this.state.modal==='tracking')this.render();
  },
- sentQuotesModal(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
+ sentQuotesModal(){return `<h2>📤 הצעות שנשלחו <button class="x" data-close>✕</button></h2>${this.sentQuotesBody()}`;},
+ sentQuotesBody(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
   const list=f?all.filter(q=>(q.client||'')===f):all;
   const dt=ts=>new Date(ts).toLocaleDateString('he-IL')+' '+new Date(ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
-  return `<h2>📤 הצעות שנשלחו${f?' · '+f:''} <button class="x" data-close>✕</button></h2>
-   ${f?`<button class="btn-ghost" data-qfilter="" style="margin-bottom:10px">↩️ הצג את כל ההצעות</button>`:''}
+  return `${f?`<div style="font-size:13px;font-weight:800;margin-bottom:8px">מסונן: ${f}</div><button class="btn-ghost" data-qfilter="" style="margin-bottom:10px">↩️ הצג את כל ההצעות</button>`:''}
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">כל הצעה נשמרת אוטומטית עם הסעיפים — אפשר לפתוח, לתקן ולשלוח מחדש.</div>
    ${list.length?list.map(q=>`<div class="list-item">
      <div class="info"><div class="t">${q.client||'ללא שם'} — ${nis(q.grand)}</div><div class="s">${q.no} · ${dt(q.ts)}${q.project?' · '+q.project:''}${q.snap?'':' · (ללא נתונים)'}</div></div>
@@ -1102,13 +1130,13 @@ const App={
   const sum=qs.reduce((s,q)=>s+(q.grand||0),0);const conv=qs.length?Math.round(closed.length/qs.length*100):0;
   return{quotes:qs.length,sum,closed:closed.length,feedbacks:feedbacks.length,reviews:reviews.length,newClients:newC.length,conv,avg:qs.length?sum/qs.length:0};},
  statsModal(){const ym=this.state.reportMonth;const d=this.reportData(ym);
-  const card=(n,l,red)=>`<div class="statcard"><div class="n" style="${red?'':'color:var(--white)'};font-size:${String(n).length>6?'18px':'26px'}">${n}</div><div class="l">${l}</div></div>`;
+  const card=(n,l,red,key)=>`<div class="statcard${key?' clickable':''}"${key?` data-drill="${key}"`:''}><div class="n" style="${red?'':'color:var(--white)'};font-size:${String(n).length>6?'18px':'26px'}">${n}</div><div class="l">${l}${key?' ›':''}</div></div>`;
   return `<h2>דו"ח חודשי 📊 <button class="x" data-close>✕</button></h2>
    <div class="field"><label>בחר חודש</label><input id="rep-month" type="month" value="${ym}"/></div>
    <div style="text-align:center;font-weight:800;font-size:15px;margin:2px 0 12px;color:var(--red)">${this.monthName(ym)}</div>
-   <div class="stat">${card(d.quotes,'הצעות שהופקו',1)}${card(d.closed,'פרויקטים שנסגרו',1)}</div>
-   <div class="stat" style="margin-top:10px">${card(d.feedbacks,'פידבקים שהתקבלו',1)}${card(d.reviews,'בקשות משוב שנשלחו',1)}</div>
-   <div class="stat" style="margin-top:10px">${card(d.newClients,'לקוחות חדשים',1)}${card(d.conv+'%','אחוז סגירה',1)}</div>
+   <div class="stat">${card(d.quotes,'הצעות שהופקו',1,'quotes')}${card(d.closed,'פרויקטים שנסגרו',1,'closed')}</div>
+   <div class="stat" style="margin-top:10px">${card(d.feedbacks,'פידבקים שהתקבלו',1,'feedbacks')}${card(d.reviews,'בקשות משוב שנשלחו',1,'reviews')}</div>
+   <div class="stat" style="margin-top:10px">${card(d.newClients,'לקוחות חדשים',1,'newClients')}${card(d.conv+'%','אחוז סגירה',1)}</div>
    <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף כספי (הצעות)',1)}${card(nis(d.avg),'הצעה ממוצעת',1)}</div>
    ${(()=>{const tg=+Store.get('targetQuotes',0);if(!tg)return '';const pct=Math.min(100,Math.round(d.quotes/tg*100));return `<div class="sec-title">יעד חודשי</div><div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px"><span>${d.quotes} מתוך ${tg} הצעות</span><b style="color:var(--red)">${pct}%</b></div><div style="height:10px;background:var(--line);border-radius:6px;overflow:hidden"><div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--red),#ff6b6b)"></div></div></div>`;})()}
    <button class="btn-ghost" id="rep-send">📲 שלח לי את הסיכום בוואטסאפ</button>
@@ -1215,6 +1243,18 @@ const App={
   const csb=document.getElementById('cloud-snaps');if(csb)csb.onclick=()=>{if(!Sync.enabled()){this.toast('הפעל סנכרון ענן קודם');return;}this._snaps=null;this.state.modal='snaps';this.render();};
   const snw=document.getElementById('snap-now');if(snw)snw.onclick=async()=>{this.toast('יוצר גיבוי…');Store.set('lastSnapDay','');const ok=await Sync.snapshotDaily();this.toast(ok?'גיבוי ענן נוצר ✓':'הגיבוי נכשל');this._snaps=null;this.loadSnaps();};
   on('[data-snaprestore]','click',async e=>{const day=e.currentTarget.dataset.snaprestore;if(!confirm('לשחזר את כל הנתונים לגיבוי מתאריך '+day+'?\nהנתונים הנוכחיים יוחלפו בכל המכשירים.'))return;this.toast('משחזר…');const ok=await Sync.restoreSnapshot(day);this.toast(ok?'שוחזר ✓':'השחזור נכשל');if(ok)setTimeout(()=>location.reload(),800);});
+  on('[data-drill]','click',e=>{this._drill=e.currentTarget.dataset.drill;this.state.modal='drill';this.render();});
+  const db=document.getElementById('drill-back');if(db)db.onclick=()=>{this.state.modal='stats';this.render();};
+  on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
+  on('[data-trksig]','click',e=>{const id=e.currentTarget.dataset.trksig;const l=Store.get('sentLinks',[]).find(x=>x.id===id)||{};const d=(this._trackData||{})[id]||{};this._sigView={img:d.signature,client:l.client,no:l.no,at:d.approvedAt,linkId:id};this.state.modal='sigview';this.render();});
+  const sdl=document.getElementById('sig-dl');if(sdl)sdl.onclick=()=>{const s=this._sigView||{};if(!s.img)return;const a=document.createElement('a');a.href=s.img;a.download='חתימה-'+(s.client||'לקוח')+'.png';a.click();};
+  const spdf=document.getElementById('sig-pdf');if(spdf)spdf.onclick=async()=>{const s=this._sigView||{};if(!s.img)return;
+    const q=Store.get('quotes',[]).find(x=>x.no===s.no&&x.snap);
+    if(!q){this.toast('לא נמצאה ההצעה המקורית להפקה');return;}
+    this.toast('מפיק PDF חתום…');
+    this.loadQuote(q.id);
+    setTimeout(async()=>{this.state.clientSig=s.img;this.state.docType='quote';try{await this.generatePDF();this.toast('PDF חתום הופק ✓');}catch(e){this.toast('ההפקה נכשלה');}},400);
+  };
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
   on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
   on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
@@ -1381,11 +1421,10 @@ const App={
   const vatAmt=data.vat>0?(data.sub-(data.sub*(data.dis||0)/100))*data.vat/100:0;
   return `<div class="pv2-wrap"><div class="pv2-page">
     <div class="pv2-top">
-      <div class="pv2-title"><div class="t">הצעת מחיר</div><div class="e">QUOTATION</div>
-        <div class="meta"><b>מס׳ הצעה:</b> ${data.no||''}<br>${data.dt?`<b>תאריך:</b> ${data.dt}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${data.vd}`:''}</div></div>
-      <div class="pv2-logo"><img src="${LOGO_PDF}" alt="יהודה שיפוצים"/><div class="c">קבלן מבצע: יהודה יעקובוב | טל׳ 054-5718316<br>yuda090581@gmail.com</div></div>
+      <div class="pv2-meta"><div class="mrow"><b>מס׳ הצעה:</b> ${data.no||''}</div>${data.dt?`<div class="mrow"><b>תאריך:</b> ${data.dt}</div>`:''}${data.vd?`<div class="mrow"><b>בתוקף עד:</b> ${data.vd}</div>`:''}</div>
+      <div class="pv2-title"><div class="t">הצעת מחיר</div><div class="e">Q U O T A T I O N</div></div>
+      <div class="pv2-logo"><img src="${LOGO_PDF}" alt="יהודה שיפוצים"/></div>
     </div>
-    <div class="pv2-line"></div>
     <div class="pv2-parties">
       <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">יהודה יעקובוב · ח.פ 311834998<br>טל׳ 054-5718316</div></div>
       <div class="pp"><div class="h">לכבוד</div><div class="n">${data.cn||'[שם הלקוח]'}</div><div class="s">${data.pr||''}</div></div>
