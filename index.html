@@ -98,6 +98,10 @@ input,select,textarea{font-family:inherit;}
 .item .del-custom{color:var(--red);background:none;border:none;font-size:15px;}
 .addbtn{width:100%;background:var(--bg3);border:1px dashed var(--line);color:var(--txt);border-radius:12px;padding:12px;font-weight:700;font-size:14px;}
 .bottombar{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#141417;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
+.trk-alert{background:rgba(237,28,36,.12);border:1px solid rgba(237,28,36,.45);border-radius:12px;padding:12px;margin-bottom:12px;}
+.trk-alert .ta-h{font-size:13px;font-weight:800;color:var(--red);margin-bottom:8px;}
+.trk-alert .ta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--txt);padding:5px 0;}
+.trk-comment{flex-basis:100%;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--txt);margin-top:8px;line-height:1.5;}
 .trk-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
 .trk-box{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;}
 .trk-box .n{font-size:22px;font-weight:900;color:var(--txt);}
@@ -271,6 +275,15 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .pv2-sumbox .r.total{border-top:2px solid #1c1c1c;margin-top:6px;padding-top:10px;font-weight:900;font-size:16px;}
 .pv2-sumbox .r.total b{color:#ed1c24;font-size:22px;}
 .pv2-sumbox .r.adv{color:#555;font-size:12px;}
+.pv2-sign{margin-top:16px;background:#faf7f1;border:1px solid #e8e0d2;border-radius:12px;padding:12px;}
+.pv2-sign-h{font-size:12px;color:#666;font-weight:700;margin-bottom:8px;}
+.pv2-pad{width:100%;height:130px;background:#fff;border:1px dashed #c9bfa8;border-radius:8px;display:block;touch-action:none;}
+.pv2-clear{margin-top:8px;background:none;border:1px solid #ddd;color:#777;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
+.pv2-note{margin-top:12px;background:#f6f2ea;border:1px solid #e8e0d2;border-radius:12px;padding:12px;}
+.pv2-note-h{font-size:13px;font-weight:800;color:#333;margin-bottom:8px;}
+.pv2-note textarea{width:100%;min-height:70px;border:1px solid #ddd;border-radius:8px;padding:10px;font-size:14px;font-family:inherit;resize:vertical;background:#fff;color:#222;}
+.pv2-send{margin-top:8px;width:100%;background:#1c1c1c;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;}
+.pv2-ok{font-size:12.5px;color:#2ec26b;font-weight:700;margin-top:8px;text-align:center;}
 .pv2-cta{text-align:center;background:#f6f2ea;border:1px solid #e8e0d2;border-radius:10px;padding:12px;font-size:12.5px;color:#555;margin-top:14px;}
 .pv2-cta b{color:#ed1c24;}
 @media(max-width:520px){.pv2-top{flex-direction:column-reverse;align-items:center;text-align:center;}.pv2-title .meta{text-align:center;}.pv2-tbl{font-size:11px;}.pv2-tbl td{padding:7px 4px;}.pv2-page{padding:16px 12px;}}
@@ -324,7 +337,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='6.0';
+const VERSION='6.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -581,6 +594,31 @@ const Sync=(()=>{
     catch(e){this.status='err';return false;}
   },
   schedulePush(){ if(applying||!this.enabled())return; clearTimeout(pushTimer); pushTimer=setTimeout(()=>this.push(),1200); },
+  async snapshotDaily(){
+    if(!this.enabled()||!window._db)return false;
+    const today=new Date().toISOString().slice(0,10);
+    if(Store.get('lastSnapDay','')===today)return false;      // once per day
+    try{
+      await window._db.collection('backups').doc(today).set({payload:localSnapshot(),at:Date.now(),device:this.deviceId()});
+      Store.set('lastSnapDay',today);
+      // keep only last 30 days
+      try{const snaps=await window._db.collection('backups').get();const ids=[];snaps.forEach(d=>ids.push(d.id));ids.sort();
+        while(ids.length>30){const old=ids.shift();try{await window._db.collection('backups').doc(old).delete();}catch(e){}}
+      }catch(e){}
+      return true;
+    }catch(e){return false;}
+  },
+  async listSnapshots(){
+    if(!window._db)return [];
+    try{const s=await window._db.collection('backups').get();const out=[];s.forEach(d=>out.push({id:d.id,at:(d.data()||{}).at||0}));return out.sort((a,b)=>b.id.localeCompare(a.id));}catch(e){return [];}
+  },
+  async restoreSnapshot(day){
+    if(!window._db)return false;
+    try{const d=await window._db.collection('backups').doc(day).get();if(!d.exists)return false;
+      const p=(d.data()||{}).payload;if(!p)return false;
+      applying=true;SYNC_KEYS.forEach(k=>{if(k in p)Store.set(k,p[k]);});applying=false;
+      await this.push(true);return true;}catch(e){return false;}
+  },
   stop(){if(unsub){try{unsub();}catch(e){}unsub=null;}this.status='off';}
  };
 })();
@@ -653,7 +691,7 @@ const App={
  grand(){return this.afterDiscount()+this.vat();},
  reminders(){return Store.get('clients',[]).filter(c=>c.status==='q'||c.status==='sent');},
  toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);},
- render(){document.getElementById('root').innerHTML=this.view();this.bind();if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();
+ render(){document.getElementById('root').innerHTML=this.view();this.bind();if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();if(this.state.modal==='snaps'&&!this._snaps)this.loadSnaps();
   const isOpen=!!this.state.modal;
   if(isOpen&&!this._pushedModal){try{history.pushState({ysm:1},'');}catch(e){}this._pushedModal=true;}
   else if(!isOpen&&this._pushedModal){this._pushedModal=false;this._ignorePop=true;try{history.back();}catch(e){}}
@@ -711,7 +749,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -803,6 +841,7 @@ const App={
    <div class="sec-title">כללי</div>
    <div class="toggle"><div><div style="font-weight:700">מצב בהיר ☀️</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>יעד חודשי — מספר הצעות (מופיע בדו"ח)</label><input id="target-quotes" type="number" inputmode="numeric" value="${Store.get('targetQuotes','')||''}" placeholder="לדוגמה: 20"/></div>
+   <button class="btn-ghost" id="cloud-snaps">🗄️ גיבויי ענן יומיים (שחזור לפי תאריך)</button>
    <div class="sec-title">גיבוי ידני</div>
    <button class="btn-ghost" id="backup">⬇️ ייצא גיבוי (JSON)</button>
    <button class="btn-ghost" id="restore-btn">⬆️ שחזר מגיבוי (גם למכשיר אחר)</button>
@@ -901,6 +940,13 @@ const App={
      <button class="btn-block" id="prev-next" style="flex:1.4;margin:0">המשך להצעה ›</button>
    </div>`;
  },
+ snapsModal(){const list=this._snaps||null;
+  return `<h2>🗄️ גיבויי ענן <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">גיבוי אוטומטי נשמר בענן פעם ביום (נשמרים 30 הימים האחרונים). אפשר לשחזר את כל הנתונים לכל תאריך.</div>
+   <button class="btn-ghost" id="snap-now" style="margin-bottom:10px">💾 צור גיבוי ענן עכשיו</button>
+   ${list===null?'<div class="empty">טוען…</div>':(list.length?list.map(s=>`<div class="list-item"><div class="info"><div class="t">${s.id}</div><div class="s">${s.at?new Date(s.at).toLocaleString('he-IL'):''}</div></div><button class="mini" data-snaprestore="${s.id}">↩️ שחזר</button></div>`).join(''):'<div class="empty">אין עדיין גיבויי ענן.<br>גיבוי ראשון ייווצר אוטומטית.</div>')}`;
+ },
+ async loadSnaps(){this._snaps=await Sync.listSnapshots();if(this.state.modal==='snaps')this.render();},
  trackingModal(){const links=Store.get('sentLinks',[]);const live=this._trackData||{};
   const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<1)return 'הרגע';if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';const d=Math.floor(hr/24);return 'לפני '+d+' ימים';};
   // stats (feature 9)
@@ -915,6 +961,8 @@ const App={
      <div class="trk-box"><div class="n" style="color:var(--ok)">${approved}</div><div class="l">אושרו (${pct}%)</div></div>
    </div>
    ${approved?`<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px">היקף שאושר: <b style="color:var(--ok)">${nis(sumApproved)}</b></div>`:''}
+   ${(()=>{const hot=links.filter(l=>{const d=live[l.id]||{};return d.viewedAt&&!d.approvedAt&&(Date.now()-d.viewedAt)>2*864e5;});
+     return hot.length?`<div class="trk-alert"><div class="ta-h">🔥 זמן להתקשר — צפו ולא אישרו</div>${hot.map(l=>`<div class="ta-row"><span>${l.client||'—'} · ${nis(l.total)} · צפה ${ago((live[l.id]||{}).viewedAt)}</span>${l.phone?`<button class="mini" data-trknudge="${l.id}">📲</button>`:''}</div>`).join('')}</div>`:'';})()}
    <button class="btn-ghost" id="trk-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
    ${links.length?links.map(l=>{const d=live[l.id]||{};
      const st=d.approvedAt?['✅ אושר','var(--ok)']:(d.viewedAt?['👁 נצפה','var(--blue)']:['📤 נשלח','var(--muted)']);
@@ -923,11 +971,13 @@ const App={
        <div class="info"><div class="t">${l.client||'ללא שם'} — ${nis(l.total)}</div>
          <div class="s">${l.no} · נשלח ${ago(l.ts)}${d.viewedAt?' · נצפה '+ago(d.viewedAt):''}${d.approvedAt?' · אושר '+ago(d.approvedAt):''}</div></div>
        ${(!d.approvedAt&&l.phone)?`<button class="mini" data-trknudge="${l.id}">📲 תזכורת</button>`:''}
-       <button class="del" data-trkdel="${l.id}">🗑️</button></div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
+       <button class="del" data-trkdel="${l.id}">🗑️</button>
+       ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${d.comment}${d.signature?' · ✍️ חתם דיגיטלית':''}</div>`:(d.signature?`<div class="trk-comment">✍️ הלקוח חתם דיגיטלית</div>`:'')}
+       </div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
  },
  async loadTracking(){const links=Store.get('sentLinks',[]);if(!links.length||!window._db)return;
   const out={};
-  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null};}}catch(e){}}));}catch(e){}
+  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||''};}}catch(e){}}));}catch(e){}
   this._trackData=out;if(this.state.modal==='tracking')this.render();
  },
  sentQuotesModal(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
@@ -1162,6 +1212,9 @@ const App={
   const rf=document.getElementById('restore-file');if(rf)rf.onchange=e=>this.restore(e);
 
   on('[data-loadclient]','click',e=>{const cl=JSON.parse(e.currentTarget.dataset.loadclient);this.state.client={name:cl.name,project:cl.project,address:cl.address,phone:cl.phone||'',status:cl.status||'q'};this.state.modal='quote';this.render();});
+  const csb=document.getElementById('cloud-snaps');if(csb)csb.onclick=()=>{if(!Sync.enabled()){this.toast('הפעל סנכרון ענן קודם');return;}this._snaps=null;this.state.modal='snaps';this.render();};
+  const snw=document.getElementById('snap-now');if(snw)snw.onclick=async()=>{this.toast('יוצר גיבוי…');Store.set('lastSnapDay','');const ok=await Sync.snapshotDaily();this.toast(ok?'גיבוי ענן נוצר ✓':'הגיבוי נכשל');this._snaps=null;this.loadSnaps();};
+  on('[data-snaprestore]','click',async e=>{const day=e.currentTarget.dataset.snaprestore;if(!confirm('לשחזר את כל הנתונים לגיבוי מתאריך '+day+'?\nהנתונים הנוכחיים יוחלפו בכל המכשירים.'))return;this.toast('משחזר…');const ok=await Sync.restoreSnapshot(day);this.toast(ok?'שוחזר ✓':'השחזור נכשל');if(ok)setTimeout(()=>location.reload(),800);});
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
   on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
   on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
@@ -1345,7 +1398,18 @@ const App={
       <div class="r total"><span>סה"כ לתשלום</span><b>${nf(data.tot)}</b></div>
       ${data.adv>0?`<div class="r adv"><span>מקדמה (${data.adv}%)</span><b>${nf(data.tot*data.adv/100)}</b></div>`:''}
     </div></div>
-    <a class="prop-approve" href="https://wa.me/${owner}?text=${encodeURIComponent(msg)}" target="_blank" onclick="try{if(window._db&&window.__pid){window._db.collection('proposals').doc(window.__pid).update({approvedAt:Date.now()});}}catch(e){}">✅ אני מאשר את ההצעה</a>
+    <div class="pv2-sign" id="pv2-sign-box">
+      <div class="pv2-sign-h">✍️ חתימת הלקוח (אופציונלי — מעניקה תוקף לאישור)</div>
+      <canvas id="pv2-pad" class="pv2-pad"></canvas>
+      <button class="pv2-clear" id="pv2-clear" type="button">🧹 נקה חתימה</button>
+    </div>
+    <button class="prop-approve" id="pv2-approve" type="button">✅ אני מאשר את ההצעה</button>
+    <div class="pv2-note">
+      <div class="pv2-note-h">💬 יש לי הערה / שאלה</div>
+      <textarea id="pv2-msg" placeholder="לדוגמה: אפשר להוסיף עוד נקודת חשמל בסלון?"></textarea>
+      <button class="pv2-send" id="pv2-send" type="button">שלח הערה ליהודה</button>
+      <div id="pv2-note-ok" class="pv2-ok"></div>
+    </div>
     <a class="prop-call" href="tel:0545718316">📞 יש לי שאלה — התקשר 054-571-8316</a>
     <div class="pv2-cta">רוצים לראות עוד מהעבודות שלנו? <b>yehuda-shipuzim.netlify.app</b></div>
     <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
@@ -1451,6 +1515,38 @@ if('serviceWorker' in navigator){
     navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloaded)return;reloaded=true;location.reload();});
   });
 }
+/* ===== client proposal page: signature + comment + approve ===== */
+function initProposalUI(pid,data){
+  const pad=document.getElementById('pv2-pad');let sigData=null;
+  if(pad){const r=pad.getBoundingClientRect();pad.width=r.width*2;pad.height=260;const ctx=pad.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';
+    let d=false,has=false;const pos=ev=>{const b=pad.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};
+    const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};
+    const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};
+    const en=()=>{d=false;if(has)sigData=pad.toDataURL('image/png');};
+    pad.addEventListener('mousedown',st);pad.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);
+    pad.addEventListener('touchstart',st,{passive:false});pad.addEventListener('touchmove',mv,{passive:false});pad.addEventListener('touchend',en);
+    const cl=document.getElementById('pv2-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,pad.width,pad.height);has=false;sigData=null;};
+  }
+  const nf=n=>'₪ '+Math.round(n||0).toLocaleString('he-IL');
+  const ap=document.getElementById('pv2-approve');
+  if(ap)ap.onclick=async()=>{
+    ap.disabled=true;ap.textContent='שולח אישור…';
+    try{if(window._db&&pid){const up={approvedAt:Date.now()};if(sigData)up.signature=sigData;await window._db.collection('proposals').doc(pid).update(up);}}catch(e){}
+    const msg='שלום, אני מאשר את הצעת המחיר מס\' '+(data.no||'')+(data.cn?' עבור '+data.cn:'')+' בסך '+nf(data.tot)+'.'+(sigData?' (חתמתי דיגיטלית בדף)':'')+' אפשר להתקדם 🙂';
+    ap.textContent='✅ ההצעה אושרה — תודה!';ap.style.background='#1e9e55';
+    window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
+  };
+  const sb=document.getElementById('pv2-send');
+  if(sb)sb.onclick=async()=>{
+    const t=(document.getElementById('pv2-msg')||{}).value||'';
+    if(!t.trim()){return;}
+    sb.disabled=true;sb.textContent='שולח…';
+    try{if(window._db&&pid){await window._db.collection('proposals').doc(pid).update({comment:t.trim(),commentAt:Date.now()});}}catch(e){}
+    const ok=document.getElementById('pv2-note-ok');if(ok)ok.textContent='✓ ההערה נשלחה ליהודה';
+    sb.textContent='נשלח ✓';
+    window.open('https://wa.me/'+WA+'?text='+encodeURIComponent('שלום, לגבי הצעה '+(data.no||'')+':\n'+t.trim()),'_blank');
+  };
+}
 document.addEventListener('DOMContentLoaded',()=>{
  // client-facing proposal via SHORT link (#id=XXXX) — fetch from Firestore
  if(location.hash&&location.hash.indexOf('#id=')===0){
@@ -1458,7 +1554,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    const sp=document.getElementById('splash');if(sp)sp.style.display='none';
    document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;font-size:16px">טוען הצעה…</div>';
    if(window._db){window._db.collection('proposals').doc(id).get().then(doc=>{
-     if(doc.exists){const d=doc.data();window.__pid=id;document.getElementById('root').innerHTML=App.proposalView(d.data);
+     if(doc.exists){const d=doc.data();window.__pid=id;document.getElementById('root').innerHTML=App.proposalView(d.data);try{initProposalUI(id,d.data);}catch(e){}
        try{if(!d.viewedAt)window._db.collection('proposals').doc(id).update({viewedAt:Date.now()});}catch(e){}
      }else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">ההצעה לא נמצאה או שפג תוקפה.<br>אנא בקש/י לינק חדש מיהודה שיפוצים.</div>';}
    }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסה/י לרענן את הדף.</div>';});}
@@ -1469,7 +1565,7 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(location.hash&&location.hash.indexOf('#p=')===0){try{let b64=location.hash.slice(3).replace(/-/g,'+').replace(/_/g,'/');const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));const data=JSON.parse(new TextDecoder().decode(bytes));const sp=document.getElementById('splash');if(sp)sp.style.display='none';document.getElementById('root').innerHTML=App.proposalView(data);return;}catch(e){}}
  App.render();
  // start cloud sync (all devices)
- try{Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
+ try{setTimeout(()=>{try{Sync.snapshotDaily();}catch(e){}},4000);Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards)
  const sp=document.getElementById('splash');
  const track=document.getElementById('slider-track'), knob=document.getElementById('slider-knob'), fill=document.getElementById('slider-fill');
