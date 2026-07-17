@@ -98,6 +98,10 @@ input,select,textarea{font-family:inherit;}
 .item .del-custom{color:var(--red);background:none;border:none;font-size:15px;}
 .addbtn{width:100%;background:var(--bg3);border:1px dashed var(--line);color:var(--txt);border-radius:12px;padding:12px;font-weight:700;font-size:14px;}
 .bottombar{position:fixed;bottom:0;left:0;right:0;z-index:60;background:#141417;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
+.trk-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.trk-box{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;}
+.trk-box .n{font-size:22px;font-weight:900;color:var(--txt);}
+.trk-box .l{font-size:11px;color:var(--muted);margin-top:2px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
 .pv-cat{margin-bottom:14px;}
@@ -320,9 +324,10 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='5.9';
+const VERSION='6.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
+ ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
  he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
  ar:{sub:'عرض سعر',quote:'عرض أسعار',order:'أمر عمل',no:'رقم العرض',date:'التاريخ',valid:'صالح حتى',contractor:'المقاول المنفذ',to:'إلى السيد',desc:'وصف العمل',qty:'الكمية',unit:'الوحدة',price:'سعر الوحدة',total:'المجموع',subtotal:'المجموع الفرعي',discount:'خصم',vat:'ض.ق.م',grand:'الإجمالي للدفع',terms:'شروط الدفع',white:'مواد بيضاء',black:'مواد سوداء',incl:'مشمول',notincl:'غير مشمول',signc:'توقيع المقاول',signk:'توقيع الزبون',cta:'هل تريد رؤية المزيد من أعمالنا؟',ctas:'امسح الرمز أو ادخل الموقع · يهودا شيبوتسيم',foot:'صدرت هذه الوثيقة من يهودا شيبوتسيم · هاتف 054-5718316',orderclause:'تشكل هذه الوثيقة أمر عمل ملزم بين الطرفين وفقًا للشروط أعلاه.'},
  en:{sub:'QUOTATION',quote:'Quotation',order:'Work Order',no:'Quote No.',date:'Date',valid:'Valid until',contractor:'Contractor',to:'To',desc:'Work Description',qty:'Qty',unit:'Unit',price:'Unit Price',total:'Total',subtotal:'Subtotal',discount:'Discount',vat:'VAT',grand:'Total Due',terms:'Payment Terms',white:'White materials',black:'Black materials',incl:'Included',notincl:'Not included',signc:'Contractor Signature',signk:'Client Signature',cta:'Want to see more of our work?',ctas:'Scan the code or visit · Yehuda Shipuzim',foot:'Document issued by Yehuda Shipuzim · Tel 054-5718316',orderclause:'This document constitutes a binding work order between the parties per the terms above.'},
@@ -532,11 +537,11 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gaUrl','gaId','gaToken','gaTo','gaOn','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks'];}};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates'];
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -648,7 +653,7 @@ const App={
  grand(){return this.afterDiscount()+this.vat();},
  reminders(){return Store.get('clients',[]).filter(c=>c.status==='q'||c.status==='sent');},
  toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);},
- render(){document.getElementById('root').innerHTML=this.view();this.bind();if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();
+ render(){document.getElementById('root').innerHTML=this.view();this.bind();if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();
   const isOpen=!!this.state.modal;
   if(isOpen&&!this._pushedModal){try{history.pushState({ysm:1},'');}catch(e){}this._pushedModal=true;}
   else if(!isOpen&&this._pushedModal){this._pushedModal=false;this._ignorePop=true;try{history.back();}catch(e){}}
@@ -684,6 +689,7 @@ const App={
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
     <button class="chip" data-modal="sentquotes">📤 הצעות שנשלחו</button>
+    <button class="chip" data-modal="tracking">👁 מעקב הצעות</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
@@ -705,7 +711,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -749,7 +755,7 @@ const App={
    <div class="field"><label>עלות משוערת לקבלן (₪)</label><input id="q_cost" type="number" inputmode="decimal" value="${s.cost||''}" placeholder="0"/></div>
    ${(+s.cost>0)?`<div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;font-size:14px"><span>רווח צפוי</span><b style="color:var(--ok)">${nis(this.afterDiscount()-(+s.cost||0))}</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px"><span>מרווח</span><b>${this.afterDiscount()>0?Math.round((this.afterDiscount()-(+s.cost||0))/this.afterDiscount()*100):0}%</b></div></div>`:''}
    <div class="sec-title">שפת המסמך</div>
-   <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
+   <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English'],['ru','Русский']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="gen-share">📲 צור ושתף (WhatsApp / מייל)</button>
@@ -894,6 +900,35 @@ const App={
      <button class="btn-ghost" id="prev-back" style="flex:1">‹ חזרה לעריכה</button>
      <button class="btn-block" id="prev-next" style="flex:1.4;margin:0">המשך להצעה ›</button>
    </div>`;
+ },
+ trackingModal(){const links=Store.get('sentLinks',[]);const live=this._trackData||{};
+  const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<1)return 'הרגע';if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';const d=Math.floor(hr/24);return 'לפני '+d+' ימים';};
+  // stats (feature 9)
+  let sent=links.length,viewed=0,approved=0,sumApproved=0;
+  links.forEach(l=>{const d=live[l.id]||{};if(d.viewedAt)viewed++;if(d.approvedAt){approved++;sumApproved+=(+l.total||0);}});
+  const pct=sent?Math.round(approved/sent*100):0;
+  const vpct=sent?Math.round(viewed/sent*100):0;
+  return `<h2>👁 מעקב הצעות <button class="x" data-close>✕</button></h2>
+   <div class="trk-stats">
+     <div class="trk-box"><div class="n">${sent}</div><div class="l">נשלחו</div></div>
+     <div class="trk-box"><div class="n" style="color:var(--blue)">${viewed}</div><div class="l">נצפו (${vpct}%)</div></div>
+     <div class="trk-box"><div class="n" style="color:var(--ok)">${approved}</div><div class="l">אושרו (${pct}%)</div></div>
+   </div>
+   ${approved?`<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px">היקף שאושר: <b style="color:var(--ok)">${nis(sumApproved)}</b></div>`:''}
+   <button class="btn-ghost" id="trk-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
+   ${links.length?links.map(l=>{const d=live[l.id]||{};
+     const st=d.approvedAt?['✅ אושר','var(--ok)']:(d.viewedAt?['👁 נצפה','var(--blue)']:['📤 נשלח','var(--muted)']);
+     return `<div class="list-item">
+       <span class="status" style="background:${st[1]};color:#fff">${st[0]}</span>
+       <div class="info"><div class="t">${l.client||'ללא שם'} — ${nis(l.total)}</div>
+         <div class="s">${l.no} · נשלח ${ago(l.ts)}${d.viewedAt?' · נצפה '+ago(d.viewedAt):''}${d.approvedAt?' · אושר '+ago(d.approvedAt):''}</div></div>
+       ${(!d.approvedAt&&l.phone)?`<button class="mini" data-trknudge="${l.id}">📲 תזכורת</button>`:''}
+       <button class="del" data-trkdel="${l.id}">🗑️</button></div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
+ },
+ async loadTracking(){const links=Store.get('sentLinks',[]);if(!links.length||!window._db)return;
+  const out={};
+  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null};}}catch(e){}}));}catch(e){}
+  this._trackData=out;if(this.state.modal==='tracking')this.render();
  },
  sentQuotesModal(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
   const list=f?all.filter(q=>(q.client||'')===f):all;
@@ -1127,6 +1162,9 @@ const App={
   const rf=document.getElementById('restore-file');if(rf)rf.onchange=e=>this.restore(e);
 
   on('[data-loadclient]','click',e=>{const cl=JSON.parse(e.currentTarget.dataset.loadclient);this.state.client={name:cl.name,project:cl.project,address:cl.address,phone:cl.phone||'',status:cl.status||'q'};this.state.modal='quote';this.render();});
+  const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
+  on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
+  on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
   on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
   on('[data-dupq]','click',e=>this.duplicateQuoteAsNew(e.currentTarget.dataset.dupq));
   on('[data-delq]','click',e=>{const id=e.currentTarget.dataset.delq;if(confirm('למחוק את ההצעה מההיסטוריה?')){const qs=Store.get('quotes',[]).filter(x=>x.id!==id);Store.set('quotes',qs);this.render();}});
@@ -1265,6 +1303,7 @@ const App={
   if(id){link=base+'#id='+id;short=true;
     // remember link on the client for view-tracking
     try{const cl=Store.get('clients',[]);const rec=cl.find(x=>x.name===c.name&&c.name);if(rec){rec.proposalId=id;Store.set('clients',cl);}}catch(e){}
+    try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});Store.set('sentLinks',sl.slice(0,200));}catch(e){}
   }else{
     // fallback: long self-contained link (works offline / if Firestore not set up)
     let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.toast('שגיאה');return;}
@@ -1306,7 +1345,7 @@ const App={
       <div class="r total"><span>סה"כ לתשלום</span><b>${nf(data.tot)}</b></div>
       ${data.adv>0?`<div class="r adv"><span>מקדמה (${data.adv}%)</span><b>${nf(data.tot*data.adv/100)}</b></div>`:''}
     </div></div>
-    <a class="prop-approve" href="https://wa.me/${owner}?text=${encodeURIComponent(msg)}" target="_blank">✅ אני מאשר את ההצעה</a>
+    <a class="prop-approve" href="https://wa.me/${owner}?text=${encodeURIComponent(msg)}" target="_blank" onclick="try{if(window._db&&window.__pid){window._db.collection('proposals').doc(window.__pid).update({approvedAt:Date.now()});}}catch(e){}">✅ אני מאשר את ההצעה</a>
     <a class="prop-call" href="tel:0545718316">📞 יש לי שאלה — התקשר 054-571-8316</a>
     <div class="pv2-cta">רוצים לראות עוד מהעבודות שלנו? <b>yehuda-shipuzim.netlify.app</b></div>
     <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
@@ -1419,7 +1458,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    const sp=document.getElementById('splash');if(sp)sp.style.display='none';
    document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;font-size:16px">טוען הצעה…</div>';
    if(window._db){window._db.collection('proposals').doc(id).get().then(doc=>{
-     if(doc.exists){const d=doc.data();document.getElementById('root').innerHTML=App.proposalView(d.data);
+     if(doc.exists){const d=doc.data();window.__pid=id;document.getElementById('root').innerHTML=App.proposalView(d.data);
        try{if(!d.viewedAt)window._db.collection('proposals').doc(id).update({viewedAt:Date.now()});}catch(e){}
      }else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">ההצעה לא נמצאה או שפג תוקפה.<br>אנא בקש/י לינק חדש מיהודה שיפוצים.</div>';}
    }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסה/י לרענן את הדף.</div>';});}
