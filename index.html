@@ -87,6 +87,10 @@ input,select,textarea{font-family:inherit;}
 .f select{background:#0e0e12;border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:0 4px;height:46px;font-size:13px;font-weight:700;width:100%;outline:none;text-align:center;min-width:0;}
 .f select:focus{border-color:var(--red);}
 .price-in{background:#0e0e12;border:1px solid var(--line);color:var(--txt);border-radius:10px;height:46px;font-size:16px;font-weight:800;width:100%;outline:none;text-align:center;padding:0 4px;min-width:0;}
+.ai-price-btn{background:var(--bg3);border:1px solid var(--line);border-radius:10px;height:46px;width:42px;font-size:18px;cursor:pointer;flex-shrink:0;transition:all .15s;}
+.ai-price-btn:active{transform:scale(.92);background:var(--red);}
+.ai-price-btn.working{animation:aipulse .8s infinite;}
+@keyframes aipulse{0%,100%{opacity:1}50%{opacity:.4}}
 .price-in:focus{border-color:var(--red);}
 .qty{display:flex;gap:5px;direction:ltr;}
 .qstep{width:32px;height:46px;border-radius:10px;background:var(--red);color:#fff;border:none;font-size:21px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;cursor:pointer;line-height:1;}
@@ -391,7 +395,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.2.6';
+const VERSION='7.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -732,6 +736,7 @@ const App={
    clientSig:null,modal:null,photoClient:null,includeGallery:Store.get('includeGallery',false),
  },
  save(){Store.set('catalog',this.state.catalog);},
+ setField(cid,iid,field,val){const it=this.find(cid,iid);if(!it)return;it[field]=val;if(field==='price'&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(cid);},
  allCats(){const sub=this.state.subItems||{};const c=this.state.catalog.map(cat=>({...cat,items:[...cat.items,...(sub[cat.id]||[])]}));c.push({id:'custom',title:'אחר (מותאם אישית)',emoji:'➕',custom:true,items:this.state.custom});return c;},
  suggestions(){const cats=this.allCats();const sel=new Set();cats.forEach(c=>c.items.forEach(i=>{if(i.selected)sel.add(i.id);}));const out=[];const seen=new Set();sel.forEach(id=>{(SUGGEST_RULES[id]||[]).forEach(sid=>{if(sel.has(sid)||seen.has(sid))return;seen.add(sid);for(const c of cats){const it=c.items.find(x=>x.id===sid);if(it){out.push({cid:c.id,iid:sid,name:it.name});break;}}});});return out.slice(0,6);},
  gotoItem(cid,iid){this.state.open[cid]=true;this.render();setTimeout(()=>{const el=document.querySelector('.item[data-iid="'+iid+'"]');if(el){try{el.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700);}},90);},
@@ -749,7 +754,12 @@ const App={
   if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||800,messages:[{role:'user',content:prompt}]})});const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';}
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
  },
- // #30: קול → AI → הצעה. מקליט תיאור עבודה חופשי וממיר לסעיפים מסודרים
+ // #29: תמחור חכם — מציע מחיר ליחידה לפי ההיסטוריה של המשתמש + טווח מומלץ
+ priceHistory(){const hist={};try{Store.get('quotes',[]).forEach(q=>{const snap=q.snap;if(!snap)return;
+     const scan=arr=>{(arr||[]).forEach(it=>{if(it&&it.name&&+it.price>0&&it.selected!==false){const k=it.name.trim();(hist[k]=hist[k]||[]).push({p:+it.price,u:it.unit||''});}});};
+     (snap.catalog||[]).forEach(c=>scan(c.items));Object.values(snap.subItems||{}).forEach(scan);scan(snap.custom);
+   });}catch(e){}return hist;},
+ async aiPriceFor(cid,iid,btn){const it=this.find(cid,iid);if(!it)return;if(btn){btn.classList.add('working');btn.textContent='⏳';}try{const hist=this.priceHistory();const exact=hist[it.name.trim()];if(exact&&exact.length){const avg=Math.round(exact.reduce((s,x)=>s+x.p,0)/exact.length);this.setField(cid,iid,'price',avg);this.haptic(20);this.toast('מחיר מההיסטוריה שלך: '+nis(avg));this.render();return;}const keys=Object.keys(hist).slice(0,25);const samples=keys.map(k=>{const a=hist[k];const av=Math.round(a.reduce((s,x)=>s+x.p,0)/a.length);return k+' = '+av+' ILS/'+(a[0].u||'');}).join('; ');const parts=['אתה מתמחר עבור קבלן שיפוצים בישראל 2026.','עבודה: '+it.name+' (יחידה: '+(it.unit||'')+')'];if(it.range)parts.push('טווח שוק: '+it.range);if(samples)parts.push('מחירים קודמים של הקבלן: '+samples);parts.push('החזר אך ורק מספר שלם בשקלים ליחידה, בלי טקסט ובלי סימנים.');const prompt=parts.join(String.fromCharCode(10));const txt=await this.callAI(prompt,50);const num=parseInt(String(txt||'').replace(/[^0-9]/g,''),10);if(!num||num<1){this.toast('לא התקבל מחיר תקין');if(btn){btn.classList.remove('working');btn.textContent='🤖';}return;}this.setField(cid,iid,'price',num);this.haptic(20);this.toast('הצעת AI: '+nis(num)+' — בדוק והתאם');this.render();}catch(e){this.toast('שגיאת AI — בדוק מפתח');if(btn){btn.classList.remove('working');btn.textContent='🤖';}} },
  v2qStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
   const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
   if(!key){this.toast('הגדר קודם מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
@@ -758,22 +768,22 @@ const App={
   this._v2qLocked=(this._v2qText||'').trim();
   r.onresult=e=>{let finalPart='',interim='';
     for(let i=0;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalPart+=t+' ';else interim+=t;}
-    const full=((this._v2qLocked?this._v2qLocked+' ':'')+finalPart+interim);
     // כשמשפט הסתיים (final) — ננעל אותו כדי שלא יחזור
-    if(finalPart)this._v2qLocked=((this._v2qLocked?this._v2qLocked+' ':'')+finalPart).trim();
+    if(finalPart)this._v2qLocked=this.dedupeWords(((this._v2qLocked?this._v2qLocked+' ':'')+finalPart).trim());
     this._v2qText=this._v2qLocked;
-    const el=document.getElementById('v2q-text');if(el)el.value=full.trim();};
+    const full=this.dedupeWords(((this._v2qLocked?this._v2qLocked+' ':'')+interim).trim());
+    const el=document.getElementById('v2q-text');if(el)el.value=full;};
   r.onerror=ev=>{if(ev.error==='not-allowed'){this.toast('אין הרשאת מיקרופון');}this._v2qOn=false;this.render();};
   // continuous=false: המנוע נעצר אחרי כל משפט; מפעילים מחדש בלי לאבד את הטקסט הנעול
   r.onend=()=>{if(this._v2qOn&&!r._stop){try{r.start();}catch(e){}}};
   try{r.start();this.haptic(15);}catch(e){}this.render();
  },
  v2qStop(){this._v2qOn=false;if(this._v2qRec){this._v2qRec._stop=true;try{this._v2qRec.stop();}catch(e){}}this.render();},
- dedupeWords(txt){if(!txt)return '';const w=txt.split(/\s+/);const out=[];
-   // מסיר חזרה מיידית של רצף של 1–6 מילים (למשל "פירוק והרכבה פירוק והרכבה")
-   for(let i=0;i<w.length;i++){let dup=false;
-     for(let n=1;n<=6;n++){if(i>=n&&i+n<=w.length){const a=w.slice(i-n,i).join(' ');const b=w.slice(i,i+n).join(' ');if(a===b&&a.length>1){dup=true;break;}}}
-     if(!dup)out.push(w[i]);
+ dedupeWords(txt){if(!txt)return '';let w=txt.split(/\s+/).filter(Boolean);const out=[];
+   // מסיר חזרה מיידית של רצף של 1–8 מילים (למשל "פירוק והרכבה פירוק והרכבה")
+   for(let i=0;i<w.length;i++){let dup=false,skip=0;
+     for(let n=8;n>=1;n--){if(i>=n&&i+n<=w.length){const a=w.slice(i-n,i).join(' ');const b=w.slice(i,i+n).join(' ');if(a===b&&a.length>1){dup=true;skip=n-1;break;}}}
+     if(!dup)out.push(w[i]);else i+=skip;
    }
    return out.join(' ');
  },
@@ -890,7 +900,7 @@ const App={
       <div class="item-name">${i.name}<div class="item-range">${i.range||''}</div></div>
       ${custom?`<button class="del-custom" data-delcustom="${i.id}">🗑️</button>`:(i.sub?`<button class="del-custom" data-delsub="${cid}|${i.id}">🗑️</button>`:'')}</div>
     <div class="fields">
-      <div class="f"><label>מחיר ₪</label><input type="number" inputmode="decimal" value="${i.price}" data-fld="price" data-k="${cid}|${i.id}" class="price-in"/></div>
+      <div class="f"><label>מחיר ₪</label><div style="display:flex;gap:5px"><input type="number" inputmode="decimal" value="${i.price}" data-fld="price" data-k="${cid}|${i.id}" class="price-in" style="flex:1"/><button class="ai-price-btn" data-aiprice="${cid}|${i.id}" type="button" title="הצע מחיר AI">🤖</button></div></div>
       <div class="f"><label>יחידה</label><select data-fld="unit" data-k="${cid}|${i.id}">${UNITS.map(u=>`<option ${u===i.unit?'selected':''}>${u}</option>`).join('')}</select></div>
       <div class="f"><label>כמות</label><div class="qty"><button class="qstep" data-step="${cid}|${i.id}|-1" type="button">−</button><input type="number" inputmode="decimal" value="${i.qty||''}" data-fld="qty" data-k="${cid}|${i.id}" class="qty-in"/><button class="qstep" data-step="${cid}|${i.id}|1" type="button">+</button></div></div></div>
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
@@ -1352,6 +1362,7 @@ const App={
   on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){const nid=uid();this.state.custom.push({id:nid,name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.modal=null;this.toast('נוסף: '+name+' — עדכן מחיר ויחידה');this.gotoItem('custom',nid);}});
   const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
   const pn=document.getElementById('prev-next');if(pn)pn.onclick=()=>{this.state.modal='quote';this.render();};
+  on('[data-aiprice]','click',e=>{const[c,i]=e.currentTarget.dataset.aiprice.split('|');this.aiPriceFor(c,i,e.currentTarget);});
   on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
     const row=e.currentTarget.closest('.item');const t=(+it.qty||0)*(+it.price||0);const v=row.querySelector('.item-total .val');if(v)v.textContent=nis(t);
     const chk=row.querySelector('.chk');if(chk){chk.classList.toggle('on',!!it.selected);chk.textContent=it.selected?'✓':'';}
