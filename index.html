@@ -391,7 +391,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.2.5';
+const VERSION='7.2.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -753,21 +753,32 @@ const App={
  v2qStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
   const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
   if(!key){this.toast('הגדר קודם מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
-  const r=new SR();r._stop=false;r.lang='he-IL';r.continuous=true;r.interimResults=true;this._v2qRec=r;this._v2qOn=true;
-  // הטקסט שכבר "ננעל" מהפעלות קודמות (לפני הפעלה מחדש של המנוע)
+  const r=new SR();r._stop=false;r.lang='he-IL';r.continuous=false;r.interimResults=true;this._v2qRec=r;this._v2qOn=true;
+  // הטקסט שכבר "ננעל" — לא ייגע בו שוב
   this._v2qLocked=(this._v2qText||'').trim();
   r.onresult=e=>{let finalPart='',interim='';
     for(let i=0;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalPart+=t+' ';else interim+=t;}
-    // הרכבה: מה שננעל בעבר + מה שהתמלל כעת במופע הנוכחי
-    const full=(this._v2qLocked?this._v2qLocked+' ':'')+finalPart+interim;
-    this._v2qText=((this._v2qLocked?this._v2qLocked+' ':'')+finalPart).trim();
+    const full=((this._v2qLocked?this._v2qLocked+' ':'')+finalPart+interim);
+    // כשמשפט הסתיים (final) — ננעל אותו כדי שלא יחזור
+    if(finalPart)this._v2qLocked=((this._v2qLocked?this._v2qLocked+' ':'')+finalPart).trim();
+    this._v2qText=this._v2qLocked;
     const el=document.getElementById('v2q-text');if(el)el.value=full.trim();};
   r.onerror=ev=>{if(ev.error==='not-allowed'){this.toast('אין הרשאת מיקרופון');}this._v2qOn=false;this.render();};
-  r.onend=()=>{if(this._v2qOn&&!r._stop){this._v2qLocked=(this._v2qText||'').trim();try{r.start();}catch(e){}}};
+  // continuous=false: המנוע נעצר אחרי כל משפט; מפעילים מחדש בלי לאבד את הטקסט הנעול
+  r.onend=()=>{if(this._v2qOn&&!r._stop){try{r.start();}catch(e){}}};
   try{r.start();this.haptic(15);}catch(e){}this.render();
  },
  v2qStop(){this._v2qOn=false;if(this._v2qRec){this._v2qRec._stop=true;try{this._v2qRec.stop();}catch(e){}}this.render();},
- async v2qConvert(){const el=document.getElementById('v2q-text');const raw=(el?el.value:this._v2qText||'').trim();
+ dedupeWords(txt){if(!txt)return '';const w=txt.split(/\s+/);const out=[];
+   // מסיר חזרה מיידית של רצף של 1–6 מילים (למשל "פירוק והרכבה פירוק והרכבה")
+   for(let i=0;i<w.length;i++){let dup=false;
+     for(let n=1;n<=6;n++){if(i>=n&&i+n<=w.length){const a=w.slice(i-n,i).join(' ');const b=w.slice(i,i+n).join(' ');if(a===b&&a.length>1){dup=true;break;}}}
+     if(!dup)out.push(w[i]);
+   }
+   return out.join(' ');
+ },
+ async v2qConvert(){const el=document.getElementById('v2q-text');let raw=(el?el.value:this._v2qText||'').trim();
+  raw=this.dedupeWords(raw);if(el)el.value=raw;this._v2qText=raw;
   if(raw.length<8){this.toast('הקלט או כתוב תיאור עבודה קצת יותר מפורט');return;}
   this.v2qStop();this._v2qText=raw;this.busy('ה-AI ממיר לסעיפים…');this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
@@ -861,7 +872,6 @@ const App={
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
-    <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
     <button class="chip" data-modal="v2q">🎤➜📋 הכתבת הצעה</button>
     <button class="chip" data-modal="tracking">📤 הצעות ומעקב</button>
     <button class="chip" data-modal="reviews">⭐ משובים</button>
@@ -944,8 +954,10 @@ const App={
 
  settingsModal(){const s=this.state;const hasPin=!!Store.get('pin','');const unlocked=s.secureUnlocked;
   const gaBlock=`
-   <button class="btn-ghost" id="ga-save">💾 שמור</button>
-   <button class="btn-ghost" id="ga-test">📤 בדיקת חיבור</button>
+   <div class="sec-title" style="margin-top:4px">⭐ משוב לקוחות</div>
+   <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
+   <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
+   <button class="btn-ghost" id="grev-save">💾 שמור קישור ביקורת</button>
    <div class="sec-title" style="margin-top:16px">🤖 עוזר AI</div>
    <div class="field"><label>בחר עוזר פעיל</label><select id="ai-provider">${[['gemini','Gemini (Google)'],['claude','Claude (Anthropic)']].map(o=>`<option value="${o[0]}" ${Store.get('aiProvider','gemini')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
    <div class="field"><label>Gemini API Key</label><div style="display:flex;gap:8px"><input id="gem-key" type="password" value="${Store.get('geminiKey','')}" placeholder="AIza…" style="flex:1"/><button class="mini2" id="gem-eye" type="button">👁</button></div></div>
@@ -970,9 +982,6 @@ const App={
    <div class="sec-title">גרסה ועדכונים</div>
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
 
-   <div class="sec-title">⭐ משוב לקוחות</div>
-   <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
-   <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
    <div class="sec-title">☁️ סנכרון בין מכשירים</div>
    <div class="toggle"><div><div style="font-weight:700">סנכרון ענן</div><div style="font-size:12px;color:var(--muted)">לקוחות · מחירון · הצעות · הגדרות — בכל המכשירים</div></div><button class="switch ${Store.get('syncOn',true)?'on':''}" id="sync-toggle"><span class="knob"></span></button></div>
    <div style="font-size:12px;color:var(--muted);margin:6px 2px 8px">מצב: <b style="color:${Sync.status==='on'?'var(--ok)':(Sync.status==='err'?'var(--red)':'var(--muted)')}">${Sync.status==='on'?'מסונכרן ✓':(Sync.status==='err'?'שגיאת חיבור':'כבוי')}</b>${Store.get('syncLocalAt',0)?' · עודכן: '+new Date(Store.get('syncLocalAt',0)).toLocaleString('he-IL'):''}</div>
@@ -1374,6 +1383,7 @@ const App={
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
   const tq=document.getElementById('target-quotes');if(tq)tq.oninput=e=>Store.set('targetQuotes',+e.target.value||0);
   const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
+  const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
