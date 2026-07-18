@@ -182,6 +182,13 @@ input,select,textarea{font-family:inherit;}
 .photos .ph img{width:100%;height:100%;object-fit:cover;}
 .photos .ph .del{position:absolute;top:3px;left:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;z-index:600;border:1px solid var(--line);box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:88%;text-align:center;}
+.busy-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.busy-box{background:var(--bg2,#1a1a1e);border:1px solid var(--line);border-radius:16px;padding:22px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.6);}
+.busy-spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--red);border-radius:50%;animation:busy-rot .7s linear infinite;}
+.busy-txt{color:#fff;font-size:13px;font-weight:600;}
+.sync-err-banner{background:var(--red);color:#fff;font-size:12.5px;font-weight:600;padding:8px 12px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
+.sync-err-banner button{background:#fff;color:var(--red);border:none;border-radius:8px;padding:4px 12px;font-weight:800;font-size:12px;cursor:pointer;}
+@keyframes busy-rot{to{transform:rotate(360deg);}}
 .install-fab{position:fixed;bottom:104px;left:14px;z-index:70;background:var(--red);color:#fff;border:none;border-radius:26px;padding:12px 18px;font-weight:800;font-size:14px;display:none;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(237,28,36,.45);animation:up .3s ease;}
 
 #pdf-stage{position:fixed;left:-10000px;top:0;}
@@ -383,7 +390,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.0';
+const VERSION='7.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -703,6 +710,7 @@ const nis=n=>(Math.round((+n||0)*100)/100).toLocaleString('en-US')+' ₪';
 const today=()=>new Date().toLocaleDateString('en-GB');
 const addMonth=()=>{const d=new Date();d.setMonth(d.getMonth()+1);return d.toLocaleDateString('en-GB');};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const phoneValid=p=>{const d=(p||'').replace(/\D/g,'');return d.length>=9&&d.length<=15;};
 const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);if(p&&!p.startsWith('972'))p='972'+p;return 'https://wa.me/'+(p||'')+'?text='+encodeURIComponent(text);};
 function nextQuoteNo(){let seq=Store.get('qseq',0)+1;const ymd=new Date().toISOString().slice(0,10).replace(/-/g,'');return 'YS-'+ymd+'-'+String(seq).padStart(3,'0');}
 
@@ -736,7 +744,39 @@ const App={
    this._aiSuggestions=lines;this.state.modal='aisuggest';this.render();
   }catch(e){this.toast('שגיאת רשת/מפתח AI');}
  },
- chosen(){const out=[];this.allCats().forEach(c=>{const lines=c.items.filter(i=>i.selected&&(+i.qty>0));if(lines.length)out.push({cat:c,lines});});return out;},
+ async callAI(prompt,maxTokens){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key)throw new Error('no-key');
+  if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||800,messages:[{role:'user',content:prompt}]})});const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';}
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
+ },
+ // #30: קול → AI → הצעה. מקליט תיאור עבודה חופשי וממיר לסעיפים מסודרים
+ v2qStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
+  const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  if(!key){this.toast('הגדר קודם מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
+  const r=new SR();r._stop=false;r.lang='he-IL';r.continuous=true;r.interimResults=true;this._v2qRec=r;this._v2qOn=true;this._v2qText=this._v2qText||'';
+  let base=this._v2qText;
+  r.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)base+=t+' ';else interim+=t;}this._v2qText=base;const el=document.getElementById('v2q-text');if(el)el.value=base+interim;};
+  r.onerror=ev=>{if(ev.error==='not-allowed'){this.toast('אין הרשאת מיקרופון');}this._v2qOn=false;this.render();};
+  r.onend=()=>{if(this._v2qOn&&!r._stop){try{r.start();}catch(e){}}};
+  try{r.start();this.haptic(15);}catch(e){}this.render();
+ },
+ v2qStop(){this._v2qOn=false;if(this._v2qRec){this._v2qRec._stop=true;try{this._v2qRec.stop();}catch(e){}}this.render();},
+ async v2qConvert(){const el=document.getElementById('v2q-text');const raw=(el?el.value:this._v2qText||'').trim();
+  if(raw.length<8){this.toast('הקלט או כתוב תיאור עבודה קצת יותר מפורט');return;}
+  this.v2qStop();this._v2qText=raw;this.busy('ה-AI ממיר לסעיפים…');this.haptic(15);
+  const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
+  const prompt='אתה עוזר לקבלן שיפוצים ישראלי. הקבלן הקליט תיאור עבודה חופשי (יתכנו שגיאות כתיב/דיבור). המר אותו לרשימת סעיפי עבודה מסודרים להצעת מחיר.\\n\\nהתיאור: "'+raw+'"\\n\\nהחזר אך ורק JSON תקין (בלי טקסט לפני/אחרי, בלי markdown) — מערך של אובייקטים. לכל סעיף: {"name":"תיאור העבודה בעברית תקנית","qty":כמות מספרית,"unit":"אחת מ: מ\\"ר / מ\\"א / מ\\"ק / יח׳ / גלובלי","cat":"אחת מ: '+cats+'"}\\nכללים: תקן שגיאות כתיב. אם לא צוינה כמות השתמש ב-1 ויחידה גלובלי. שטחים במ\\"ר, אורכים במ\\"א. אל תמציא מחירים. עד 25 סעיפים.';
+  try{let txt=await this.callAI(prompt,1500);
+   txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
+   let arr=JSON.parse(txt);if(!Array.isArray(arr)||!arr.length){throw new Error('empty');}
+   arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,25);
+   this._v2qResult=arr;this.idle();this.state.modal='v2qreview';this.render();
+  }catch(e){this.idle();this.toast('ההמרה נכשלה — נסה לנסח שוב או בדוק את מפתח ה-AI');}
+ },
+ v2qApply(){const arr=(this._v2qResult||[]).filter(x=>x.ok);if(!arr.length){this.toast('לא נבחרו סעיפים');return;}
+  arr.forEach(x=>{this.state.custom.push({id:uid(),name:x.name,price:0,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1});});
+  Store.set('customItems',this.state.custom);this._v2qResult=null;this._v2qText='';this.state.modal=null;this.haptic(25);
+  this.toast(arr.length+' סעיפים נוספו ✓ — עדכן מחירים');this.render();
+ },
  catTotal(c){return c.items.reduce((s,i)=>s+(i.selected?(+i.qty||0)*(+i.price||0):0),0);},
  matExtra(){const s=this.state;let x=0;if(s.whiteOn&&!s.whiteInc)x+=+s.whitePrice||0;if(s.blackOn&&!s.blackInc)x+=+s.blackPrice||0;return x;},
  subtotal(){return this.allCats().reduce((s,c)=>s+this.catTotal(c),0)+this.matExtra();},
@@ -746,6 +786,9 @@ const App={
  grand(){return this.afterDiscount()+this.vat();},
  reminders(){return Store.get('clients',[]).filter(c=>c.status==='q'||c.status==='sent');},
  toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);},
+ haptic(ms){try{if(navigator.vibrate)navigator.vibrate(ms||15);}catch(e){}},
+ busy(m){try{let b=document.getElementById('busy-ov');if(!b){b=document.createElement('div');b.id='busy-ov';b.className='busy-ov';b.innerHTML='<div class="busy-box"><div class="busy-spin"></div><div class="busy-txt"></div></div>';document.body.appendChild(b);}b.querySelector('.busy-txt').textContent=m||'רגע…';b.style.display='flex';}catch(e){}},
+ idle(){try{const b=document.getElementById('busy-ov');if(b)b.style.display='none';}catch(e){}},
  render(){
   let _sc=null;try{const m=document.querySelector('.modal');_sc=m?{el:'modal',y:m.scrollTop}:{el:'win',y:window.scrollY};}catch(e){}
   document.getElementById('root').innerHTML=this.view();this.bind();
@@ -779,12 +822,14 @@ const App={
     <div class="searchwrap"><span class="mag">🔍</span>
       <input id="search" placeholder="חיפוש חופשי: עבודה או קטגוריה…" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
+  ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   <div class="chips">
     <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     <button class="chip" data-modal="calendar">📅 לוח</button>
     <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="voice">🎤 עוזר קולי</button>
+    <button class="chip" data-modal="v2q">🎤➜📋 הכתבת הצעה</button>
     <button class="chip" data-modal="tracking">📤 הצעות ומעקב</button>
     <button class="chip" data-modal="reviews">⭐ משובים</button>
     <button class="chip" data-modal="stats">📊 דו"ח חודשי</button></div>
@@ -808,7 +853,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1124,6 +1169,29 @@ const App={
    </div>
    <div id="voice-log" style="margin-top:12px"></div>`;
  },
+ v2qModal(){const on=this._v2qOn;const txt=this._v2qText||'';
+  return `<h2>🎤➜📋 הכתבת הצעה בקול <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">תאר את העבודה במילים חופשיות — וה-AI יסדר אותה לסעיפים. לדוגמה: "הריסת קיר במטבח, ריצוף ארבעים מטר, צביעת סלון ושני חדרים, שלוש נקודות חשמל".</div>
+   <div style="text-align:center;margin:6px 0 14px">
+     <button id="v2q-btn" class="voice-big ${on?'on':''}">${on?'⏹ עצור הקלטה':'🎤 התחל לדבר'}</button>
+   </div>
+   <textarea id="v2q-text" placeholder="הטקסט יופיע כאן… אפשר גם לכתוב או לתקן ידנית" style="width:100%;min-height:120px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;color:var(--txt);resize:vertical;line-height:1.7">${txt.replace(/</g,'&lt;')}</textarea>
+   <button class="btn-block" id="v2q-convert" style="margin-top:14px">✨ המר לסעיפי הצעה</button>
+   ${txt?`<button class="btn-ghost" id="v2q-clear" style="margin-top:8px">🗑️ נקה טקסט</button>`:''}
+   <div style="font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.8">💡 טיפ: ציין כמויות ("ארבעים מטר", "שלוש נקודות") — ה-AI ימיר אותן ליחידות. מחירים תמלא אחר כך.</div>`;
+ },
+ v2qReviewModal(){const arr=this._v2qResult||[];const chosen=arr.filter(x=>x.ok).length;
+  const byCat={};arr.forEach((x,i)=>{(byCat[x.cat]=byCat[x.cat]||[]).push({...x,_i:i});});
+  return `<h2>📋 אישור סעיפים (${chosen}/${arr.length}) <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">ה-AI זיהה את הסעיפים הבאים. בטל סימון למה שלא רלוונטי, ואשר. המחירים יתווספו על ידך אחר כך.</div>
+   ${Object.keys(byCat).map(cat=>`<div style="margin-bottom:12px"><div style="font-weight:800;color:var(--red);font-size:12.5px;margin-bottom:6px">${cat}</div>
+     ${byCat[cat].map(x=>`<div class="list-item" style="align-items:center">
+       <input type="checkbox" data-v2qtoggle="${x._i}" ${x.ok?'checked':''} style="width:20px;height:20px;accent-color:var(--red);margin-left:8px"/>
+       <div class="info"><div class="t" style="font-size:13.5px">${x.name}</div><div class="s">כמות ${x.qty} · ${x.unit}</div></div>
+     </div>`).join('')}</div>`).join('')}
+   <button class="btn-block" id="v2q-apply" style="margin-top:10px">➕ הוסף ${chosen} סעיפים להצעה</button>
+   <button class="btn-ghost" id="v2q-back" style="margin-top:8px">← חזור לעריכת הטקסט</button>`;
+ },
  voiceStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
   const r=new SR();r._stop=false;r.lang='he-IL';r.continuous=true;r.interimResults=true;this._voiceRec=r;this._voiceOn=true;
   const live=()=>document.getElementById('voice-live');
@@ -1223,9 +1291,17 @@ const App={
   const sb=document.getElementById('search');if(sb)sb.addEventListener('input',e=>{this.state.search=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}});
   const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
   const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
+  const v2b=document.getElementById('v2q-btn');if(v2b)v2b.onclick=()=>{this._v2qOn?this.v2qStop():this.v2qStart();};
+  const v2c=document.getElementById('v2q-convert');if(v2c)v2c.onclick=()=>this.v2qConvert();
+  const v2cl=document.getElementById('v2q-clear');if(v2cl)v2cl.onclick=()=>{this._v2qText='';this.v2qStop();this.render();};
+  const v2a=document.getElementById('v2q-apply');if(v2a)v2a.onclick=()=>this.v2qApply();
+  const v2bk=document.getElementById('v2q-back');if(v2bk)v2bk.onclick=()=>{this.state.modal='v2q';this.render();};
+  on('[data-v2qtoggle]','change',e=>{const i=+e.currentTarget.dataset.v2qtoggle;if(this._v2qResult&&this._v2qResult[i]){this._v2qResult[i].ok=e.currentTarget.checked;this.render();}});
+  const v2t=document.getElementById('v2q-text');if(v2t)v2t.oninput=e=>{this._v2qText=e.target.value;};
   on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
   on('[data-suggest]','click',e=>{const[c,i]=e.currentTarget.dataset.suggest.split('|');const it=this.find(c,i);if(it){it.selected=true;if(!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.toast('נוסף: '+it.name+' — עדכן מחיר/כמות');this.gotoItem(c,i);}});
   on('[data-suggest-ai]','click',()=>this.aiSuggest());
+  const srt=document.getElementById('sync-retry');if(srt)srt.onclick=async()=>{this.toast('מנסה לסנכרן שוב…');this.haptic(15);await Sync.init(()=>this.render());await Sync.push(true);this.toast(Sync.status==='on'?'סונכרן ✓':'עדיין אין חיבור');this.render();};
   const cc=document.getElementById('chip-cats');if(cc)cc.onclick=()=>{const cats=this.allCats();const anyOpen=cats.some(c=>this.state.open[c.id]);if(anyOpen){this.state.open={};}else{cats.forEach(c=>this.state.open[c.id]=true);}this.render();};
   on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){const nid=uid();this.state.custom.push({id:nid,name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.modal=null;this.toast('נוסף: '+name+' — עדכן מחיר ויחידה');this.gotoItem('custom',nid);}});
   const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
@@ -1260,7 +1336,7 @@ const App={
   const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
   const tq=document.getElementById('target-quotes');if(tq)tq.oninput=e=>Store.set('targetQuotes',+e.target.value||0);
-  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.toast('הנתונים אופסו ✓');this.render();};
+  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
@@ -1349,7 +1425,7 @@ const App={
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
   on('[data-delclient]','click',e=>{const id=e.currentTarget.dataset.delclient;const cl=Store.get('clients',[]).find(c=>c.id===id);if(!confirm('למחוק את הלקוח'+(cl&&cl.name?' "'+cl.name+'"':'')+'? פעולה זו אינה הפיכה.'))return;Store.set('clients',Store.get('clients',[]).filter(c=>c.id!==id));this.toast('הלקוח נמחק');this.render();});
 
-  on('[data-nudge]','click',e=>{const cl=Store.get('clients',[]).find(c=>c.id===e.currentTarget.dataset.nudge);if(!cl||!cl.phone)return;const msg='שלום'+(cl.name?' '+cl.name:'')+' 👋\nרק מוודא שההצעה הגיעה — אשמח לשמוע מה דעתך 🙂';window.open(waLink(cl.phone,msg),'_blank');});
+  on('[data-nudge]','click',e=>{const cl=Store.get('clients',[]).find(c=>c.id===e.currentTarget.dataset.nudge);if(!cl)return;if(!phoneValid(cl.phone)){this.toast('מספר הטלפון של הלקוח חסר או לא תקין');return;}this.haptic(15);const msg='שלום'+(cl.name?' '+cl.name:'')+' 👋\nרק מוודא שההצעה הגיעה — אשמח לשמוע מה דעתך 🙂';window.open(waLink(cl.phone,msg),'_blank');});
   on('[data-markdone]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.markdone);cl.status='done';cl.doneAt=Date.now();if(cl.reviewSentAt&&!cl.feedbackAt)cl.feedbackAt=Date.now();Store.set('clients',list);this.toast('סומן כבוצע ✓');this.render();});
 
   // photos modal
@@ -1360,7 +1436,7 @@ const App={
   const pff=document.getElementById('pf-file');if(pff)pff.onchange=async e=>{const f=e.target.files[0];if(!f)return;this.toast('מעבד תמונה…');const data=await compressImage(f);await Photos.add({id:uid(),clientId:'__portfolio__',type:'portfolio',data,ts:Date.now()});this.loadPortfolio();this.toast('נוספה תמונת עבודה ✓');};
  },
 
- async loadPhotos(){const list=await Photos.list(this.state.photoClient);const draw=(type,el)=>{if(!el)return;const arr=list.filter(p=>p.type===type);el.innerHTML=arr.length?arr.map(p=>`<div class="ph"><img src="${p.data}"/><button class="del" data-delphoto="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין תמונות</div>';};
+ async loadPhotos(){const list=await Photos.list(this.state.photoClient);const draw=(type,el)=>{if(!el)return;const arr=list.filter(p=>p.type===type);el.innerHTML=arr.length?arr.map(p=>`<div class="ph"><img loading="lazy" src="${p.data}"/><button class="del" data-delphoto="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין תמונות</div>';};
   draw('before',document.getElementById('ph-before'));draw('after',document.getElementById('ph-after'));
  },
 
@@ -1368,7 +1444,7 @@ const App={
 
  initSigPad(){const cv=document.getElementById('sigpad');if(!cv)return;const r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';let d=false,has=false;const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);const cl=document.getElementById('sig-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);has=false;};const sv=document.getElementById('sig-save');if(sv)sv.onclick=()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.toast('החתימה נשמרה ✓');this.render();};const ss=document.getElementById('sig-send');if(ss)ss.onclick=async()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.render();await this.sendSignedConfirmation();};},
 
- async loadPortfolio(){const grid=document.getElementById('pf-grid');if(!grid)return;const list=await Photos.list('__portfolio__');grid.innerHTML=list.length?list.map(p=>`<div class="ph"><img src="${p.data}"/><button class="del" data-delpf="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין עדיין תמונות עבודה</div>';grid.querySelectorAll('[data-delpf]').forEach(b=>b.addEventListener('click',async e=>{if(!confirm('למחוק תמונת עבודה זו?'))return;await Photos.del(e.currentTarget.dataset.delpf);this.loadPortfolio();}));},
+ async loadPortfolio(){const grid=document.getElementById('pf-grid');if(!grid)return;const list=await Photos.list('__portfolio__');grid.innerHTML=list.length?list.map(p=>`<div class="ph"><img loading="lazy" src="${p.data}"/><button class="del" data-delpf="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין עדיין תמונות עבודה</div>';grid.querySelectorAll('[data-delpf]').forEach(b=>b.addEventListener('click',async e=>{if(!confirm('למחוק תמונת עבודה זו?'))return;await Photos.del(e.currentTarget.dataset.delpf);this.loadPortfolio();}));},
 
  updateBottom(){const b=document.querySelector('.bottombar .b');if(b)b.innerHTML=`${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small>`;const a=document.querySelector('.bottombar .a');if(a)a.textContent=`${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ`;},
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
@@ -1450,7 +1526,7 @@ const App={
    ${extra?`<div class="p-extra">${extra}</div>`:''}
    <div class="p-sign"><div class="s"><div class="sh">${L.signc}</div><div class="sigimg"></div><div class="sl">יהודה יעקובוב</div></div>
      <div class="s"><div class="sh">${L.signk}</div><div class="sigimg">${s.clientSig?`<img src="${s.clientSig}"/>`:''}</div><div class="sl">${c.name||'—'}</div></div></div>
-   ${(this._galleryImgs&&this._galleryImgs.length)?`<div class="p-gallery"><div class="pg-title">📸 עבודות אחרונות שלנו</div><div class="pg-sub">כך נראית עבודה מקצועית של יהודה שיפוצים</div><div class="pg-grid">${this._galleryImgs.map(p=>`<img src="${p.data}"/>`).join('')}</div></div>`:''}
+   ${(this._galleryImgs&&this._galleryImgs.length)?`<div class="p-gallery"><div class="pg-title">📸 עבודות אחרונות שלנו</div><div class="pg-sub">כך נראית עבודה מקצועית של יהודה שיפוצים</div><div class="pg-grid">${this._galleryImgs.map(p=>`<img loading="lazy" src="${p.data}"/>`).join('')}</div></div>`:''}
    <div class="p-cta"><div><div class="t">${L.cta}</div><div class="u">yehuda-shipuzim.netlify.app</div><div class="s">${L.ctas}</div></div><div class="qr" id="pdf-qr"></div></div>
    <div class="p-foot">${L.foot} · ${s.date}</div></div>`;
  },
@@ -1476,7 +1552,7 @@ const App={
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.render();
  },
- async makeProposalLink(){this.captureQuote();this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+ async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
@@ -1496,10 +1572,11 @@ const App={
     try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});Store.set('sentLinks',sl.slice(0,200));}catch(e){}
   }else{
     // fallback: long self-contained link (works offline / if Firestore not set up)
-    let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.toast('שגיאה');return;}
+    let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.idle();this.toast('שגיאה');return;}
     link=base+'#p='+b64;
   }
   const msg='שלום'+(c.name?' '+c.name:'')+' 👋\nהצעת המחיר שלך מ-יהודה שיפוצים מוכנה לצפייה ואישור:\n'+link;
+  this.idle();this.haptic(20);
   if(!short)this.toast('אין חיבור ל-Firebase — נוצר לינק ארוך');else this.toast('לינק קצר נוצר ✓');
   if(navigator.share){navigator.share({title:'הצעת מחיר · יהודה שיפוצים',text:msg}).catch(()=>{});}
   else if(c.phone){window.open(waLink(c.phone,msg),'_blank');}
@@ -1612,11 +1689,16 @@ proposalView(data){data=data||{};const nf=n=>'₪ '+Math.round(n).toLocaleString
    }
    stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת-מחיר';return{pdf,blob:pdf.output('blob'),fname:`${label}-${this.state.quoteNo}.pdf`};},
 
- async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}this.toast('מכין PDF…');
-  const{pdf,blob,fname}=await this.makePdfBlob();this.recordQuote();
+ async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}
+  this.captureQuote();
+  if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
+  this.haptic(15);this.busy('מכין PDF…');
+  try{const{pdf,blob,fname}=await this.makePdfBlob();this.recordQuote();
   let shared=false;
   if(share&&navigator.canShare){try{const file=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'מסמך · יהודה שיפוצים',text:`מ-יהודה שיפוצים · ${nis(this.grand())}`});shared=true;}}catch(e){}}
-  if(!shared){pdf.save(fname);this.toast('ה-PDF נוצר ✓');}
+  if(!shared){pdf.save(fname);this.toast('ה-PDF נוצר ✓');}this.haptic(20);}
+  catch(e){this.toast('הפקת ה-PDF נכשלה');}
+  finally{this.idle();}
  },
 
  async driveConnect(){const ok=await Drive.ready();this.toast(ok?'מחובר ל-Google Drive ✓':'התחברות נכשלה');this.render();},
