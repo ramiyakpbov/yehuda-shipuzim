@@ -383,7 +383,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='6.9.1';
+const VERSION='6.9.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1464,7 +1464,7 @@ const App={
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.render();
  },
- async makeProposalLink(){this.captureQuote();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+ async makeProposalLink(){this.captureQuote();this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
@@ -1631,7 +1631,9 @@ proposalView(data){data=data||{};const nf=n=>'₪ '+Math.round(n).toLocaleString
 let deferredPrompt=null;
 const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
-function showInstallUI(){if(isStandalone())return;let b=document.getElementById('install-fab');if(!b){b=document.createElement('button');b.id='install-fab';b.className='install-fab';b.innerHTML='📲 התקן אפליקציה';b.onclick=doInstall;document.body.appendChild(b);}b.style.display='flex';}
+// מצב תצוגת לקוח: הצעה (#p= / #id=) או דף משוב (#r=) — לעולם לא מציגים כפתור התקנה ללקוח
+const isClientView=()=>{const h=location.hash||'';return h.indexOf('#p=')===0||h.indexOf('#id=')===0||h.indexOf('#r=')===0;};
+function showInstallUI(){if(isStandalone()||isClientView())return;let b=document.getElementById('install-fab');if(!b){b=document.createElement('button');b.id='install-fab';b.className='install-fab';b.innerHTML='📲 התקן אפליקציה';b.onclick=doInstall;document.body.appendChild(b);}b.style.display='flex';}
 function hideInstallUI(){const b=document.getElementById('install-fab');if(b)b.style.display='none';}
 async function doInstall(){
   if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice;}catch(e){}deferredPrompt=null;hideInstallUI();return;}
@@ -1639,10 +1641,10 @@ async function doInstall(){
   if(isIOS()){try{App.toast('באייפון: לחץ על כפתור השיתוף ⬆️ בתחתית הדפדפן → "הוסף למסך הבית"');}catch(e){}return;}
   try{App.toast('פתח דרך כרום ולחץ ⋮ ← "התקנת אפליקציה"');}catch(e){}
 }
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;showInstallUI();});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!isClientView())showInstallUI();});
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;hideInstallUI();try{App.toast('האפליקציה הותקנה ✓');}catch(e){}});
-// iOS: show a hint FAB (no native prompt there)
-if(isIOS()&&!isStandalone())setTimeout(showInstallUI,2200);
+// iOS: show a hint FAB (no native prompt there) — but never on a client-facing page
+if(isIOS()&&!isStandalone()&&!isClientView())setTimeout(showInstallUI,2200);
 
 /* ===== ניווט אחורה: סוגר מסך במקום לצאת מהאפליקציה ===== */
 App._pushedModal=false;App._ignorePop=false;
@@ -1759,8 +1761,25 @@ document.addEventListener('DOMContentLoaded',()=>{
  }
  // client-facing proposal view via self-contained LONG link (#p=...) — fallback / old links
  if(location.hash&&location.hash.indexOf('#p=')===0){try{let b64=location.hash.slice(3).replace(/-/g,'+').replace(/_/g,'/');const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));const data=JSON.parse(new TextDecoder().decode(bytes));const sp=document.getElementById('splash');if(sp)sp.style.display='none';document.getElementById('root').innerHTML=App.proposalView(data);return;}catch(e){}}
+ // --- מיגרציה חד-פעמית v6.9.2: שחזור לקוחות + תאריכי יעד מהצעות שנשלחו בעבר ---
+ try{if(!Store.get('mig_dueDate_692',false)){
+   const clients=Store.get('clients',[]);
+   const byName={};clients.forEach(c=>{if(c.name)byName[c.name]=c;});
+   let changed=false;
+   // 1) מ-quotes: כל הצעה שמורה עם snapshot של הלקוח (כולל dueDate)
+   Store.get('quotes',[]).forEach(q=>{const qc=q.client;if(!qc||!qc.name)return;
+     let rec=byName[qc.name];
+     if(!rec){rec={id:uid(),createdAt:q.ts||Date.now(),name:qc.name,project:qc.project||'',address:qc.address||'',phone:qc.phone||'',status:qc.status||'sent'};clients.push(rec);byName[qc.name]=rec;changed=true;}
+     if(qc.dueDate&&!rec.dueDate){rec.dueDate=qc.dueDate;changed=true;}
+   });
+   // 2) מ-sentLinks: לקוחות שקיבלו הצעה דיגיטלית אך אינם ברשימה
+   Store.get('sentLinks',[]).forEach(sl=>{if(!sl.client)return;
+     if(!byName[sl.client]){const rec={id:uid(),createdAt:sl.ts||Date.now(),name:sl.client,project:sl.project||'',phone:sl.phone||'',status:'sent'};clients.push(rec);byName[sl.client]=rec;changed=true;}
+   });
+   if(changed)Store.set('clients',clients);
+   Store.set('mig_dueDate_692',true);
+ }}catch(e){}
  App.render();
- // start cloud sync (all devices)
  try{setTimeout(()=>{try{Sync.snapshotDaily();}catch(e){}},4000);Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards)
  const sp=document.getElementById('splash');
