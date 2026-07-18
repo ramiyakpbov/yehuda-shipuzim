@@ -383,7 +383,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='6.8';
+const VERSION='6.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -742,7 +742,7 @@ const App={
   let _sc=null;try{const m=document.querySelector('.modal');_sc=m?{el:'modal',y:m.scrollTop}:{el:'win',y:window.scrollY};}catch(e){}
   document.getElementById('root').innerHTML=this.view();this.bind();
   try{if(_sc){if(_sc.el==='modal'){const m2=document.querySelector('.modal');if(m2)m2.scrollTop=_sc.y;}else window.scrollTo(0,_sc.y);}}catch(e){}
-  if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();if(this.state.modal==='snaps'&&!this._snaps)this.loadSnaps();if(this.state.modal==='reviews'&&!this._revData)this.loadReviews();if(this.state.modal==='reviews'&&!this._revData)this.loadReviews();
+  if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();if(this.state.modal==='snaps'&&!this._snaps)this.loadSnaps();if(this.state.modal==='reviews'&&!this._revData)this.loadReviews();
   const isOpen=!!this.state.modal;
   if(isOpen&&!this._pushedModal){try{history.pushState({ysm:1},'');}catch(e){}this._pushedModal=true;}
   else if(!isOpen&&this._pushedModal){this._pushedModal=false;this._ignorePop=true;try{history.back();}catch(e){}}
@@ -886,10 +886,7 @@ const App={
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
 
    <div class="sec-title">⭐ משוב לקוחות</div>
-   <div class="field"><label>לינק לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
-   <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">כדי להשיג: Google Business Profile ← "בקש ביקורות" ← העתק קישור</div>
-   <div class="sec-title">⭐ משוב לקוחות</div>
-   <div class="field"><label>קישור לביקורת בגוגל (יופיע בדף המשוב)</label><input id="gmb-url" value="${Store.get('gmbUrl','')}" placeholder="https://g.page/r/..."/></div>
+   <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
    <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
    <div class="sec-title">☁️ סנכרון בין מכשירים</div>
    <div class="toggle"><div><div style="font-weight:700">סנכרון ענן</div><div style="font-size:12px;color:var(--muted)">לקוחות · מחירון · הצעות · הגדרות — בכל המכשירים</div></div><button class="switch ${Store.get('syncOn',true)?'on':''}" id="sync-toggle"><span class="knob"></span></button></div>
@@ -1249,7 +1246,6 @@ const App={
   const ia=document.getElementById('install-app');if(ia)ia.onclick=()=>doInstall();
   const cu=document.getElementById('check-update');if(cu)cu.onclick=()=>this.checkUpdate();
   const grv=document.getElementById('g-review');if(grv)grv.onchange=()=>{Store.set('googleReview',grv.value.trim());this.toast('נשמר ✓');};
-  const gmb=document.getElementById('gmb-url');if(gmb)gmb.onchange=()=>{Store.set('gmbUrl',gmb.value.trim());this.toast('נשמר ✓');};
   const syt=document.getElementById('sync-toggle');if(syt)syt.onclick=async()=>{const on=!Store.get('syncOn',true);Store.set('syncOn',on);if(on){this.toast('מפעיל סנכרון…');await Sync.init(()=>{this.render();});await Sync.push(true);this.toast(Sync.status==='on'?'סנכרון פעיל ✓':'סנכרון נכשל');}else{Sync.stop();this.toast('סנכרון כובה');}this.render();};
   const syn=document.getElementById('sync-now');if(syn)syn.onclick=async()=>{if(!Sync.enabled()){this.toast('הפעל סנכרון קודם');return;}this.toast('מסנכרן…');const ok=await Sync.push(true);await Sync.init(()=>this.render());this.toast(ok||Sync.status==='on'?'סונכרן ✓':'סנכרון נכשל');this.render();};
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{if(!confirm('לאפס את המחירון למחירי ברירת המחדל 2026?\nהכמויות יתאפסו · תתי-הסעיפים שהוספת יישארו (עם איפוס כמות).'))return;this.state.catalog=JSON.parse(JSON.stringify(CATALOG));const clr=arr=>{if(arr)arr.forEach(it=>{it.selected=false;it.qty='';});};Object.values(this.state.subItems||{}).forEach(clr);clr(this.state.custom);Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);this.save();this.toast('המחירון אופס · הכמויות אופסו · תתי-הסעיפים נשמרו ✓');this.render();};
@@ -1390,7 +1386,7 @@ const App={
   this.toast('יוצר לינק משוב…');
   let link=null;
   if(window._db){try{const id=this.shortId();
-    await window._db.collection('reviews').doc(id).set({client:cl.name||'',phone:cl.phone||'',project:cl.project||'',gmb:Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:0,text:'',doneAt:null});
+    await window._db.collection('reviews').doc(id).set({client:cl.name||'',phone:cl.phone||'',project:cl.project||'',gmb:Store.get('googleReview','')||Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:0,text:'',doneAt:null});
     link=location.origin+location.pathname+'#r='+id;
     const rl=Store.get('reviewLinks',[]);rl.unshift({id:id,client:cl.name||'',phone:cl.phone||'',ts:Date.now()});Store.set('reviewLinks',rl.slice(0,200));
     cl.reviewId=id;
@@ -1469,23 +1465,6 @@ const App={
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.render();
  },
- reviewPageView(data,id){const stars=[1,2,3,4,5];
-  return `<div class="rv-wrap"><div class="rv-card">
-    <div class="rv-hdr"><img src="${LOGO_APP}" alt="יהודה שיפוצים"/><div class="co">יהודה שיפוצים</div></div>
-    <div class="rv-body">
-      ${data.doneAt?`<div class="rv-thanks">🙏 תודה רבה!<div class="s">המשוב שלך התקבל ונשמר. אנחנו מעריכים את זה מאוד.</div></div>`:`
-      <div class="rv-h">שלום${data.client?' '+data.client:''} 👋</div>
-      <div class="rv-sub">איך היית מדרג/ת את העבודה שלנו?${data.project?'<br><span style="color:#999">'+data.project+'</span>':''}</div>
-      <div class="rv-stars" id="rv-stars">${stars.map(n=>`<span class="st" data-star="${n}">☆</span>`).join('')}</div>
-      <div class="rv-lbl" id="rv-lbl"></div>
-      <textarea id="rv-text" placeholder="ספר/י לנו במילים שלך (לא חובה)…"></textarea>
-      <button class="rv-send" id="rv-send">שלח משוב</button>
-      <div id="rv-ok" class="rv-ok"></div>`}
-      <a class="rv-google" href="https://search.google.com/local/writereview?placeid=" target="_blank" id="rv-google">⭐ כתוב לנו ביקורת בגוגל</a>
-    </div>
-    <div class="rv-foot">יהודה שיפוצים · 054-571-8316</div>
-  </div></div>`;
- },
  async makeProposalLink(){this.captureQuote();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
@@ -1516,32 +1495,6 @@ const App={
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק את הלינק:',link);}}
  },
  reviewsModal(){const links=Store.get('reviewLinks',[]);const live=this._revData||{};
-  const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';return 'לפני '+Math.floor(hr/24)+' ימים';};
-  let done=0,sum=0;
-  links.forEach(l=>{const d=live[l.id]||{};if(d.doneAt&&d.stars){done++;sum+=d.stars;}});
-  const avg=done?(sum/done).toFixed(1):'—';
-  return `<h2>⭐ משובי לקוחות <button class="x" data-close>✕</button></h2>
-   <div class="trk-stats">
-     <div class="trk-box"><div class="n">${links.length}</div><div class="l">נשלחו</div></div>
-     <div class="trk-box"><div class="n" style="color:var(--ok)">${done}</div><div class="l">התקבלו</div></div>
-     <div class="trk-box"><div class="n" style="color:#f5b301">${avg}</div><div class="l">דירוג ממוצע</div></div>
-   </div>
-   <button class="btn-ghost" id="rev-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
-   ${links.length?links.map(l=>{const d=live[l.id]||{};
-     const st=d.doneAt?['★'.repeat(d.stars||0)+'☆'.repeat(5-(d.stars||0)),'#f5b301']:['ממתין','var(--muted)'];
-     return `<div class="list-item">
-       <span class="status" style="background:${d.doneAt?'#f5b301':'var(--bg3)'};color:${d.doneAt?'#111':'var(--muted)'};font-size:11px">${st[0]}</span>
-       <div class="info"><div class="t">${l.client||'—'}</div><div class="s">${l.project?l.project+' · ':''}נשלח ${ago(l.ts)}${d.doneAt?' · ענה '+ago(d.doneAt):''}</div></div>
-       ${(!d.doneAt&&l.phone)?`<button class="mini" data-revnudge="${l.id}">📲 תזכורת</button>`:''}
-       <button class="del" data-revdel="${l.id}">🗑️</button>
-       ${d.text?`<div class="trk-comment">💬 ${d.text}</div>`:''}
-       </div>`;}).join(''):'<div class="empty">עדיין לא נשלחו בקשות משוב.<br>סיים פרויקט ← 📩 משוב.</div>'}`;
- },
- async loadReviews(){const links=Store.get('reviewLinks',[]);if(!links.length||!window._db)return;const out={};
-  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null};}}catch(e){}}));}catch(e){}
-  this._revData=out;if(this.state.modal==='reviews')this.render();
- },
- reviewsModal(){const links=Store.get('reviewLinks',[]);const live=this._revData||{};
   const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<1)return 'הרגע';if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';return 'לפני '+Math.floor(hr/24)+' ימים';};
   const done=links.filter(l=>(live[l.id]||{}).doneAt);
   const avg=done.length?(done.reduce((a,l)=>a+((live[l.id]||{}).stars||0),0)/done.length):0;
@@ -1565,7 +1518,7 @@ const App={
   try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null};}}catch(e){}}));}catch(e){}
   this._revData=out;if(this.state.modal==='reviews')this.render();
  },
- reviewView(id,d){d=d||{};const gmb=d.gmb||Store.get('gmbUrl','');
+ reviewView(id,d){d=d||{};const gmb=d.gmb||Store.get('googleReview','')||Store.get('gmbUrl','');
   return `<div class="pv2-wrap"><div class="rv-card">
     <div class="rv-hdr"><img src="${LOGO_APP}" alt="יהודה שיפוצים"/><div class="co">יהודה שיפוצים</div></div>
     <div class="rv-body">
@@ -1728,28 +1681,6 @@ if('serviceWorker' in navigator){
   });
 }
 /* ===== client review page: stars + text + google ===== */
-function initReviewUI(rid,d){
-  try{window.__gReview=Store.get('googleReview','')||(d&&d.g)||'';}catch(e){window.__gReview='';}
-  let stars=0;const LBL={1:'לא מרוצה 😕',2:'בסדר',3:'טוב 🙂',4:'טוב מאוד 😀',5:'מצוין! 🤩'};
-  const wrap=document.getElementById('rv-stars'),lbl=document.getElementById('rv-lbl');
-  const paint=()=>{if(!wrap)return;[...wrap.querySelectorAll('.st')].forEach((s,i)=>{s.textContent=i<stars?'★':'☆';s.classList.toggle('on',i<stars);});if(lbl)lbl.textContent=LBL[stars]||'בחר/י דירוג';};
-  if(wrap)wrap.querySelectorAll('.st').forEach(s=>s.onclick=()=>{stars=+s.dataset.star;paint();});
-  const sb=document.getElementById('rv-send');
-  if(sb)sb.onclick=async()=>{
-    if(!stars){if(lbl){lbl.textContent='בחר/י דירוג קודם 🙏';lbl.style.color='#ed1c24';}return;}
-    const txt=(document.getElementById('rv-text')||{}).value||'';
-    sb.disabled=true;sb.textContent='שולח…';
-    try{if(window._db&&rid)await window._db.collection('reviews').doc(rid).update({stars:stars,text:txt.trim(),doneAt:Date.now()});}catch(e){}
-    const ok=document.getElementById('rv-ok');
-    sb.textContent='✓ נשלח — תודה רבה!';sb.style.background='#2ec26b';
-    if(ok){ok.innerHTML='תודה על המשוב! 🙏';
-      const g=(window.__gReview||'');
-      if(stars>=4&&g){ok.innerHTML+='<a class="rv-google" href="'+g+'" target="_blank">⭐ שתפו את החוויה גם בגוגל</a>';}
-    }
-    try{if(stars<=3)window.open('https://wa.me/'+WA+'?text='+encodeURIComponent('משוב '+stars+'/5'+(txt?': '+txt:'')),'_blank');}catch(e){}
-  };
-}
-/* ===== client review page ===== */
 function initReviewUI(id,d){d=d||{};
   let stars=0;const lbls={1:'לא מרוצה 😕',2:'סביר',3:'בסדר גמור',4:'מרוצה מאוד 😊',5:'מעולה! 🤩'};
   const box=document.getElementById('rv-stars'),lbl=document.getElementById('rv-lbl');
