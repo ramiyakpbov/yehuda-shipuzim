@@ -395,7 +395,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.3';
+const VERSION='7.3.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -813,7 +813,7 @@ const App={
  afterDiscount(){return this.subtotal()-this.discountAmt();},
  vat(){return this.state.vatOn?this.afterDiscount()*this.state.vatPct/100:0;},
  grand(){return this.afterDiscount()+this.vat();},
- reminders(){return Store.get('clients',[]).filter(c=>c.status==='q'||c.status==='sent');},
+ reminders(){return Store.get('clients',[]).filter(c=>(c.status==='q'||c.status==='sent')&&!c.approvedAt);},
  toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);},
  async checkUpdate(){this.busy('בודק עדכונים…');this.haptic(15);
   try{
@@ -1174,7 +1174,13 @@ const App={
  async loadTracking(){const links=Store.get('sentLinks',[]);if(!links.length||!window._db)return;
   const out={};
   try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||''};}}catch(e){}}));}catch(e){}
-  this._trackData=out;if(this.state.modal==='tracking')this.render();
+  this._trackData=out;
+  // סנכרון: לקוח שההצעה שלו אושרה בענן — מעדכנים את הסטטוס המקומי ל'בוצע' כדי שלא יופיע בתזכורות
+  try{const clients=Store.get('clients',[]);let changed=false;
+    links.forEach(l=>{const d=out[l.id];if(d&&d.approvedAt&&l.client){const cl=clients.find(c=>c.name===l.client);if(cl&&cl.status!=='done'){cl.status='done';cl.approvedAt=d.approvedAt;changed=true;}}});
+    if(changed){Store.set('clients',clients);try{Sync.push&&Sync.push();}catch(e){}}
+  }catch(e){}
+  if(this.state.modal==='tracking')this.render();
  },
  sentQuotesModal(){return `<h2>📤 הצעות שנשלחו <button class="x" data-close>✕</button></h2>${this.sentQuotesBody()}`;},
  sentQuotesBody(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
