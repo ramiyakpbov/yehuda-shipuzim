@@ -413,7 +413,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.6';
+const VERSION='7.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -819,9 +819,17 @@ const App={
   }catch(e){this.idle();this.toast('ההמרה נכשלה — נסה לנסח שוב או בדוק את מפתח ה-AI');}
  },
  v2qApply(){const arr=(this._v2qResult||[]).filter(x=>x.ok);if(!arr.length){this.toast('לא נבחרו סעיפים');return;}
-  arr.forEach(x=>{this.state.custom.push({id:uid(),name:x.name,price:0,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1});});
-  Store.set('customItems',this.state.custom);this._v2qResult=null;this._v2qText='';this.state.modal=null;this.haptic(25);
-  this.toast(arr.length+' סעיפים נוספו ✓ — עדכן מחירים');this.render();
+  // מיפוי שם קטגוריה (מה-AI) → מזהה קטגוריה במערכת
+  const catMap={'הריסה ופינוי':'demo','הריסה':'demo','פינוי':'demo','אינסטלציה':'plumb','שרברבות':'plumb','חשמל ותקשורת':'elec','חשמל':'elec','תקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','גמר':'finish','צבע':'finish','ריצוף':'finish','גבס':'finish','עיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','נגרות':'alum','מסגרות':'alum','אלומיניום':'alum','תכנון ניהול ורישוי':'plan','תכנון':'plan','רישוי':'plan','שלד ותשתית כבדה':'struct','שלד':'struct','פיתוח חוץ וסביבה':'outdoor','פיתוח חוץ':'outdoor','גינון':'outdoor'};
+  const resolve=name=>{if(!name)return 'custom';const n=name.trim();if(catMap[n])return catMap[n];for(const k in catMap){if(n.indexOf(k)>=0||k.indexOf(n)>=0)return catMap[k];}return 'custom';};
+  let added=0,toCustom=0;
+  arr.forEach(x=>{const cid=resolve(x.cat);const item={id:uid(),name:x.name,price:0,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1};
+    if(cid==='custom'){this.state.custom.push(item);toCustom++;}
+    else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;}
+    added++;});
+  Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
+  this._v2qResult=null;this._v2qText='';this.state.modal=null;this.haptic(25);
+  this.toast(added+' סעיפים נוספו לקטגוריות ✓ — עדכן מחירים'+(toCustom?' ('+toCustom+' ב"אחר")':''));this.render();
  },
  chosen(){const out=[];this.allCats().forEach(c=>{const lines=c.items.filter(i=>i.selected&&(+i.qty>0));if(lines.length)out.push({cat:c,lines});});return out;},
  catTotal(c){return c.items.reduce((s,i)=>s+(i.selected?(+i.qty||0)*(+i.price||0):0),0);},
@@ -899,7 +907,6 @@ const App={
     <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     <button class="chip" data-modal="calendar">📅 יומן</button>
-    <button class="chip" data-modal="gemini">🤖 Gemini</button>
     <button class="chip" data-modal="v2q">🎤 הצעה קולית</button>
     <button class="chip" data-modal="tracking">📤 הצעות ומעקב</button>
     <button class="chip" data-modal="kanban">📋 לוח פרויקטים</button>
@@ -925,7 +932,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',gemini:'geminiModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1280,8 +1287,8 @@ const App={
    <div id="voice-log" style="margin-top:12px"></div>`;
  },
  v2qModal(){const on=this._v2qOn;const txt=this._v2qText||'';
-  return `<h2>🎤➜📋 הכתבת הצעה בקול <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">תאר את העבודה במילים חופשיות — וה-AI יסדר אותה לסעיפים. לדוגמה: "הריסת קיר במטבח, ריצוף ארבעים מטר, צביעת סלון ושני חדרים, שלוש נקודות חשמל".</div>
+  return `<h2>🎤 הצעה קולית / טקסט <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">דבר <b>או הדבק/הקלד</b> תיאור עבודה מבולגן — וה-AI יסדר אותו לסעיפים <b>לפי קטגוריות</b> (הריסה, אינסטלציה, חשמל…). לדוגמה: "הריסת קיר במטבח, ריצוף ארבעים מטר, צביעת סלון, שלוש נקודות חשמל".</div>
    <div style="text-align:center;margin:6px 0 14px">
      <button id="v2q-btn" class="voice-big ${on?'on':''}">${on?'⏹ עצור הקלטה':'🎤 התחל לדבר'}</button>
    </div>
@@ -1763,7 +1770,7 @@ const App={
     <div class="rv-foot">המשוב שלך עוזר לנו להשתפר · יהודה שיפוצים · 054-571-8316</div>
   </div></div>`;
  },
-proposalView(data){data=data||{};const nf=n=>'₪ '+Math.round(n).toLocaleString('he-IL');const owner=WA;
+proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL')+' ₪';const owner=WA;
   const msg='שלום, אני מאשר את הצעת המחיר מס\' '+(data.no||'')+(data.cn?' עבור '+data.cn:'')+' בסך '+nf(data.tot)+'. אפשר להתקדם 🙂';
   // group items by category (backward compatible: items without c go to one group)
   const groups=[];const gmap={};(data.it||[]).forEach(i=>{const key=i.c||'';if(!gmap[key]){gmap[key]={title:key,lines:[]};groups.push(gmap[key]);}gmap[key].lines.push(i);});
@@ -1962,7 +1969,7 @@ function initProposalUI(pid,data){
     pad.addEventListener('touchstart',st,{passive:false});pad.addEventListener('touchmove',mv,{passive:false});pad.addEventListener('touchend',en);
     const cl=document.getElementById('pv2-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,pad.width,pad.height);has=false;sigData=null;};
   }
-  const nf=n=>'₪ '+Math.round(n||0).toLocaleString('he-IL');
+  const nf=n=>Math.round(n||0).toLocaleString('he-IL')+' ₪';
   const ap=document.getElementById('pv2-approve');
   if(ap)ap.onclick=async()=>{
     ap.disabled=true;ap.textContent='שולח אישור…';
