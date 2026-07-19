@@ -413,7 +413,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.7';
+const VERSION='7.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -810,11 +810,25 @@ const App={
   if(raw.length<8){this.toast('הקלט או כתוב תיאור עבודה קצת יותר מפורט');return;}
   this.v2qStop();this._v2qText=raw;this.busy('ה-AI ממיר לסעיפים…');this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
-  const prompt='אתה עוזר לקבלן שיפוצים ישראלי. הקבלן הקליט תיאור עבודה חופשי (יתכנו שגיאות כתיב/דיבור). המר אותו לרשימת סעיפי עבודה מסודרים להצעת מחיר.\\n\\nהתיאור: "'+raw+'"\\n\\nהחזר אך ורק JSON תקין (בלי טקסט לפני/אחרי, בלי markdown) — מערך של אובייקטים. לכל סעיף: {"name":"תיאור העבודה בעברית תקנית","qty":כמות מספרית,"unit":"אחת מ: מ\\"ר / מ\\"א / מ\\"ק / יח׳ / גלובלי","cat":"אחת מ: '+cats+'"}\\nכללים: תקן שגיאות כתיב. אם לא צוינה כמות השתמש ב-1 ויחידה גלובלי. שטחים במ\\"ר, אורכים במ\\"א. אל תמציא מחירים. עד 25 סעיפים.';
-  try{let txt=await this.callAI(prompt,1500);
+  const P=['אתה עוזר לקבלן שיפוצים ישראלי. הקבלן מסר תיאור עבודה חופשי (קול או טקסט מודבק, יתכנו שגיאות כתיב). המר אותו לרשימת סעיפי עבודה מסודרים להצעת מחיר.',
+    '',
+    'התיאור:',
+    raw,
+    '',
+    'החזר אך ורק JSON תקין (בלי טקסט לפני/אחרי, בלי markdown) — מערך אובייקטים. לכל סעיף:',
+    '{"name":"תיאור העבודה בעברית תקנית","qty":כמות מספרית,"unit":"מ\"ר או מ\"א או מ\"ק או יח׳ או נקודה או גלובלי","price":מחיר_ליחידה_בשקלים,"cat":"אחת מ: '+cats+'"}',
+    '',
+    'כללי מחיר (חשוב מאוד):',
+    '- אם צוין מחיר ליחידה (למשל "250 ש\"ח למטר") — קח אותו כ-price.',
+    '- אם צוין רק סכום כולל (למשל "3500 ש\"ח" ל-14 מטר) — חשב price = הסכום הכולל חלקי הכמות, ועגל למספר שלם.',
+    '- אם אין כמות מפורשת, qty=1, unit=גלובלי, ו-price = הסכום הכולל שצוין.',
+    '- אם אין מחיר כלל — price=0.',
+    '- תקן שגיאות כתיב. שטחים במ\"ר, אורכים במ\"א, נקודות חשמל ב"נקודה". עד 25 סעיפים.'];
+  const prompt=P.join(String.fromCharCode(10));
+  try{let txt=await this.callAI(prompt,2000);
    txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
    let arr=JSON.parse(txt);if(!Array.isArray(arr)||!arr.length){throw new Error('empty');}
-   arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,25);
+   arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),price:(+x.price>0?Math.round(+x.price):0),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,25);
    this._v2qResult=arr;this.idle();this.state.modal='v2qreview';this.render();
   }catch(e){this.idle();this.toast('ההמרה נכשלה — נסה לנסח שוב או בדוק את מפתח ה-AI');}
  },
@@ -823,7 +837,7 @@ const App={
   const catMap={'הריסה ופינוי':'demo','הריסה':'demo','פינוי':'demo','אינסטלציה':'plumb','שרברבות':'plumb','חשמל ותקשורת':'elec','חשמל':'elec','תקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','גמר':'finish','צבע':'finish','ריצוף':'finish','גבס':'finish','עיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','נגרות':'alum','מסגרות':'alum','אלומיניום':'alum','תכנון ניהול ורישוי':'plan','תכנון':'plan','רישוי':'plan','שלד ותשתית כבדה':'struct','שלד':'struct','פיתוח חוץ וסביבה':'outdoor','פיתוח חוץ':'outdoor','גינון':'outdoor'};
   const resolve=name=>{if(!name)return 'custom';const n=name.trim();if(catMap[n])return catMap[n];for(const k in catMap){if(n.indexOf(k)>=0||k.indexOf(n)>=0)return catMap[k];}return 'custom';};
   let added=0,toCustom=0;
-  arr.forEach(x=>{const cid=resolve(x.cat);const item={id:uid(),name:x.name,price:0,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1};
+  arr.forEach(x=>{const cid=resolve(x.cat);const item={id:uid(),name:x.name,price:(+x.price>0?+x.price:0),unit:x.unit||'גלובלי',selected:true,qty:x.qty||1};
     if(cid==='custom'){this.state.custom.push(item);toCustom++;}
     else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;}
     added++;});
@@ -1288,7 +1302,7 @@ const App={
  },
  v2qModal(){const on=this._v2qOn;const txt=this._v2qText||'';
   return `<h2>🎤 הצעה קולית / טקסט <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">דבר <b>או הדבק/הקלד</b> תיאור עבודה מבולגן — וה-AI יסדר אותו לסעיפים <b>לפי קטגוריות</b> (הריסה, אינסטלציה, חשמל…). לדוגמה: "הריסת קיר במטבח, ריצוף ארבעים מטר, צביעת סלון, שלוש נקודות חשמל".</div>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">דבר <b>או הדבק/הקלד</b> תיאור עבודה מבולגן — וה-AI יסדר אותו לסעיפים <b>לפי קטגוריות וגם יקרא את המחירים</b> שכתבת. לדוגמה: "הריסת קיר 2500 ש״ח, ריצוף 14 מטר לפי 250 ש״ח, צביעה 4500".</div>
    <div style="text-align:center;margin:6px 0 14px">
      <button id="v2q-btn" class="voice-big ${on?'on':''}">${on?'⏹ עצור הקלטה':'🎤 התחל לדבר'}</button>
    </div>
@@ -1304,7 +1318,7 @@ const App={
    ${Object.keys(byCat).map(cat=>`<div style="margin-bottom:12px"><div style="font-weight:800;color:var(--red);font-size:12.5px;margin-bottom:6px">${cat}</div>
      ${byCat[cat].map(x=>`<div class="list-item" style="align-items:center">
        <input type="checkbox" data-v2qtoggle="${x._i}" ${x.ok?'checked':''} style="width:20px;height:20px;accent-color:var(--red);margin-left:8px"/>
-       <div class="info"><div class="t" style="font-size:13.5px">${x.name}</div><div class="s">כמות ${x.qty} · ${x.unit}</div></div>
+       <div class="info"><div class="t" style="font-size:13.5px">${x.name}</div><div class="s">כמות ${x.qty} · ${x.unit}${+x.price>0?' · '+(+x.price).toLocaleString('he-IL')+' ₪ ליח׳':' · ללא מחיר'}</div></div>
      </div>`).join('')}</div>`).join('')}
    <button class="btn-block" id="v2q-apply" style="margin-top:10px">➕ הוסף ${chosen} סעיפים להצעה</button>
    <button class="btn-ghost" id="v2q-back" style="margin-top:8px">← חזור לעריכת הטקסט</button>`;
