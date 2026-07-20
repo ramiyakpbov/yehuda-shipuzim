@@ -413,7 +413,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.8';
+const VERSION='7.8.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -823,6 +823,10 @@ const App={
     '- אם צוין רק סכום כולל (למשל "3500 ש\"ח" ל-14 מטר) — חשב price = הסכום הכולל חלקי הכמות, ועגל למספר שלם.',
     '- אם אין כמות מפורשת, qty=1, unit=גלובלי, ו-price = הסכום הכולל שצוין.',
     '- אם אין מחיר כלל — price=0.',
+    '- 15 ספוטים ב-1500 שח סהכ: qty=15, unit=נקודה, price=100.',
+    '- 3 גמישים ב-1200 שח סהכ: qty=3, unit=יחידה, price=400.',
+    '- פירוק 4 מזגנים ב-2800 שח סהכ: qty=4, unit=יחידה, price=700.',
+    '- תזכורת: price הוא תמיד ליחידה אחת, לא הסכום הכולל.',
     '- תקן שגיאות כתיב. שטחים במ\"ר, אורכים במ\"א, נקודות חשמל ב"נקודה". עד 25 סעיפים.'];
   const prompt=P.join(String.fromCharCode(10));
   try{let txt=await this.callAI(prompt,2000);
@@ -832,18 +836,40 @@ const App={
    this._v2qResult=arr;this.idle();this.state.modal='v2qreview';this.render();
   }catch(e){this.idle();this.toast('ההמרה נכשלה — נסה לנסח שוב או בדוק את מפתח ה-AI');}
  },
+ dedupeItems(){let removed=0;
+   // בכל קטגוריה: אם יש כפילויות שם — משאירים את זו עם המחיר הגבוה יותר
+   Object.keys(this.state.subItems||{}).forEach(cid=>{
+     const seen={};const kept=[];
+     this.state.subItems[cid].forEach(it=>{
+       const k=it.name;
+       if(seen[k]){const prev=seen[k];if((+it.price||0)>(+prev.price||0)){prev.price=it.price;prev.qty=it.qty;}removed++;}
+       else{seen[k]=it;kept.push(it);}
+     });
+     this.state.subItems[cid]=kept;
+   });
+   // גם ב-custom
+   {const seen={};const kept=[];this.state.custom.forEach(it=>{if(seen[it.name]){const prev=seen[it.name];if((+it.price||0)>(+prev.price||0))prev.price=it.price;removed++;}else{seen[it.name]=it;kept.push(it);}});this.state.custom=kept;}
+   Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
+   this.haptic(20);this.toast(removed?removed+' סעיפים כפולים אוחדו ✓':'לא נמצאו כפילויות');this.render();
+ },
  v2qApply(){const arr=(this._v2qResult||[]).filter(x=>x.ok);if(!arr.length){this.toast('לא נבחרו סעיפים');return;}
   // מיפוי שם קטגוריה (מה-AI) → מזהה קטגוריה במערכת
   const catMap={'הריסה ופינוי':'demo','הריסה':'demo','פינוי':'demo','אינסטלציה':'plumb','שרברבות':'plumb','חשמל ותקשורת':'elec','חשמל':'elec','תקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','גמר':'finish','צבע':'finish','ריצוף':'finish','גבס':'finish','עיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','נגרות':'alum','מסגרות':'alum','אלומיניום':'alum','תכנון ניהול ורישוי':'plan','תכנון':'plan','רישוי':'plan','שלד ותשתית כבדה':'struct','שלד':'struct','פיתוח חוץ וסביבה':'outdoor','פיתוח חוץ':'outdoor','גינון':'outdoor'};
   const resolve=name=>{if(!name)return 'custom';const n=name.trim();if(catMap[n])return catMap[n];for(const k in catMap){if(n.indexOf(k)>=0||k.indexOf(n)>=0)return catMap[k];}return 'custom';};
-  let added=0,toCustom=0;
-  arr.forEach(x=>{const cid=resolve(x.cat);const item={id:uid(),name:x.name,price:(+x.price>0?+x.price:0),unit:x.unit||'גלובלי',selected:true,qty:x.qty||1};
+  let added=0,toCustom=0,updated=0;
+  arr.forEach(x=>{const cid=resolve(x.cat);const price=(+x.price>0?+x.price:0);
+    // בדיקת כפילות: אם כבר קיים סעיף באותו שם באותה קטגוריה — עדכן במקום להוסיף
+    let existing=null;
+    if(cid==='custom'){existing=this.state.custom.find(i=>i.name===x.name);}
+    else{existing=(this.state.subItems[cid]||[]).find(i=>i.name===x.name);}
+    if(existing){if(price>0)existing.price=price;existing.qty=x.qty||existing.qty||1;existing.selected=true;updated++;return;}
+    const item={id:uid(),name:x.name,price:price,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1};
     if(cid==='custom'){this.state.custom.push(item);toCustom++;}
     else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;}
     added++;});
   Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
   this._v2qResult=null;this._v2qText='';this.state.modal=null;this.haptic(25);
-  this.toast(added+' סעיפים נוספו לקטגוריות ✓ — עדכן מחירים'+(toCustom?' ('+toCustom+' ב"אחר")':''));this.render();
+  this.toast((added?added+' סעיפים נוספו':'')+(updated?(added?' · ':'')+updated+' עודכנו':'')+' ✓');this.render();
  },
  chosen(){const out=[];this.allCats().forEach(c=>{const lines=c.items.filter(i=>i.selected&&(+i.qty>0));if(lines.length)out.push({cat:c,lines});});return out;},
  catTotal(c){return c.items.reduce((s,i)=>s+(i.selected?(+i.qty||0)*(+i.price||0):0),0);},
@@ -1169,7 +1195,8 @@ const App={
    <div style="display:flex;gap:10px;margin-top:16px">
      <button class="btn-ghost" id="prev-back" style="flex:1">‹ חזרה לעריכה</button>
      <button class="btn-block" id="prev-next" style="flex:1.4;margin:0">המשך להצעה ›</button>
-   </div>`;
+   </div>
+   <button class="btn-ghost" id="prev-dedupe" style="margin-top:10px;font-size:12px">🧹 נקה סעיפים כפולים</button>`;
  },
  snapsModal(){const list=this._snaps||null;
   return `<h2>🗄️ גיבויי ענן <button class="x" data-close>✕</button></h2>
