@@ -165,6 +165,15 @@ input,select,textarea{font-family:inherit;}
 .addrow button{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:0 16px;font-weight:800;}
 .list-item{display:flex;align-items:center;gap:8px;padding:13px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;margin-bottom:9px;flex-wrap:wrap;}
 .aihub-grid{display:flex;flex-direction:column;gap:10px;}
+.qtype-row{display:flex;gap:10px;}
+.qtype-mini{flex:1;background:var(--bg3);border:2px solid var(--line);border-radius:10px;padding:11px 8px;cursor:pointer;font-size:12.5px;font-weight:700;color:var(--txt);transition:border-color .15s,background .15s;}
+.qtype-mini.on{border-color:var(--red);background:rgba(237,28,36,.08);}
+.qtype-btn{flex:1;position:relative;background:var(--bg3);border:2px solid var(--line);border-radius:14px;padding:14px 10px;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;}
+.qtype-btn.on{border-color:var(--red);background:rgba(237,28,36,.08);}
+.qt-ic{font-size:26px;margin-bottom:6px;}
+.qt-t{font-weight:800;font-size:13.5px;color:var(--txt);}
+.qt-d{font-size:10.5px;color:var(--muted);margin-top:3px;}
+.qt-v{position:absolute;top:8px;left:8px;background:var(--red);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;}
 .aihub-card{display:flex;align-items:center;gap:12px;width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:right;transition:border-color .15s,transform .1s;}
 .aihub-card:active{transform:scale(.98);}
 .aihub-card:hover{border-color:var(--red);}
@@ -425,7 +434,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.9';
+const VERSION='8.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -763,7 +772,7 @@ const App={
    showTerms:true,terms:Store.get('terms','תנאי תשלום: 30% מקדמה עם תחילת העבודה, יתרה בהתאם להתקדמות. ההצעה בתוקף עד התאריך הנקוב.'),
    whiteOn:false,whiteItems:[],whiteCustom:Store.get('whiteCustom',[]),whiteInc:true,whitePrice:0,
    blackOn:false,blackItems:[],blackCustom:Store.get('blackCustom',[]),blackInc:true,blackPrice:0,
-   clientSig:null,modal:null,photoClient:null,includeGallery:Store.get('includeGallery',false),
+   clientSig:null,modal:null,photoClient:null,includeGallery:Store.get('includeGallery',false),planMode:Store.get('planMode',false),planPerSqm:Store.get('planPerSqm',''),planTotalSqm:Store.get('planTotalSqm',''),
  },
  save(){Store.set('catalog',this.state.catalog);},
  setField(cid,iid,field,val){const it=this.find(cid,iid);if(!it)return;it[field]=val;if(field==='price'&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(cid);},
@@ -927,10 +936,20 @@ const App={
  },
  v2qApply(){const arr=(this._v2qResult||[]).filter(x=>x.ok);if(!arr.length){this.toast('לא נבחרו סעיפים');return;}
   // מיפוי שם קטגוריה (מה-AI) → מזהה קטגוריה במערכת
-  const catMap={'הריסה ופינוי':'demo','הריסה':'demo','פינוי':'demo','אינסטלציה':'plumb','שרברבות':'plumb','חשמל ותקשורת':'elec','חשמל':'elec','תקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','גמר':'finish','צבע':'finish','ריצוף':'finish','גבס':'finish','עיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','נגרות':'alum','מסגרות':'alum','אלומיניום':'alum','תכנון ניהול ורישוי':'plan','תכנון':'plan','רישוי':'plan','שלד ותשתית כבדה':'struct','שלד':'struct','פיתוח חוץ וסביבה':'outdoor','פיתוח חוץ':'outdoor','גינון':'outdoor'};
+  const catMap={'הריסה ופינוי':'demo','הריסה':'demo','פינוי':'demo','אינסטלציה':'plumb','שרברבות':'plumb','מיזוג':'plumb','מיזוג אוויר':'plumb','מזגן':'plumb','ספרינקלרים':'plumb','כיבוי אש':'plumb','חשמל ותקשורת':'elec','חשמל':'elec','תקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','גמר':'finish','צבע':'finish','ריצוף':'finish','גבס':'finish','עיצוב פנים':'finish','תקרה':'finish','נגרות מסגרות ואלומיניום':'alum','נגרות':'alum','מסגרות':'alum','אלומיניום':'alum','דלתות':'alum','תכנון ניהול ורישוי':'plan','תכנון':'plan','רישוי':'plan','שלד ותשתית כבדה':'struct','שלד':'struct','בטון':'struct','ברזל':'struct','יציקה':'struct','פיתוח חוץ וסביבה':'outdoor','פיתוח חוץ':'outdoor','גינון':'outdoor'};
   const resolve=name=>{if(!name)return 'custom';const n=name.trim();if(catMap[n])return catMap[n];for(const k in catMap){if(n.indexOf(k)>=0||k.indexOf(n)>=0)return catMap[k];}return 'custom';};
+  // זיהוי לפי מילות מפתח בשם הסעיף עצמו (גיבוי כשה-AI לא נתן קטגוריה)
+  const byName=nm=>{const t=(nm||'');
+    if(/מזגן|מיזוג|ספרינק|כיבוי אש|צנרת נחושת/.test(t))return 'plumb';
+    if(/חשמל|תקשורת|שקע|נקוד(ת|ות) חשמל|תאורה|ארון חשמל|רנטגן|עופרת|קודן/.test(t))return 'elec';
+    if(/אינסטל|ניקוז|מים|ביוב|כיור|ברז|שרברב/.test(t))return 'plumb';
+    if(/ריצוף|גבס|צבע|שפכטל|תקרה|פרקט|טיח|חיפוי|פנלים/.test(t))return 'finish';
+    if(/נגר|אלומיניום|מסגר|דלת|חלון|משקוף/.test(t))return 'alum';
+    if(/בטון|ברזל|יציקה|שלד|עמוד|פלטת בסיס/.test(t))return 'struct';
+    if(/הריסה|פינוי|פסולת/.test(t))return 'demo';
+    return 'custom';};
   let added=0,toCustom=0,updated=0;
-  arr.forEach(x=>{const cid=resolve(x.cat);const price=(+x.price>0?+x.price:0);
+  arr.forEach(x=>{let cid=resolve(x.cat);if(cid==='custom')cid=byName(x.name);const price=(+x.price>0?+x.price:0);
     // בדיקת כפילות: אם כבר קיים סעיף באותו שם באותה קטגוריה — עדכן במקום להוסיף
     let existing=null;
     if(cid==='custom'){existing=this.state.custom.find(i=>i.name===x.name);}
@@ -941,6 +960,8 @@ const App={
     else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;}
     added++;});
   Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
+  // סוג ההצעה שנבחר בעוזר AI — משפיע על ה-PDF (תכנון = בלי מחירים)
+  this.state.planMode=(this._aiQuoteType==='plan');Store.set('planMode',this.state.planMode);
   this._v2qResult=null;this._v2qText='';this.state.modal=null;this.haptic(25);
   this.toast((added?added+' סעיפים נוספו':'')+(updated?(added?' · ':'')+updated+' עודכנו':'')+' ✓');this.render();
  },
@@ -1070,6 +1091,16 @@ const App={
      <div class="field"><label>בתוקף עד</label><input id="q_valid" value="${s.valid}"/></div></div>
    <div class="field"><label>תאריך יעד לפרויקט (מופיע בלוח 📅)</label><input id="c_due" type="date" value="${c.dueDate||''}"/></div>
    <div class="field"><label>הערות פנימיות (לא מופיע בהצעה 🔒)</label><textarea id="c_notes" placeholder="לזיכרון שלך בלבד…" style="min-height:48px">${c.notes||''}</textarea></div>
+   <div class="sec-title">סוג הצעה</div>
+   <div class="row2">
+     <button class="qtype-mini ${!s.planMode?'on':''}" data-setplan="0">🧮 מחשבון (עם מחירים)</button>
+     <button class="qtype-mini ${s.planMode?'on':''}" data-setplan="1">📐 תכנון (למ"ר)</button>
+   </div>
+   ${s.planMode?`<div class="row2" style="margin-top:10px">
+     <div class="field"><label>מחיר למ"ר (₪)</label><input id="q_persqm" type="number" inputmode="decimal" value="${s.planPerSqm||''}" placeholder="3200"/></div>
+     <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="475"/></div>
+   </div>
+   <div style="font-size:11px;color:var(--muted);margin-top:4px">💡 בהצעת תכנון ה-PDF יציג סעיפים וכמויות בלבד (בלי מחיר לכל שורה), ובסוף: המחיר למ"ר.</div>`:''}
    <div class="sec-title">הנחת לקוח ומקדמה</div>
    <div class="row2"><div class="field"><label>אחוז הנחה (%)</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
      <div class="field"><label>מקדמה (%) — תופיע בהצעה</label><input id="q_adv" type="number" inputmode="decimal" value="${s.advance||''}" placeholder="0"/></div></div>
@@ -1401,20 +1432,30 @@ const App={
    <div id="voice-log" style="margin-top:12px"></div>`;
  },
  aiHubModal(){
+  const qt=this._aiQuoteType||'calc';
   const card=(modal,icon,title,desc,badge)=>`<button class="aihub-card" data-modal="${modal}">
      <div class="ah-icon">${icon}</div>
      <div class="ah-txt"><div class="ah-t">${title}${badge?`<span class="ah-badge">${badge}</span>`:''}</div><div class="ah-d">${desc}</div></div>
      <div class="ah-arrow">‹</div></button>`;
   return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">בחר איך ליצור הצעה — ה-AI יסדר הכל לסעיפים מקצועיים לפי קטגוריות, מוכן ל-PDF בפורמט שלך.</div>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">בחר סוג הצעה ואיך ליצור אותה — ה-AI יסדר הכל לסעיפים מקצועיים, מוכן ל-PDF בפורמט שלך.</div>
+   <div style="font-weight:800;font-size:12.5px;margin-bottom:8px">1️⃣ סוג ההצעה:</div>
+   <div class="qtype-row">
+     <button class="qtype-btn ${qt==='calc'?'on':''}" data-qtype="calc">
+       <div class="qt-ic">🧮</div><div class="qt-t">הצעת מחשבון</div><div class="qt-d">עם מחירים · סה"כ + מע"מ</div>
+       ${qt==='calc'?'<div class="qt-v">✓</div>':''}
+     </button>
+     <button class="qtype-btn ${qt==='plan'?'on':''}" data-qtype="plan">
+       <div class="qt-ic">📐</div><div class="qt-t">הצעת תכנון</div><div class="qt-d">בלי מחירים · X ₪ למ"ר</div>
+       ${qt==='plan'?'<div class="qt-v">✓</div>':''}
+     </button>
+   </div>
+   <div style="font-weight:800;font-size:12.5px;margin:16px 0 8px">2️⃣ איך ליצור:</div>
    <div class="aihub-grid">
      ${card('v2q','🎤','הכתבה קולית','דבר בקול וה-AI ימיר להצעה','')}
      ${card('v2q','📋','הדבקת טקסט','הדבק הצעה מבולגנת מוואטסאפ','')}
-     ${card('aiphoto','📷','צילום פתקית','צלם פתק בכתב יד וה-AI יקרא','חדש')}
-     ${card('aipdf','📄','העלאת קובץ','טען PDF/תמונה של כתב כמויות','חדש')}
-   </div>
-   <div style="margin-top:16px;padding:12px;background:var(--bg3);border-radius:10px;font-size:11.5px;color:var(--muted);line-height:1.7">
-     💡 <b>טיפ:</b> "הכתבה קולית" ו"הדבקת טקסט" נפתחות באותו מסך — אפשר גם לדבר וגם להקליד/להדביק.
+     ${card('aiphoto','📷','צילום פתקית','צלם פתק בכתב יד וה-AI יקרא','')}
+     ${card('aipdf','📄','העלאת קובץ','טען PDF/תמונה של כתב כמויות','')}
    </div>`;
  },
  aiPhotoModal(){
@@ -1710,6 +1751,8 @@ const App={
   on('[data-cal-add]','click',e=>{this.addToCalendar(e.currentTarget.dataset.calAdd);});
   const calIcs=document.getElementById('cal-ics');if(calIcs)calIcs.onclick=()=>{const cc=this._calChoice||{};if(!cc.ics)return;const blob=new Blob([cc.ics],{type:'text/calendar'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(cc.name||'event')+'.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);this.haptic(15);this.toast('הקובץ הורד — פתח אותו כדי להוסיף ליומן');};
   on('[data-kbmove]','click',e=>{e.stopPropagation();const[id,col]=e.currentTarget.dataset.kbmove.split('|');this.kbMove(id,col);});
+  on('[data-qtype]','click',e=>{this._aiQuoteType=e.currentTarget.dataset.qtype;this.haptic(10);this.render();});
+  on('[data-setplan]','click',e=>{this.captureQuote();this.state.planMode=e.currentTarget.dataset.setplan==='1';Store.set('planMode',this.state.planMode);this.haptic(10);this.render();});
   // עוזר AI — צילום פתקית
   const aphIn=document.getElementById('aiphoto-in');if(aphIn)aphIn.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{this._aiPhotoData=rd.result;this.render();};rd.readAsDataURL(f);};
   const aphGo=document.getElementById('aiphoto-go');if(aphGo)aphGo.onclick=()=>this.aiVisionConvert(this._aiPhotoData);
@@ -1769,7 +1812,7 @@ const App={
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
- captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;},
+ captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}},
  saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
  exportClients(){const list=Store.get('clients',[]);if(!list.length){this.toast('אין לקוחות לייצוא');return;}
   const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
@@ -1810,18 +1853,19 @@ const App={
  restore(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);Object.keys(d).forEach(k=>{if(k!=='_v'&&d[k]!==null)Store.set(k,d[k]);});this.state.catalog=Store.get('catalog',this.state.catalog);this.state.custom=Store.get('customItems',[]);this.toast('שוחזר בהצלחה ✓');this.state.modal=null;this.render();}catch(x){this.toast('קובץ לא תקין');}};rd.readAsText(f);},
 
  buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=s.lang==='en'?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
-  groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="6"><div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div></td></tr>`;
-    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
+  const plan=s.planMode;const cspan=plan?4:6;
+  groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?g.cat.title:`<div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
+    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
   // materials as a real table category (not a footnote)
   if(s.whiteOn||s.blackOn){
     const mrows=[];
     if(s.whiteOn)mrows.push({name:L.white+': '+(s.whiteItems.length?s.whiteItems.join(', '):L.incl),price:(s.whiteInc?0:(+s.whitePrice||0))});
     if(s.blackOn)mrows.push({name:L.black+': '+(s.blackItems.length?s.blackItems.join(', '):L.incl),price:(s.blackInc?0:(+s.blackPrice||0))});
     const msum=mrows.reduce((a,r)=>a+r.price,0);
-    rows+=`<tr class="cat-band"><td colspan="6"><div style="display:flex;justify-content:space-between"><span>חומרים</span><span style="color:var(--red);font-weight:900">${nis(msum)}</span></div></td></tr>`;
-    mrows.forEach((r,idx)=>{rows+=`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td><td>${nis(r.price)}</td><td>${nis(r.price)}</td></tr>`;});
+    rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?'חומרים':`<div style="display:flex;justify-content:space-between"><span>חומרים</span><span style="color:var(--red);font-weight:900">${nis(msum)}</span></div>`}</td></tr>`;
+    mrows.forEach((r,idx)=>{rows+=plan?`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td></tr>`:`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td><td>${nis(r.price)}</td><td>${nis(r.price)}</td></tr>`;});
   }
-  if(!rows)rows='<tr class="line"><td colspan="6" style="text-align:center;color:#999;padding:20px">—</td></tr>';
+  if(!rows)rows=`<tr class="line"><td colspan="${cspan}" style="text-align:center;color:#999;padding:20px">—</td></tr>`;
   let extra='';
   if(s.showTerms&&s.terms&&s.terms.trim())extra+=`<div class="blk"><b>${L.terms}:</b> ${this.termsText()}</div>`;
   if(isC)extra+=`<div class="blk"><b>${L.orderclause}</b></div>`;
@@ -1835,13 +1879,16 @@ const App={
    <div class="p-parties">
      <div class="p-party"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="l">יהודה יעקובוב · ח.פ 311834998<br>054-5718316</div></div>
      <div class="p-party"><div class="h">${L.to}</div><div class="n">${c.name||'—'}</div><div class="l">${c.project||''}<br>${c.address||''}${c.phone?'<br>'+c.phone:''}</div></div></div>
-   <table class="p-items"><thead><tr><th style="width:30px">#</th><th class="desc">${L.desc}</th><th style="width:55px">${L.qty}</th><th style="width:60px">${L.unit}</th><th style="width:85px">${L.price}</th><th style="width:95px">${L.total}</th></tr></thead><tbody>${rows}</tbody></table>
-   <div class="p-summary"><div class="p-sumbox">
+   <table class="p-items"><thead><tr><th style="width:30px">#</th><th class="desc">${L.desc}</th><th style="width:55px">${L.qty}</th><th style="width:60px">${L.unit}</th>${plan?'':`<th style="width:85px">${L.price}</th><th style="width:95px">${L.total}</th>`}</tr></thead><tbody>${rows}</tbody></table>
+   ${plan?`<div class="p-summary"><div class="p-sumbox" style="width:100%;max-width:100%">
+     ${(+s.planTotalSqm>0)?`<div class="p-sumrow"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><span class="v">${(+s.planTotalSqm).toLocaleString('he-IL')} \u05de"\u05e8</span></div>`:''}
+     <div class="p-sumtotal"><span>\u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u05d5\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} \u20aa ${s.vatOn?'+ \u05de\u05e2"\u05de ':''}\u05dc\u05de"\u05e8</span></div>
+     </div></div>`:`<div class="p-summary"><div class="p-sumbox">
      <div class="p-sumrow"><span>${L.subtotal}</span><span class="v">${nis(this.subtotal())}</span></div>
      ${(+s.discount>0)?`<div class="p-sumrow disc"><span>${L.discount} (${s.discount}%)</span><span class="v">- ${nis(this.discountAmt())}</span></div>`:''}
      ${s.vatOn?`<div class="p-sumrow"><span>${L.vat} (${s.vatPct}%)</span><span class="v">${nis(this.vat())}</span></div>`:''}
      <div class="p-sumtotal"><span>${L.grand}</span><span class="v">${nis(this.grand())}</span></div>
-     ${(+s.advance>0)?`<div class="p-sumrow"><span>מקדמה (${s.advance}%)</span><span class="v">${nis(Math.round(this.grand()*(+s.advance)/100))}</span></div>`:''}</div></div>
+     ${(+s.advance>0)?`<div class="p-sumrow"><span>\u05de\u05e7\u05d3\u05de\u05d4 (${s.advance}%)</span><span class="v">${nis(Math.round(this.grand()*(+s.advance)/100))}</span></div>`:''}</div></div>`}
    ${extra?`<div class="p-extra">${extra}</div>`:''}
    <div class="p-sign"><div class="s"><div class="sh">${L.signc}</div><div class="sigimg"></div><div class="sl">יהודה יעקובוב</div></div>
      <div class="s"><div class="sh">${L.signk}</div><div class="sigimg">${s.clientSig?`<img src="${s.clientSig}"/>`:''}</div><div class="sl">${c.name||'—'}</div></div></div>
@@ -1880,7 +1927,7 @@ const App={
   const mw=matRow(s.whiteOn,s.whiteInc!==false,s.whitePrice,s.whiteItems,'חומר לבן');
   const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,'חומר שחור');
   if(mw)items.push(mw); if(mb)items.push(mb);
-  const data={cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.termsText():'')||''};
+  const data={cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.termsText():'')||'',plan:s.planMode?1:0,psqm:+s.planPerSqm||0,tsqm:+s.planTotalSqm||0};
   const base=location.origin+location.pathname;
   this.toast('יוצר לינק…');
   let link,short=false;
@@ -1946,10 +1993,11 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   // group items by category (backward compatible: items without c go to one group)
   const groups=[];const gmap={};(data.it||[]).forEach(i=>{const key=i.c||'';if(!gmap[key]){gmap[key]={title:key,lines:[]};groups.push(gmap[key]);}gmap[key].lines.push(i);});
   let rowNo=0;
+  const plan=data.plan==1;
   const tbody=groups.map(g=>{
     const gsum=g.lines.reduce((s,l)=>s+(+l.q||0)*(+l.p||0),0);
-    return (g.title?`<tr class="pv2-band"><td colspan="5">${g.title}</td><td class="bs">${nf(gsum)}</td></tr>`:'')+
-      g.lines.map(l=>{rowNo++;const isMat=(g.title==='חומרים');return `<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td><td>${nf(l.p)}</td><td class="ltot">${nf((+l.q||0)*(+l.p||0))}</td></tr>`;}).join('');
+    return (g.title?`<tr class="pv2-band"><td colspan="${plan?4:5}">${g.title}</td>${plan?'':`<td class="bs">${nf(gsum)}</td>`}</tr>`:'')+
+      g.lines.map(l=>{rowNo++;const isMat=(g.title==='חומרים');return plan?`<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td></tr>`:`<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td><td>${nf(l.p)}</td><td class="ltot">${nf((+l.q||0)*(+l.p||0))}</td></tr>`;}).join('');
   }).join('');
   const vatAmt=data.vat>0?(data.sub-(data.sub*(data.dis||0)/100))*data.vat/100:0;
   return `<div class="pv2-wrap"><div class="pv2-page">
@@ -1962,14 +2010,17 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">יהודה יעקובוב · ח.פ 311834998<br>טל׳ 054-5718316</div></div>
       <div class="pp"><div class="h">לכבוד</div><div class="n">${data.cn||'[שם הלקוח]'}</div><div class="s">${[data.pr,data.ad,data.ph].filter(Boolean).join('<br>')}</div></div>
     </div>
-    <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">תיאור העבודה</th><th>כמות</th><th>יחידה</th><th>מחיר ליח׳</th><th>סה"כ</th></tr></thead><tbody>${tbody}</tbody></table>
-    <div class="pv2-sumwrap"><div class="pv2-sumbox">
+    <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">תיאור העבודה</th><th>כמות</th><th>יחידה</th>${plan?'':'<th>מחיר ליח׳</th><th>סה"כ</th>'}</tr></thead><tbody>${tbody}</tbody></table>
+    ${plan?`<div class="pv2-sumwrap"><div class="pv2-sumbox" style="width:100%">
+      ${data.tsqm>0?`<div class="r"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><b>${(+data.tsqm).toLocaleString('he-IL')} \u05de"\u05e8</b></div>`:''}
+      <div class="r total"><span>\u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u05d5\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa ${data.vat>0?'+ \u05de\u05e2"\u05de ':''}\u05dc\u05de"\u05e8</b></div>
+    </div></div>`:`<div class="pv2-sumwrap"><div class="pv2-sumbox">
       <div class="r"><span>סכום ביניים</span><b>${nf(data.sub)}</b></div>
       ${data.dis>0?`<div class="r red"><span>הנחה (${data.dis}%)</span><b>- ${nf(data.sub*data.dis/100)}</b></div>`:''}
       ${data.vat>0?`<div class="r"><span>מע"מ (${data.vat}%)</span><b>${nf(vatAmt)}</b></div>`:''}
       <div class="r total"><span>סה"כ לתשלום</span><b>${nf(data.tot)}</b></div>
       ${data.adv>0?`<div class="r adv"><span>מקדמה (${data.adv}%)</span><b>${nf(data.tot*data.adv/100)}</b></div>`:''}
-    </div></div>
+    </div></div>`}
     ${data.terms?`<div class="pv2-terms"><b>תנאי תשלום:</b> ${data.terms}</div>`:''}
     <div class="pv2-sign" id="pv2-sign-box">
       <div class="pv2-sign-h">✍️ חתימת הלקוח (אופציונלי — מעניקה תוקף לאישור)</div>
@@ -2003,6 +2054,13 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
      const top=(r.top-pageRect.top)*scale;const bottom=(r.bottom-pageRect.top)*scale;
      if(bottom>top)noCut.push([top,bottom]);
    });}catch(e){}
+   // "כותרת קטגוריה לא נשארת יתומה" — כל cat-band מודבק לשורה הראשונה שאחריה
+   try{page.querySelectorAll('.cat-band').forEach(band=>{
+     let nxt=band.nextElementSibling;
+     if(nxt){const rb=band.getBoundingClientRect(),rn=nxt.getBoundingClientRect();
+       const top=(rb.top-pageRect.top)*scale;const bottom=(rn.bottom-pageRect.top)*scale;
+       if(bottom>top)noCut.push([top,bottom]);}
+   });}catch(e){}
    let y=0,first=true,guard=0;
    while(y<canvas.height&&guard++<60){
      let cut=Math.min(y+sliceH,canvas.height);
@@ -2011,7 +2069,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
        while(moved&&tries++<40){moved=false;
          for(const pair of noCut){const t=pair[0],b=pair[1];if(cut>t+2&&cut<b-2){cut=Math.floor(t)-1;moved=true;break;}}
        }
-       if(cut<=y+sliceH*0.35)cut=Math.min(y+sliceH,canvas.height); // הגנה מפני עמוד קצר מדי
+       if(cut<=y+sliceH*0.5)cut=Math.min(y+sliceH,canvas.height); // הגנה מפני עמוד קצר מדי
      }
      const hSlice=cut-y;
      const c2=document.createElement('canvas');c2.width=canvas.width;c2.height=hSlice;
