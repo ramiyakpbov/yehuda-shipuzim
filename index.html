@@ -164,6 +164,18 @@ input,select,textarea{font-family:inherit;}
 .addrow input{flex:1;background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font-size:14px;outline:none;}
 .addrow button{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:0 16px;font-weight:800;}
 .list-item{display:flex;align-items:center;gap:8px;padding:13px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;margin-bottom:9px;flex-wrap:wrap;}
+.aihub-grid{display:flex;flex-direction:column;gap:10px;}
+.aihub-card{display:flex;align-items:center;gap:12px;width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:right;transition:border-color .15s,transform .1s;}
+.aihub-card:active{transform:scale(.98);}
+.aihub-card:hover{border-color:var(--red);}
+.ah-icon{font-size:28px;flex:none;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--bg2,#1a1a1e);border-radius:12px;}
+.ah-txt{flex:1;}
+.ah-t{font-weight:800;font-size:14.5px;color:var(--txt);display:flex;align-items:center;gap:8px;}
+.ah-badge{background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.ah-d{font-size:11.5px;color:var(--muted);margin-top:2px;}
+.ah-arrow{font-size:22px;color:var(--muted);flex:none;}
+.aiphoto-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 16px;background:var(--bg3);border:2px dashed var(--line);border-radius:14px;cursor:pointer;text-align:center;transition:border-color .15s;}
+.aiphoto-drop:hover{border-color:var(--red);}
 .kb-board{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;}
 .kb-col{flex:0 0 78%;max-width:78%;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:8px;min-height:120px;transition:background .15s,border-color .15s;}
 .kb-col.kb-over{background:rgba(237,28,36,.12);border-color:var(--red);}
@@ -413,7 +425,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='7.8.1';
+const VERSION='7.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -768,6 +780,17 @@ const App={
    this._aiSuggestions=lines;this.state.modal='aisuggest';this.render();
   }catch(e){this.toast('שגיאת רשת/מפתח AI');}
  },
+ async callAIVision(prompt,imageDataUrl,maxTokens){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key)throw new Error('no-key');
+  // חלץ base64 ו-mime מה-data URL
+  const m=String(imageDataUrl).match(/^data:([^;]+);base64,(.+)$/);if(!m)throw new Error('bad-image');
+  const mime=m[1],b64=m[2];
+  if(provider==='claude'){
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||2000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mime,data:b64}},{type:'text',text:prompt}]}]})});
+    const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';
+  }
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:mime,data:b64}},{text:prompt}]}]})});
+  const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
+ },
  async callAI(prompt,maxTokens){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key)throw new Error('no-key');
   if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||800,messages:[{role:'user',content:prompt}]})});const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';}
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
@@ -835,6 +858,56 @@ const App={
    arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),price:(+x.price>0?Math.round(+x.price):0),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,25);
    this._v2qResult=arr;this.idle();this.state.modal='v2qreview';this.render();
   }catch(e){this.idle();this.toast('ההמרה נכשלה — נסה לנסח שוב או בדוק את מפתח ה-AI');}
+ },
+ async aiPdfConvert(){
+  if(this._aiPdfData){return this.aiVisionConvert(this._aiPdfData);}
+  if(!this._aiPdfRaw){this.toast('לא נבחר קובץ');return;}
+  const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  if(!key){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
+  this.busy('ה-AI קורא את הקובץ…');this.haptic(15);
+  const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
+  const P=['אתה עוזר לקבלן שיפוצים ישראלי. במסמך המצורף יש תיאור עבודות שיפוץ (כתב כמויות/הצעה). קרא בעיון והפק רשימת סעיפי עבודה מסודרים.',
+    'החזר אך ורק JSON תקין (מערך). לכל סעיף: {"name":"תיאור בעברית","qty":מספר,"unit":"מ\\"ר/מ\\"א/יח׳/נקודה/גלובלי","price":מחיר_ליחידה,"cat":"אחת מ: '+cats+'"}',
+    'אם אין מחיר — price=0. price ליחידה אחת. עד 30 סעיפים.'];
+  const prompt=P.join(String.fromCharCode(10));
+  const m=String(this._aiPdfRaw).match(/^data:([^;]+);base64,(.+)$/);if(!m){this.idle();this.toast('שגיאה בקריאת הקובץ');return;}
+  const b64=m[2];
+  try{let txt='';
+   if(provider==='claude'){
+     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:3000,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:prompt}]}]})});
+     const d=await r.json();txt=(d.content&&d.content[0]&&d.content[0].text)||'';
+   }else{
+     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:'application/pdf',data:b64}},{text:prompt}]}]})});
+     const d=await r.json();txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
+   }
+   txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
+   let arr=JSON.parse(txt);if(!Array.isArray(arr)||!arr.length){throw new Error('empty');}
+   arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),price:(+x.price>0?Math.round(+x.price):0),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,30);
+   this._v2qResult=arr;this._aiPdfRaw=null;this._aiPdfName=null;this.idle();this.state.modal='v2qreview';this.render();
+  }catch(e){this.idle();this.toast('הקריאה נכשלה — נסה קובץ אחר או בדוק את מפתח ה-AI');}
+ },
+ async aiVisionConvert(imageDataUrl){
+  if(!imageDataUrl){this.toast('לא נבחרה תמונה');return;}
+  this.busy('ה-AI קורא את התמונה…');this.haptic(15);
+  const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
+  const P=['אתה עוזר לקבלן שיפוצים ישראלי. בתמונה המצורפת יש פתק/מסמך עם תיאור עבודות שיפוץ (יתכן כתב יד, יתכן טבלה מודפסת). קרא את התמונה בעיון והפק רשימת סעיפי עבודה מסודרים להצעת מחיר.',
+    '',
+    'החזר אך ורק JSON תקין (בלי טקסט לפני/אחרי, בלי markdown) — מערך אובייקטים. לכל סעיף:',
+    '{"name":"תיאור העבודה בעברית תקנית","qty":כמות מספרית,"unit":"מ\\"ר או מ\\"א או מ\\"ק או יח׳ או נקודה או גלובלי","price":מחיר_ליחידה_בשקלים,"cat":"אחת מ: '+cats+'"}',
+    '',
+    'כללי מחיר:',
+    '- אם יש מחיר ליחידה בתמונה — קח אותו.',
+    '- אם יש רק סכום כולל — חשב price = הסכום חלקי הכמות, עגל לשלם.',
+    '- אם אין מחיר — price=0.',
+    '- price הוא תמיד ליחידה אחת, לא הסכום הכולל.',
+    '- קרא כמויות והערות במדויק. תקן שגיאות כתיב. עד 30 סעיפים.'];
+  const prompt=P.join(String.fromCharCode(10));
+  try{let txt=await this.callAIVision(prompt,imageDataUrl,3000);
+   txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
+   let arr=JSON.parse(txt);if(!Array.isArray(arr)||!arr.length){throw new Error('empty');}
+   arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),price:(+x.price>0?Math.round(+x.price):0),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,30);
+   this._v2qResult=arr;this._aiPhotoData=null;this._aiPdfData=null;this.idle();this.state.modal='v2qreview';this.render();
+  }catch(e){this.idle();this.toast('הקריאה נכשלה — נסה תמונה ברורה יותר או בדוק את מפתח ה-AI');}
  },
  dedupeItems(){let removed=0;
    // בכל קטגוריה: אם יש כפילויות שם — משאירים את זו עם המחיר הגבוה יותר
@@ -947,7 +1020,7 @@ const App={
     <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     <button class="chip" data-modal="calendar">📅 יומן</button>
-    <button class="chip" data-modal="v2q">🎤 הצעה קולית</button>
+    <button class="chip" data-modal="aihub">✨ עוזר AI</button>
     <button class="chip" data-modal="tracking">📤 הצעות ומעקב</button>
     <button class="chip" data-modal="kanban">📋 לוח פרויקטים</button>
     <button class="chip" data-modal="reviews">⭐ משובים</button>
@@ -972,7 +1045,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1327,6 +1400,53 @@ const App={
    </div>
    <div id="voice-log" style="margin-top:12px"></div>`;
  },
+ aiHubModal(){
+  const card=(modal,icon,title,desc,badge)=>`<button class="aihub-card" data-modal="${modal}">
+     <div class="ah-icon">${icon}</div>
+     <div class="ah-txt"><div class="ah-t">${title}${badge?`<span class="ah-badge">${badge}</span>`:''}</div><div class="ah-d">${desc}</div></div>
+     <div class="ah-arrow">‹</div></button>`;
+  return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">בחר איך ליצור הצעה — ה-AI יסדר הכל לסעיפים מקצועיים לפי קטגוריות, מוכן ל-PDF בפורמט שלך.</div>
+   <div class="aihub-grid">
+     ${card('v2q','🎤','הכתבה קולית','דבר בקול וה-AI ימיר להצעה','')}
+     ${card('v2q','📋','הדבקת טקסט','הדבק הצעה מבולגנת מוואטסאפ','')}
+     ${card('aiphoto','📷','צילום פתקית','צלם פתק בכתב יד וה-AI יקרא','חדש')}
+     ${card('aipdf','📄','העלאת קובץ','טען PDF/תמונה של כתב כמויות','חדש')}
+   </div>
+   <div style="margin-top:16px;padding:12px;background:var(--bg3);border-radius:10px;font-size:11.5px;color:var(--muted);line-height:1.7">
+     💡 <b>טיפ:</b> "הכתבה קולית" ו"הדבקת טקסט" נפתחות באותו מסך — אפשר גם לדבר וגם להקליד/להדביק.
+   </div>`;
+ },
+ aiPhotoModal(){
+  const img=this._aiPhotoData;
+  return `<h2>📷 צילום פתקית <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">צלם או העלה תמונה של פתק בכתב יד עם פרטי העבודה — ה-AI יקרא ויסדר להצעה מקצועית.</div>
+   ${img?`<div style="text-align:center;margin-bottom:14px"><img src="${img}" style="max-width:100%;max-height:280px;border-radius:12px;border:1px solid var(--line)"/></div>
+     <button class="btn-block" id="aiphoto-go">✨ קרא והמר להצעה</button>
+     <button class="btn-ghost" id="aiphoto-clear" style="margin-top:8px">🗑️ בחר תמונה אחרת</button>`
+   :`<label class="aiphoto-drop" for="aiphoto-in">
+       <div style="font-size:40px;margin-bottom:8px">📷</div>
+       <div style="font-weight:700;margin-bottom:4px">לחץ לצילום או בחירת תמונה</div>
+       <div style="font-size:11px;color:var(--muted)">JPG · PNG · תומך בכתב יד</div>
+     </label>
+     <input id="aiphoto-in" type="file" accept="image/*" capture="environment" style="display:none"/>`}
+   <div style="margin-top:14px;font-size:11px;color:var(--muted);line-height:1.7">💡 צלם ברור, עם תאורה טובה. ככל שכתב היד קריא יותר — התוצאה מדויקת יותר.</div>`;
+ },
+ aiPdfModal(){
+  const f=this._aiPdfName;
+  return `<h2>📄 העלאת קובץ <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">טען קובץ PDF או תמונה של כתב כמויות / הצעה קיימת — ה-AI יסדר אותה מחדש לפורמט שלך.</div>
+   ${f?`<div style="text-align:center;margin-bottom:14px;padding:16px;background:var(--bg3);border-radius:12px"><div style="font-size:32px">📄</div><div style="font-weight:700;margin-top:6px">${f}</div></div>
+     <button class="btn-block" id="aipdf-go">✨ נתח והמר להצעה</button>
+     <button class="btn-ghost" id="aipdf-clear" style="margin-top:8px">🗑️ בחר קובץ אחר</button>`
+   :`<label class="aiphoto-drop" for="aipdf-in">
+       <div style="font-size:40px;margin-bottom:8px">📄</div>
+       <div style="font-weight:700;margin-bottom:4px">לחץ לבחירת קובץ</div>
+       <div style="font-size:11px;color:var(--muted)">PDF · JPG · PNG</div>
+     </label>
+     <input id="aipdf-in" type="file" accept="image/*,application/pdf" style="display:none"/>`}
+   <div style="margin-top:14px;font-size:11px;color:var(--muted);line-height:1.7">💡 קבצי PDF עם טקסט ברור עובדים הכי טוב. תמונות סרוקות גם נתמכות.</div>`;
+ },
  v2qModal(){const on=this._v2qOn;const txt=this._v2qText||'';
   return `<h2>🎤 הצעה קולית / טקסט <button class="x" data-close>✕</button></h2>
    <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">דבר <b>או הדבק/הקלד</b> תיאור עבודה מבולגן — וה-AI יסדר אותו לסעיפים <b>לפי קטגוריות וגם יקרא את המחירים</b> שכתבת. לדוגמה: "הריסת קיר 2500 ש״ח, ריצוף 14 מטר לפי 250 ש״ח, צביעה 4500".</div>
@@ -1590,6 +1710,16 @@ const App={
   on('[data-cal-add]','click',e=>{this.addToCalendar(e.currentTarget.dataset.calAdd);});
   const calIcs=document.getElementById('cal-ics');if(calIcs)calIcs.onclick=()=>{const cc=this._calChoice||{};if(!cc.ics)return;const blob=new Blob([cc.ics],{type:'text/calendar'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(cc.name||'event')+'.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);this.haptic(15);this.toast('הקובץ הורד — פתח אותו כדי להוסיף ליומן');};
   on('[data-kbmove]','click',e=>{e.stopPropagation();const[id,col]=e.currentTarget.dataset.kbmove.split('|');this.kbMove(id,col);});
+  // עוזר AI — צילום פתקית
+  const aphIn=document.getElementById('aiphoto-in');if(aphIn)aphIn.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{this._aiPhotoData=rd.result;this.render();};rd.readAsDataURL(f);};
+  const aphGo=document.getElementById('aiphoto-go');if(aphGo)aphGo.onclick=()=>this.aiVisionConvert(this._aiPhotoData);
+  const aphClr=document.getElementById('aiphoto-clear');if(aphClr)aphClr.onclick=()=>{this._aiPhotoData=null;this.render();};
+  // עוזר AI — העלאת קובץ (תמונה או PDF)
+  const apdIn=document.getElementById('aipdf-in');if(apdIn)apdIn.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;this._aiPdfName=f.name;
+    if(f.type==='application/pdf'){this.toast('מעבד PDF…');this._aiPdfIsPdf=true;const rd=new FileReader();rd.onload=()=>{this._aiPdfRaw=rd.result;this.render();};rd.readAsDataURL(f);}
+    else{this._aiPdfIsPdf=false;const rd=new FileReader();rd.onload=()=>{this._aiPdfData=rd.result;this.render();};rd.readAsDataURL(f);}};
+  const apdGo=document.getElementById('aipdf-go');if(apdGo)apdGo.onclick=()=>this.aiPdfConvert();
+  const apdClr=document.getElementById('aipdf-clear');if(apdClr)apdClr.onclick=()=>{this._aiPdfData=null;this._aiPdfRaw=null;this._aiPdfName=null;this.render();};
   // גרירת כרטיסים בקנבן
   document.querySelectorAll('.kb-card[draggable]').forEach(card=>{
     card.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',card.dataset.kbid);card.classList.add('dragging');});
