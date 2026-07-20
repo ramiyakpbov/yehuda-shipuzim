@@ -434,7 +434,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='8.1';
+const VERSION='8.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1004,9 +1004,9 @@ const App={
  busy(m){try{let b=document.getElementById('busy-ov');if(!b){b=document.createElement('div');b.id='busy-ov';b.className='busy-ov';b.innerHTML='<div class="busy-box"><div class="busy-spin"></div><div class="busy-txt"></div></div>';document.body.appendChild(b);}b.querySelector('.busy-txt').textContent=m||'רגע…';b.style.display='flex';}catch(e){}},
  idle(){try{const b=document.getElementById('busy-ov');if(b)b.style.display='none';}catch(e){}},
  render(){
-  let _sc=null;try{const m=document.querySelector('.modal');_sc=m?{el:'modal',y:m.scrollTop}:{el:'win',y:window.scrollY};}catch(e){}
+  let _sc=null;try{const m=document.querySelector('.modal');const sc=document.querySelector('.modal-scroll,.qm-scroll,.sheet');_sc=sc?{el:'sc',y:sc.scrollTop}:(m?{el:'modal',y:m.scrollTop}:{el:'win',y:window.scrollY});}catch(e){}
   document.getElementById('root').innerHTML=this.view();this.bind();
-  try{if(_sc){if(_sc.el==='modal'){const m2=document.querySelector('.modal');if(m2)m2.scrollTop=_sc.y;}else window.scrollTo(0,_sc.y);}}catch(e){}
+  try{if(_sc){if(_sc.el==='sc'){const s2=document.querySelector('.modal-scroll,.qm-scroll,.sheet');if(s2)s2.scrollTop=_sc.y;}else if(_sc.el==='modal'){const m2=document.querySelector('.modal');if(m2)m2.scrollTop=_sc.y;}else window.scrollTo(0,_sc.y);}}catch(e){}
   if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();if(this.state.modal==='snaps'&&!this._snaps)this.loadSnaps();if(this.state.modal==='reviews'&&!this._revData)this.loadReviews();
   const isOpen=!!this.state.modal;
   if(isOpen&&!this._pushedModal){try{history.pushState({ysm:1},'');}catch(e){}this._pushedModal=true;}
@@ -1032,15 +1032,15 @@ const App={
       <div class="spacer"></div>
       <button class="icon-btn" data-modal="reminders">🔔${rem?`<span class="dot">${rem}</span>`:''}</button>
       <button class="icon-btn" data-modal="clients">👥</button>
-      <button class="icon-btn" data-modal="settings">⚙️</button></div>
+      <button class="icon-btn" data-modal="menu">⚙️</button></div>
     <div class="searchwrap"><span class="mag">🔍</span>
       <input id="search" placeholder="חיפוש חופשי: עבודה או קטגוריה…" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   <div class="chips">
-    <button class="chip" id="chip-cats">🗂️ כל הקטגוריות</button>
+    <button class="chip" id="chip-cats">📂 קטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
-    <button class="chip" data-modal="menu">☰ לשוניות</button></div>
+    <button class="chip" id="chip-reset">🔄 איפוס הצעה</button></div>
   <div class="wrap">${cats||'<div class="empty">לא נמצאו תוצאות. נסה חיפוש אחר או "כל הקטגוריות".</div>'}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
@@ -1116,9 +1116,6 @@ const App={
      ${s.vatOn?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px"><span>מע"מ (${s.vatPct}%)</span><b style="color:var(--txt)">${nis(this.vat())}</b></div>`:''}
      <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"><span style="font-weight:800">סה"כ לתשלום</span><b style="color:var(--red);font-size:19px">${nis(this.grand())}</b></div>
      ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>
-   <div class="sec-title">רווחיות (מוסתר מהלקוח 🔒)</div>
-   <div class="field"><label>עלות משוערת לקבלן (₪)</label><input id="q_cost" type="number" inputmode="decimal" value="${s.cost||''}" placeholder="0"/></div>
-   ${(+s.cost>0)?`<div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px"><div style="display:flex;justify-content:space-between;font-size:14px"><span>רווח צפוי</span><b style="color:var(--ok)">${nis(this.afterDiscount()-(+s.cost||0))}</b></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:4px"><span>מרווח</span><b>${this.afterDiscount()>0?Math.round((this.afterDiscount()-(+s.cost||0))/this.afterDiscount()*100):0}%</b></div></div>`:''}
    <div class="sec-title">שפת המסמך</div>
    <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English'],['ru','Русский']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
@@ -1130,7 +1127,10 @@ const App={
  settingsModal(){const s=this.state;const hasPin=!!Store.get('pin','');const unlocked=s.secureUnlocked;
   const gaBlock=`
    <div class="sec-title" style="margin-top:4px">💰 אחוז מע"מ</div>
+   <div class="toggle"><div><div style="font-weight:700">חישוב מע"מ</div></div><button class="switch ${s.vatOn?'on':''}" id="vat-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>אחוז מע"מ (%) — משתנה לעיתים רחוקות</label><input id="vat-pct" type="number" inputmode="decimal" value="${s.vatPct}"/></div>
+   <div class="sec-title" style="margin-top:16px">☀️ תצוגה</div>
+   <div class="toggle"><div><div style="font-weight:700">מצב בהיר</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
    <div class="sec-title" style="margin-top:16px">⭐ משוב לקוחות</div>
    <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
    <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
@@ -1153,8 +1153,7 @@ const App={
    ? `<div class="field"><label>קוד גישה</label><input id="pin-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div><button class="btn-block" id="pin-open">🔓 פתח אזור מאובטח</button>`
    : `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">הגדר קוד גישה שיגן על המפתחות והנתונים הרגישים מפני צפייה.</div><div class="field"><label>קוד חדש (4–6 ספרות)</label><input id="pin-set" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div><button class="btn-block" id="pin-create">צור קוד והמשך</button>`;
   return `<h2>הגדרות <button class="x" data-close>✕</button></h2>
-   <button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>
-   <div class="toggle"><div><div style="font-weight:700">חישוב מע"מ</div></div><button class="switch ${s.vatOn?'on':''}" id="vat-toggle"><span class="knob"></span></button></div>
+   ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
    <div class="sec-title">גרסה ועדכונים</div>
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
 
@@ -1162,10 +1161,8 @@ const App={
    <div class="toggle"><div><div style="font-weight:700">סנכרון ענן</div><div style="font-size:12px;color:var(--muted)">לקוחות · מחירון · הצעות · הגדרות — בכל המכשירים</div></div><button class="switch ${Store.get('syncOn',true)?'on':''}" id="sync-toggle"><span class="knob"></span></button></div>
    <div style="font-size:12px;color:var(--muted);margin:6px 2px 8px">מצב: <b style="color:${Sync.status==='on'?'var(--ok)':(Sync.status==='err'?'var(--red)':'var(--muted)')}">${Sync.status==='on'?'מסונכרן ✓':(Sync.status==='err'?'שגיאת חיבור':'כבוי')}</b>${Store.get('syncLocalAt',0)?' · עודכן: '+new Date(Store.get('syncLocalAt',0)).toLocaleString('he-IL'):''}</div>
    <button class="btn-ghost" id="sync-now">🔄 סנכרן עכשיו</button>
-   <div class="sec-title">כללי</div>
-   <div class="toggle"><div><div style="font-weight:700">מצב בהיר ☀️</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
+   <div class="sec-title">💾 גיבוי ושחזור</div>
    <button class="btn-ghost" id="cloud-snaps">🗄️ גיבויי ענן יומיים (שחזור לפי תאריך)</button>
-   <div class="sec-title">גיבוי ידני</div>
    <button class="btn-ghost" id="backup">⬇️ ייצא גיבוי (JSON)</button>
    <button class="btn-ghost" id="restore-btn">⬆️ שחזר מגיבוי (גם למכשיר אחר)</button>
    <input id="restore-file" type="file" accept="application/json" class="hidden"/>
@@ -1173,7 +1170,7 @@ const App={
    <button class="btn-ghost" id="restore-auto">↩️ שחזר מגיבוי אוטומטי אחרון</button>
    ${(()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw)return '<div style="font-size:11px;color:var(--muted);margin:-4px 2px 8px">עדיין אין גיבוי אוטומטי מקומי</div>';const t=JSON.parse(raw).t;return '<div style="font-size:11px;color:var(--muted);margin:-4px 2px 8px">✅ גיבוי אחרון: '+new Date(t).toLocaleString('he-IL')+'</div>';}catch(e){return '';}})()}
    <button class="btn-ghost" id="reset-data" style="color:var(--red);border-color:var(--red)">🧪 איפוס נתוני טסטים (הצעות/לקוחות/דשבורד)</button>
-   <div class="sec-title" style="margin-top:16px">🔐 אזור מאובטח — מפתחות AI</div>
+   <div class="sec-title" style="margin-top:16px">🔐 הגדרות מפתח (קוד 3396)</div>
    ${unlocked?gaBlock:lockCard}
    <div style="margin-top:16px;text-align:center">${logoBlock(true,.8)}</div>
    <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · 054-5718316<br>yehuda-shipuzim.netlify.app</div>`;
@@ -1202,7 +1199,7 @@ const App={
    <button class="btn-ghost" id="export-clients" style="margin-bottom:10px">📊 ייצוא לאקסל (CSV)</button>
    ${list.length?list.map(cl=>`<div class="list-item">
      <span class="status ${cl.status||'q'}">${lbl[cl.status||'q']}</span>
-     <div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${cl.phone?cl.phone+' · ':''}${cl.project||''}${cl.notes?' · 📝':''}</div></div>
+     <div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${cl.phone?cl.phone+' · ':''}${cl.project||''}</div>${cl.notes?`<div class="s" style="margin-top:4px;background:var(--bg2,#1a1a1e);border-right:3px solid var(--red);border-radius:6px;padding:6px 8px;white-space:pre-wrap">📝 ${cl.notes}</div>`:''}</div>
      <button class="mini" data-cstatus="${cl.id}">סטטוס »</button>
      <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
      <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
@@ -1238,6 +1235,16 @@ const App={
  kbMove(id,toCol){const clients=Store.get('clients',[]);const cl=clients.find(c=>c.id===id);if(!cl)return;
    cl.status=toCol;if(toCol==='done'&&!cl.doneAt)cl.doneAt=Date.now();
    Store.set('clients',clients);try{Sync.push&&Sync.push();}catch(e){}this.haptic(15);this.render();
+ },
+ resetCurrentQuote(){
+   this.allCats().forEach(c=>{(c.items||[]).forEach(i=>{i.selected=false;i.qty=0;});});
+   this.state.custom=[];Store.set('customItems',[]);
+   this.state.subItems={};Store.set('subItems',{});
+   this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
+   this.state.discount=0;this.state.advance=0;this.state.planMode=false;this.state.planPerSqm='';this.state.planTotalSqm='';
+   Store.set('planMode',false);
+   this.state.quoteNo=nextQuoteNo();this._aiQuoteType='calc';
+   this.haptic(20);this.toast('ההצעה אופסה ✓ — מוכן להצעה חדשה');this.state.modal=null;this.render();
  },
  geminiModal(){const prov=Store.get('aiProvider','gemini');const hasKey=prov==='claude'?!!Store.get('claudeKey',''):!!Store.get('geminiKey','');
   const acts=[['📝 נסח הודעה ללקוח','נסח הודעת וואטסאפ קצרה, מנומסת ומקצועית בעברית ללקוח בשם הקבלן "יהודה שיפוצים", בנוגע להצעת מחיר ששלחתי.'],
@@ -1431,7 +1438,7 @@ const App={
      <div class="ah-icon">${icon}</div>
      <div class="ah-txt"><div class="ah-t">${title}${locked?' <span style="font-size:12px">🔒</span>':''}</div><div class="ah-d">${desc}</div></div>
      <div class="ah-arrow">‹</div></button>`;
-  return `<h2>☰ לשוניות <button class="x" data-close>✕</button></h2>
+  return `<h2>⚙️ תפריט ראשי <button class="x" data-close>✕</button></h2>
    <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">בחר כלי — כל בחירה נפתחת במסך מלא.</div>
    <div class="aihub-grid">
      ${item('aihub','✨','עוזר AI','יצירת הצעה מקול / טקסט / צילום / קובץ',true)}
@@ -1440,6 +1447,7 @@ const App={
      ${item('kanban','📋','לוח פרויקטים','ניהול שלבי העבודה',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
      ${item('stats','📊','דו"ח חודשי','סטטיסטיקות והכנסות',false)}
+     ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
  },
  aiHubModal(){
@@ -1650,6 +1658,7 @@ const App={
   on('[data-suggest-ai]','click',()=>this.aiSuggest());
   const srt=document.getElementById('sync-retry');if(srt)srt.onclick=async()=>{this.toast('מנסה לסנכרן שוב…');this.haptic(15);await Sync.init(()=>this.render());await Sync.push(true);this.toast(Sync.status==='on'?'סונכרן ✓':'עדיין אין חיבור');this.render();};
   const cc=document.getElementById('chip-cats');if(cc)cc.onclick=()=>{const cats=this.allCats();const anyOpen=cats.some(c=>this.state.open[c.id]);if(anyOpen){this.state.open={};}else{cats.forEach(c=>this.state.open[c.id]=true);}this.render();};
+  const crst=document.getElementById('chip-reset');if(crst)crst.onclick=()=>{if(!confirm('לאפס את ההצעה הנוכחית?\nכל הפריטים שנבחרו והמחירים יימחקו (המחירון נשמר).'))return;this.resetCurrentQuote();};
   on('[data-addai]','click',e=>{const i=+e.currentTarget.dataset.addai;const name=(this._aiSuggestions||[])[i];if(name){const nid=uid();this.state.custom.push({id:nid,name,price:0,unit:'גלובלי',selected:true,qty:1});Store.set('customItems',this.state.custom);this.state.modal=null;this.toast('נוסף: '+name+' — עדכן מחיר ויחידה');this.gotoItem('custom',nid);}});
   const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
   const pn=document.getElementById('prev-next');if(pn)pn.onclick=()=>{this.state.modal='quote';this.render();};
@@ -1769,6 +1778,8 @@ const App={
       if(code!=='3396'){this.toast('קוד שגוי');return;}
       this._aiUnlocked=true;this.toast('נפתח ✓');
     }
+    // דחיפת המסך הנוכחי למחסנית — כדי שכפתור חזור יחזור לתפריט
+    if(this.state.modal)this._navStack.push(this.state.modal);
     this.haptic(15);this.state.modal=modal;this.render();
   });
   on('[data-qtype]','click',e=>{this._aiQuoteType=e.currentTarget.dataset.qtype;this.haptic(10);this.render();});
@@ -1832,7 +1843,7 @@ const App={
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
- captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const qc=g('q_cost');if(qc!==undefined)this.state.cost=+qc||0;const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}},
+ captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}},
  saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
  exportClients(){const list=Store.get('clients',[]);if(!list.length){this.toast('אין לקוחות לייצוא');return;}
   const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
@@ -1892,17 +1903,18 @@ const App={
   return `<div class="page" id="pdf-page" style="direction:${dir};position:relative">
    <div class="p-watermark">${logoBlock(false,2.6)}</div>
    <div class="p-head">
-     <div class="p-logo">${logoBlock(false,.85)}<div class="contact">${L.contractor}: יהודה יעקובוב<br>054-5718316 · yuda090581@gmail.com</div></div>
+     <div class="p-logo">${logoBlock(false,.85)}</div>
      <div class="p-title-c"><div class="big">${isC?L.order:L.quote}</div><div class="en">${L.sub}</div></div>
      <div class="p-meta-l"><b>${L.no}:</b> ${s.quoteNo}<br><b>${L.date}:</b> ${s.date}<br><b>${L.valid}:</b> ${s.valid}</div>
    </div>
    <div class="p-parties">
-     <div class="p-party"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="l">יהודה יעקובוב · ח.פ 311834998<br>054-5718316</div></div>
+     <div class="p-party"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="l">ח.פ 311834998<br>054-5718316<br>yuda090581@gmail.com</div></div>
      <div class="p-party"><div class="h">${L.to}</div><div class="n">${c.name||'—'}</div><div class="l">${c.project||''}<br>${c.address||''}${c.phone?'<br>'+c.phone:''}</div></div></div>
    <table class="p-items"><thead><tr><th style="width:30px">#</th><th class="desc">${L.desc}</th><th style="width:55px">${L.qty}</th><th style="width:60px">${L.unit}</th>${plan?'':`<th style="width:85px">${L.price}</th><th style="width:95px">${L.total}</th>`}</tr></thead><tbody>${rows}</tbody></table>
    ${plan?`<div class="p-summary"><div class="p-sumbox" style="width:100%;max-width:100%">
-     ${(+s.planTotalSqm>0)?`<div class="p-sumrow"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><span class="v">${(+s.planTotalSqm).toLocaleString('he-IL')} \u05de"\u05e8</span></div>`:''}
-     <div class="p-sumtotal"><span>\u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u05d5\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} \u20aa ${s.vatOn?'+ \u05de\u05e2"\u05de ':''}\u05dc\u05de"\u05e8</span></div>
+     ${(+s.planTotalSqm>0)?`<div class="p-sumrow"><span>שטח כולל</span><span class="v">${(+s.planTotalSqm).toLocaleString('he-IL')} מ"ר</span></div>`:''}
+     <div class="p-sumrow"><span>מחיר למ"ר</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} ₪</span></div>
+     ${(+s.planTotalSqm>0&&+s.planPerSqm>0)?`<div class="p-sumtotal"><span>סה"כ ${s.vatOn?'לפני מע"מ':''}</span><span class="v">${((+s.planPerSqm)*(+s.planTotalSqm)).toLocaleString('he-IL')} ₪</span></div>${s.vatOn?`<div class="p-sumrow"><span>מע"מ (${s.vatPct}%)</span><span class="v">${Math.round((+s.planPerSqm)*(+s.planTotalSqm)*s.vatPct/100).toLocaleString('he-IL')} ₪</span></div><div class="p-sumtotal"><span>סה"כ כולל מע"מ</span><span class="v">${Math.round((+s.planPerSqm)*(+s.planTotalSqm)*(1+s.vatPct/100)).toLocaleString('he-IL')} ₪</span></div>`:''}`:`<div class="p-sumtotal"><span>לפי כתב כמויות ותוכניות</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} ₪ ${s.vatOn?'+ מע"מ ':''}למ"ר</span></div>`}
      </div></div>`:`<div class="p-summary"><div class="p-sumbox">
      <div class="p-sumrow"><span>${L.subtotal}</span><span class="v">${nis(this.subtotal())}</span></div>
      ${(+s.discount>0)?`<div class="p-sumrow disc"><span>${L.discount} (${s.discount}%)</span><span class="v">- ${nis(this.discountAmt())}</span></div>`:''}
@@ -2027,13 +2039,14 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       <div class="pv2-meta"><b>מס׳ הצעה:</b> ${data.no||''}<br>${data.dt?`<b>תאריך:</b> ${data.dt}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${data.vd}`:''}</div>
     </div>
     <div class="pv2-parties">
-      <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">יהודה יעקובוב · ח.פ 311834998<br>טל׳ 054-5718316</div></div>
+      <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">ח.פ 311834998<br>054-5718316<br>yuda090581@gmail.com</div></div>
       <div class="pp"><div class="h">לכבוד</div><div class="n">${data.cn||'[שם הלקוח]'}</div><div class="s">${[data.pr,data.ad,data.ph].filter(Boolean).join('<br>')}</div></div>
     </div>
     <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">תיאור העבודה</th><th>כמות</th><th>יחידה</th>${plan?'':'<th>מחיר ליח׳</th><th>סה"כ</th>'}</tr></thead><tbody>${tbody}</tbody></table>
     ${plan?`<div class="pv2-sumwrap"><div class="pv2-sumbox" style="width:100%">
       ${data.tsqm>0?`<div class="r"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><b>${(+data.tsqm).toLocaleString('he-IL')} \u05de"\u05e8</b></div>`:''}
-      <div class="r total"><span>\u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u05d5\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa ${data.vat>0?'+ \u05de\u05e2"\u05de ':''}\u05dc\u05de"\u05e8</b></div>
+      <div class="r"><span>\u05de\u05d7\u05d9\u05e8 \u05dc\u05de"\u05e8</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa</b></div>
+      ${(data.tsqm>0&&data.psqm>0)?`<div class="r total"><span>\u05e1\u05d4"\u05db ${data.vat>0?'\u05dc\u05e4\u05e0\u05d9 \u05de\u05e2"\u05de':''}</span><b>${((+data.psqm)*(+data.tsqm)).toLocaleString('he-IL')} \u20aa</b></div>${data.vat>0?`<div class="r"><span>\u05de\u05e2"\u05de (${data.vat}%)</span><b>${Math.round((+data.psqm)*(+data.tsqm)*data.vat/100).toLocaleString('he-IL')} \u20aa</b></div><div class="r total"><span>\u05e1\u05d4"\u05db \u05db\u05d5\u05dc\u05dc \u05de\u05e2"\u05de</span><b>${Math.round((+data.psqm)*(+data.tsqm)*(1+data.vat/100)).toLocaleString('he-IL')} \u20aa</b></div>`:''}`:`<div class="r total"><span>\u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u05d5\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa ${data.vat>0?'+ \u05de\u05e2"\u05de ':''}\u05dc\u05de"\u05e8</b></div>`}
     </div></div>`:`<div class="pv2-sumwrap"><div class="pv2-sumbox">
       <div class="r"><span>סכום ביניים</span><b>${nf(data.sub)}</b></div>
       ${data.dis>0?`<div class="r red"><span>הנחה (${data.dis}%)</span><b>- ${nf(data.sub*data.dis/100)}</b></div>`:''}
@@ -2154,9 +2167,17 @@ window.addEventListener('appinstalled',()=>{deferredPrompt=null;hideInstallUI();
 if(isIOS()&&!isStandalone()&&!isClientView())setTimeout(showInstallUI,2200);
 
 /* ===== ניווט אחורה: סוגר מסך במקום לצאת מהאפליקציה ===== */
-App._pushedModal=false;App._ignorePop=false;
+App._pushedModal=false;App._ignorePop=false;App._navStack=[];
 window.addEventListener('popstate',()=>{
   if(App._ignorePop){App._ignorePop=false;return;}
+  // חזור שלב אחד אחורה במחסנית הניווט
+  if(App._navStack&&App._navStack.length){
+    const prev=App._navStack.pop();
+    App.state.modal=prev||null;
+    if(App._navStack.length||prev){try{history.pushState({ysm:1},'');}catch(e){}}
+    else App._pushedModal=false;
+    App.render();return;
+  }
   if(App.state.modal){App.state.modal=null;App._pushedModal=false;App.render();}
 });
 
