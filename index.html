@@ -401,6 +401,82 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .p-cta .qr{width:78px;height:78px;background:#fff;padding:4px;border:1px solid #ddd;border-radius:6px;}
 .p-cta .qr img,.p-cta .qr canvas{width:100%!important;height:100%!important;}
 .p-foot{text-align:center;font-size:10px;color:#999;margin-top:18px;border-top:1px solid #eee;padding-top:12px;}
+/* ═══════════════ שכבת פרימיום · עיצוב יוקרתי-מינימלי ═══════════════ */
+/* עומק וצללים מרובדים */
+.sheet{box-shadow:0 -8px 40px rgba(0,0,0,.5),0 -2px 12px rgba(0,0,0,.3);border-radius:26px 26px 0 0;}
+.overlay{background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:ovfade .25s ease;}
+@keyframes ovfade{from{opacity:0;}to{opacity:1;}}
+.sheet{animation:sheetUp .34s cubic-bezier(.22,1,.36,1);}
+@keyframes sheetUp{from{transform:translateY(42px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+
+/* כותרת המודאל — קו הפרדה עדין */
+.sheet h2{position:sticky;top:-18px;background:var(--bg2);z-index:5;padding:6px 0 12px;margin-bottom:6px;border-bottom:1px solid var(--line);letter-spacing:-.3px;}
+
+/* כרטיסי תפריט — הופעה מדורגת + זוהר במגע */
+.aihub-card{border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.2);animation:cardIn .4s cubic-bezier(.22,1,.36,1) backwards;transition:transform .18s cubic-bezier(.22,1,.36,1),border-color .18s,box-shadow .18s;}
+.aihub-card:nth-child(1){animation-delay:.03s;}
+.aihub-card:nth-child(2){animation-delay:.08s;}
+.aihub-card:nth-child(3){animation-delay:.13s;}
+.aihub-card:nth-child(4){animation-delay:.18s;}
+.aihub-card:nth-child(5){animation-delay:.23s;}
+.aihub-card:nth-child(6){animation-delay:.28s;}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.aihub-card:active{transform:scale(.975);}
+.aihub-card:hover{box-shadow:0 6px 20px rgba(237,28,36,.14),0 2px 6px rgba(0,0,0,.25);transform:translateY(-1px);}
+.ah-icon{transition:transform .25s cubic-bezier(.22,1,.36,1);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.aihub-card:hover .ah-icon{transform:scale(1.08) rotate(-3deg);}
+
+/* צ'יפים — מגע חלק וזוהר עדין */
+.chip{transition:transform .15s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s,color .2s,box-shadow .2s;}
+.chip:active{transform:scale(.94);}
+.chip.on{box-shadow:0 2px 10px rgba(237,28,36,.28);}
+
+/* כפתורי אייקון בכותרת */
+.icon-btn{transition:transform .15s cubic-bezier(.22,1,.36,1),background .2s,box-shadow .2s;}
+.icon-btn:active{transform:scale(.9);}
+.icon-btn:hover{box-shadow:0 2px 12px rgba(0,0,0,.3);}
+
+/* כפתור ראשי — זוהר יוקרתי + מגע */
+.btn-block{position:relative;overflow:hidden;box-shadow:0 4px 16px rgba(237,28,36,.3),0 1px 3px rgba(0,0,0,.3);transition:transform .16s cubic-bezier(.22,1,.36,1),box-shadow .2s;letter-spacing:.2px;}
+.btn-block:active{transform:scale(.98) translateY(1px);box-shadow:0 2px 8px rgba(237,28,36,.25);}
+.btn-block::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.22),transparent);transition:left .6s;}
+.btn-block:hover::after{left:130%;}
+
+.btn-ghost{transition:transform .15s cubic-bezier(.22,1,.36,1),background .2s,border-color .2s;}
+.btn-ghost:active{transform:scale(.985);}
+
+/* פריטי רשימה — הופעה עדינה */
+.list-item{transition:transform .15s cubic-bezier(.22,1,.36,1),box-shadow .2s,border-color .2s;box-shadow:0 1px 2px rgba(0,0,0,.15);}
+.list-item:active{transform:scale(.99);}
+
+/* קטגוריות — פתיחה חלקה */
+.cat-head{transition:background .2s,border-color .2s;}
+.cat-chev{transition:transform .28s cubic-bezier(.22,1,.36,1);}
+
+/* מתגים — מעבר קטיפתי */
+.switch,.switch .knob{transition:.28s cubic-bezier(.22,1,.36,1);}
+.switch.on{box-shadow:0 0 0 1px rgba(237,28,36,.3),0 2px 8px rgba(237,28,36,.25);}
+
+/* שדות קלט — פוקוס יוקרתי */
+input,textarea,select{transition:border-color .2s,box-shadow .2s,background .2s;}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(237,28,36,.12);}
+
+/* בוררי סוג הצעה */
+.qtype-btn,.qtype-mini{transition:transform .16s cubic-bezier(.22,1,.36,1),border-color .2s,background .2s,box-shadow .2s;}
+.qtype-btn:active,.qtype-mini:active{transform:scale(.97);}
+.qtype-btn.on{box-shadow:0 4px 16px rgba(237,28,36,.18);}
+
+/* טוסט — כניסה מלמעלה */
+.toast{box-shadow:0 8px 30px rgba(0,0,0,.4);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+
+/* גלילה חלקה בכל האפליקציה */
+*{scroll-behavior:smooth;}
+.sheet::-webkit-scrollbar{width:0;}
+
+/* מצב בהיר — צללים מותאמים */
+.light .sheet{box-shadow:0 -8px 40px rgba(0,0,0,.12),0 -2px 12px rgba(0,0,0,.06);}
+.light .aihub-card:hover{box-shadow:0 6px 20px rgba(237,28,36,.1),0 2px 6px rgba(0,0,0,.08);}
+.light .list-item{box-shadow:0 1px 3px rgba(0,0,0,.06);}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -434,7 +510,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='8.2';
+const VERSION='8.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1200,7 +1276,6 @@ const App={
    ${list.length?list.map(cl=>`<div class="list-item">
      <span class="status ${cl.status||'q'}">${lbl[cl.status||'q']}</span>
      <div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${cl.phone?cl.phone+' · ':''}${cl.project||''}</div>${cl.notes?`<div class="s" style="margin-top:4px;background:var(--bg2,#1a1a1e);border-right:3px solid var(--red);border-radius:6px;padding:6px 8px;white-space:pre-wrap">📝 ${cl.notes}</div>`:''}</div>
-     <button class="mini" data-cstatus="${cl.id}">סטטוס »</button>
      <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
      <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
      <button class="mini" data-cquotes="${(cl.name||'').replace(/'/g,'&#39;')}">📤 הצעות</button><button class="mini" data-review="${cl.id}">📩 משוב</button>
@@ -1443,8 +1518,7 @@ const App={
    <div class="aihub-grid">
      ${item('aihub','✨','עוזר AI','יצירת הצעה מקול / טקסט / צילום / קובץ',true)}
      ${item('calendar','📅','יומן','פרויקטים לפי תאריך יעד',false)}
-     ${item('tracking','📤','הצעות ומעקב','מעקב אחר לינקים ואישורים',false)}
-     ${item('kanban','📋','לוח פרויקטים','ניהול שלבי העבודה',false)}
+     ${item('tracking','📤','הצעות ומעקב','מעקב אחר סטטוס ואישורים',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
      ${item('stats','📊','דו"ח חודשי','סטטיסטיקות והכנסות',false)}
      ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
