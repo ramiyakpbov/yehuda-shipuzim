@@ -513,7 +513,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='8.9';
+const VERSION='9.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1242,7 +1242,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1669,6 +1669,10 @@ const App={
      ${card('v2q','📋','הדבקת טקסט','הדבק הצעה מבולגנת מוואטסאפ','')}
      ${card('aiphoto','📷','צילום פתקית','צלם פתק בכתב יד וה-AI יקרא','')}
      ${card('aipdf','📄','העלאת קובץ','טען PDF/תמונה של כתב כמויות','')}
+   </div>
+   <div style="font-weight:800;font-size:12.5px;margin:16px 0 8px">3️⃣ כלי כתיבה חכמים:</div>
+   <div class="aihub-grid">
+     ${card('gemini','🤖','ניסוח וכתיבה','הודעות ללקוח · תיאורי עבודה · טיפים','')}
    </div>`;
  },
  aiPhotoModal(){
