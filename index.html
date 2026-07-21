@@ -513,7 +513,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='8.6.1';
+const VERSION='8.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1014,17 +1014,18 @@ const App={
   if(!key){this.toast('הגדר קודם מפתח AI בהגדרות מפתח');return;}
   this.busy('ה-AI בודק מה חסר…');this.haptic(15);
   const have=[];groups.forEach(g=>g.lines.forEach(l=>have.push(l.name)));
-  const P=['אתה קבלן שיפוצים ותיק בישראל. לפניך רשימת סעיפים בהצעת מחיר. זהה עד 5 סעיפים חשובים שכנראה חסרים ומקובל לכלול בעבודה כזו (למשל: אטימה בעבודות רטובות, פינוי פסולת, ניקיון סופי, חשמל נלווה).',
+  const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
+  const P=['אתה קבלן שיפוצים ותיק בישראל. לפניך רשימת סעיפים בהצעת מחיר. זהה עד 6 סעיפים חשובים שכנראה חסרים ומקובל לכלול בעבודה כזו (למשל: אטימה בעבודות רטובות, פינוי פסולת, ניקיון סופי, חשמל נלווה).',
     'הסעיפים הקיימים: '+have.join(', '),
-    'החזר אך ורק JSON: מערך של מחרוזות קצרות (שמות סעיפים חסרים בלבד). אם לא חסר כלום — החזר [].',
-    'דוגמה: ["פינוי פסולת לאתר מורשה","ניקיון סופי","אטימה בחדרים רטובים"]'];
+    'החזר אך ורק JSON: מערך אובייקטים {"name":"שם הסעיף החסר","cat":"אחת מ: '+cats+'"}. אם לא חסר כלום — החזר [].',
+    'דוגמה: [{"name":"פינוי פסולת לאתר מורשה","cat":"הריסה ופינוי"},{"name":"ניקיון סופי","cat":"עבודות גמר ועיצוב פנים"}]'];
   const prompt=P.join(String.fromCharCode(10));
-  try{let txt=await this.callAI(prompt,400);
+  try{let txt=await this.callAI(prompt,600);
    if(!txt||!txt.trim()){this.idle();this.toast('ה-AI לא החזיר תשובה — ייתכן שהמכסה נגמרה. נסה שוב');return;}
    txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
    let arr;try{arr=JSON.parse(txt);}catch(pe){this.idle();this.toast('ה-AI החזיר תשובה לא תקינה — נסה שוב');return;}
    if(!Array.isArray(arr))arr=[];
-   arr=arr.filter(x=>typeof x==='string'&&x.trim()).slice(0,5);
+   arr=arr.filter(x=>x&&x.name&&String(x.name).trim()).map(x=>({name:String(x.name).trim(),cat:String(x.cat||'אחר').trim()})).slice(0,6);
    this.idle();
    if(!arr.length){this.toast('👍 ההצעה נראית מלאה — לא חסר כלום');return;}
    this._missingItems=arr;this.state.modal='missing';this.render();
@@ -1033,10 +1034,10 @@ const App={
  missingModal(){
   const arr=this._missingItems||[];
   return `<h2>💡 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">ה-AI זיהה סעיפים שמקובל לכלול בעבודה כזו. סמן מה להוסיף כסעיף מותאם (מחיר תמלא אחר כך):</div>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">ה-AI זיהה סעיפים שמקובל לכלול בעבודה כזו, ושייך כל אחד לקטגוריה. סמן מה להוסיף (מחיר וכמות תמלא אחר כך):</div>
    ${arr.map((it,i)=>`<label class="aihub-card" style="cursor:pointer">
      <input type="checkbox" class="miss-chk" data-i="${i}" checked style="width:20px;height:20px;accent-color:var(--red)"/>
-     <div class="ah-txt"><div class="ah-t" style="font-size:13.5px">${it}</div></div></label>`).join('')}
+     <div class="ah-txt"><div class="ah-t" style="font-size:13.5px">${it.name}</div><div class="ah-d">📁 ${it.cat||'אחר'}</div></div></label>`).join('')}
    <button class="btn-block" id="miss-add" style="margin-top:14px">➕ הוסף מסומנים להצעה</button>
    <button class="btn-ghost" id="miss-skip" style="margin-top:8px">דלג</button>`;
  },
@@ -1885,7 +1886,31 @@ const App={
   const opf=document.getElementById('open-portfolio');if(opf)opf.onclick=()=>{this.captureQuote();this.state.modal='portfolio';this.render();};
   const gp=document.getElementById('gen-pdf');if(gp)gp.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='quote';this.generatePDF(false);};
   const cms=document.getElementById('check-missing');if(cms)cms.onclick=()=>{this.captureQuote();this.suggestMissingItems();};
-  const madd=document.getElementById('miss-add');if(madd)madd.onclick=()=>{const chks=document.querySelectorAll('.miss-chk');const add=[];chks.forEach(ch=>{if(ch.checked)add.push(this._missingItems[+ch.dataset.i]);});if(!add.length){this.toast('לא סומן כלום');return;}add.forEach(name=>{this.state.custom.push({name:name,price:0,qty:1,unit:'גלובלי',selected:true});});Store.set('customItems',this.state.custom);this._missingItems=null;this.state.modal=null;this.haptic(20);this.toast('נוספו '+add.length+' סעיפים ✓ — מלא מחירים');this.render();};
+  const madd=document.getElementById('miss-add');if(madd)madd.onclick=()=>{
+    const chks=document.querySelectorAll('.miss-chk');const add=[];chks.forEach(ch=>{if(ch.checked)add.push(this._missingItems[+ch.dataset.i]);});
+    if(!add.length){this.toast('לא סומן כלום');return;}
+    // מיפוי שם קטגוריה → id
+    const catMap={'הריסה ופינוי':'demo','אינסטלציה':'plumb','חשמל ותקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','תכנון ניהול ורישוי':'plan','שלד ותשתית כבדה':'struct','פיתוח חוץ וסביבה':'outdoor','אחר':'custom'};
+    const byName=nm=>{const t=(nm||'');
+      if(/מזגן|מיזוג|ספרינק|כיבוי אש|צנרת נחושת/.test(t))return 'plumb';
+      if(/חשמל|תקשורת|שקע|תאורה|ארון חשמל|רנטגן|עופרת|קודן|מאמ/.test(t))return 'elec';
+      if(/אינסטל|ניקוז|מים|ביוב|כיור|ברז|שרברב|הצפה|אטימה|איטום/.test(t))return 'plumb';
+      if(/ריצוף|גבס|צבע|שפכטל|תקרה|פרקט|טיח|חיפוי|פנלים|ניקיון|ניקוי/.test(t))return 'finish';
+      if(/נגר|אלומיניום|מסגר|דלת|חלון|משקוף/.test(t))return 'alum';
+      if(/בטון|ברזל|יציקה|שלד|עמוד|פלטת בסיס/.test(t))return 'struct';
+      if(/הריסה|פינוי|פסולת/.test(t))return 'demo';
+      return 'custom';};
+    let toCat=0,toCustom=0;
+    add.forEach(it=>{
+      let cid=catMap[it.cat]||'custom';
+      if(cid==='custom')cid=byName(it.name);
+      const item={name:it.name,price:0,qty:1,unit:'גלובלי',selected:true};
+      if(cid==='custom'){this.state.custom.push(item);toCustom++;}
+      else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;toCat++;}
+    });
+    Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
+    this._missingItems=null;this.state.modal=null;this.haptic(20);
+    this.toast('נוספו '+add.length+' סעיפים ✓ ('+toCat+' לקטגוריות) — מלא מחירים');this.render();};
   const mskip=document.getElementById('miss-skip');if(mskip)mskip.onclick=()=>{this._missingItems=null;this.state.modal=null;this.render();};
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
