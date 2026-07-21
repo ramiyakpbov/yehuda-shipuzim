@@ -513,7 +513,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='8.7';
+const VERSION='8.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -982,20 +982,35 @@ const App={
   const samples=[];this.state.catalog.forEach(cat=>{(cat.items||[]).forEach(it=>{if(+it.price>0)samples.push(it.name+' = '+it.price+'₪/'+(it.unit||''));});});
   if(!samples.length){this.idle();this.toast('אין מחירים במחירון לבדיקה');return;}
   const lastChk=Store.get('priceCheckAt',0);
-  const P=['אתה יועץ תמחור לקבלני שיפוצים בישראל, שנת 2026. לפניך מחירון של קבלן. זהה עד 4 פריטים שהמחיר שלהם נמוך משמעותית ממחיר השוק הנוכחי (פער 10%+) וכדאי לעדכן.',
-    'המחירון: '+samples.slice(0,40).join(', '),
-    'החזר אך ורק JSON: מערך אובייקטים {"name":"שם הפריט","now":המחיר_הנוכחי,"suggest":מחיר_שוק_מומלץ,"why":"סיבה קצרה"}. אם הכל מעודכן — החזר [].'];
+  const P=['אתה יועץ תמחור לקבלני שיפוצים בישראל, שנת 2026. לפניך מחירון של קבלן. זהה עד 4 פריטים בלבד שהמחיר שלהם נמוך משמעותית ממחיר השוק הנוכחי (פער 10%+) וכדאי לעדכן.',
+    'המחירון: '+samples.slice(0,30).join(', '),
+    'החזר אך ורק JSON תקין בלי טקסט נוסף, בלי הסברים, בלי markdown. פורמט: מערך של עד 4 אובייקטים {"name":"שם הפריט","now":מספר,"suggest":מספר,"why":"סיבה קצרה"}. אם הכל מעודכן — החזר [] בדיוק.'];
   const prompt=P.join(String.fromCharCode(10));
-  try{let txt=await this.callAI(prompt,600);
+  try{let txt=await this.callAI(prompt,900);
    if(!txt||!txt.trim()){this.idle();this.toast('ה-AI לא החזיר תשובה — ייתכן שהמכסה נגמרה. נסה שוב');return;}
-   txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
-   let arr;try{arr=JSON.parse(txt);}catch(pe){this.idle();this.toast('ה-AI החזיר תשובה לא תקינה — נסה שוב');return;}
-   if(!Array.isArray(arr))arr=[];
+   let arr=this._parseJSONArray(txt);
+   if(arr===null){this.idle();this.toast('ה-AI החזיר תשובה לא תקינה — נסה שוב');return;}
    Store.set('priceCheckAt',Date.now());
    this.idle();
    if(!arr.length){this.toast('👍 המחירון שלך מעודכן ותחרותי');return;}
    this._priceFresh=arr.slice(0,4);this.state.modal='pricefresh';this.render();
   }catch(e){this.idle();this.toast('שגיאת חיבור ל-AI: '+(e&&e.message==='no-key'?'לא הוגדר מפתח':'בדוק חיבור ומפתח'));}
+ },
+ learnCat(name,cid){if(!name||!cid||cid==='custom')return;try{const m=Store.get('learnedCats',{});m[name.trim()]=cid;Store.set('learnedCats',m);}catch(e){}},
+ recallCat(name){if(!name)return null;try{const m=Store.get('learnedCats',{});return m[name.trim()]||null;}catch(e){return null;}},
+ _parseJSONArray(txt){
+  // פרסר עמיד: מנקה markdown, מחלץ מערך, ומתקן JSON חתוך
+  try{
+   txt=String(txt||'').replace(/```json/gi,'').replace(/```/g,'').trim();
+   const a=txt.indexOf('[');if(a<0)return null;
+   let b=txt.lastIndexOf(']');
+   let slice=b>a?txt.slice(a,b+1):txt.slice(a);
+   try{return JSON.parse(slice);}catch(e){}
+   // תיקof JSON חתוך: חתוך אחרי האובייקט השלם האחרון
+   const lastObj=slice.lastIndexOf('}');
+   if(lastObj>0){try{return JSON.parse(slice.slice(0,lastObj+1)+']');}catch(e){}}
+   return null;
+  }catch(e){return null;}
  },
  priceFreshModal(){
   const arr=this._priceFresh||[];
@@ -1033,12 +1048,21 @@ const App={
  },
  missingModal(){
   const arr=this._missingItems||[];
+  const units=['גלובלי','מ"ר','מ"א','מ"ק','יח׳','נק׳','ימי עבודה'];
   return `<h2>💡 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">ה-AI זיהה סעיפים שמקובל לכלול בעבודה כזו, ושייך כל אחד לקטגוריה. סמן מה להוסיף (מחיר וכמות תמלא אחר כך):</div>
-   ${arr.map((it,i)=>`<label class="aihub-card" style="cursor:pointer">
-     <input type="checkbox" class="miss-chk" data-i="${i}" checked style="width:20px;height:20px;accent-color:var(--red)"/>
-     <div class="ah-txt"><div class="ah-t" style="font-size:13.5px">${it.name}</div><div class="ah-d">📁 ${it.cat||'אחר'}</div></div></label>`).join('')}
-   <button class="btn-block" id="miss-add" style="margin-top:14px">➕ הוסף מסומנים להצעה</button>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">ה-AI זיהה סעיפים חסרים ושייך כל אחד לקטגוריה. מלא כאן מחיר וכמות — והם יתפזרו לקטגוריות מוכנים:</div>
+   ${arr.map((it,i)=>`<div class="miss-row" style="background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px">
+     <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px">
+       <input type="checkbox" class="miss-chk" data-i="${i}" checked style="width:20px;height:20px;accent-color:var(--red);flex:none"/>
+       <div style="flex:1"><div style="font-weight:700;font-size:13px">${it.name}</div><div style="font-size:11px;color:var(--muted)">📁 ${it.cat||'אחר'}</div></div>
+     </label>
+     <div style="display:flex;gap:6px">
+       <input type="number" class="miss-price" data-i="${i}" inputmode="decimal" placeholder="מחיר ₪" style="flex:1;padding:8px;border-radius:8px;font-size:13px"/>
+       <input type="number" class="miss-qty" data-i="${i}" inputmode="decimal" placeholder="כמות" value="1" style="width:70px;padding:8px;border-radius:8px;font-size:13px"/>
+       <select class="miss-unit" data-i="${i}" style="width:90px;padding:8px;border-radius:8px;font-size:12px">${units.map(u=>`<option value="${u}">${u}</option>`).join('')}</select>
+     </div>
+   </div>`).join('')}
+   <button class="btn-block" id="miss-add" style="margin-top:6px">➕ הוסף מסומנים להצעה</button>
    <button class="btn-ghost" id="miss-skip" style="margin-top:8px">דלג</button>`;
  },
  async aiVisionConvert(imageDataUrl){
@@ -1095,7 +1119,7 @@ const App={
     if(/הריסה|פינוי|פסולת/.test(t))return 'demo';
     return 'custom';};
   let added=0,toCustom=0,updated=0;
-  arr.forEach(x=>{let cid=resolve(x.cat);if(cid==='custom')cid=byName(x.name);const price=(+x.price>0?+x.price:0);
+  arr.forEach(x=>{let cid=this.recallCat(x.name)||resolve(x.cat);if(cid==='custom')cid=byName(x.name);const price=(+x.price>0?+x.price:0);
     // בדיקת כפילות: אם כבר קיים סעיף באותו שם באותה קטגוריה — עדכן במקום להוסיף
     let existing=null;
     if(cid==='custom'){existing=this.state.custom.find(i=>i.name===x.name);}
@@ -1103,7 +1127,7 @@ const App={
     if(existing){if(price>0)existing.price=price;existing.qty=x.qty||existing.qty||1;existing.selected=true;updated++;return;}
     const item={id:uid(),name:x.name,price:price,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1};
     if(cid==='custom'){this.state.custom.push(item);toCustom++;}
-    else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;}
+    else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;this.learnCat(x.name,cid);}
     added++;});
   Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
   // סוג ההצעה שנבחר בעוזר AI — משפיע על ה-PDF (תכנון = בלי מחירים)
@@ -1264,6 +1288,10 @@ const App={
      ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>
    <div class="sec-title">שפת המסמך</div>
    <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English'],['ru','Русский']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
+   <div class="sec-title" style="margin-top:16px">🪄 הוספה מהירה עם AI</div>
+   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">כתוב תוספות חופשי (עם מחיר אם יש) — ה-AI יפזר לקטגוריות. לדוגמה: "החלפת 3 שקעים 450 ש״ח, צביעת מרפסת 800"</div>
+   <textarea id="quick-add" placeholder="תאר סעיפים להוספה…" style="min-height:60px;margin-bottom:8px"></textarea>
+   <button class="btn-ghost" id="quick-add-btn" style="margin-bottom:8px">🪄 פזר לקטגוריות (AI)</button>
    <button class="btn-ghost" id="check-missing" style="margin-bottom:8px">💡 בדוק סעיפים חסרים (AI)</button>
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
@@ -1886,10 +1914,15 @@ const App={
   const opf=document.getElementById('open-portfolio');if(opf)opf.onclick=()=>{this.captureQuote();this.state.modal='portfolio';this.render();};
   const gp=document.getElementById('gen-pdf');if(gp)gp.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='quote';this.generatePDF(false);};
   const cms=document.getElementById('check-missing');if(cms)cms.onclick=()=>{this.captureQuote();this.suggestMissingItems();};
+  const qab=document.getElementById('quick-add-btn');if(qab)qab.onclick=()=>{const el=document.getElementById('quick-add');const t=el?el.value.trim():'';if(!t){this.toast('כתוב קודם מה להוסיף');return;}this.captureQuote();this._v2qText=t;this.v2qConvert();};
   const madd=document.getElementById('miss-add');if(madd)madd.onclick=()=>{
-    const chks=document.querySelectorAll('.miss-chk');const add=[];chks.forEach(ch=>{if(ch.checked)add.push(this._missingItems[+ch.dataset.i]);});
+    const chks=document.querySelectorAll('.miss-chk');const add=[];
+    chks.forEach(ch=>{if(ch.checked){const i=+ch.dataset.i;const it=this._missingItems[i];
+      const pr=document.querySelector('.miss-price[data-i="'+i+'"]');
+      const qt=document.querySelector('.miss-qty[data-i="'+i+'"]');
+      const un=document.querySelector('.miss-unit[data-i="'+i+'"]');
+      add.push({name:it.name,cat:it.cat,price:(pr?+pr.value||0:0),qty:(qt?+qt.value||1:1),unit:(un?un.value:'גלובלי')});}});
     if(!add.length){this.toast('לא סומן כלום');return;}
-    // מיפוי שם קטגוריה → id
     const catMap={'הריסה ופינוי':'demo','אינסטלציה':'plumb','חשמל ותקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','תכנון ניהול ורישוי':'plan','שלד ותשתית כבדה':'struct','פיתוח חוץ וסביבה':'outdoor','אחר':'custom'};
     const byName=nm=>{const t=(nm||'');
       if(/מזגן|מיזוג|ספרינק|כיבוי אש|צנרת נחושת/.test(t))return 'plumb';
@@ -1900,17 +1933,17 @@ const App={
       if(/בטון|ברזל|יציקה|שלד|עמוד|פלטת בסיס/.test(t))return 'struct';
       if(/הריסה|פינוי|פסולת/.test(t))return 'demo';
       return 'custom';};
-    let toCat=0,toCustom=0;
+    let toCat=0;
     add.forEach(it=>{
-      let cid=catMap[it.cat]||'custom';
+      let cid=this.recallCat(it.name)||catMap[it.cat]||'custom';
       if(cid==='custom')cid=byName(it.name);
-      const item={name:it.name,price:0,qty:1,unit:'גלובלי',selected:true};
-      if(cid==='custom'){this.state.custom.push(item);toCustom++;}
-      else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;toCat++;}
+      const item={name:it.name,price:it.price,qty:it.qty,unit:it.unit,selected:true};
+      if(cid==='custom'){this.state.custom.push(item);}
+      else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;this.learnCat(it.name,cid);toCat++;}
     });
     Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
     this._missingItems=null;this.state.modal=null;this.haptic(20);
-    this.toast('נוספו '+add.length+' סעיפים ✓ ('+toCat+' לקטגוריות) — מלא מחירים');this.render();};
+    this.toast('נוספו '+add.length+' סעיפים ✓ ('+toCat+' לקטגוריות)');this.render();};
   const mskip=document.getElementById('miss-skip');if(mskip)mskip.onclick=()=>{this._missingItems=null;this.state.modal=null;this.render();};
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
