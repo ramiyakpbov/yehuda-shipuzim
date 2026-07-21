@@ -367,6 +367,16 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .pv2-sumbox .r.total b{color:#ed1c24;font-size:17px;}
 .pv2-sumbox .r.adv{font-size:11.5px;font-weight:600;color:#555;background:#fff;border-top:1px solid #eee;}
 .pv2-sign{margin-top:16px;background:#faf7f1;border:1px solid #e8e0d2;border-radius:12px;padding:12px;}
+/* v9.2 collage */
+.cg-row{display:flex;gap:10px;}
+.cg-row.three .cg-slot{aspect-ratio:1/0.9;}
+.cg-slot{flex:1;aspect-ratio:1/0.8;border:2px dashed var(--line);border-radius:14px;position:relative;overflow:hidden;cursor:pointer;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;}
+.cg-slot.has{border-style:solid;}
+.cg-slot img{width:100%;height:100%;object-fit:cover;}
+.cg-ph{text-align:center;font-size:13px;color:var(--muted);line-height:1.7;}
+.cg-x{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.65);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:2;}
+.cg-lbls{display:flex;gap:8px;margin-top:8px;}
+.cg-lbls input{flex:1;font-size:12px;}
 .pv2-sign-h{font-size:12px;color:#666;font-weight:700;margin-bottom:8px;}
 .pv2-pad{width:100%;height:130px;background:#fff;border:1px dashed #c9bfa8;border-radius:8px;display:block;touch-action:none;}
 .pv2-clear{margin-top:8px;background:none;border:1px solid #ddd;color:#777;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
@@ -513,7 +523,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='9.1';
+const VERSION='9.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.',mat:'Материалы',adv:'Аванс',area:'Общая площадь',persqm:'Цена за м²',prevat:'Итого без НДС',grandvat:'Итого с НДС',byboq:'Согласно ведомости объёмов и планам',sqm:'м²',dsign:'✍️ Подпись заказчика (необязательно — подтверждает согласие)',dclear:'🧹 Очистить подпись',dapprove:'✅ Я подтверждаю предложение',dnoteh:'💬 У меня есть вопрос / замечание',dnoteph:'Например: можно добавить ещё одну розетку в гостиной?',dnotesend:'Отправить сообщение',dcall:'📞 Есть вопрос? Звоните 054-571-8316'},
@@ -1270,7 +1280,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',collage:'collageModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1670,6 +1680,7 @@ const App={
      ${item('calendar','📅','יומן','פרויקטים לפי תאריך יעד',false)}
      ${item('tracking','📤','הצעות ומעקב','מעקב אחר סטטוס ואישורים',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
+     ${item('collage','🖼️','סטורי לפני/אחרי','קולאז\' ממותג לוואטסאפ — עם כותרות AI',false)}
      ${item('stats','📊','דו"ח חודשי','סטטיסטיקות והכנסות',false)}
      ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
@@ -1997,6 +2008,15 @@ const App={
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
   const trn=document.getElementById('tr-now');if(trn)trn.onclick=async()=>{this.captureQuote();const ok=await this.ensureTranslations();if(ok)this.toast('🌐 התרגום מוכן ושמור ✓');};
+  // v9.2: קולאז' לפני/אחרי
+  on('[data-cgmode]','click',e=>{this.cgCapture();this._cg().mode=e.currentTarget.dataset.cgmode;this._cgResult=null;this.render();});
+  on('[data-cgslot]','click',e=>{if(e.target.dataset.cgdel)return;const inp=e.currentTarget.querySelector('input[type=file]');if(inp)inp.click();});
+  on('[data-cgfile]','change',e=>{this.cgCapture();this.cgLoadFile(e.currentTarget.dataset.cgfile,e.currentTarget.files[0]);});
+  on('[data-cgdel]','click',e=>{e.stopPropagation();this.cgCapture();this._cg().imgs[e.currentTarget.dataset.cgdel]=null;this._cgResult=null;this.render();});
+  const cga=document.getElementById('cg-ai');if(cga)cga.onclick=()=>this.cgSuggest();
+  const cgm=document.getElementById('cg-make');if(cgm)cgm.onclick=()=>this.cgMake();
+  const cgs=document.getElementById('cg-share');if(cgs)cgs.onclick=()=>this.cgShare();
+  const cgd=document.getElementById('cg-dl');if(cgd)cgd.onclick=()=>this.cgDownload();
   const gsh=document.getElementById('gen-share');if(gsh)gsh.onclick=()=>{this.captureQuote();this.saveClient();this.generatePDF(true);};
   if(this.state.modal==='sign')this.initSigPad();
 
@@ -2273,6 +2293,103 @@ const App={
        <button class="del" data-revdel="${l.id}">🗑️</button>
        ${d.text?`<div class="trk-comment">💬 ${d.text}</div>`:''}</div>`;}).join(''):'<div class="empty">עדיין לא נשלחו בקשות משוב.<br>סיים פרויקט ← 👥 לקוחות ← 📩 משוב</div>'}`;
  },
+ /* ===== v9.2: סטורי לפני/אחרי — קולאז' ממותג ב-Canvas + כותרות AI ===== */
+ _cg(){this._cgState=this._cgState||{mode:'ba',imgs:{before:null,after:null,s1:null,s2:null,s3:null},title:'מהריסה — לגימור מושלם',red:'לגימור מושלם',sub:'פרויקט אמיתי שלנו',labels:['1 · תשתיות','2 · ריצוף','3 · גימור']};return this._cgState;},
+ collageModal(){const g=this._cg();const ba=g.mode==='ba';
+  const slot=(key,label)=>`<div class="cg-slot ${g.imgs[key]?'has':''}" data-cgslot="${key}">
+    ${g.imgs[key]?`<img src="${g.imgs[key]}"/><span class="cg-x" data-cgdel="${key}">✕</span>`:`<div class="cg-ph">📷<br>${label}</div>`}
+    <input type="file" accept="image/*" data-cgfile="${key}" style="display:none"></div>`;
+  return `<h2>🖼️ סטורי לפני/אחרי <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">קולאז' ממותג 1080×1920 לסטטוס וואטסאפ — בעיצוב יהודה שיפוצים. ה-AI כותב את הכותרות, ה-Canvas מעצב.</div>
+   <div class="chips" style="padding:0 0 10px">
+     <button class="chip ${ba?'on':''}" data-cgmode="ba">לפני ← אחרי</button>
+     <button class="chip ${!ba?'on':''}" data-cgmode="steps">3 שלבים</button>
+   </div>
+   ${ba?`<div class="cg-row">${slot('before','לפני')}${slot('after','אחרי')}</div>`
+      :`<div class="cg-row three">${slot('s1',g.labels[0])}${slot('s2',g.labels[1])}${slot('s3',g.labels[2])}</div>
+        <div class="cg-lbls">${[0,1,2].map(i=>`<input data-cglbl="${i}" value="${g.labels[i]}" placeholder="תווית שלב ${i+1}">`).join('')}</div>`}
+   <button class="btn-ghost" id="cg-ai" style="margin:10px 0 8px">✨ הצע כותרת + תיאור (AI מנתח את התמונות)</button>
+   <label style="font-size:12px;font-weight:700">כותרת (החלק האדום יודגש)</label>
+   <input id="cg-title" value="${g.title}" style="margin-bottom:6px">
+   <input id="cg-red" value="${g.red}" placeholder="החלק שיוצג באדום (חייב להופיע בכותרת)" style="margin-bottom:6px">
+   <label style="font-size:12px;font-weight:700">שורת משנה</label>
+   <input id="cg-sub" value="${g.sub}" style="margin-bottom:12px">
+   <button class="btn-main" id="cg-make">🎨 צור קולאז'</button>
+   <div id="cg-out" style="margin-top:12px">${this._cgResult?`<img src="${this._cgResult}" style="width:100%;border-radius:14px;border:1px solid var(--line)"/><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-main" id="cg-share" style="flex:1">📤 שתף לסטטוס</button><button class="btn-ghost" id="cg-dl" style="flex:1">⬇️ שמור</button></div>`:''}</div>`;
+ },
+ cgCapture(){const g=this._cg();const t=document.getElementById('cg-title'),r=document.getElementById('cg-red'),s=document.getElementById('cg-sub');
+  if(t)g.title=t.value;if(r)g.red=r.value;if(s)g.sub=s.value;
+  document.querySelectorAll('[data-cglbl]').forEach(el=>{g.labels[+el.dataset.cglbl]=el.value;});},
+ cgLoadFile(key,file){if(!file)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{
+   const MAX=1600;let w=im.width,h=im.height;const sc=Math.min(1,MAX/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+   const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,0,0,w,h);
+   this._cg().imgs[key]=cv.toDataURL('image/jpeg',.86);this._cgResult=null;this.render();};im.src=rd.result;};rd.readAsDataURL(file);},
+ async cgSuggest(){const g=this._cg();this.cgCapture();
+  const pics=(g.mode==='ba'?['before','after']:['s1','s2','s3']).map(k=>g.imgs[k]).filter(Boolean);
+  if(!pics.length){this.toast('העלה קודם לפחות תמונה אחת');return;}
+  this.busy('ה-AI מנתח את התמונות…');
+  try{const P='אתה קופירייטר של קבלן שיפוצים ישראלי. לפניך תמונות מפרויקט (לפני/אחרי או שלבים). כתוב לסטטוס וואטסאפ: 1) כותרת קצרה ועוצמתית בעברית (עד 5 מילים), 2) איזה חלק מהכותרת להדגיש באדום (2-3 מילים מתוך הכותרת, בדיוק כפי שמופיעות בה), 3) שורת משנה (עד 8 מילים, אפשר עם · בין ביטויים). בלי המילים "קבלן רשום". החזר אך ורק JSON: {"title":"...","red":"...","sub":"..."}';
+   const txt=await this.callAIVision(P,pics[pics.length-1],400);
+   const a=txt.indexOf('{'),b=txt.lastIndexOf('}');const o=JSON.parse(txt.slice(a,b+1));
+   if(o.title)g.title=String(o.title).trim();if(o.red)g.red=String(o.red).trim();if(o.sub)g.sub=String(o.sub).trim();
+   if(g.red&&!g.title.includes(g.red))g.red=g.title.split(' ').slice(-2).join(' ');
+   this.idle();this.haptic(20);this.render();this.toast('✨ כותרות מוכנות — ערוך חופשי');
+  }catch(e){this.idle();this.toast('ניתוח ה-AI נכשל — כתוב ידנית או נסה שוב');}},
+ _cgImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});},
+ _cgRR(x,y,w,h,r){const c=this._cgCtx;c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();},
+ _cgCover(im,x,y,w,h,r){const c=this._cgCtx;c.save();this._cgRR(x,y,w,h,r);c.clip();
+  const s=Math.max(w/im.width,h/im.height);const dw=im.width*s,dh=im.height*s;c.drawImage(im,x+(w-dw)/2,y+(h-dh)/2,dw,dh);c.restore();},
+ _cgPill(text,rx,y,bg){const c=this._cgCtx;c.font='800 40px Heebo,Arial';const tw=c.measureText(text).width;const pw=tw+64,ph=76;const x=rx-pw;
+  c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=18;this._cgRR(x,y,pw,ph,38);c.fillStyle=bg;c.fill();c.restore();
+  c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(text,x+pw/2,y+ph/2+2);},
+ async cgMake(){this.cgCapture();const g=this._cg();const need=g.mode==='ba'?['before','after']:['s1','s2','s3'];
+  if(need.some(k=>!g.imgs[k])){this.toast('חסרות תמונות — מלא את כל המשבצות');return;}
+  this.busy('מעצב קולאז\'…');
+  try{
+   const W=1080,H=1920;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');this._cgCtx=c;
+   const grd=c.createLinearGradient(0,0,0,H);grd.addColorStop(0,'#1b1b1e');grd.addColorStop(1,'#0d0d0f');c.fillStyle=grd;c.fillRect(0,0,W,H);
+   c.fillStyle='#ed1c24';c.fillRect(0,0,W,16);
+   const logo=await this._cgImg(LOGO_APP);const lw=300,lh=lw*logo.height/logo.width;c.drawImage(logo,(W-lw)/2,52,lw,lh);
+   let y=52+lh+68;
+   // כותרת: חלק לבן + חלק אדום (RTL)
+   c.textBaseline='alphabetic';c.font='900 78px Heebo,Arial';
+   const red=(g.red&&g.title.includes(g.red))?g.red:'';const white=red?g.title.replace(red,'').replace(/\s+—?\s*$/,' ').trim():g.title;
+   const sep=red&&white?' ':'';const wW=c.measureText(white).width,wR=red?c.measureText(red+sep).width:0;
+   let tx=(W+wW+wR)/2; // RTL: מציירים מימין לשמאל
+   c.textAlign='right';c.fillStyle='#fff';c.fillText(white,tx,y);tx-=wW;
+   if(red){c.fillStyle='#ed1c24';c.fillText(sep+red,tx,y);}
+   y+=58;c.font='500 40px Heebo,Arial';c.textAlign='center';c.fillStyle='#9a9aa0';c.fillText(g.sub,W/2,y);
+   y+=52;
+   const M=64,PW=W-M*2;
+   if(g.mode==='ba'){
+     const PH=Math.floor((H-y-300-90)/2);
+     const before=await this._cgImg(g.imgs.before),after=await this._cgImg(g.imgs.after);
+     this._cgCover(before,M,y,PW,PH,28);this._cgPill('לפני',M+PW-28,y+30,'#111114');
+     const midY=y+PH+16;
+     c.fillStyle='#ed1c24';c.font='900 74px Arial';c.textAlign='center';c.fillText('↓',W/2,midY+62);
+     const y2=midY+96;this._cgCover(after,M,y2,PW,PH,28);this._cgPill('אחרי',M+PW-28,y2+30,'#ed1c24');
+     y=y2+PH;
+   }else{
+     const GAP=54,PH=Math.floor((H-y-300-GAP*2-40)/3);
+     const keys=['s1','s2','s3'];
+     for(let i=0;i<3;i++){const im=await this._cgImg(g.imgs[keys[i]]);
+       this._cgCover(im,M,y,PW,PH,28);this._cgPill(g.labels[i]||('שלב '+(i+1)),M+PW-28,y+26,'#ed1c24');y+=PH+GAP;}
+     y-=GAP;
+   }
+   // תחתית: טלפון + פוטר (בלי קבלן רשום!)
+   let fy=H-172;
+   c.font='900 96px Heebo,Arial';c.textAlign='center';c.fillStyle='#ed1c24';c.fillText('054-571-8316',W/2,fy);
+   fy+=62;c.font='700 38px Heebo,Arial';c.fillStyle='#fff';c.fillText('יהודה יעקובוב · יהודה שיפוצים',W/2,fy);
+   fy+=48;c.font='600 34px Heebo,Arial';c.fillStyle='#8f8f96';c.fillText('yehuda-shipuzim.netlify.app',W/2,fy);
+   this._cgResult=cv.toDataURL('image/jpeg',.92);this._cgCtx=null;
+   this.idle();this.haptic(25);this.render();
+  }catch(e){this._cgCtx=null;this.idle();this.toast('יצירת הקולאז\' נכשלה — נסה תמונות אחרות');}},
+ async cgShare(){if(!this._cgResult)return;
+  try{const blob=await (await fetch(this._cgResult)).blob();const file=new File([blob],'yehuda-story.jpg',{type:'image/jpeg'});
+   if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'יהודה שיפוצים'});return;}
+  }catch(e){}
+  this.cgDownload();},
+ cgDownload(){if(!this._cgResult)return;const a=document.createElement('a');a.href=this._cgResult;a.download='yehuda-story-'+Date.now()+'.jpg';a.click();this.toast('הקולאז\' נשמר ✓');},
  async loadReviews(){const links=Store.get('reviewLinks',[]);if(!links.length||!window._db)return;const out={};
   try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null};}}catch(e){}}));}catch(e){}
   this._revData=out;if(this.state.modal==='reviews')this.render();
