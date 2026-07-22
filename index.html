@@ -367,28 +367,6 @@ table.p-items tbody tr.alt td{background:#faf8f4;}
 .pv2-sumbox .r.total b{color:#ed1c24;font-size:17px;}
 .pv2-sumbox .r.adv{font-size:11.5px;font-weight:600;color:#555;background:#fff;border-top:1px solid #eee;}
 .pv2-sign{margin-top:16px;background:#faf7f1;border:1px solid #e8e0d2;border-radius:12px;padding:12px;}
-/* v9.2 collage */
-.cg-row{display:flex;gap:10px;}
-.cg-row.three .cg-slot{aspect-ratio:1/0.9;}
-.cg-slot{flex:1;aspect-ratio:1/0.8;border:2px dashed var(--line);border-radius:14px;position:relative;overflow:hidden;cursor:pointer;background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;}
-.cg-slot.has{border-style:solid;}
-.cg-slot img{width:100%;height:100%;object-fit:cover;}
-.cg-ph{text-align:center;font-size:13px;color:var(--muted);line-height:1.7;}
-.cg-x{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.65);color:#fff;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:2;}
-.cg-lbls{display:flex;gap:8px;margin-top:8px;}
-.cg-lbls input{flex:1;font-size:12px;}
-/* v9.3 multi-photo galleries + review landing story */
-.cg-gal{margin-bottom:10px;border:1px solid var(--line);border-radius:14px;padding:10px;background:rgba(255,255,255,.02);}
-.cg-gal-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.cg-tag{color:#fff;font-size:12px;font-weight:800;padding:4px 14px;border-radius:20px;}
-.cg-thumbs{display:flex;gap:8px;flex-wrap:wrap;}
-.cg-th{width:72px;height:72px;border-radius:10px;overflow:hidden;position:relative;border:1px solid var(--line);}
-.cg-th img{width:100%;height:100%;object-fit:cover;}
-.cg-th.add{display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--muted);border-style:dashed;cursor:pointer;background:rgba(255,255,255,.03);}
-.rv-story{padding:14px 14px 0;}
-.rv-story-h{font-size:14px;font-weight:900;text-align:center;margin-bottom:8px;color:#1c1c1c;}
-.rv-story-img{width:100%;border-radius:14px;display:block;box-shadow:0 6px 22px rgba(0,0,0,.18);}
-.rv-story-dl{display:block;text-align:center;font-size:12.5px;font-weight:700;color:#ed1c24;margin-top:8px;text-decoration:none;}
 .pv2-sign-h{font-size:12px;color:#666;font-weight:700;margin-bottom:8px;}
 .pv2-pad{width:100%;height:130px;background:#fff;border:1px dashed #c9bfa8;border-radius:8px;display:block;touch-action:none;}
 .pv2-clear{margin-top:8px;background:none;border:1px solid #ddd;color:#777;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;}
@@ -535,13 +513,13 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='9.3';
+const VERSION='9.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
- ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.',mat:'Материалы',adv:'Аванс',area:'Общая площадь',persqm:'Цена за м²',prevat:'Итого без НДС',grandvat:'Итого с НДС',byboq:'Согласно ведомости объёмов и планам',sqm:'м²',dsign:'✍️ Подпись заказчика (необязательно — подтверждает согласие)',dclear:'🧹 Очистить подпись',dapprove:'✅ Я подтверждаю предложение',dnoteh:'💬 У меня есть вопрос / замечание',dnoteph:'Например: можно добавить ещё одну розетку в гостиной?',dnotesend:'Отправить сообщение',dcall:'📞 Есть вопрос? Звоните 054-571-8316'},
- he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.',mat:'חומרים',adv:'מקדמה',area:'שטח כולל',persqm:'מחיר למ"ר',prevat:'סה"כ לפני מע"מ',grandvat:'סה"כ כולל מע"מ',byboq:'לפי כתב כמויות ותוכניות',sqm:'מ"ר',dsign:'✍️ חתימת הלקוח (אופציונלי — מעניקה תוקף לאישור)',dclear:'🧹 נקה חתימה',dapprove:'✅ אני מאשר את ההצעה',dnoteh:'💬 יש לי הערה / שאלה',dnoteph:'לדוגמה: אפשר להוסיף עוד נקודת חשמל בסלון?',dnotesend:'שלח הערה ליהודה',dcall:'📞 יש לי שאלה — התקשר 054-571-8316'},
- ar:{sub:'عرض سعر',quote:'عرض أسعار',order:'أمر عمل',no:'رقم العرض',date:'التاريخ',valid:'صالح حتى',contractor:'المقاول المنفذ',to:'إلى السيد',desc:'وصف العمل',qty:'الكمية',unit:'الوحدة',price:'سعر الوحدة',total:'المجموع',subtotal:'المجموع الفرعي',discount:'خصم',vat:'ض.ق.م',grand:'الإجمالي للدفع',terms:'شروط الدفع',white:'مواد بيضاء',black:'مواد سوداء',incl:'مشمول',notincl:'غير مشمول',signc:'توقيع المقاول',signk:'توقيع الزبون',cta:'هل تريد رؤية المزيد من أعمالنا؟',ctas:'امسح الرمز أو ادخل الموقع · يهودا شيبوتسيم',foot:'صدرت هذه الوثيقة من يهودا شيبوتسيم · هاتف 054-5718316',orderclause:'تشكل هذه الوثيقة أمر عمل ملزم بين الطرفين وفقًا للشروط أعلاه.',mat:'مواد',adv:'دفعة مقدمة',area:'المساحة الإجمالية',persqm:'السعر للمتر المربع',prevat:'المجموع قبل الضريبة',grandvat:'المجموع شامل الضريبة',byboq:'حسب جدول الكميات والمخططات',sqm:'م²',dsign:'✍️ توقيع الزبون (اختياري — يمنح صلاحية للموافقة)',dclear:'🧹 مسح التوقيع',dapprove:'✅ أوافق على العرض',dnoteh:'💬 لدي ملاحظة / سؤال',dnoteph:'مثلاً: هل يمكن إضافة نقطة كهرباء في الصالون؟',dnotesend:'إرسال ملاحظة',dcall:'📞 لديك سؤال؟ اتصل 054-571-8316'},
- en:{sub:'QUOTATION',quote:'Quotation',order:'Work Order',no:'Quote No.',date:'Date',valid:'Valid until',contractor:'Contractor',to:'To',desc:'Work Description',qty:'Qty',unit:'Unit',price:'Unit Price',total:'Total',subtotal:'Subtotal',discount:'Discount',vat:'VAT',grand:'Total Due',terms:'Payment Terms',white:'White materials',black:'Black materials',incl:'Included',notincl:'Not included',signc:'Contractor Signature',signk:'Client Signature',cta:'Want to see more of our work?',ctas:'Scan the code or visit · Yehuda Shipuzim',foot:'Document issued by Yehuda Shipuzim · Tel 054-5718316',orderclause:'This document constitutes a binding work order between the parties per the terms above.',mat:'Materials',adv:'Advance',area:'Total area',persqm:'Price per sqm',prevat:'Total before VAT',grandvat:'Total incl. VAT',byboq:'Per bill of quantities and plans',sqm:'sqm',dsign:'✍️ Client signature (optional — validates approval)',dclear:'🧹 Clear signature',dapprove:'✅ I approve this quote',dnoteh:'💬 I have a question / comment',dnoteph:'E.g.: can we add another power outlet in the living room?',dnotesend:'Send note',dcall:'📞 Questions? Call 054-571-8316'},
+ ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
+ he:{sub:'Q U O T A T I O N',quote:'הצעת מחיר',order:'הזמנת עבודה',no:'מס׳ הצעה',date:'תאריך',valid:'בתוקף עד',contractor:'קבלן מבצע',to:'לכבוד',desc:'תיאור העבודה',qty:'כמות',unit:'יחידה',price:'מחיר ליח׳',total:'סה"כ',subtotal:'סכום ביניים',discount:'הנחה',vat:'מע"מ',grand:'סה"כ לתשלום',terms:'תנאי תשלום',white:'חומר לבן',black:'חומר שחור',incl:'כלול',notincl:'אינו כלול',signc:'חתימת הקבלן',signk:'חתימת הלקוח',cta:'רוצים לראות עוד מהעבודות שלנו?',ctas:'סרקו את הקוד או היכנסו לאתר · יהודה שיפוצים',foot:'מסמך זה הופק על ידי יהודה שיפוצים · יהודה יעקובוב · טל׳ 054-5718316',orderclause:'מסמך זה מהווה הזמנת עבודה מחייבת בין הצדדים בהתאם לתנאים לעיל.'},
+ ar:{sub:'عرض سعر',quote:'عرض أسعار',order:'أمر عمل',no:'رقم العرض',date:'التاريخ',valid:'صالح حتى',contractor:'المقاول المنفذ',to:'إلى السيد',desc:'وصف العمل',qty:'الكمية',unit:'الوحدة',price:'سعر الوحدة',total:'المجموع',subtotal:'المجموع الفرعي',discount:'خصم',vat:'ض.ق.م',grand:'الإجمالي للدفع',terms:'شروط الدفع',white:'مواد بيضاء',black:'مواد سوداء',incl:'مشمول',notincl:'غير مشمول',signc:'توقيع المقاول',signk:'توقيع الزبون',cta:'هل تريد رؤية المزيد من أعمالنا؟',ctas:'امسح الرمز أو ادخل الموقع · يهودا شيبوتسيم',foot:'صدرت هذه الوثيقة من يهودا شيبوتسيم · هاتف 054-5718316',orderclause:'تشكل هذه الوثيقة أمر عمل ملزم بين الطرفين وفقًا للشروط أعلاه.'},
+ en:{sub:'QUOTATION',quote:'Quotation',order:'Work Order',no:'Quote No.',date:'Date',valid:'Valid until',contractor:'Contractor',to:'To',desc:'Work Description',qty:'Qty',unit:'Unit',price:'Unit Price',total:'Total',subtotal:'Subtotal',discount:'Discount',vat:'VAT',grand:'Total Due',terms:'Payment Terms',white:'White materials',black:'Black materials',incl:'Included',notincl:'Not included',signc:'Contractor Signature',signk:'Client Signature',cta:'Want to see more of our work?',ctas:'Scan the code or visit · Yehuda Shipuzim',foot:'Document issued by Yehuda Shipuzim · Tel 054-5718316',orderclause:'This document constitutes a binding work order between the parties per the terms above.'},
 };
 /* ===== LOGO (matches new brand, works on black & white) ===== */
 const LOGO_GRAPHIC=`<svg viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg">
@@ -905,35 +883,7 @@ const App={
   if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||800,messages:[{role:'user',content:prompt}]})});const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';}
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
  },
- // ===== v9.1: תרגום סעיפים אמיתי (רעיון 7) =====
- tr(txt){const lg=this.state.lang;if(!txt||lg==='he')return txt;const c=Store.get('trCache',{});return (c[lg]&&c[lg][String(txt).trim()])||txt;},
- collectTrStrings(){const s=this.state;const set=new Set();
-  this.chosen().forEach(g=>{if(g.cat&&g.cat.title)set.add(String(g.cat.title).trim());g.lines.forEach(l=>{if(l.name)set.add(String(l.name).trim());if(l.unit)set.add(String(l.unit).trim());});});
-  if(s.whiteOn){(s.whiteItems||[]).forEach(x=>set.add(String(x).trim()));set.add('גלובלי');}
-  if(s.blackOn){(s.blackItems||[]).forEach(x=>set.add(String(x).trim()));set.add('גלובלי');}
-  if(s.showTerms&&s.terms&&s.terms.trim())set.add(this.termsText().trim());
-  return [...set].filter(t=>t&&/[\u0590-\u05FF]/.test(t));},
- async ensureTranslations(){const lg=this.state.lang;if(lg==='he')return true;
-  const names={ru:'רוסית (Русский)',en:'אנגלית (English)',ar:'ערבית (العربية)'};
-  const cache=Store.get('trCache',{});cache[lg]=cache[lg]||{};
-  const missing=this.collectTrStrings().filter(t=>!cache[lg][t]);
-  if(!missing.length)return true;
-  this.busy('🌐 מתרגם סעיפים ל'+(names[lg]||lg)+'…');
-  try{
-   for(let i=0;i<missing.length;i+=40){const chunk=missing.slice(i,i+40);
-    const P=['אתה מתרגם מקצועי של מסמכי בנייה ושיפוצים בישראל. תרגם מעברית ל'+(names[lg]||lg)+' את הביטויים הבאים.',
-     'כללים: השתמש במונחים מקצועיים מקובלים בתחום הבנייה. אל תתרגם מספרים, מידות (כמו 60x60) ושמות מותגים. יחידות מידה תרגם (מ"ר, מ"א, נקודה, גלובלי וכו׳). שמור על אורך דומה למקור.',
-     'החזר אך ורק JSON תקין בלי טקסט נוסף ובלי markdown: אובייקט שהמפתחות בו הם המחרוזות המקוריות בעברית *בדיוק* כפי שניתנו, והערכים הם התרגומים.',
-     'המחרוזות:',JSON.stringify(chunk)];
-    let txt=await this.callAI(P.join(String.fromCharCode(10)),3000);
-    txt=String(txt||'').replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('{'),b=txt.lastIndexOf('}');if(a<0||b<=a)throw new Error('bad');
-    const map=JSON.parse(txt.slice(a,b+1));
-    chunk.forEach(k=>{const v=map[k];if(v&&typeof v==='string'&&v.trim())cache[lg][k]=v.trim();});
-   }
-   Store.set('trCache',cache);this.idle();return true;
-  }catch(e){this.idle();this.toast('🌐 התרגום נכשל — המסמך ייווצר בעברית. בדוק מפתח AI');return false;}
- },
- clearTrCache(){Store.set('trCache',{});this.toast('זיכרון התרגומים נוקה ✓');},
+ // #29: תמחור חכם — מציע מחיר ליחידה לפי ההיסטוריה של המשתמש + טווח מומלץ
  priceHistory(){const hist={};try{Store.get('quotes',[]).forEach(q=>{const snap=q.snap;if(!snap)return;
      const scan=arr=>{(arr||[]).forEach(it=>{if(it&&it.name&&+it.price>0&&it.selected!==false){const k=it.name.trim();(hist[k]=hist[k]||[]).push({p:+it.price,u:it.unit||''});}});};
      (snap.catalog||[]).forEach(c=>scan(c.items));Object.values(snap.subItems||{}).forEach(scan);scan(snap.custom);
@@ -1292,7 +1242,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',voice:'voiceModal',templates:'templatesModal',portfolio:'portfolioModal',aisuggest:'aiSuggestModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',collage:'collageModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',kanban:'kanbanModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1349,8 +1299,6 @@ const App={
      ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>
    <div class="sec-title">שפת המסמך</div>
    <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English'],['ru','Русский']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
-   ${s.lang!=='he'?`<div style="font-size:11.5px;color:var(--muted);margin:2px 0 4px">🌐 הסעיפים, הקטגוריות ותנאי התשלום יתורגמו אוטומטית (AI) בעת יצירת ה-PDF או הלינק. פרטי הקבלן והמחירים נשארים כפי שהם.</div>
-   <button class="btn-ghost" id="tr-now" style="margin-bottom:8px">🌐 תרגם עכשיו (בדיקה מראש)</button>`:''}
    <div class="sec-title" style="margin-top:16px">🪄 הוספה מהירה עם AI</div>
    <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">כתוב תוספות חופשי (עם מחיר אם יש) — ה-AI יפזר לקטגוריות. לדוגמה: "החלפת 3 שקעים 450 ש״ח, צביעת מרפסת 800"</div>
    <textarea id="quick-add" placeholder="תאר סעיפים להוספה…" style="min-height:60px;margin-bottom:8px"></textarea>
@@ -1369,6 +1317,9 @@ const App={
    <div class="field"><label>אחוז מע"מ (%) — משתנה לעיתים רחוקות</label><input id="vat-pct" type="number" inputmode="decimal" value="${s.vatPct}"/></div>
    <div class="sec-title" style="margin-top:16px">☀️ תצוגה</div>
    <div class="toggle"><div><div style="font-weight:700">מצב בהיר</div><div style="font-size:12px;color:var(--muted)">נוח לשימוש בשמש</div></div><button class="switch ${Store.get('theme','dark')==='light'?'on':''}" id="theme-toggle"><span class="knob"></span></button></div>
+   <div class="sec-title" style="margin-top:16px">🚀 מעבר לפרודקשן</div>
+   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">מוחק את כל נתוני הטסטים מהענן ומהמכשיר: לקוחות, הצעות, מעקב ומשובים. המחירון וההגדרות נשמרים.</div>
+   <button class="btn-ghost" id="go-production" style="color:var(--red);border-color:var(--red)">🧹 נקה הכל ועבור לפרודקשן</button>
    <div class="sec-title" style="margin-top:16px">⭐ משוב לקוחות</div>
    <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
    <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
@@ -1431,7 +1382,7 @@ const App={
    ${list.length?list.map(cl=>`<div class="list-item">
      <span class="status ${cl.status||'q'}">${lbl[cl.status||'q']}</span>
      <div class="info"><div class="t">${cl.name||'—'}</div><div class="s">${cl.phone?cl.phone+' · ':''}${cl.project||''}</div>${cl.notes?`<div class="s" style="margin-top:4px;background:var(--bg2,#1a1a1e);border-right:3px solid var(--red);border-radius:6px;padding:6px 8px;white-space:pre-wrap">📝 ${cl.notes}</div>`:''}</div>
-     <button class="mini" data-photos="${cl.id}" style="display:none">📷 תמונות</button>
+     <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
      <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
      <button class="mini" data-cquotes="${(cl.name||'').replace(/'/g,'&#39;')}">📤 הצעות</button><button class="mini" data-review="${cl.id}">📩 משוב</button>
      <button class="del" data-delclient="${cl.id}">🗑️</button></div>`).join(''):'<div class="empty">לא נמצאו לקוחות.</div>'}`;
@@ -1692,7 +1643,6 @@ const App={
      ${item('calendar','📅','יומן','פרויקטים לפי תאריך יעד',false)}
      ${item('tracking','📤','הצעות ומעקב','מעקב אחר סטטוס ואישורים',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
-     ${item('collage','🖼️','סטורי לפני/אחרי','קולאז\' ממותג לוואטסאפ — עם כותרות AI',false)}
      ${item('stats','📊','דו"ח חודשי','סטטיסטיקות והכנסות',false)}
      ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
@@ -1860,6 +1810,9 @@ const App={
    <div class="photos" id="ph-before"><div class="empty" style="grid-column:1/-1">טוען…</div></div>
    <div class="sec-title"><span>אחרי ✨</span><button class="mini2" data-addphoto="after">＋ הוסף</button></div>
    <div class="photos" id="ph-after"></div>
+   <div class="sec-title" style="margin-top:16px">🎨 שיתוף מקצועי</div>
+   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">צור תמונה ממותגת "לפני / אחרי" עם הלוגו שלך — מוכנה לוואטסאפ ולרשתות.</div>
+   <button class="btn-block" id="make-collage">✨ צור קולאז' ממותג</button>
    <input id="photo-file" type="file" accept="image/*" class="hidden"/>`;
  },
 
@@ -1954,6 +1907,24 @@ const App={
   const fsk=document.getElementById('fresh-skip');if(fsk)fsk.onclick=()=>{this._priceFresh=null;this.state.modal=null;this.render();};
   const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
+  const gop=document.getElementById('go-production');if(gop)gop.onclick=async()=>{
+    const c=prompt('🚀 מעבר לפרודקשן\n\nפעולה זו תמחק לצמיתות את כל נתוני הטסטים:\n• לקוחות · הצעות · מעקב · משובים\n\nהמחירון וההגדרות יישמרו.\nהמחיקה תסונכרן לכל המכשירים.\n\nהזן קוד אישור:');
+    if(c===null)return;
+    if(c!=='3396'){this.toast('קוד שגוי');return;}
+    if(!confirm('בטוח? אין דרך חזרה (מלבד גיבוי).'))return;
+    try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
+    this.busy('מנקה נתוני טסטים…');
+    ['quotes','clients','sentQuotes','reviews','trackedLinks','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));
+    this.state.custom=[];Store.set('customItems',[]);
+    this.state.subItems={};Store.set('subItems',{});
+    this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
+    this.state.quoteNo=nextQuoteNo();
+    try{await Sync.push(true);}catch(e){}
+    Store.set('isProduction',true);
+    this.idle();this.haptic(30);
+    this.toast('✅ המערכת נקייה ומוכנה לפרודקשן');
+    this.state.modal=null;this.render();
+  };
   const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
   const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
@@ -2019,21 +1990,6 @@ const App={
   const mskip=document.getElementById('miss-skip');if(mskip)mskip.onclick=()=>{this._missingItems=null;this.state.modal=null;this.render();};
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
-  const trn=document.getElementById('tr-now');if(trn)trn.onclick=async()=>{this.captureQuote();const ok=await this.ensureTranslations();if(ok)this.toast('🌐 התרגום מוכן ושמור ✓');};
-  // v9.3: קולאז' לפני/אחרי לפי לקוח
-  on('[data-cgmode]','click',e=>{this.cgCapture();this._cg().mode=e.currentTarget.dataset.cgmode;this._cgResult=null;this.render();});
-  const cgc=document.getElementById('cg-client');if(cgc)cgc.onchange=()=>{this.cgCapture();this.render();};
-  on('[data-cgadd]','click',e=>{const inp=e.currentTarget.querySelector('input[type=file]');if(inp)inp.click();});
-  on('[data-cgmulti]','change',e=>{this.cgCapture();this.cgAddFiles(e.currentTarget.dataset.cgmulti,e.currentTarget.files);});
-  on('[data-cgrm]','click',e=>{e.stopPropagation();this.cgCapture();const[k,i]=e.currentTarget.dataset.cgrm.split(':');this._cg()[k].splice(+i,1);this._cgResult=null;this.render();});
-  on('[data-cgslot]','click',e=>{if(e.target.dataset.cgdel)return;const inp=e.currentTarget.querySelector('input[type=file]');if(inp)inp.click();});
-  on('[data-cgfile]','change',e=>{this.cgCapture();this.cgLoadFile(e.currentTarget.dataset.cgfile,e.currentTarget.files[0]);});
-  on('[data-cgdel]','click',e=>{e.stopPropagation();this.cgCapture();this._cg()[e.currentTarget.dataset.cgdel]=null;this._cgResult=null;this.render();});
-  const cga=document.getElementById('cg-ai');if(cga)cga.onclick=()=>this.cgSuggest();
-  const cgm=document.getElementById('cg-make');if(cgm)cgm.onclick=()=>this.cgMake();
-  const cgs=document.getElementById('cg-share');if(cgs)cgs.onclick=()=>this.cgShare();
-  const cgd=document.getElementById('cg-dl');if(cgd)cgd.onclick=()=>this.cgDownload();
-  const cgr=document.getElementById('cg-review');if(cgr)cgr.onclick=()=>this.cgSendReview();
   const gsh=document.getElementById('gen-share');if(gsh)gsh.onclick=()=>{this.captureQuote();this.saveClient();this.generatePDF(true);};
   if(this.state.modal==='sign')this.initSigPad();
 
@@ -2113,11 +2069,6 @@ const App={
     col.addEventListener('dragleave',()=>col.classList.remove('kb-over'));
     col.addEventListener('drop',ev=>{ev.preventDefault();col.classList.remove('kb-over');const id=ev.dataTransfer.getData('text/plain');if(id)this.kbMove(id,col.dataset.kbcol);});
   });
-  on('[data-cstatus]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.cstatus);if(!cl)return;const o=['q','pending','doing','sent','done'];const idx=o.indexOf(cl.status||'q');
-    if(idx>=o.length-1){ // כבר 'בוצע' — לא לגלגל אוטומטית להתחלה; לשאול
-      if(confirm('הלקוח מסומן כ"בוצע". לאפס סטטוס חזרה ל"הצעה"?')){cl.status='q';cl.doneAt=null;}else return;
-    }else{cl.status=o[idx+1];if(cl.status==='done'&&!cl.doneAt)cl.doneAt=Date.now();}
-    Store.set('clients',list);this.render();});
   const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
@@ -2132,12 +2083,64 @@ const App={
 
   // photos modal
   on('[data-addphoto]','click',e=>{this._photoType=e.currentTarget.dataset.addphoto;document.getElementById('photo-file').click();});
+  const mkc=document.getElementById('make-collage');if(mkc)mkc.onclick=()=>this.makeCollage();
+  const csh=document.getElementById('collage-share');if(csh)csh.onclick=async()=>{try{const r=await fetch(this._collageUrl);const b=await r.blob();const f=new File([b],'לפני-אחרי.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'יהודה שיפוצים'});}else{this.toast('שמור את התמונה ושתף ידנית');}}catch(e){this.toast('השיתוף נכשל — שמור ושתף ידנית');}};
   const pf=document.getElementById('photo-file');if(pf)pf.onchange=async e=>{const f=e.target.files[0];if(!f)return;this.toast('מעבד תמונה…');const data=await compressImage(f);await Photos.add({id:uid(),clientId:this.state.photoClient,type:this._photoType,data,ts:Date.now()});this.loadPhotos();this.toast('נוסף ✓');
     if(Drive.token){try{const cl=Store.get('clients',[]).find(c=>c.id===this.state.photoClient)||{};const root=await Drive.ensureFolder('יהודה שיפוצים');const cf=await Drive.ensureFolder(cl.name||'לקוח',root);const tf=await Drive.ensureFolder(this._photoType==='before'?'לפני':'אחרי',cf);await Drive.uploadDataUrl('photo-'+Date.now()+'.jpg',data,tf);this.toast('נשמר גם ב-Drive ✓');}catch(x){}}};
   on('[data-delphoto]','click',async e=>{if(!confirm('למחוק תמונה זו?'))return;await Photos.del(e.currentTarget.dataset.delphoto);this.loadPhotos();});
   const pff=document.getElementById('pf-file');if(pff)pff.onchange=async e=>{const f=e.target.files[0];if(!f)return;this.toast('מעבד תמונה…');const data=await compressImage(f);await Photos.add({id:uid(),clientId:'__portfolio__',type:'portfolio',data,ts:Date.now()});this.loadPortfolio();this.toast('נוספה תמונת עבודה ✓');};
  },
 
+ async makeCollage(){
+  const list=await Photos.list(this.state.photoClient);
+  const before=list.filter(p=>p.type==='before').pop();
+  const after=list.filter(p=>p.type==='after').pop();
+  if(!before||!after){this.toast('צריך לפחות תמונה אחת "לפני" ואחת "אחרי"');return;}
+  this.busy('בונה קולאז׳…');this.haptic(15);
+  try{
+   const load=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src;});
+   const [imgA,imgB]=await Promise.all([load(before.data),load(after.data)]);
+   const W=1080,H=1350,pad=24,headH=110,footH=96;
+   const cellW=(W-pad*3)/2, cellH=H-headH-footH-pad*2;
+   const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+   // רקע
+   x.fillStyle='#0d0d0f';x.fillRect(0,0,W,H);
+   // כותרת
+   x.fillStyle='#ed1c24';x.fillRect(0,0,W,6);
+   x.fillStyle='#ffffff';x.font='800 46px Arial';x.textAlign='center';x.direction='rtl';
+   x.fillText('לפני  ←  אחרי',W/2,74);
+   // ציור תמונה עם חיתוך "cover"
+   const drawCover=(im,dx,dy,dw,dh)=>{const r=Math.max(dw/im.width,dh/im.height);const w=im.width*r,h=im.height*r;x.save();x.beginPath();x.rect(dx,dy,dw,dh);x.clip();x.drawImage(im,dx+(dw-w)/2,dy+(dh-h)/2,w,h);x.restore();
+     x.strokeStyle='#33333b';x.lineWidth=2;x.strokeRect(dx,dy,dw,dh);};
+   const y0=headH;
+   drawCover(imgA,W-pad-cellW,y0,cellW,cellH); // ימין = לפני (RTL)
+   drawCover(imgB,pad,y0,cellW,cellH);          // שמאל = אחרי
+   // תוויות
+   const tag=(txt,cx,color)=>{x.fillStyle=color;const tw=140,th=44;x.fillRect(cx-tw/2,y0+cellH-th-14,tw,th);
+     x.fillStyle='#fff';x.font='800 26px Arial';x.textAlign='center';x.fillText(txt,cx,y0+cellH-14-12);};
+   tag('לפני',W-pad-cellW/2,'rgba(0,0,0,.72)');
+   tag('אחרי',pad+cellW/2,'#ed1c24');
+   // פוטר מיתוג
+   const fy=H-footH;
+   x.fillStyle='#17171b';x.fillRect(0,fy,W,footH);
+   x.fillStyle='#ed1c24';x.fillRect(0,fy,W,4);
+   x.fillStyle='#ffffff';x.font='800 38px Arial';x.textAlign='center';
+   x.fillText('יהודה שיפוצים',W/2,fy+50);
+   x.fillStyle='#9a9aa6';x.font='400 26px Arial';
+   x.fillText('054-5718316  ·  yehuda-shipuzim.netlify.app',W/2,fy+84);
+   const url=cv.toDataURL('image/jpeg',.92);
+   this.idle();
+   this._collageUrl=url;this.state.modal='collage';this.render();
+  }catch(e){this.idle();this.toast('יצירת הקולאז׳ נכשלה');}
+ },
+ collageModal(){
+  const u=this._collageUrl;
+  return `<h2>✨ קולאז׳ ממותג <button class="x" data-close>✕</button></h2>
+   ${u?`<img src="${u}" style="width:100%;border-radius:14px;border:1px solid var(--line);margin-bottom:14px"/>
+   <a class="btn-block" href="${u}" download="לפני-אחרי-יהודה-שיפוצים.jpg" style="display:block;text-align:center;text-decoration:none">⬇️ שמור תמונה</a>
+   <button class="btn-ghost" id="collage-share" style="margin-top:8px">📤 שתף בוואטסאפ</button>`:'<div class="empty">אין קולאז׳</div>'}
+   <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6">💡 נוצר מהתמונה האחרונה בכל קטגוריה. רוצה זוג אחר? מחק תמונות מיותרות ונסה שוב.</div>`;
+ },
  async loadPhotos(){const list=await Photos.list(this.state.photoClient);const draw=(type,el)=>{if(!el)return;const arr=list.filter(p=>p.type===type);el.innerHTML=arr.length?arr.map(p=>`<div class="ph"><img loading="lazy" src="${p.data}"/><button class="del" data-delphoto="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין תמונות</div>';};
   draw('before',document.getElementById('ph-before'));draw('after',document.getElementById('ph-after'));
  },
@@ -2192,22 +2195,22 @@ const App={
  backup(){const data={_v:VERSION};Store.keys().forEach(k=>data[k]=Store.get(k,null));const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yehuda-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();this.toast('גיבוי נוצר ✓');},
  restore(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);Object.keys(d).forEach(k=>{if(k!=='_v'&&d[k]!==null)Store.set(k,d[k]);});this.state.catalog=Store.get('catalog',this.state.catalog);this.state.custom=Store.get('customItems',[]);this.toast('שוחזר בהצלחה ✓');this.state.modal=null;this.render();}catch(x){this.toast('קובץ לא תקין');}};rd.readAsText(f);},
 
- buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=(s.lang==='en'||s.lang==='ru')?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
+ buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=s.lang==='en'?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
   const plan=s.planMode;const cspan=plan?4:6;
-  groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?this.tr(g.cat.title):`<div style="display:flex;justify-content:space-between"><span>${this.tr(g.cat.title)}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
-    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.tr(i.name)}</td><td>${i.qty}</td><td>${this.tr(i.unit)}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.tr(i.name)}</td><td>${i.qty}</td><td>${this.tr(i.unit)}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
+  groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?g.cat.title:`<div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
+    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
   // materials as a real table category (not a footnote)
   if(s.whiteOn||s.blackOn){
     const mrows=[];
-    if(s.whiteOn)mrows.push({name:L.white+': '+(s.whiteItems.length?s.whiteItems.map(x=>this.tr(x)).join(', '):L.incl),price:(s.whiteInc?0:(+s.whitePrice||0))});
-    if(s.blackOn)mrows.push({name:L.black+': '+(s.blackItems.length?s.blackItems.map(x=>this.tr(x)).join(', '):L.incl),price:(s.blackInc?0:(+s.blackPrice||0))});
+    if(s.whiteOn)mrows.push({name:L.white+': '+(s.whiteItems.length?s.whiteItems.join(', '):L.incl),price:(s.whiteInc?0:(+s.whitePrice||0))});
+    if(s.blackOn)mrows.push({name:L.black+': '+(s.blackItems.length?s.blackItems.join(', '):L.incl),price:(s.blackInc?0:(+s.blackPrice||0))});
     const msum=mrows.reduce((a,r)=>a+r.price,0);
-    rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?L.mat:`<div style="display:flex;justify-content:space-between"><span>${L.mat}</span><span style="color:var(--red);font-weight:900">${nis(msum)}</span></div>`}</td></tr>`;
-    mrows.forEach((r,idx)=>{rows+=plan?`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>${this.tr('גלובלי')}</td></tr>`:`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>${this.tr('גלובלי')}</td><td>${nis(r.price)}</td><td>${nis(r.price)}</td></tr>`;});
+    rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?'חומרים':`<div style="display:flex;justify-content:space-between"><span>חומרים</span><span style="color:var(--red);font-weight:900">${nis(msum)}</span></div>`}</td></tr>`;
+    mrows.forEach((r,idx)=>{rows+=plan?`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td></tr>`:`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td><td>${nis(r.price)}</td><td>${nis(r.price)}</td></tr>`;});
   }
   if(!rows)rows=`<tr class="line"><td colspan="${cspan}" style="text-align:center;color:#999;padding:20px">—</td></tr>`;
   let extra='';
-  if(s.showTerms&&s.terms&&s.terms.trim())extra+=`<div class="blk"><b>${L.terms}:</b> ${this.tr(this.termsText().trim())}</div>`;
+  if(s.showTerms&&s.terms&&s.terms.trim())extra+=`<div class="blk"><b>${L.terms}:</b> ${this.termsText()}</div>`;
   if(isC)extra+=`<div class="blk"><b>${L.orderclause}</b></div>`;
   return `<div class="page" id="pdf-page" style="direction:${dir};position:relative">
    <div class="p-watermark">${logoBlock(false,2.6)}</div>
@@ -2221,15 +2224,15 @@ const App={
      <div class="p-party"><div class="h">${L.to}</div><div class="n">${c.name||'—'}</div><div class="l">${c.project||''}<br>${c.address||''}${c.phone?'<br>'+c.phone:''}</div></div></div>
    <table class="p-items"><thead><tr><th style="width:30px">#</th><th class="desc">${L.desc}</th><th style="width:55px">${L.qty}</th><th style="width:60px">${L.unit}</th>${plan?'':`<th style="width:85px">${L.price}</th><th style="width:95px">${L.total}</th>`}</tr></thead><tbody>${rows}</tbody></table>
    ${plan?`<div class="p-summary"><div class="p-sumbox" style="width:100%;max-width:100%">
-     ${(+s.planTotalSqm>0)?`<div class="p-sumrow"><span>${L.area}</span><span class="v">${(+s.planTotalSqm).toLocaleString('he-IL')} ${L.sqm}</span></div>`:''}
-     <div class="p-sumrow"><span>${L.persqm}</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} ₪</span></div>
-     ${(+s.planTotalSqm>0&&+s.planPerSqm>0)?`<div class="p-sumtotal"><span>${s.vatOn?L.prevat:L.total}</span><span class="v">${((+s.planPerSqm)*(+s.planTotalSqm)).toLocaleString('he-IL')} ₪</span></div>${s.vatOn?`<div class="p-sumrow"><span>${L.vat} (${s.vatPct}%)</span><span class="v">${Math.round((+s.planPerSqm)*(+s.planTotalSqm)*s.vatPct/100).toLocaleString('he-IL')} ₪</span></div><div class="p-sumtotal"><span>${L.grandvat}</span><span class="v">${Math.round((+s.planPerSqm)*(+s.planTotalSqm)*(1+s.vatPct/100)).toLocaleString('he-IL')} ₪</span></div>`:''}`:`<div class="p-sumtotal"><span>${L.byboq}</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} ₪ ${s.vatOn?'+ '+L.vat+' ':''}/ ${L.sqm}</span></div>`}
+     ${(+s.planTotalSqm>0)?`<div class="p-sumrow"><span>שטח כולל</span><span class="v">${(+s.planTotalSqm).toLocaleString('he-IL')} מ"ר</span></div>`:''}
+     <div class="p-sumrow"><span>מחיר למ"ר</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} ₪</span></div>
+     ${(+s.planTotalSqm>0&&+s.planPerSqm>0)?`<div class="p-sumtotal"><span>סה"כ ${s.vatOn?'לפני מע"מ':''}</span><span class="v">${((+s.planPerSqm)*(+s.planTotalSqm)).toLocaleString('he-IL')} ₪</span></div>${s.vatOn?`<div class="p-sumrow"><span>מע"מ (${s.vatPct}%)</span><span class="v">${Math.round((+s.planPerSqm)*(+s.planTotalSqm)*s.vatPct/100).toLocaleString('he-IL')} ₪</span></div><div class="p-sumtotal"><span>סה"כ כולל מע"מ</span><span class="v">${Math.round((+s.planPerSqm)*(+s.planTotalSqm)*(1+s.vatPct/100)).toLocaleString('he-IL')} ₪</span></div>`:''}`:`<div class="p-sumtotal"><span>לפי כתב כמויות ותוכניות</span><span class="v">${(+s.planPerSqm||0).toLocaleString('he-IL')} ₪ ${s.vatOn?'+ מע"מ ':''}למ"ר</span></div>`}
      </div></div>`:`<div class="p-summary"><div class="p-sumbox">
      <div class="p-sumrow"><span>${L.subtotal}</span><span class="v">${nis(this.subtotal())}</span></div>
      ${(+s.discount>0)?`<div class="p-sumrow disc"><span>${L.discount} (${s.discount}%)</span><span class="v">- ${nis(this.discountAmt())}</span></div>`:''}
      ${s.vatOn?`<div class="p-sumrow"><span>${L.vat} (${s.vatPct}%)</span><span class="v">${nis(this.vat())}</span></div>`:''}
      <div class="p-sumtotal"><span>${L.grand}</span><span class="v">${nis(this.grand())}</span></div>
-     ${(+s.advance>0)?`<div class="p-sumrow"><span>${L.adv} (${s.advance}%)</span><span class="v">${nis(Math.round(this.grand()*(+s.advance)/100))}</span></div>`:''}</div></div>`}
+     ${(+s.advance>0)?`<div class="p-sumrow"><span>\u05de\u05e7\u05d3\u05de\u05d4 (${s.advance}%)</span><span class="v">${nis(Math.round(this.grand()*(+s.advance)/100))}</span></div>`:''}</div></div>`}
    ${extra?`<div class="p-extra">${extra}</div>`:''}
    <div class="p-sign"><div class="s"><div class="sh">${L.signc}</div><div class="sigimg"></div><div class="sl">יהודה יעקובוב</div></div>
      <div class="s"><div class="sh">${L.signk}</div><div class="sigimg">${s.clientSig?`<img src="${s.clientSig}"/>`:''}</div><div class="sl">${c.name||'—'}</div></div></div>
@@ -2259,17 +2262,16 @@ const App={
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.render();
  },
- async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;if(this.state.lang!=='he')await this.ensureTranslations();this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.tr(l.name),q:l.qty,p:l.price,u:this.tr(l.unit||''),c:this.tr(g.cat.title)})));
+ async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
-  const L=I18N[s.lang]||I18N.he;
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
-    const names=(items&&items.length)?items.map(x=>this.tr(x)).join(', '):L.incl;
-    return {n:label+': '+names,q:1,p:(inc?0:(+price||0)),u:this.tr('גלובלי'),c:L.mat};};
-  const mw=matRow(s.whiteOn,s.whiteInc!==false,s.whitePrice,s.whiteItems,L.white);
-  const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,L.black);
+    const names=(items&&items.length)?items.join(', '):'כלול';
+    return {n:label+': '+names,q:1,p:(inc?0:(+price||0)),u:'גלובלי',c:'חומרים'};};
+  const mw=matRow(s.whiteOn,s.whiteInc!==false,s.whitePrice,s.whiteItems,'חומר לבן');
+  const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,'חומר שחור');
   if(mw)items.push(mw); if(mb)items.push(mb);
-  const data={cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.tr(this.termsText().trim()):'')||'',plan:s.planMode?1:0,psqm:+s.planPerSqm||0,tsqm:+s.planTotalSqm||0,lng:s.lang||'he'};
+  const data={cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.termsText():'')||'',plan:s.planMode?1:0,psqm:+s.planPerSqm||0,tsqm:+s.planTotalSqm||0};
   const base=location.origin+location.pathname;
   this.toast('יוצר לינק…');
   let link,short=false;
@@ -2310,155 +2312,6 @@ const App={
        <button class="del" data-revdel="${l.id}">🗑️</button>
        ${d.text?`<div class="trk-comment">💬 ${d.text}</div>`:''}</div>`;}).join(''):'<div class="empty">עדיין לא נשלחו בקשות משוב.<br>סיים פרויקט ← 👥 לקוחות ← 📩 משוב</div>'}`;
  },
- /* ===== v9.3: סטורי לפני/אחרי לפי לקוח — ריבוי תמונות + AI + משוב עם דף נחיתה ===== */
- _cg(){this._cgState=this._cgState||{clientId:'',mode:'ba',before:[],after:[],s1:null,s2:null,s3:null,title:'מהריסה — לגימור מושלם',red:'לגימור מושלם',sub:'פרויקט אמיתי שלנו',labels:['1 · תשתיות','2 · ריצוף','3 · גימור']};return this._cgState;},
- collageModal(){const g=this._cg();const ba=g.mode==='ba';const clients=Store.get('clients',[]);
-  const cl=clients.find(c=>c.id===g.clientId);
-  const gal=(key,label,color)=>`<div class="cg-gal">
-    <div class="cg-gal-h"><span class="cg-tag" style="background:${color}">${label}</span><span style="font-size:11px;color:var(--muted)">${(g[key]||[]).length}/4 תמונות</span></div>
-    <div class="cg-thumbs">${(g[key]||[]).map((im,i)=>`<div class="cg-th"><img src="${im}"/><span class="cg-x" data-cgrm="${key}:${i}">✕</span></div>`).join('')}
-     ${(g[key]||[]).length<4?`<div class="cg-th add" data-cgadd="${key}">＋<input type="file" accept="image/*" multiple data-cgmulti="${key}" style="display:none"></div>`:''}</div></div>`;
-  const slot=(key,label)=>`<div class="cg-slot ${g[key]?'has':''}" data-cgslot="${key}">
-    ${g[key]?`<img src="${g[key]}"/><span class="cg-x" data-cgdel="${key}">✕</span>`:`<div class="cg-ph">📷<br>${label}</div>`}
-    <input type="file" accept="image/*" data-cgfile="${key}" style="display:none"></div>`;
-  return `<h2>🖼️ סטורי לפני/אחרי <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">בחר לקוח ← העלה תמונות ← ה-AI כותב, ה-Canvas מעצב ← שתף לסטטוס או שלח ללקוח בקשת משוב עם דף נחיתה שכולל את הלפני/אחרי.</div>
-   <label style="font-size:12px;font-weight:700">👤 לקוח / פרויקט</label>
-   <select id="cg-client" style="margin-bottom:10px"><option value="">— בחר לקוח —</option>${clients.map(c=>`<option value="${c.id}" ${c.id===g.clientId?'selected':''}>${c.name}${c.project?' · '+c.project:''}</option>`).join('')}</select>
-   <div class="chips" style="padding:0 0 10px">
-     <button class="chip ${ba?'on':''}" data-cgmode="ba">לפני ← אחרי</button>
-     <button class="chip ${!ba?'on':''}" data-cgmode="steps">3 שלבים</button>
-   </div>
-   ${ba?gal('before','לפני','#111114')+gal('after','אחרי','var(--red)')
-      :`<div class="cg-row three">${slot('s1',g.labels[0])}${slot('s2',g.labels[1])}${slot('s3',g.labels[2])}</div>
-        <div class="cg-lbls">${[0,1,2].map(i=>`<input data-cglbl="${i}" value="${g.labels[i]}" placeholder="תווית שלב ${i+1}">`).join('')}</div>`}
-   <button class="btn-ghost" id="cg-ai" style="margin:10px 0 8px">✨ הצע כותרת + תיאור (AI מנתח את התמונות)</button>
-   <label style="font-size:12px;font-weight:700">כותרת (החלק האדום יודגש)</label>
-   <input id="cg-title" value="${g.title}" style="margin-bottom:6px">
-   <input id="cg-red" value="${g.red}" placeholder="החלק שיוצג באדום (חייב להופיע בכותרת)" style="margin-bottom:6px">
-   <label style="font-size:12px;font-weight:700">שורת משנה</label>
-   <input id="cg-sub" value="${g.sub}" style="margin-bottom:12px">
-   <button class="btn-main" id="cg-make">🎨 צור קולאז'</button>
-   <div id="cg-out" style="margin-top:12px">${this._cgResult?`<img src="${this._cgResult}" style="width:100%;border-radius:14px;border:1px solid var(--line)"/>
-     <div style="display:flex;gap:8px;margin-top:8px"><button class="btn-main" id="cg-share" style="flex:1">📤 שתף לסטטוס</button><button class="btn-ghost" id="cg-dl" style="flex:1">⬇️ שמור</button></div>
-     <button class="btn-main" id="cg-review" style="margin-top:8px;background:var(--ok,#1a9a4a)">📩 שלח ללקוח בקשת משוב + דף נחיתה עם הסטורי</button>
-     ${cl?'':'<div style="font-size:11.5px;color:var(--muted);margin-top:4px">לשליחת משוב — בחר לקוח למעלה</div>'}`:''}</div>`;
- },
- cgCapture(){const g=this._cg();const t=document.getElementById('cg-title'),r=document.getElementById('cg-red'),s=document.getElementById('cg-sub'),c=document.getElementById('cg-client');
-  if(t)g.title=t.value;if(r)g.red=r.value;if(s)g.sub=s.value;if(c)g.clientId=c.value;
-  document.querySelectorAll('[data-cglbl]').forEach(el=>{g.labels[+el.dataset.cglbl]=el.value;});},
- _cgShrink(file){return new Promise(res=>{const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{
-   const MAX=1600;let w=im.width,h=im.height;const sc=Math.min(1,MAX/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
-   const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(im,0,0,w,h);
-   res(cv.toDataURL('image/jpeg',.86));};im.onerror=()=>res(null);im.src=rd.result;};rd.readAsDataURL(file);});},
- async cgAddFiles(key,files){const g=this._cg();const arr=g[key]=g[key]||[];
-  for(const f of [...files].slice(0,4-arr.length)){const d=await this._cgShrink(f);if(d)arr.push(d);}
-  this._cgResult=null;this.render();},
- cgLoadFile(key,file){if(!file)return;this._cgShrink(file).then(d=>{if(d){this._cg()[key]=d;this._cgResult=null;this.render();}});},
- async callAIVisionMulti(prompt,dataUrls,maxTokens){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key)throw new Error('no-key');
-  const parts=dataUrls.map(u=>{const m=String(u).match(/^data:([^;]+);base64,(.+)$/);return m?{mime:m[1],b64:m[2]}:null;}).filter(Boolean);
-  if(!parts.length)throw new Error('bad-image');
-  if(provider==='claude'){
-    const content=parts.map(p=>({type:'image',source:{type:'base64',media_type:p.mime,data:p.b64}}));content.push({type:'text',text:prompt});
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||600,messages:[{role:'user',content}]})});
-    const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';}
-  const gp=parts.map(p=>({inline_data:{mime_type:p.mime,data:p.b64}}));gp.push({text:prompt});
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:gp}]})});
-  const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';},
- async cgSuggest(){const g=this._cg();this.cgCapture();
-  const pics=g.mode==='ba'?[...(g.before||[]).slice(0,2),...(g.after||[]).slice(0,2)]:['s1','s2','s3'].map(k=>g[k]).filter(Boolean);
-  if(!pics.length){this.toast('העלה קודם לפחות תמונה אחת');return;}
-  const cl=Store.get('clients',[]).find(c=>c.id===g.clientId);
-  this.busy('ה-AI מנתח את התמונות…');
-  try{const P='אתה קופירייטר של קבלן שיפוצים ישראלי. לפניך תמונות מפרויקט (לפני/אחרי או שלבים)'+(cl&&cl.project?' — סוג הפרויקט: '+cl.project:'')+'. כתוב לסטטוס וואטסאפ: 1) כותרת קצרה ועוצמתית בעברית (עד 5 מילים), 2) איזה חלק מהכותרת להדגיש באדום (2-3 מילים מתוך הכותרת, בדיוק כפי שמופיעות בה), 3) שורת משנה (עד 8 מילים, אפשר עם · בין ביטויים). בלי המילים "קבלן רשום". החזר אך ורק JSON: {"title":"...","red":"...","sub":"..."}';
-   const txt=await this.callAIVisionMulti(P,pics.slice(0,4),400);
-   const a=txt.indexOf('{'),b=txt.lastIndexOf('}');const o=JSON.parse(txt.slice(a,b+1));
-   if(o.title)g.title=String(o.title).trim();if(o.red)g.red=String(o.red).trim();if(o.sub)g.sub=String(o.sub).trim();
-   if(g.red&&!g.title.includes(g.red))g.red=g.title.split(' ').slice(-2).join(' ');
-   this.idle();this.haptic(20);this.render();this.toast('✨ כותרות מוכנות — ערוך חופשי');
-  }catch(e){this.idle();this.toast('ניתוח ה-AI נכשל — כתוב ידנית או נסה שוב');}},
- _cgImg(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});},
- _cgRR(x,y,w,h,r){const c=this._cgCtx;c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();},
- _cgCover(im,x,y,w,h,r){const c=this._cgCtx;c.save();this._cgRR(x,y,w,h,r);c.clip();
-  const s=Math.max(w/im.width,h/im.height);const dw=im.width*s,dh=im.height*s;c.drawImage(im,x+(w-dw)/2,y+(h-dh)/2,dw,dh);c.restore();},
- _cgPill(text,rx,y,bg){const c=this._cgCtx;c.font='800 40px Heebo,Arial';const tw=c.measureText(text).width;const pw=tw+64,ph=76;const x=rx-pw;
-  c.save();c.shadowColor='rgba(0,0,0,.45)';c.shadowBlur=18;this._cgRR(x,y,pw,ph,38);c.fillStyle=bg;c.fill();c.restore();
-  c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(text,x+pw/2,y+ph/2+2);},
- async _cgGrid(imgs,x,y,w,h,pill,pillBg){const c=this._cgCtx;const n=imgs.length;
-  if(n===1){const im=await this._cgImg(imgs[0]);this._cgCover(im,x,y,w,h,28);}
-  else if(n===2){const gw=(w-14)/2;for(let i=0;i<2;i++){const im=await this._cgImg(imgs[i]);this._cgCover(im,x+i*(gw+14),y,gw,h,24);}}
-  else{const gw=(w-14)/2,gh=(h-14)/2;for(let i=0;i<Math.min(n,4);i++){const im=await this._cgImg(imgs[i]);
-    if(n===3&&i===2){this._cgCover(im,x,y+gh+14,w,gh,24);}
-    else this._cgCover(im,x+(i%2)*(gw+14),y+Math.floor(i/2)*(gh+14),gw,gh,24);}}
-  this._cgPill(pill,x+w-28,y+26,pillBg);},
- async cgMake(){this.cgCapture();const g=this._cg();
-  if(g.mode==='ba'){if(!(g.before||[]).length||!(g.after||[]).length){this.toast('העלה לפחות תמונה אחת ללפני ואחת לאחרי');return;}}
-  else if(['s1','s2','s3'].some(k=>!g[k])){this.toast('חסרות תמונות — מלא את כל המשבצות');return;}
-  this.busy('מעצב קולאז\'…');
-  try{
-   const W=1080,H=1920;const cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');this._cgCtx=c;
-   const grd=c.createLinearGradient(0,0,0,H);grd.addColorStop(0,'#1b1b1e');grd.addColorStop(1,'#0d0d0f');c.fillStyle=grd;c.fillRect(0,0,W,H);
-   c.fillStyle='#ed1c24';c.fillRect(0,0,W,16);
-   const logo=await this._cgImg(LOGO_APP);const lw=300,lh=lw*logo.height/logo.width;c.drawImage(logo,(W-lw)/2,52,lw,lh);
-   let y=52+lh+68;
-   c.textBaseline='alphabetic';c.font='900 78px Heebo,Arial';
-   const red=(g.red&&g.title.includes(g.red))?g.red:'';const white=red?g.title.replace(red,'').replace(/\s+—?\s*$/,' ').trim():g.title;
-   const sep=red&&white?' ':'';const wW=c.measureText(white).width,wR=red?c.measureText(red+sep).width:0;
-   let tx=(W+wW+wR)/2;
-   c.textAlign='right';c.fillStyle='#fff';c.fillText(white,tx,y);tx-=wW;
-   if(red){c.fillStyle='#ed1c24';c.fillText(sep+red,tx,y);}
-   y+=58;c.font='500 40px Heebo,Arial';c.textAlign='center';c.fillStyle='#9a9aa0';c.fillText(g.sub,W/2,y);
-   y+=52;
-   const M=64,PW=W-M*2;
-   if(g.mode==='ba'){
-     const PH=Math.floor((H-y-300-90)/2);
-     await this._cgGrid(g.before,M,y,PW,PH,'לפני','#111114');
-     const midY=y+PH+16;
-     c.fillStyle='#ed1c24';c.font='900 74px Arial';c.textAlign='center';c.fillText('↓',W/2,midY+62);
-     const y2=midY+96;await this._cgGrid(g.after,M,y2,PW,PH,'אחרי','#ed1c24');
-     y=y2+PH;
-   }else{
-     const GAP=54,PH=Math.floor((H-y-300-GAP*2-40)/3);
-     const keys=['s1','s2','s3'];
-     for(let i=0;i<3;i++){const im=await this._cgImg(g[keys[i]]);
-       this._cgCover(im,M,y,PW,PH,28);this._cgPill(g.labels[i]||('שלב '+(i+1)),M+PW-28,y+26,'#ed1c24');y+=PH+GAP;}
-     y-=GAP;
-   }
-   let fy=H-172;
-   c.font='900 96px Heebo,Arial';c.textAlign='center';c.fillStyle='#ed1c24';c.fillText('054-571-8316',W/2,fy);
-   fy+=62;c.font='700 38px Heebo,Arial';c.fillStyle='#fff';c.fillText('יהודה יעקובוב · יהודה שיפוצים',W/2,fy);
-   fy+=48;c.font='600 34px Heebo,Arial';c.fillStyle='#8f8f96';c.fillText('yehuda-shipuzim.netlify.app',W/2,fy);
-   this._cgResult=cv.toDataURL('image/jpeg',.92);
-   // גרסה מוקטנת לדף הנחיתה של המשוב (מגבלת Firestore 1MB)
-   const sc=document.createElement('canvas');sc.width=720;sc.height=1280;sc.getContext('2d').drawImage(cv,0,0,720,1280);
-   this._cgSmall=sc.toDataURL('image/jpeg',.72);
-   this._cgCtx=null;
-   this.idle();this.haptic(25);this.render();
-  }catch(e){this._cgCtx=null;this.idle();this.toast('יצירת הקולאז\' נכשלה — נסה תמונות אחרות');}},
- async cgSendReview(){this.cgCapture();const g=this._cg();
-  if(!this._cgResult||!this._cgSmall){this.toast('צור קודם את הקולאז\'');return;}
-  const list=Store.get('clients',[]);const cl=list.find(c=>c.id===g.clientId);
-  if(!cl){this.toast('בחר לקוח למעלה כדי לשלוח משוב');return;}
-  if(!window._db){this.toast('אין חיבור לענן — נסה שוב');return;}
-  this.busy('יוצר דף נחיתה עם הסטורי…');
-  try{const id=this.shortId();
-   await window._db.collection('reviews').doc(id).set({client:cl.name||'',clientId:cl.id,phone:cl.phone||'',project:cl.project||'',gmb:Store.get('googleReview','')||Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:null,text:'',doneAt:null,img:this._cgSmall});
-   const link=location.origin+location.pathname+'#r='+id;
-   const rl=Store.get('reviewLinks',[]);rl.unshift({id:id,client:cl.name||'',phone:cl.phone||'',project:cl.project||'',ts:Date.now(),story:1});Store.set('reviewLinks',rl.slice(0,200));
-   cl.status='sent';cl.reviewId=id;Store.set('clients',list);
-   const msg='שלום '+(cl.name||'')+' 🙏\nתראו איזה יופי יצא! הכנו לכם דף לפני/אחרי מהפרויקט 🎬\nנשמח מאוד גם למשוב קצר (30 שניות):\n'+link;
-   this.idle();this.haptic(20);
-   if(cl.phone)window.open(waLink(cl.phone,msg),'_blank');
-   else if(navigator.share)navigator.share({text:msg}).catch(()=>{});
-   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
-   this.toast('בקשת משוב עם הסטורי נשלחה ✓');this.render();
-  }catch(e){this.idle();this.toast('השליחה נכשלה — ייתכן שהתמונה גדולה מדי, נסה פחות תמונות');}},
- async cgShare(){if(!this._cgResult)return;
-  try{const blob=await (await fetch(this._cgResult)).blob();const file=new File([blob],'yehuda-story.jpg',{type:'image/jpeg'});
-   if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'יהודה שיפוצים'});return;}
-  }catch(e){}
-  this.cgDownload();},
- cgDownload(){if(!this._cgResult)return;const a=document.createElement('a');a.href=this._cgResult;a.download='yehuda-story-'+Date.now()+'.jpg';a.click();this.toast('הקולאז\' נשמר ✓');},
  async loadReviews(){const links=Store.get('reviewLinks',[]);if(!links.length||!window._db)return;const out={};
   try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null};}}catch(e){}}));}catch(e){}
   this._revData=out;if(this.state.modal==='reviews')this.render();
@@ -2466,11 +2319,6 @@ const App={
  reviewView(id,d){d=d||{};const gmb=d.gmb||Store.get('googleReview','')||Store.get('gmbUrl','');
   return `<div class="pv2-wrap"><div class="rv-card">
     <div class="rv-hdr"><img src="${LOGO_APP}" alt="יהודה שיפוצים"/><div class="co">יהודה שיפוצים</div></div>
-    ${d.img?`<div class="rv-story">
-      <div class="rv-story-h">🎬 הפרויקט שלכם — לפני ואחרי</div>
-      <img class="rv-story-img" src="${d.img}" alt="לפני ואחרי"/>
-      <a class="rv-story-dl" href="${d.img}" download="לפני-אחרי-יהודה-שיפוצים.jpg">⬇️ שמרו את התמונה למזכרת</a>
-    </div>`:''}
     <div class="rv-body">
       <div class="rv-h">שלום${d.client?' '+d.client:''} 👋</div>
       <div class="rv-sub">תודה שבחרת בנו! איך היינו?</div>
@@ -2485,7 +2333,6 @@ const App={
   </div></div>`;
  },
 proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL')+' ₪';const owner=WA;
-  const L=I18N[data.lng]||I18N.he;const dir=(data.lng==='en'||data.lng==='ru')?'ltr':'rtl';
   const msg='שלום, אני מאשר את הצעת המחיר מס\' '+(data.no||'')+(data.cn?' עבור '+data.cn:'')+' בסך '+nf(data.tot)+'. אפשר להתקדם 🙂';
   // group items by category (backward compatible: items without c go to one group)
   const groups=[];const gmap={};(data.it||[]).forEach(i=>{const key=i.c||'';if(!gmap[key]){gmap[key]={title:key,lines:[]};groups.push(gmap[key]);}gmap[key].lines.push(i);});
@@ -2494,47 +2341,47 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   const tbody=groups.map(g=>{
     const gsum=g.lines.reduce((s,l)=>s+(+l.q||0)*(+l.p||0),0);
     return (g.title?`<tr class="pv2-band"><td colspan="${plan?4:5}">${g.title}</td>${plan?'':`<td class="bs">${nf(gsum)}</td>`}</tr>`:'')+
-      g.lines.map(l=>{rowNo++;const isMat=(g.title==='חומרים'||g.title===L.mat);return plan?`<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td></tr>`:`<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td><td>${nf(l.p)}</td><td class="ltot">${nf((+l.q||0)*(+l.p||0))}</td></tr>`;}).join('');
+      g.lines.map(l=>{rowNo++;const isMat=(g.title==='חומרים');return plan?`<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td></tr>`:`<tr class="${rowNo%2?'odd':'even'}${isMat?' matline':''}"><td class="num">${rowNo}</td><td class="desc">${l.n}</td><td>${l.q}</td><td>${l.u||''}</td><td>${nf(l.p)}</td><td class="ltot">${nf((+l.q||0)*(+l.p||0))}</td></tr>`;}).join('');
   }).join('');
   const vatAmt=data.vat>0?(data.sub-(data.sub*(data.dis||0)/100))*data.vat/100:0;
-  return `<div class="pv2-wrap" style="direction:${dir}"><div class="pv2-page">
+  return `<div class="pv2-wrap"><div class="pv2-page">
     <div class="pv2-top">
       <div class="pv2-logo"><img src="${LOGO_PDF}" alt="יהודה שיפוצים"/></div>
-      <div class="pv2-title"><div class="t">${L.quote}</div><div class="e">${data.lng==='he'||!data.lng?'Q U O T A T I O N':L.sub}</div></div>
-      <div class="pv2-meta"><b>${L.no}:</b> ${data.no||''}<br>${data.dt?`<b>${L.date}:</b> ${data.dt}<br>`:''}${data.vd?`<b>${L.valid}:</b> ${data.vd}`:''}</div>
+      <div class="pv2-title"><div class="t">הצעת מחיר</div><div class="e">Q U O T A T I O N</div></div>
+      <div class="pv2-meta"><b>מס׳ הצעה:</b> ${data.no||''}<br>${data.dt?`<b>תאריך:</b> ${data.dt}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${data.vd}`:''}</div>
     </div>
     <div class="pv2-parties">
-      <div class="pp"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="s">ח.פ 311834998<br>054-5718316<br>yuda090581@gmail.com</div></div>
-      <div class="pp"><div class="h">${L.to}</div><div class="n">${data.cn||'—'}</div><div class="s">${[data.pr,data.ad,data.ph].filter(Boolean).join('<br>')}</div></div>
+      <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">ח.פ 311834998<br>054-5718316<br>yuda090581@gmail.com</div></div>
+      <div class="pp"><div class="h">לכבוד</div><div class="n">${data.cn||'[שם הלקוח]'}</div><div class="s">${[data.pr,data.ad,data.ph].filter(Boolean).join('<br>')}</div></div>
     </div>
-    <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">${L.desc}</th><th>${L.qty}</th><th>${L.unit}</th>${plan?'':`<th>${L.price}</th><th>${L.total}</th>`}</tr></thead><tbody>${tbody}</tbody></table>
+    <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">תיאור העבודה</th><th>כמות</th><th>יחידה</th>${plan?'':'<th>מחיר ליח׳</th><th>סה"כ</th>'}</tr></thead><tbody>${tbody}</tbody></table>
     ${plan?`<div class="pv2-sumwrap"><div class="pv2-sumbox" style="width:100%">
-      ${data.tsqm>0?`<div class="r"><span>${L.area}</span><b>${(+data.tsqm).toLocaleString('he-IL')} ${L.sqm}</b></div>`:''}
-      <div class="r"><span>${L.persqm}</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa</b></div>
-      ${(data.tsqm>0&&data.psqm>0)?`<div class="r total"><span>${data.vat>0?L.prevat:L.total}</span><b>${((+data.psqm)*(+data.tsqm)).toLocaleString('he-IL')} \u20aa</b></div>${data.vat>0?`<div class="r"><span>${L.vat} (${data.vat}%)</span><b>${Math.round((+data.psqm)*(+data.tsqm)*data.vat/100).toLocaleString('he-IL')} \u20aa</b></div><div class="r total"><span>${L.grandvat}</span><b>${Math.round((+data.psqm)*(+data.tsqm)*(1+data.vat/100)).toLocaleString('he-IL')} \u20aa</b></div>`:''}`:`<div class="r total"><span>${L.byboq}</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa ${data.vat>0?'+ '+L.vat+' ':''}/ ${L.sqm}</b></div>`}
+      ${data.tsqm>0?`<div class="r"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><b>${(+data.tsqm).toLocaleString('he-IL')} \u05de"\u05e8</b></div>`:''}
+      <div class="r"><span>\u05de\u05d7\u05d9\u05e8 \u05dc\u05de"\u05e8</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa</b></div>
+      ${(data.tsqm>0&&data.psqm>0)?`<div class="r total"><span>\u05e1\u05d4"\u05db ${data.vat>0?'\u05dc\u05e4\u05e0\u05d9 \u05de\u05e2"\u05de':''}</span><b>${((+data.psqm)*(+data.tsqm)).toLocaleString('he-IL')} \u20aa</b></div>${data.vat>0?`<div class="r"><span>\u05de\u05e2"\u05de (${data.vat}%)</span><b>${Math.round((+data.psqm)*(+data.tsqm)*data.vat/100).toLocaleString('he-IL')} \u20aa</b></div><div class="r total"><span>\u05e1\u05d4"\u05db \u05db\u05d5\u05dc\u05dc \u05de\u05e2"\u05de</span><b>${Math.round((+data.psqm)*(+data.tsqm)*(1+data.vat/100)).toLocaleString('he-IL')} \u20aa</b></div>`:''}`:`<div class="r total"><span>\u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u05d5\u05ea\u05d5\u05db\u05e0\u05d9\u05d5\u05ea</span><b>${(+data.psqm||0).toLocaleString('he-IL')} \u20aa ${data.vat>0?'+ \u05de\u05e2"\u05de ':''}\u05dc\u05de"\u05e8</b></div>`}
     </div></div>`:`<div class="pv2-sumwrap"><div class="pv2-sumbox">
-      <div class="r"><span>${L.subtotal}</span><b>${nf(data.sub)}</b></div>
-      ${data.dis>0?`<div class="r red"><span>${L.discount} (${data.dis}%)</span><b>- ${nf(data.sub*data.dis/100)}</b></div>`:''}
-      ${data.vat>0?`<div class="r"><span>${L.vat} (${data.vat}%)</span><b>${nf(vatAmt)}</b></div>`:''}
-      <div class="r total"><span>${L.grand}</span><b>${nf(data.tot)}</b></div>
-      ${data.adv>0?`<div class="r adv"><span>${L.adv} (${data.adv}%)</span><b>${nf(data.tot*data.adv/100)}</b></div>`:''}
+      <div class="r"><span>סכום ביניים</span><b>${nf(data.sub)}</b></div>
+      ${data.dis>0?`<div class="r red"><span>הנחה (${data.dis}%)</span><b>- ${nf(data.sub*data.dis/100)}</b></div>`:''}
+      ${data.vat>0?`<div class="r"><span>מע"מ (${data.vat}%)</span><b>${nf(vatAmt)}</b></div>`:''}
+      <div class="r total"><span>סה"כ לתשלום</span><b>${nf(data.tot)}</b></div>
+      ${data.adv>0?`<div class="r adv"><span>מקדמה (${data.adv}%)</span><b>${nf(data.tot*data.adv/100)}</b></div>`:''}
     </div></div>`}
-    ${data.terms?`<div class="pv2-terms"><b>${L.terms}:</b> ${data.terms}</div>`:''}
+    ${data.terms?`<div class="pv2-terms"><b>תנאי תשלום:</b> ${data.terms}</div>`:''}
     <div class="pv2-sign" id="pv2-sign-box">
-      <div class="pv2-sign-h">${L.dsign}</div>
+      <div class="pv2-sign-h">✍️ חתימת הלקוח (אופציונלי — מעניקה תוקף לאישור)</div>
       <canvas id="pv2-pad" class="pv2-pad"></canvas>
-      <button class="pv2-clear" id="pv2-clear" type="button">${L.dclear}</button>
+      <button class="pv2-clear" id="pv2-clear" type="button">🧹 נקה חתימה</button>
     </div>
-    <button class="prop-approve" id="pv2-approve" type="button">${L.dapprove}</button>
+    <button class="prop-approve" id="pv2-approve" type="button">✅ אני מאשר את ההצעה</button>
     <div class="pv2-note">
-      <div class="pv2-note-h">${L.dnoteh}</div>
-      <textarea id="pv2-msg" placeholder="${L.dnoteph}"></textarea>
-      <button class="pv2-send" id="pv2-send" type="button">${L.dnotesend}</button>
+      <div class="pv2-note-h">💬 יש לי הערה / שאלה</div>
+      <textarea id="pv2-msg" placeholder="לדוגמה: אפשר להוסיף עוד נקודת חשמל בסלון?"></textarea>
+      <button class="pv2-send" id="pv2-send" type="button">שלח הערה ליהודה</button>
       <div id="pv2-note-ok" class="pv2-ok"></div>
     </div>
-    <a class="prop-call" href="tel:0545718316">${L.dcall}</a>
-    <div class="pv2-cta">${L.cta} <b>yehuda-shipuzim.netlify.app</b></div>
-    <div class="prop-foot">${L.foot}</div>
+    <a class="prop-call" href="tel:0545718316">📞 יש לי שאלה — התקשר 054-571-8316</a>
+    <div class="pv2-cta">רוצים לראות עוד מהעבודות שלנו? <b>yehuda-shipuzim.netlify.app</b></div>
+    <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
   </div></div>`;
  },
  async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');
@@ -2583,7 +2430,6 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
  async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}
   this.captureQuote();
   if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
-  if(this.state.lang!=='he')await this.ensureTranslations();
   this.haptic(15);this.busy('מכין PDF…');
   try{const{pdf,blob,fname}=await this.makePdfBlob();this.recordQuote();
   let shared=false;
