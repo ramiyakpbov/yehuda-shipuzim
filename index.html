@@ -522,7 +522,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='9.2';
+const VERSION='9.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2117,60 +2117,150 @@ const App={
   const pff=document.getElementById('pf-file');if(pff)pff.onchange=async e=>{const f=e.target.files[0];if(!f)return;this.toast('מעבד תמונה…');const data=await compressImage(f);await Photos.add({id:uid(),clientId:'__portfolio__',type:'portfolio',data,ts:Date.now()});this.loadPortfolio();this.toast('נוספה תמונת עבודה ✓');};
  },
 
+ _enhanceImage(im,tw,th){
+  // שיפור אוטומטי: מתיחת היסטוגרמה, ניגודיות S-curve, רוויה, חידוד
+  const c=document.createElement('canvas');c.width=tw;c.height=th;const g=c.getContext('2d');
+  const r=Math.max(tw/im.width,th/im.height),w=im.width*r,h=im.height*r;
+  g.drawImage(im,(tw-w)/2,(th-h)/2,w,h);
+  let d;try{d=g.getImageData(0,0,tw,th);}catch(e){return c;}
+  const p=d.data,n=p.length;
+  // 1) מצא אחוזון 1% ו-99% לצורך מתיחת טונים
+  const hist=new Uint32Array(256);
+  for(let i=0;i<n;i+=4){hist[(p[i]*0.299+p[i+1]*0.587+p[i+2]*0.114)|0]++;}
+  const total=tw*th,lowCut=total*0.01,highCut=total*0.99;
+  let acc=0,lo=0,hi=255;
+  for(let v=0;v<256;v++){acc+=hist[v];if(acc>=lowCut){lo=v;break;}}
+  acc=0;for(let v=0;v<256;v++){acc+=hist[v];if(acc>=highCut){hi=v;break;}}
+  if(hi-lo<30){lo=0;hi=255;}
+  const scale=255/(hi-lo);
+  // 2) LUT: מתיחה + S-curve עדין
+  const lut=new Uint8ClampedArray(256);
+  for(let v=0;v<256;v++){
+    let t=(v-lo)*scale;t=t<0?0:t>255?255:t;
+    const x=t/255,s=x*x*(3-2*x);            // smoothstep
+    lut[v]=Math.round(255*(x*0.35+s*0.65)); // ניגודיות מתונה
+  }
+  const SAT=1.18;
+  for(let i=0;i<n;i+=4){
+    let R=lut[p[i]],G=lut[p[i+1]],B=lut[p[i+2]];
+    const lum=R*0.299+G*0.587+B*0.114;
+    R=lum+(R-lum)*SAT;G=lum+(G-lum)*SAT;B=lum+(B-lum)*SAT;
+    p[i]=R<0?0:R>255?255:R;p[i+1]=G<0?0:G>255?255:G;p[i+2]=B<0?0:B>255?255:B;
+  }
+  g.putImageData(d,0,0);
+  // 3) חידוד (unsharp mask מקורב) + וינייטה עדינה
+  try{
+   const blur=document.createElement('canvas');blur.width=tw;blur.height=th;
+   const bg=blur.getContext('2d');bg.filter='blur(2px)';bg.drawImage(c,0,0);
+   g.save();g.globalCompositeOperation='overlay';g.globalAlpha=0.22;g.drawImage(blur,0,0);g.restore();
+  }catch(e){}
+  const vg=g.createRadialGradient(tw/2,th/2,Math.min(tw,th)*0.32,tw/2,th/2,Math.max(tw,th)*0.72);
+  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,0.3)');
+  g.fillStyle=vg;g.fillRect(0,0,tw,th);
+  return c;
+ },
  async makeCollage(style){
   const list=await Photos.list(this.state.photoClient);
   const before=list.filter(p=>p.type==='before').pop();
   const after=list.filter(p=>p.type==='after').pop();
-  if(!before||!after){this.toast('צריך לפחות תמונה אחת "לפני" ואחת "אחרי"');return;}
-  const titles=[['אותו חדר. עולם אחר.','גבס · תאורה אדריכלית · גימור מושלם'],
-    ['מהריסה — לגימור מושלם','שיפוץ מקצה לקצה · פרויקט אמיתי שלנו'],
-    ['מקצוענות בכל שלב','תשתיות · ריצוף · גימור — הכל בצוות אחד'],
-    ['ככה נראה שיפוץ מקצועי','תכנון מדויק · ביצוע נקי · לוחות זמנים']];
+  if(!before||!after){this.toast('\u05e6\u05e8\u05d9\u05da \u05dc\u05e4\u05d7\u05d5\u05ea \u05ea\u05de\u05d5\u05e0\u05d4 \u05d0\u05d7\u05ea "\u05dc\u05e4\u05e0\u05d9" \u05d5\u05d0\u05d7\u05ea "\u05d0\u05d7\u05e8\u05d9"');return;}
+  const titles=[['\u05d0\u05d5\u05ea\u05d5 \u05d7\u05d3\u05e8. \u05e2\u05d5\u05dc\u05dd \u05d0\u05d7\u05e8.','\u05d2\u05d1\u05e1 \u00b7 \u05ea\u05d0\u05d5\u05e8\u05d4 \u05d0\u05d3\u05e8\u05d9\u05db\u05dc\u05d9\u05ea \u00b7 \u05d2\u05d9\u05de\u05d5\u05e8 \u05de\u05d5\u05e9\u05dc\u05dd'],
+    ['\u05de\u05d4\u05e8\u05d9\u05e1\u05d4 \u2014 \u05dc\u05d2\u05d9\u05de\u05d5\u05e8 \u05de\u05d5\u05e9\u05dc\u05dd','\u05e9\u05d9\u05e4\u05d5\u05e5 \u05de\u05e7\u05e6\u05d4 \u05dc\u05e7\u05e6\u05d4 \u00b7 \u05e4\u05e8\u05d5\u05d9\u05e7\u05d8 \u05d0\u05de\u05d9\u05ea\u05d9 \u05e9\u05dc\u05e0\u05d5'],
+    ['\u05de\u05e7\u05e6\u05d5\u05e2\u05e0\u05d5\u05ea \u05d1\u05db\u05dc \u05e9\u05dc\u05d1','\u05ea\u05e9\u05ea\u05d9\u05d5\u05ea \u00b7 \u05e8\u05d9\u05e6\u05d5\u05e3 \u00b7 \u05d2\u05d9\u05de\u05d5\u05e8 \u2014 \u05d4\u05db\u05dc \u05d1\u05e6\u05d5\u05d5\u05ea \u05d0\u05d7\u05d3'],
+    ['\u05db\u05db\u05d4 \u05e0\u05e8\u05d0\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e5 \u05de\u05e7\u05e6\u05d5\u05e2\u05d9','\u05ea\u05db\u05e0\u05d5\u05df \u05de\u05d3\u05d5\u05d9\u05e7 \u00b7 \u05d1\u05d9\u05e6\u05d5\u05e2 \u05e0\u05e7\u05d9 \u00b7 \u05dc\u05d5\u05d7\u05d5\u05ea \u05d6\u05de\u05e0\u05d9\u05dd']];
   const t=titles[(style||0)%titles.length];
-  this.busy('בונה עיצוב…');this.haptic(15);
+  this.busy('\u05de\u05e2\u05d1\u05d3 \u05ea\u05de\u05d5\u05e0\u05d5\u05ea\u2026');this.haptic(15);
   try{
    const load=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src;});
    const logoImg=await load(LOGO_PDF).catch(()=>null);
    const [imgA,imgB]=await Promise.all([load(before.data),load(after.data)]);
+
+   // ===== שיפור אוטומטי של תמונה =====
+   const enhance=(im,boost)=>{
+     const w=im.width,h=im.height;
+     const c1=document.createElement('canvas');c1.width=w;c1.height=h;
+     const q=c1.getContext('2d',{willReadFrequently:true});
+     q.drawImage(im,0,0);
+     let d;try{d=q.getImageData(0,0,w,h);}catch(e){return c1;}
+     const p=d.data;
+     // מתיחת היסטוגרמה (auto-levels) לפי אחוזונים
+     const hist=new Uint32Array(256);
+     for(let i=0;i<p.length;i+=4){const l=(p[i]*.299+p[i+1]*.587+p[i+2]*.114)|0;hist[l]++;}
+     const total=w*h;let lo=0,hi=255,acc=0;
+     const cut=total*0.005;
+     for(let i=0;i<256;i++){acc+=hist[i];if(acc>cut){lo=i;break;}}
+     acc=0;for(let i=255;i>=0;i--){acc+=hist[i];if(acc>cut){hi=i;break;}}
+     if(hi-lo<30){lo=0;hi=255;}
+     const scale=255/(hi-lo);
+     const contrast=boost?1.12:1.06, sat=boost?1.18:1.10, gamma=boost?0.94:0.97;
+     const lut=new Uint8ClampedArray(256);
+     for(let i=0;i<256;i++){
+       let v=(i-lo)*scale;                       // levels
+       v=((v/255-0.5)*contrast+0.5)*255;         // contrast
+       v=255*Math.pow(Math.max(0,v)/255,gamma);  // gamma
+       lut[i]=v;
+     }
+     for(let i=0;i<p.length;i+=4){
+       let r=lut[p[i]],g=lut[p[i+1]],b=lut[p[i+2]];
+       const gray=r*.299+g*.587+b*.114;          // saturation
+       r=gray+(r-gray)*sat;g=gray+(g-gray)*sat;b=gray+(b-gray)*sat;
+       p[i]=r;p[i+1]=g;p[i+2]=b;
+     }
+     q.putImageData(d,0,0);
+     // חידוד עדין (unsharp mask מדומה)
+     const c2=document.createElement('canvas');c2.width=w;c2.height=h;
+     const q2=c2.getContext('2d');
+     q2.drawImage(c1,0,0);
+     q2.globalAlpha=0.28;q2.globalCompositeOperation='overlay';
+     q2.filter='blur(1.5px) invert(1)';q2.drawImage(c1,0,0);
+     q2.filter='none';q2.globalAlpha=1;q2.globalCompositeOperation='source-over';
+     return c2;
+   };
+   const cA=enhance(imgA,false);   // "לפני" — שיפור עדין בלבד
+   const cB=enhance(imgB,true);    // "אחרי" — שיפור חזק יותר
+
    const W=1080,H=1920;
    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
-   // רקע כהה עם גרדיאנט עדין
-   const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#14141a');bg.addColorStop(.5,'#0d0d0f');bg.addColorStop(1,'#14141a');
+   const bg=x.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#16161d');bg.addColorStop(.45,'#0d0d0f');bg.addColorStop(1,'#1a1218');
    x.fillStyle=bg;x.fillRect(0,0,W,H);
    x.fillStyle='#ed1c24';x.fillRect(0,0,W,10);
-   // לוגו
-   let y=40;
-   if(logoImg){const lw=300,lh=logoImg.height*(lw/logoImg.width);x.drawImage(logoImg,(W-lw)/2,y,lw,lh);y+=lh+30;}else{y+=40;}
-   // כותרת
    x.textAlign='center';x.direction='rtl';
-   x.fillStyle='#ffffff';x.font='800 62px Arial';x.fillText(t[0],W/2,y+50);
-   x.fillStyle='#9a9aa6';x.font='400 32px Arial';x.fillText(t[1],W/2,y+105);
-   y+=150;
-   // תמונות
-   const pad=50,imgW=W-pad*2,imgH=560,gap=90;
+   let y=44;
+   if(logoImg){const lw=290,lh=logoImg.height*(lw/logoImg.width);x.drawImage(logoImg,(W-lw)/2,y,lw,lh);y+=lh+26;}else{y+=36;}
+   x.fillStyle='#ffffff';x.font='800 64px Arial';x.fillText(t[0],W/2,y+54);
+   x.fillStyle='#ed1c24';x.fillRect(W/2-70,y+78,140,4);
+   x.fillStyle='#9a9aa6';x.font='400 31px Arial';x.fillText(t[1],W/2,y+126);
+   y+=176;
+   const pad=48,imgW=W-pad*2,imgH=572,gap=94;
    const rr=(dx,dy,dw,dh,r)=>{x.beginPath();x.moveTo(dx+r,dy);x.arcTo(dx+dw,dy,dx+dw,dy+dh,r);x.arcTo(dx+dw,dy+dh,dx,dy+dh,r);x.arcTo(dx,dy+dh,dx,dy,r);x.arcTo(dx,dy,dx+dw,dy,r);x.closePath();};
-   const drawImg=(im,dy,label,labelBg)=>{
-     const ratio=Math.max(imgW/im.width,imgH/im.height);const w=im.width*ratio,h=im.height*ratio;
-     x.save();rr(pad,dy,imgW,imgH,26);x.clip();x.drawImage(im,pad+(imgW-w)/2,dy+(imgH-h)/2,w,h);x.restore();
-     // תווית
-     x.save();const tw=150,th=54,tx=W-pad-tw-24,ty=dy+24;
-     x.fillStyle=labelBg;rr(tx,ty,tw,th,27);x.fill();
-     x.fillStyle='#fff';x.font='800 30px Arial';x.textAlign='center';x.fillText(label,tx+tw/2,ty+37);x.restore();
+   const drawImg=(src,dy,label,labelBg,accent)=>{
+     x.save();x.shadowColor='rgba(0,0,0,.55)';x.shadowBlur=34;x.shadowOffsetY=12;
+     rr(pad,dy,imgW,imgH,28);x.fillStyle='#000';x.fill();x.restore();
+     const ratio=Math.max(imgW/src.width,imgH/src.height);const w=src.width*ratio,h=src.height*ratio;
+     x.save();rr(pad,dy,imgW,imgH,28);x.clip();
+     x.drawImage(src,pad+(imgW-w)/2,dy+(imgH-h)/2,w,h);
+     const vg=x.createLinearGradient(0,dy+imgH-190,0,dy+imgH);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.55)');
+     x.fillStyle=vg;x.fillRect(pad,dy+imgH-190,imgW,190);x.restore();
+     x.save();rr(pad,dy,imgW,imgH,28);x.strokeStyle=accent;x.lineWidth=3;x.stroke();x.restore();
+     x.save();const tw=158,th=56,tx=W-pad-tw-26,ty=dy+26;
+     x.shadowColor='rgba(0,0,0,.5)';x.shadowBlur=14;
+     x.fillStyle=labelBg;rr(tx,ty,tw,th,28);x.fill();x.restore();
+     x.fillStyle='#fff';x.font='800 31px Arial';x.textAlign='center';x.fillText(label,tx+tw/2,ty+38);
    };
-   drawImg(imgA,y,'לפני','rgba(0,0,0,.78)');
-   // חץ
+   drawImg(cA,y,'\u05dc\u05e4\u05e0\u05d9','rgba(0,0,0,.8)','rgba(255,255,255,.14)');
    const ay=y+imgH+gap/2;
-   x.fillStyle='#ed1c24';x.font='800 54px Arial';x.fillText('↓',W/2,ay+12);
-   drawImg(imgB,y+imgH+gap,'אחרי','#ed1c24');
-   // פוטר
-   const fy=y+imgH*2+gap+70;
-   x.fillStyle='#ed1c24';x.font='800 76px Arial';x.fillText('054-571-8316',W/2,fy+40);
-   x.fillStyle='#f3f3f5';x.font='700 32px Arial';x.fillText('יהודה שיפוצים · יהודה יעקובוב',W/2,fy+95);
-   x.fillStyle='#9a9aa6';x.font='600 28px Arial';x.fillText('yehuda-shipuzim.netlify.app',W/2,fy+140);
-   const url=cv.toDataURL('image/jpeg',.92);
+   x.save();x.shadowColor='rgba(237,28,36,.75)';x.shadowBlur=26;
+   x.fillStyle='#ed1c24';x.font='800 58px Arial';x.fillText('\u2193',W/2,ay+14);x.restore();
+   drawImg(cB,y+imgH+gap,'\u05d0\u05d7\u05e8\u05d9','#ed1c24','rgba(237,28,36,.5)');
+   const fy=y+imgH*2+gap+78;
+   x.save();x.shadowColor='rgba(237,28,36,.5)';x.shadowBlur=22;
+   x.fillStyle='#ed1c24';x.font='800 78px Arial';x.fillText('054-571-8316',W/2,fy+40);x.restore();
+   x.fillStyle='#f3f3f5';x.font='700 33px Arial';x.fillText('\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d9\u05d4\u05d5\u05d3\u05d4 \u05d9\u05e2\u05e7\u05d5\u05d1\u05d5\u05d1',W/2,fy+96);
+   x.fillStyle='#8a8a96';x.font='600 28px Arial';x.fillText('yehuda-shipuzim.netlify.app',W/2,fy+142);
+   const url=cv.toDataURL('image/jpeg',.93);
    this.idle();
    this._collageUrl=url;this._collageStyle=(style||0);this.state.modal='collage';this.render();
-  }catch(e){this.idle();this.toast('יצירת העיצוב נכשלה');}
+  }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05e2\u05d9\u05e6\u05d5\u05d1 \u05e0\u05db\u05e9\u05dc\u05d4');}
  },
  collageModal(){
   const u=this._collageUrl;const st=this._collageStyle||0;
@@ -2369,7 +2459,7 @@ const App={
       <textarea id="rv-text" placeholder="מה אהבתם? מה נשפר? (אופציונלי)"></textarea>
       <label class="rv-consent" for="rv-photos">
         <input type="checkbox" id="rv-photos"/>
-        <span>מאשר/ת פרסום תמונות "לפני / אחרי" מהפרויקט שלי 📸</span>
+        <span><b>מאשר/ת פרסום תמונות מהפרויקט</b> 📸<br><span style="font-size:11.5px;opacity:.7">תמונות "לפני / אחרי" מעוצבות — ללא פרטים אישיים וללא כתובת</span></span>
       </label>
       <button class="rv-send" id="rv-send">שלח משוב</button>
       <div id="rv-ok" class="rv-ok"></div>
