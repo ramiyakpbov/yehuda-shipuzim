@@ -480,6 +480,15 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .light .aihub-card{background:linear-gradient(150deg,var(--bg3),rgba(255,255,255,.5));}
 .light .aihub-card:hover{box-shadow:0 8px 28px rgba(237,28,36,.12),0 3px 10px rgba(0,0,0,.08);}
 .light .list-item{box-shadow:0 2px 6px rgba(0,0,0,.06);}
+.rv-consent{display:flex;align-items:flex-start;gap:10px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0;cursor:pointer;font-size:13px;line-height:1.5;text-align:right;transition:border-color .25s,background .25s;}
+.rv-consent:has(input:checked){border-color:var(--red);background:rgba(237,28,36,.07);}
+.rv-consent input{width:20px;height:20px;accent-color:var(--red);flex:none;margin-top:1px;}
+.rv-card{box-shadow:0 20px 60px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.3);}
+.rv-hdr img{filter:drop-shadow(0 4px 12px rgba(237,28,36,.3));}
+.rv-stars .st{transition:transform .2s cubic-bezier(.16,1,.3,1),color .2s;}
+.rv-stars .st:active{transform:scale(1.25);}
+.rv-send{box-shadow:0 6px 20px rgba(237,28,36,.32);transition:transform .2s cubic-bezier(.16,1,.3,1),box-shadow .25s;}
+.rv-send:active{transform:scale(.97);}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -513,7 +522,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='9.1';
+const VERSION='9.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1242,7 +1251,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1640,6 +1649,7 @@ const App={
    <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">בחר כלי — כל בחירה נפתחת במסך מלא.</div>
    <div class="aihub-grid">
      ${item('aihub','✨','עוזר AI','יצירת הצעה מקול / טקסט / צילום / קובץ',true)}
+     ${item('gallery','📷','גלריית פרויקטים','תמונות לפני/אחרי + עיצוב שיווקי',false)}
      ${item('calendar','📅','יומן','פרויקטים לפי תאריך יעד',false)}
      ${item('tracking','📤','הצעות ומעקב','מעקב אחר סטטוס ואישורים',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
@@ -1804,6 +1814,19 @@ const App={
  },
 
 
+ galleryModal(){
+  const clients=Store.get('clients',[]);
+  const q=(this.state.galQ||'').trim();
+  let list=clients.slice().sort((a,b)=>(b.ts||0)-(a.ts||0));
+  if(q)list=list.filter(c=>((c.name||'')+' '+(c.project||'')).includes(q));
+  return `<h2>📷 גלריית פרויקטים <button class="x" data-close>✕</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">בחר לקוח כדי לנהל את תמונות "לפני / אחרי" וליצור עיצוב שיווקי.</div>
+   <input id="gal-search" type="search" placeholder="🔍 חפש לקוח…" value="${q}" style="margin-bottom:12px"/>
+   ${list.length?list.map(cl=>`<button class="aihub-card" data-galclient="${cl.id}">
+     <div class="ah-icon">📸</div>
+     <div class="ah-txt"><div class="ah-t" style="font-size:14px">${cl.name||'—'}</div><div class="ah-d">${cl.project||'ללא פרויקט'}${cl.phone?' · '+cl.phone:''}</div></div>
+     <div class="ah-arrow">‹</div></button>`).join(''):'<div class="empty">אין לקוחות עדיין</div>'}`;
+ },
  photosModal(){const cl=Store.get('clients',[]).find(c=>c.id===this.state.photoClient)||{};
   return `<h2>תמונות — ${cl.name||''} <button class="x" data-close>✕</button></h2>
    <div class="sec-title"><span>לפני 📸</span><button class="mini2" data-addphoto="before">＋ הוסף</button></div>
@@ -1811,8 +1834,8 @@ const App={
    <div class="sec-title"><span>אחרי ✨</span><button class="mini2" data-addphoto="after">＋ הוסף</button></div>
    <div class="photos" id="ph-after"></div>
    <div class="sec-title" style="margin-top:16px">🎨 שיתוף מקצועי</div>
-   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">צור תמונה ממותגת "לפני / אחרי" עם הלוגו שלך — מוכנה לוואטסאפ ולרשתות.</div>
-   <button class="btn-block" id="make-collage">✨ צור קולאז' ממותג</button>
+   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">עיצוב אנכי מרשים "לפני / אחרי" עם כותרת שיווקית ומיתוג — מוכן לסטטוס ולרשתות.</div>
+   <button class="btn-block" id="make-collage">✨ צור עיצוב שיווקי</button>
    <input id="photo-file" type="file" accept="image/*" class="hidden"/>`;
  },
 
@@ -2083,7 +2106,10 @@ const App={
 
   // photos modal
   on('[data-addphoto]','click',e=>{this._photoType=e.currentTarget.dataset.addphoto;document.getElementById('photo-file').click();});
-  const mkc=document.getElementById('make-collage');if(mkc)mkc.onclick=()=>this.makeCollage();
+  const mkc=document.getElementById('make-collage');if(mkc)mkc.onclick=()=>this.makeCollage(0);
+  document.querySelectorAll('[data-costyle]').forEach(b=>{b.onclick=()=>this.makeCollage(+b.dataset.costyle);});
+  const gs=document.getElementById('gal-search');if(gs)gs.oninput=e=>{this.state.galQ=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('gal-search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(_){}}};
+  document.querySelectorAll('[data-galclient]').forEach(b=>{b.onclick=()=>{this._navStack.push('gallery');this.state.photoClient=b.dataset.galclient;this.state.modal='photos';this.render();};});
   const csh=document.getElementById('collage-share');if(csh)csh.onclick=async()=>{try{const r=await fetch(this._collageUrl);const b=await r.blob();const f=new File([b],'לפני-אחרי.jpg',{type:'image/jpeg'});if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'יהודה שיפוצים'});}else{this.toast('שמור את התמונה ושתף ידנית');}}catch(e){this.toast('השיתוף נכשל — שמור ושתף ידנית');}};
   const pf=document.getElementById('photo-file');if(pf)pf.onchange=async e=>{const f=e.target.files[0];if(!f)return;this.toast('מעבד תמונה…');const data=await compressImage(f);await Photos.add({id:uid(),clientId:this.state.photoClient,type:this._photoType,data,ts:Date.now()});this.loadPhotos();this.toast('נוסף ✓');
     if(Drive.token){try{const cl=Store.get('clients',[]).find(c=>c.id===this.state.photoClient)||{};const root=await Drive.ensureFolder('יהודה שיפוצים');const cf=await Drive.ensureFolder(cl.name||'לקוח',root);const tf=await Drive.ensureFolder(this._photoType==='before'?'לפני':'אחרי',cf);await Drive.uploadDataUrl('photo-'+Date.now()+'.jpg',data,tf);this.toast('נשמר גם ב-Drive ✓');}catch(x){}}};
@@ -2091,55 +2117,71 @@ const App={
   const pff=document.getElementById('pf-file');if(pff)pff.onchange=async e=>{const f=e.target.files[0];if(!f)return;this.toast('מעבד תמונה…');const data=await compressImage(f);await Photos.add({id:uid(),clientId:'__portfolio__',type:'portfolio',data,ts:Date.now()});this.loadPortfolio();this.toast('נוספה תמונת עבודה ✓');};
  },
 
- async makeCollage(){
+ async makeCollage(style){
   const list=await Photos.list(this.state.photoClient);
   const before=list.filter(p=>p.type==='before').pop();
   const after=list.filter(p=>p.type==='after').pop();
   if(!before||!after){this.toast('צריך לפחות תמונה אחת "לפני" ואחת "אחרי"');return;}
-  this.busy('בונה קולאז׳…');this.haptic(15);
+  const titles=[['אותו חדר. עולם אחר.','גבס · תאורה אדריכלית · גימור מושלם'],
+    ['מהריסה — לגימור מושלם','שיפוץ מקצה לקצה · פרויקט אמיתי שלנו'],
+    ['מקצוענות בכל שלב','תשתיות · ריצוף · גימור — הכל בצוות אחד'],
+    ['ככה נראה שיפוץ מקצועי','תכנון מדויק · ביצוע נקי · לוחות זמנים']];
+  const t=titles[(style||0)%titles.length];
+  this.busy('בונה עיצוב…');this.haptic(15);
   try{
    const load=src=>new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=src;});
+   const logoImg=await load(LOGO_PDF).catch(()=>null);
    const [imgA,imgB]=await Promise.all([load(before.data),load(after.data)]);
-   const W=1080,H=1350,pad=24,headH=110,footH=96;
-   const cellW=(W-pad*3)/2, cellH=H-headH-footH-pad*2;
+   const W=1080,H=1920;
    const cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
-   // רקע
-   x.fillStyle='#0d0d0f';x.fillRect(0,0,W,H);
+   // רקע כהה עם גרדיאנט עדין
+   const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#14141a');bg.addColorStop(.5,'#0d0d0f');bg.addColorStop(1,'#14141a');
+   x.fillStyle=bg;x.fillRect(0,0,W,H);
+   x.fillStyle='#ed1c24';x.fillRect(0,0,W,10);
+   // לוגו
+   let y=40;
+   if(logoImg){const lw=300,lh=logoImg.height*(lw/logoImg.width);x.drawImage(logoImg,(W-lw)/2,y,lw,lh);y+=lh+30;}else{y+=40;}
    // כותרת
-   x.fillStyle='#ed1c24';x.fillRect(0,0,W,6);
-   x.fillStyle='#ffffff';x.font='800 46px Arial';x.textAlign='center';x.direction='rtl';
-   x.fillText('לפני  ←  אחרי',W/2,74);
-   // ציור תמונה עם חיתוך "cover"
-   const drawCover=(im,dx,dy,dw,dh)=>{const r=Math.max(dw/im.width,dh/im.height);const w=im.width*r,h=im.height*r;x.save();x.beginPath();x.rect(dx,dy,dw,dh);x.clip();x.drawImage(im,dx+(dw-w)/2,dy+(dh-h)/2,w,h);x.restore();
-     x.strokeStyle='#33333b';x.lineWidth=2;x.strokeRect(dx,dy,dw,dh);};
-   const y0=headH;
-   drawCover(imgA,W-pad-cellW,y0,cellW,cellH); // ימין = לפני (RTL)
-   drawCover(imgB,pad,y0,cellW,cellH);          // שמאל = אחרי
-   // תוויות
-   const tag=(txt,cx,color)=>{x.fillStyle=color;const tw=140,th=44;x.fillRect(cx-tw/2,y0+cellH-th-14,tw,th);
-     x.fillStyle='#fff';x.font='800 26px Arial';x.textAlign='center';x.fillText(txt,cx,y0+cellH-14-12);};
-   tag('לפני',W-pad-cellW/2,'rgba(0,0,0,.72)');
-   tag('אחרי',pad+cellW/2,'#ed1c24');
-   // פוטר מיתוג
-   const fy=H-footH;
-   x.fillStyle='#17171b';x.fillRect(0,fy,W,footH);
-   x.fillStyle='#ed1c24';x.fillRect(0,fy,W,4);
-   x.fillStyle='#ffffff';x.font='800 38px Arial';x.textAlign='center';
-   x.fillText('יהודה שיפוצים',W/2,fy+50);
-   x.fillStyle='#9a9aa6';x.font='400 26px Arial';
-   x.fillText('054-5718316  ·  yehuda-shipuzim.netlify.app',W/2,fy+84);
+   x.textAlign='center';x.direction='rtl';
+   x.fillStyle='#ffffff';x.font='800 62px Arial';x.fillText(t[0],W/2,y+50);
+   x.fillStyle='#9a9aa6';x.font='400 32px Arial';x.fillText(t[1],W/2,y+105);
+   y+=150;
+   // תמונות
+   const pad=50,imgW=W-pad*2,imgH=560,gap=90;
+   const rr=(dx,dy,dw,dh,r)=>{x.beginPath();x.moveTo(dx+r,dy);x.arcTo(dx+dw,dy,dx+dw,dy+dh,r);x.arcTo(dx+dw,dy+dh,dx,dy+dh,r);x.arcTo(dx,dy+dh,dx,dy,r);x.arcTo(dx,dy,dx+dw,dy,r);x.closePath();};
+   const drawImg=(im,dy,label,labelBg)=>{
+     const ratio=Math.max(imgW/im.width,imgH/im.height);const w=im.width*ratio,h=im.height*ratio;
+     x.save();rr(pad,dy,imgW,imgH,26);x.clip();x.drawImage(im,pad+(imgW-w)/2,dy+(imgH-h)/2,w,h);x.restore();
+     // תווית
+     x.save();const tw=150,th=54,tx=W-pad-tw-24,ty=dy+24;
+     x.fillStyle=labelBg;rr(tx,ty,tw,th,27);x.fill();
+     x.fillStyle='#fff';x.font='800 30px Arial';x.textAlign='center';x.fillText(label,tx+tw/2,ty+37);x.restore();
+   };
+   drawImg(imgA,y,'לפני','rgba(0,0,0,.78)');
+   // חץ
+   const ay=y+imgH+gap/2;
+   x.fillStyle='#ed1c24';x.font='800 54px Arial';x.fillText('↓',W/2,ay+12);
+   drawImg(imgB,y+imgH+gap,'אחרי','#ed1c24');
+   // פוטר
+   const fy=y+imgH*2+gap+70;
+   x.fillStyle='#ed1c24';x.font='800 76px Arial';x.fillText('054-571-8316',W/2,fy+40);
+   x.fillStyle='#f3f3f5';x.font='700 32px Arial';x.fillText('יהודה שיפוצים · יהודה יעקובוב',W/2,fy+95);
+   x.fillStyle='#9a9aa6';x.font='600 28px Arial';x.fillText('yehuda-shipuzim.netlify.app',W/2,fy+140);
    const url=cv.toDataURL('image/jpeg',.92);
    this.idle();
-   this._collageUrl=url;this.state.modal='collage';this.render();
-  }catch(e){this.idle();this.toast('יצירת הקולאז׳ נכשלה');}
+   this._collageUrl=url;this._collageStyle=(style||0);this.state.modal='collage';this.render();
+  }catch(e){this.idle();this.toast('יצירת העיצוב נכשלה');}
  },
  collageModal(){
-  const u=this._collageUrl;
-  return `<h2>✨ קולאז׳ ממותג <button class="x" data-close>✕</button></h2>
-   ${u?`<img src="${u}" style="width:100%;border-radius:14px;border:1px solid var(--line);margin-bottom:14px"/>
-   <a class="btn-block" href="${u}" download="לפני-אחרי-יהודה-שיפוצים.jpg" style="display:block;text-align:center;text-decoration:none">⬇️ שמור תמונה</a>
-   <button class="btn-ghost" id="collage-share" style="margin-top:8px">📤 שתף בוואטסאפ</button>`:'<div class="empty">אין קולאז׳</div>'}
-   <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6">💡 נוצר מהתמונה האחרונה בכל קטגוריה. רוצה זוג אחר? מחק תמונות מיותרות ונסה שוב.</div>`;
+  const u=this._collageUrl;const st=this._collageStyle||0;
+  return `<h2>✨ עיצוב שיווקי <button class="x" data-close>✕</button></h2>
+   ${u?`<img src="${u}" style="width:100%;border-radius:14px;border:1px solid var(--line);margin-bottom:12px"/>
+   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">לא אהבת את הכותרת? החלף סגנון:</div>
+   <div style="display:flex;gap:6px;margin-bottom:12px">
+     ${[0,1,2,3].map(i=>`<button class="chip ${st===i?'on':''}" data-costyle="${i}">${i+1}</button>`).join('')}
+   </div>
+   <a class="btn-block" href="${u}" download="יהודה-שיפוצים-לפני-אחרי.jpg" style="display:block;text-align:center;text-decoration:none">⬇️ שמור תמונה</a>
+   <button class="btn-ghost" id="collage-share" style="margin-top:8px">📤 שתף בוואטסאפ</button>`:'<div class="empty">אין עיצוב</div>'}`;
  },
  async loadPhotos(){const list=await Photos.list(this.state.photoClient);const draw=(type,el)=>{if(!el)return;const arr=list.filter(p=>p.type===type);el.innerHTML=arr.length?arr.map(p=>`<div class="ph"><img loading="lazy" src="${p.data}"/><button class="del" data-delphoto="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין תמונות</div>';};
   draw('before',document.getElementById('ph-before'));draw('after',document.getElementById('ph-after'));
@@ -2325,6 +2367,10 @@ const App={
       <div class="rv-stars" id="rv-stars">${[1,2,3,4,5].map(i=>`<span class="st" data-s="${i}">☆</span>`).join('')}</div>
       <div class="rv-lbl" id="rv-lbl">לחצו על הכוכבים</div>
       <textarea id="rv-text" placeholder="מה אהבתם? מה נשפר? (אופציונלי)"></textarea>
+      <label class="rv-consent" for="rv-photos">
+        <input type="checkbox" id="rv-photos"/>
+        <span>מאשר/ת פרסום תמונות "לפני / אחרי" מהפרויקט שלי 📸</span>
+      </label>
       <button class="rv-send" id="rv-send">שלח משוב</button>
       <div id="rv-ok" class="rv-ok"></div>
       ${gmb?`<a class="rv-gmb" id="rv-gmb" href="${gmb}" target="_blank">⭐ דרגו אותנו גם בגוגל</a>`:''}
@@ -2530,9 +2576,10 @@ function initReviewUI(id,d){d=d||{};
   const btn=document.getElementById('rv-send');
   if(btn)btn.onclick=async()=>{
     const txt=(document.getElementById('rv-text')||{}).value||'';
+    const photoOK=!!((document.getElementById('rv-photos')||{}).checked);
     if(!stars&&!txt.trim()){if(lbl)lbl.textContent='בחרו דירוג כדי לשלוח';return;}
     btn.disabled=true;btn.textContent='שולח…';
-    try{if(window._db&&id)await window._db.collection('reviews').doc(id).update({stars:stars,text:txt.trim(),doneAt:Date.now()});}catch(e){}
+    try{if(window._db&&id)await window._db.collection('reviews').doc(id).update({stars:stars,text:txt.trim(),photoConsent:photoOK,doneAt:Date.now()});}catch(e){}
     const ok=document.getElementById('rv-ok');if(ok)ok.textContent='✓ תודה רבה! המשוב נשלח';
     btn.textContent='נשלח ✓';
     const g=document.getElementById('rv-gmb');
