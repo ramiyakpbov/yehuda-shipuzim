@@ -738,6 +738,53 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .sum-b b{color:var(--txt);}
 .sum-x{position:absolute;top:9px;left:9px;background:transparent;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:4px 7px;border-radius:7px;}
 .sum-x:active{background:var(--bg2);}
+
+/* ═══════════════ מדריך שימוש v10.5 ═══════════════ */
+.g-cat{font-size:11px;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase;margin:20px 0 9px;padding-bottom:6px;border-bottom:1px solid var(--line);font-weight:700;}
+.g-cat:first-of-type{margin-top:4px;}
+.g-body{font-size:14.5px;line-height:1.8;}
+.g-body p{margin-bottom:12px;color:var(--muted);}
+.g-body p b,.g-body b{color:var(--txt);}
+.g-path{display:inline-flex;background:var(--bg);border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:9px;font-size:12px;margin-bottom:14px;}
+.g-ul{list-style:none;margin:10px 0 14px;}
+.g-ul li{padding:5px 0;padding-right:17px;position:relative;color:var(--muted);}
+.g-ul li::before{content:'';position:absolute;right:2px;top:14px;width:5px;height:5px;background:var(--red);border-radius:50%;}
+.g-ul2{list-style:none;margin:6px 0;font-size:13.5px;}
+.g-ul2 li{padding:3px 0;color:var(--muted);}
+.g-ul2 li::before{content:'\2014  ';color:var(--red);}
+.g-ol{list-style:none;counter-reset:go;margin:10px 0 14px;}
+.g-ol li{counter-increment:go;position:relative;padding-right:33px;padding-bottom:10px;color:var(--muted);}
+.g-ol li::before{content:counter(go);position:absolute;right:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--bg3);border:1px solid var(--red);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;}
+.g-plate{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px;margin:14px 0;}
+.g-ph{font-weight:800;font-size:13.5px;color:var(--txt);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+.g-plate p{margin-bottom:8px;}
+.g-plate p:last-child{margin-bottom:0;}
+.g-note{background:var(--bg3);border-right:3px solid var(--line);border-radius:10px;padding:11px 14px;margin:13px 0;font-size:13.5px;color:var(--muted);line-height:1.7;}
+.g-note b{color:var(--txt);}
+.g-note.ok{border-right-color:var(--ok);}
+.g-note.warn{border-right-color:var(--warn);}
+.g-note.stop{border-right-color:var(--red);}
+.g-eg{background:rgba(237,28,36,.07);border-right:3px solid var(--red);border-radius:10px;padding:12px 14px;margin:13px 0;font-size:13.5px;color:var(--muted);}
+.g-eg i{color:var(--txt);font-style:italic;}
+.g-lbl{display:block;font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--red);margin-bottom:6px;font-weight:700;}
+.g-ar{margin:8px 0 5px;font-size:12px;color:var(--muted);}
+.g-tb{width:100%;border-collapse:collapse;font-size:13.5px;margin:10px 0;}
+.g-tb th{text-align:right;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--red);padding:8px 9px;font-weight:700;}
+.g-tb td{padding:8px 9px;border-bottom:1px solid var(--line);color:var(--muted);vertical-align:top;}
+.g-tb td:first-child{color:var(--txt);font-weight:600;white-space:nowrap;}
+.g-tb tr:last-child td{border-bottom:none;}
+.g-tb .yes{color:var(--ok);font-weight:700;}
+.g-tb .no{color:var(--muted);opacity:.6;}
+.g-nav{display:flex;gap:8px;margin-top:18px;}
+.g-nav .btn-ghost{flex:1;font-size:12.5px;padding:11px 8px;}
+.g-nav span{flex:1;}
+.g-chk{background:var(--bg3);border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.g-ci{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px;color:var(--txt);}
+.g-ci:last-child{border-bottom:none;}
+.g-ci small{display:block;color:var(--muted);font-size:12px;margin-top:1px;}
+.g-cb{width:20px;height:20px;border:2px solid var(--line);border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;margin-top:2px;transition:.2s;}
+.g-ci.done .g-cb{background:var(--ok);border-color:var(--ok);color:#fff;}
+.g-ci.done > span:last-child{opacity:.45;text-decoration:line-through;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -771,7 +818,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='10.4';
+const VERSION='10.5';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -794,6 +841,259 @@ function logoBlock(dark,scale){scale=scale||1;
  return `<img src="${src}" alt="יהודה שיפוצים" style="width:${130*scale}px;height:auto;display:inline-block"/>`;}
 
 /* ===== Voice helpers (Hebrew) ===== */
+/* ═══════════════ מדריך שימוש — נתונים ═══════════════ */
+const GUIDE=[
+ {c:'התחלה',items:[
+  {id:'g1',ic:'🚀',t:'מה זה עושה',d:'הבנה בסיסית לפני שמתחילים',
+   b:`<p>שלושה דברים, בסדר הזה:</p>
+   <ul class="g-ul"><li><b>בונה הצעות</b> — מתוך מחירון מוכן, בעברית, עם הלוגו והפרטים שלך.</li>
+   <li><b>שולח ועוקב</b> — PDF או קישור. בקישור רואים מתי הלקוח פתח ואם אישר.</li>
+   <li><b>שומר הכל</b> — לקוחות, הצעות, תמונות. מסונכרן בין כל המכשירים.</li></ul>
+   <p>מעל זה יושבת שכבת AI שחוסכת הקלדה — מהקלטה קולית ועד צילום פתק בכתב יד.</p>
+   <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
+
+  {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
+   b:`<div class="g-plate"><div class="g-ph">אנדרואיד · Chrome</div>
+   <ol class="g-ol"><li>פותחים את הכתובת בכרום</li><li>תפריט שלוש נקודות</li><li><b>הוסף למסך הבית</b></li></ol></div>
+   <div class="g-plate"><div class="g-ph">אייפון · Safari בלבד</div>
+   <ol class="g-ol"><li>פותחים <b>בספארי</b> — לא בכרום</li><li>כפתור השיתוף בתחתית</li><li>גוללים ובוחרים <b>הוסף למסך הבית</b></li></ol></div>
+   <div class="g-note ok"><b>איך יודעים שהצליח</b><br>כפתור ההתקנה בהגדרות נעלם מעצמו.</div>`},
+
+  {id:'g3',ic:'🗺️',t:'מפת המסכים',d:'איפה כל דבר נמצא',
+   b:`<p>שלושה אייקונים למעלה, שלושה צ׳יפים מתחת. כל השאר בגלגל השיניים.</p>
+   <table class="g-tb"><tr><td>🔔</td><td>תזכורות — מי ממתין, מה פג</td></tr>
+   <tr><td>👥</td><td>מאגר לקוחות עם היסטוריה</td></tr>
+   <tr><td>⚙️</td><td>התפריט הראשי</td></tr>
+   <tr><td>📂</td><td>פותח וסוגר קטגוריות</td></tr>
+   <tr><td>⚡</td><td>תבניות מוכנות</td></tr>
+   <tr><td>🔄</td><td>מנקה הצעה (המחירון נשמר)</td></tr></table>
+   <p style="margin-top:14px"><b>בגלגל השיניים:</b></p>
+   <table class="g-tb"><tr><td>✨</td><td>עוזר AI — 7 כלים, קוד 3396</td></tr>
+   <tr><td>📷</td><td>גלריית פרויקטים</td></tr>
+   <tr><td>💬</td><td>מרכז הודעות</td></tr>
+   <tr><td>📅</td><td>יומן</td></tr>
+   <tr><td>📤</td><td>הצעות ומעקב</td></tr>
+   <tr><td>⭐</td><td>משובים</td></tr>
+   <tr><td>📊</td><td>דו״ח חודשי</td></tr>
+   <tr><td>⚙️</td><td>הגדרות</td></tr></table>
+   <div class="g-note"><b>כפתור החזור</b><br>חוזר שלב אחד אחורה, לא ישר למסך הראשי.</div>`}
+ ]},
+
+ {c:'הצעת מחיר',items:[
+  {id:'g4',ic:'📝',t:'בניית הצעה',d:'המסלול המרכזי',
+   b:`<ol class="g-ol"><li><b>פותחים קטגוריה</b> — לחיצה על השם פותחת את הסעיפים.</li>
+   <li><b>בוחרים ומזינים כמות</b> — המחיר מגיע מהמחירון, אפשר לשנות לפרויקט הזה בלבד.</li>
+   <li><b>סעיף שלא קיים</b> — בתחתית כל קטגוריה יש הוספת סעיף מותאם.</li>
+   <li><b>פרטי לקוח</b> — שם, טלפון, כתובת, פרויקט.</li>
+   <li><b>מייצרים</b> — PDF או קישור.</li></ol>
+   <p style="margin-top:14px"><b>תשע הקטגוריות:</b></p>
+   <table class="g-tb"><tr><td>הריסה ופינוי</td><td>פירוק, פסולת</td></tr>
+   <tr><td>אינסטלציה</td><td>מים, ביוב, מיזוג</td></tr>
+   <tr><td>חשמל ותקשורת</td><td>נקודות, לוחות, תאורה</td></tr>
+   <tr><td>עבודות גמר</td><td>ריצוף, גבס, צבע</td></tr>
+   <tr><td>נגרות ואלומיניום</td><td>דלתות, חלונות, ארונות</td></tr>
+   <tr><td>תכנון ורישוי</td><td>אדריכל, היתרים</td></tr>
+   <tr><td>שלד ותשתית</td><td>בטון, ברזל, יציקות</td></tr>
+   <tr><td>פיתוח חוץ</td><td>חצר, גינון</td></tr>
+   <tr><td>אחר</td><td>מה שלא נכנס לשאר</td></tr></table>
+   <div class="g-note"><b>הערות פנימיות</b><br>השדה עם המנעול. "הלקוח מתמקח", "לגבות מקדמה גבוהה". לא מופיע בהצעה — מופיע בכרטיס הלקוח.</div>`},
+
+  {id:'g5',ic:'🧮',t:'מחשבון או תכנון',d:'שני סוגי הצעות',
+   b:`<div class="g-plate"><div class="g-ph">🧮 הצעת מחשבון</div>
+   <p><b>מציג:</b> כל סעיף עם מחיר ליחידה וסה״כ, ובסוף סכום כולל + מע״מ.</p>
+   <p><b>מתי:</b> רוב העבודות — שיפוץ דירה, מטבח, אמבטיה.</p></div>
+   <div class="g-plate"><div class="g-ph">📐 הצעת תכנון</div>
+   <p><b>מציג:</b> סעיפים וכמויות בלי מחיר לכל שורה. בסוף — מחיר למ״ר, שטח, וסכום כולל.</p>
+   <p><b>מתי:</b> פרויקטים עם כתב כמויות, כשהלקוח רוצה היקף ולא פירוט.</p>
+   <p><b>איך:</b> בהגדרות ההצעה בוחרים "תכנון", מזינים מחיר למ״ר ושטח.</p>
+   <div class="g-eg"><span class="g-lbl">חישוב</span>3,200 ₪ למ״ר × 213 מ״ר<div class="g-ar">↓</div>
+   <ul class="g-ul2"><li>לפני מע״מ: 681,600 ₪</li><li>מע״מ 18%: 122,688 ₪</li><li>סה״כ: 804,288 ₪</li></ul></div></div>`},
+
+  {id:'g6',ic:'📤',t:'שליחה ללקוח',d:'PDF או קישור',
+   b:`<table class="g-tb"><tr><th></th><th>PDF</th><th>קישור</th></tr>
+   <tr><td>מעקב צפייה</td><td class="no">אין</td><td class="yes">יש</td></tr>
+   <tr><td>חתימה</td><td class="no">אין</td><td class="yes">באצבע</td></tr>
+   <tr><td>הדפסה</td><td class="yes">מושלם</td><td class="no">פחות</td></tr>
+   <tr><td>בלי רשת</td><td class="yes">עובד</td><td class="no">צריך חיבור</td></tr></table>
+   <div class="g-note ok"><b>המלצה</b><br>שלח קישור כברירת מחדל — תדע מתי נפתח והלקוח יכול לאשר בלחיצה. שמור PDF להדפסה.</div>
+   <p><b>מה הלקוח רואה בקישור:</b> ההצעה עם המיתוג שלך, פירוט לפי קטגוריות, סיכום עם מע״מ, מקום לחתימה, וכפתור אישור שמעדכן אותך מיד.</p>
+   <div class="g-note"><b>חתום ושלח</b><br>אחרי שהלקוח חותם — "📤 שמור ושלח מסמך חתום" מייצר PDF עם החתימה ושולח לו.</div>`},
+
+  {id:'g7',ic:'👁',t:'מעקב אחרי הצעות',d:'⚙️ ← 📤 הצעות ומעקב',
+   b:`<p>המקום היחיד שבו הסטטוס חי. שני טאבים: <b>מעקב לינקים</b> (מי פתח, מתי, מי אישר) ו<b>כל ההצעות</b>.</p>
+   <div class="g-note warn"><b>שים לב</b><br>הסטטוס בכרטיס הלקוח הוא לקריאה בלבד — הוא משקף את מה שקורה כאן. משנים רק במעקב.</div>`}
+ ]},
+
+ {c:'כלי AI',items:[
+  {id:'g8',ic:'🎤',t:'הכתבה והדבקה',d:'הדרך המהירה',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 🎤 / 📋</div>
+   <p>שתי הדרכים נפתחות באותו מסך. אפשר להקליט קול, ואפשר להדביק טקסט מוואטסאפ גם אם הוא מבולגן.</p>
+   <div class="g-eg"><span class="g-lbl">קלט</span><i>"הריסת קיר 2500 שח, ריצוף 14 מטר לפי 250 שח למטר, צביעה של כל הדירה 4500"</i>
+   <div class="g-ar">↓ מפוזר לקטגוריות</div>
+   <ul class="g-ul2"><li>הריסה — הריסת קיר · 1 יח׳ · 2,500 ₪</li><li>גמר — ריצוף · 14 מ״ר · 250 ₪ ליח׳</li><li>גמר — צביעת דירה · 1 יח׳ · 4,500 ₪</li></ul></div>
+   <p>לפני שנכנס — מסך ביקורת מראה מה זוהה. אפשר לתקן.</p>`},
+
+  {id:'g9',ic:'📷',t:'צילום פתקית',d:'קורא כתב יד',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 📷 צילום פתקית</div>
+   <p>מצלמים פתק שכתבת ביד, וה-AI קורא אותו והופך להצעה. עובד גם על כתב לא מסודר.</p>
+   <div class="g-note"><b>לתוצאה טובה</b><br>תאורה טובה · הפתק ישר במסגרת · בלי צל של היד.</div>`},
+
+  {id:'g10',ic:'📄',t:'קובץ PDF',d:'כתב כמויות → הצעה',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 📄 העלאת קובץ</div>
+   <p>מעלים PDF או תמונה של מסמך — כתב כמויות מאדריכל, או הצעה ישנה — וזה מומר לפורמט שלך.</p>
+   <div class="g-note ok"><b>שימוש נפוץ</b><br>קיבלת כתב כמויות מפורט. במקום להקליד 40 שורות — מעלים ומקבלים הצעה מוכנה.</div>`},
+
+  {id:'g11',ic:'🎧',t:'הקלטה קולית',d:'הקלטת וואטסאפ → הצעה',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 🎧 הקלטה קולית</div>
+   <p>הלקוח שלח הקלטה, או שהקלטת לעצמך. מעלים את הקובץ וה-AI מאזין ובונה הצעה.</p>
+   <div class="g-plate"><div class="g-ph">איך מוציאים הקלטה מוואטסאפ</div>
+   <ol class="g-ol"><li>לחיצה ארוכה על ההקלטה</li><li><b>שתף</b></li><li><b>שמור לקבצים</b></li></ol></div>
+   <ol class="g-ol"><li>בוחרים את הקובץ</li><li>מאזינים בנגן המובנה לוודא</li><li><b>האזן ובנה הצעה</b></li><li>מסך ביקורת — מתקנים ומאשרים</li></ol>
+   <table class="g-tb" style="margin-top:14px"><tr><td>פורמטים</td><td>OGG · OPUS · M4A · MP3 · WAV</td></tr>
+   <tr><td>מגבלה</td><td>20MB · כ-10 דקות · עד 30 סעיפים</td></tr>
+   <tr><td>דורש</td><td>מפתח Gemini</td></tr></table>
+   <div class="g-note ok"><b>למה זה חזק</b><br>ה-AI מאזין להקלטה עצמה, לא לתמלול. מתמודד עם דיבור לא מסודר — אם הדובר חוזר או מתקן, נלקחת הגרסה הסופית. וגם מפרק סכומים: "3 דלתות ב-4,800" → 3 יח׳ × 1,600.</div>`},
+
+  {id:'g12',ic:'📱',t:'צילום מסך וואטסאפ',d:'הלקוח כתב בהודעה',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 📱 צילום מסך</div>
+   <p>הלקוח כתב בקשות בהודעה. צילום מסך → סעיפים מוכנים.</p>
+   <div class="g-note"><b>מה שונה מצילום פתקית</b><br>כאן ה-AI יודע שזו שיחה, לא מסמך. מתעלם מברכות, "תודה", "בסדר" ושיחת חולין — ומוציא רק בקשות עבודה.</div>`},
+
+  {id:'g13',ic:'⚡',t:'לכוד מהיר',d:'משפט אחד → הכל',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← ⚡ לכוד מהיר</div>
+   <p>משפט אחד יוצר לקוח, הצעה ותזכורת — בבת אחת.</p>
+   <div class="g-eg"><span class="g-lbl">כותבים</span><i>"הצעה לרונית כהן 054-1234567, שיפוץ מטבח ברמת גן, הריסה 3000 ריצוף 12 מטר 250 למטר ואינסטלציה 8000"</i>
+   <div class="g-ar">↓ נוצר</div>
+   <ul class="g-ul2"><li>לקוח: רונית כהן · 054-1234567 · רמת גן</li><li>שלושה סעיפים בקטגוריות</li><li>תזכורת מעקב לעוד 3 ימים</li></ul></div>
+   <p>אם הלקוח כבר קיים — הפרטים נטענים במקום להיווצר מחדש.</p>`},
+
+  {id:'g14',ic:'🤖',t:'ניסוח וכתיבה',d:'4 כלי כתיבה',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 🤖 ניסוח וכתיבה</div>
+   <table class="g-tb"><tr><td>📝 נסח הודעה</td><td>הודעת וואטסאפ מקצועית</td></tr>
+   <tr><td>🔨 הצע סעיפים</td><td>רשימה לסוג עבודה</td></tr>
+   <tr><td>📄 תיאור מקצועי</td><td>פסקת פתיחה להצעה</td></tr>
+   <tr><td>💡 טיפ ייעול</td><td>עצה לניהול העסק</td></tr></table>`},
+
+  {id:'g15',ic:'✍️',t:'הסגנון שלי',d:'שה-AI יכתוב כמוך',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← ✍️ הסגנון שלי</div>
+   <p>מדביקים 2–4 הודעות אמיתיות שכתבת ללקוחות. מכאן והלאה כל טקסט שה-AI מנסח נשמע כמוך — אותו טון, אותו אורך, אותן מילים.</p>
+   <div class="g-eg"><span class="g-lbl">דוגמה למה שמדביקים</span><i>היי דני, סיימנו היום את הגבס. מחר מתחילים צבע.<br><br>בוקר טוב, הצוות מגיע ב-8. תודה!</i></div>
+   <p>נשמר ומסונכרן בין המכשירים.</p>`},
+
+  {id:'g16',ic:'💡',t:'סעיפים חסרים',d:'מונע ויכוחים',
+   b:`<div class="g-path">מסך ההצעה ← 💡 בדוק סעיפים חסרים</div>
+   <p>אחרי שבנית הצעה, ה-AI בוחן מה יש ומזהה מה מקובל לכלול ולא נמצא.</p>
+   <ol class="g-ol"><li>סורק ומשווה לעבודות דומות</li><li>מציג המלצות עם קטגוריה</li><li><b>ממלאים מחיר וכמות במקום</b></li><li>נכנס לקטגוריות מוכן</li></ol>
+   <div class="g-eg"><span class="g-lbl">בנית הצעה לשיפוץ מקלחת</span>
+   <ul class="g-ul2"><li>אינסטלציה — איטום בחדר רטוב</li><li>הריסה — פינוי פסולת</li><li>גמר — ניקיון סופי</li></ul></div>
+   <div class="g-note ok"><b>המערכת לומדת</b><br>ברגע שסעיף שובץ לקטגוריה, השיוך נשמר לתמיד — גם אחרי איפוס. בפעם הבאה זה יקרה לבד.</div>`},
+
+  {id:'g17',ic:'🔔',t:'סריקת מחירון',d:'פעם בחצי שנה',
+   b:`<div class="g-path">⚙️ ← ✨ עוזר AI ← 🔔 סריקת מחירון</div>
+   <p>ה-AI סורק את כל המחירון ומשווה למחירי השוק.</p>
+   <ol class="g-ol"><li>רץ בחלקים — "בודק מחירון… 2/5"</li><li>רשימה: מחיר נוכחי, מומלץ, וסיבה</li><li><b>✓ עדכן</b> לכל שורה, או <b>עדכן הכל</b></li></ol>
+   <div class="g-note ok"><b>נשמר לתמיד</b><br>המחיר החדש נכנס למחירון — כל הצעה חדשה תשתמש בו.</div>`}
+ ]},
+
+ {c:'כלים נוספים',items:[
+  {id:'g18',ic:'🖼️',t:'גלריה ושיווק',d:'לפני/אחרי ממותג',
+   b:`<div class="g-path">⚙️ ← 📷 גלריית פרויקטים</div>
+   <ol class="g-ol"><li>בוחרים לקוח מהרשימה</li><li>מוסיפים תמונות ב<b>לפני</b> וב<b>אחרי</b></li><li><b>✨ צור עיצוב שיווקי</b></li><li>מחליפים בין 4 סגנונות כותרת</li><li>שומרים או משתפים לוואטסאפ</li></ol>
+   <div class="g-plate"><div class="g-ph">מה העיצוב כולל · 1080×1920</div>
+   <ul class="g-ul"><li><b>שיפור אוטומטי</b> — ניגודיות, בהירות, רוויה, חדות. ה"אחרי" מקבל טיפול חזק יותר.</li>
+   <li><b>פורמט אנכי</b> — לסטטוס ולסטורי</li>
+   <li><b>מיתוג</b> — לוגו, טלפון גדול, אתר</li></ul></div>`},
+
+  {id:'g19',ic:'💬',t:'מרכז הודעות',d:'21 הודעות מוכנות',
+   b:`<div class="g-path">⚙️ ← 💬 מרכז הודעות</div>
+   <p>בוחרים לקוח, בוחרים מצב, וההודעה נפתחת בוואטסאפ עם השם והפרויקט בפנים.</p>
+   <table class="g-tb"><tr><td>📅 תיאום</td><td>התחלה · מגיעים מחר · מתעכבים · שינוי מועד</td></tr>
+   <tr><td>🔨 במהלך</td><td>סיום יום · תמונות · שאלה · ממצא · חומרים</td></tr>
+   <tr><td>💰 כסף</td><td>מקדמה · תשלום שלב · תזכורת · עבודה נוספת</td></tr>
+   <tr><td>✅ סיום</td><td>סיום · תיקונים · מסירה · תודה</td></tr>
+   <tr><td>📄 הצעות</td><td>שליחה · מעקב · התאמה · תוקף פג</td></tr></table>
+   <div class="g-note"><b>קווים תחתונים</b><br>__ בהודעה = מקום למלא. עורכים בוואטסאפ לפני שליחה.</div>`},
+
+  {id:'g20',ic:'👥',t:'לקוחות',d:'מאגר עם היסטוריה',
+   b:`<div class="g-path">👥 בסרגל העליון</div>
+   <p>כל לקוח נשמר אוטומטית. בכרטיס:</p>
+   <ul class="g-ul"><li><b>סטטוס</b> — לקריאה בלבד, מגיע מהמעקב</li>
+   <li><b>הערות פנימיות</b> — בתיבה עם פס אדום</li>
+   <li><b>📷 תמונות</b> · <b>טען</b> (מעתיק להצעה חדשה) · <b>📤 הצעות</b> · <b>📩 משוב</b></li></ul>`},
+
+  {id:'g21',ic:'⭐',t:'משובים',d:'ביקורות לקוחות',
+   b:`<div class="g-path">⚙️ ← ⭐ משובים</div>
+   <p>שולחים ללקוח קישור. הוא מדרג בכוכבים, כותב, ומאשר.</p>
+   <div class="g-note ok"><b>הסכמה לתמונות</b><br>בדף המשוב יש סימון "מאשר/ת פרסום תמונות מהפרויקט". ככה תדע ממי מותר לפרסם.</div>
+   <p>אם הגדרת קישור לגוגל — לקוחות מרוצים מופנים לשם.</p>`},
+
+  {id:'g22',ic:'📊',t:'יומן ודוחות',d:'תאריכים וסטטיסטיקות',
+   b:`<p><b>📅 יומן</b> — פרויקטים לפי תאריך יעד. אפשר להוסיף ליומן של הטלפון עם תזכורת יום מראש.</p>
+   <p><b>📊 דו״ח חודשי</b> — כמה נשלחו, כמה אושרו, אילו עבודות נפוצות.</p>
+   <div class="g-note ok"><b>סיכום יומי</b><br>בראש המסך הראשי — מה קרה היום: נשלח, נצפה, ממתין, יעדים קרובים. סוגרים ב-✕ וחוזר מחר.</div>`}
+ ]},
+
+ {c:'מערכת',items:[
+  {id:'g23',ic:'⚙️',t:'הגדרות',d:'עסק, מיתוג, סנכרון',
+   b:`<table class="g-tb"><tr><td>גרסה</td><td>הנוכחית + בדיקת עדכון</td></tr>
+   <tr><td>☁️ סנכרון</td><td>הכל בין כל המכשירים. דלוק כברירת מחדל.</td></tr>
+   <tr><td>🏢 פרטי עסק</td><td>שם, טלפון, ח.פ, מייל, לוגו, חתימה</td></tr>
+   <tr><td>📝 תנאי תשלום</td><td>הטקסט בתחתית כל הצעה</td></tr>
+   <tr><td>💾 גיבוי</td><td>מסך נפרד</td></tr></table>`},
+
+  {id:'g24',ic:'🔐',t:'הגדרות מפתח',d:'קוד 3396',
+   b:`<div class="g-path">הגדרות ← גלילה לתחתית ← 3396</div>
+   <table class="g-tb"><tr><td>💰 מע״מ</td><td>הפעלה ואחוז — 18%</td></tr>
+   <tr><td>☀️ מצב בהיר</td><td>לשימוש בשמש</td></tr>
+   <tr><td>🔑 מפתחות AI</td><td>Gemini (ראשי) · Claude (גיבוי)</td></tr>
+   <tr><td>⭐ קישור גוגל</td><td>לאיסוף ביקורות</td></tr>
+   <tr><td>☁️ Drive</td><td>Client ID + גיבוי אוטומטי</td></tr>
+   <tr><td>🚀 פרודקשן</td><td>ניקוי נתוני טסטים</td></tr></table>
+   <div class="g-note"><b>על מפתחות AI</b><br>Gemini עושה הכל כולל אודיו, והוא חינמי. Claude הוא גיבוי בלבד ואינו מעבד אודיו. אין צורך בשניהם.</div>`},
+
+  {id:'g25',ic:'💾',t:'גיבוי ושחזור',d:'הרגל של פעם בחודש',
+   b:`<table class="g-tb"><tr><td>🗄️ ענן</td><td>שחזור לפי תאריך — אוטומטי</td></tr>
+   <tr><td>⬇️ ייצוא</td><td>JSON למייל או דרייב</td></tr>
+   <tr><td>⬆️ שחזור</td><td>גם ממכשיר אחר</td></tr>
+   <tr><td>↩️ אוטומטי</td><td>בכל פתיחה של האפליקציה</td></tr>
+   <tr><td>♻️ מחירון</td><td>חזרה לברירת מחדל 2026</td></tr></table>
+   <div class="g-note ok"><b>גיבוי שבועי</b><br>אם חיברת Drive — מגבה לבד אחת לשבוע.</div>
+   <div class="g-note"><b>הרגל טוב</b><br>פעם בחודש ייצא לקובץ ושלח לעצמך במייל. עשר שניות שמצילות.</div>`},
+
+  {id:'g26',ic:'🚀',t:'מעבר לפרודקשן',d:'פעולה חד-פעמית',
+   b:`<div class="g-path">הגדרות מפתח ← 🧹 נקה הכל</div>
+   <p>מעבר משלב הבדיקות לעבודה אמיתית.</p>
+   <table class="g-tb"><tr><td>נמחק</td><td>לקוחות · הצעות · מעקב · משובים — במכשיר <b>ובענן</b></td></tr>
+   <tr><td>נשאר</td><td>מחירון · הגדרות · מיתוג · מפתחות</td></tr>
+   <tr><td>הגנות</td><td>קוד 3396 + אישור כפול + גיבוי אוטומטי</td></tr></table>
+   <div class="g-note stop"><b>לפני שלוחצים</b><br>ייצא גיבוי ידני לקובץ. הגיבוי האוטומטי קיים, אבל עדיף עותק אצלך.</div>`}
+ ]},
+
+ {c:'עזרה',items:[
+  {id:'g27',ic:'🔧',t:'תקלות נפוצות',d:'מה לעשות כשמשהו נתקע',
+   b:`<table class="g-tb"><tr><th>ההודעה</th><th>מה לעשות</th></tr>
+   <tr><td>לא הוגדר מפתח</td><td>הגדרות ← מפתח (3396) ← הזן Gemini</td></tr>
+   <tr><td>לא החזיר תשובה</td><td>המכסה נגמרה. נסה מאוחר יותר או מחר.</td></tr>
+   <tr><td>תשובה לא תקינה</td><td>נסה שוב — בדרך כלל עובד בשנייה</td></tr>
+   <tr><td>צילום לא נקרא</td><td>תאורה, יישור, בלי צל. או הדבק כטקסט.</td></tr>
+   <tr><td>לא מסתנכרן</td><td>בדוק אינטרנט ← 🔄 סנכרן עכשיו</td></tr>
+   <tr><td>אודיו לא עובד</td><td>דורש Gemini. Claude לא מעבד אודיו.</td></tr>
+   <tr><td>שכחתי קוד</td><td>3396</td></tr></table>`},
+
+  {id:'g28',ic:'✅',t:'בדיקה לפני שליחה',d:'8 בדיקות · הסימונים נשמרים',
+   b:`<div class="g-chk">
+   <div class="g-ci" data-gchk="0"><span class="g-cb">✓</span><span>פרטי הלקוח מלאים<small>שם, טלפון, כתובת, פרויקט</small></span></div>
+   <div class="g-ci" data-gchk="1"><span class="g-cb">✓</span><span>כל הסעיפים עם כמות ומחיר<small>אין שורה עם 0</small></span></div>
+   <div class="g-ci" data-gchk="2"><span class="g-cb">✓</span><span>הרצתי בדיקת סעיפים חסרים<small>עשר שניות שמונעות ויכוח</small></span></div>
+   <div class="g-ci" data-gchk="3"><span class="g-cb">✓</span><span>סוג ההצעה נכון<small>מחשבון או תכנון</small></span></div>
+   <div class="g-ci" data-gchk="4"><span class="g-cb">✓</span><span>מע״מ מוגדר נכון<small>18% ודלוק</small></span></div>
+   <div class="g-ci" data-gchk="5"><span class="g-cb">✓</span><span>רשמתי הערות פנימיות<small>מה שחשוב לזכור בעוד חודש</small></span></div>
+   <div class="g-ci" data-gchk="6"><span class="g-cb">✓</span><span>בדקתי את ה-PDF<small>שהכל נראה מסודר</small></span></div>
+   <div class="g-ci" data-gchk="7"><span class="g-cb">✓</span><span>שלחתי קישור<small>כדי לדעת מתי נפתח</small></span></div>
+   </div>`}
+ ]}
+];
+
 const HE_NUM={'אפס':0,'אחת':1,'אחד':1,'שתיים':2,'שתים':2,'שניים':2,'שני':2,'שתי':2,'שלוש':3,'שלושה':3,'ארבע':4,'ארבעה':4,'חמש':5,'חמישה':5,'שש':6,'שישה':6,'שבע':7,'שבעה':7,'שמונה':8,'תשע':9,'תשעה':9,'עשר':10,'עשרה':10,'עשרים':20,'שלושים':30,'ארבעים':40,'חמישים':50,'שישים':60,'שבעים':70,'שמונים':80,'תשעים':90,'מאה':100,'מאתיים':200,'אלף':1000,'אלפיים':2000};
 function stripNiqqud(s){return (s||'').replace(/[\u0591-\u05C7]/g,'');}
 function voiceNum(text){text=stripNiqqud(text);const dm=text.match(/\d+(\.\d+)?/);if(dm)return parseFloat(dm[0]);const toks=text.split(/\s+/).map(t=>t.replace(/[^\u0590-\u05FF]/g,'')).filter(Boolean);let total=0,current=0,found=false;for(const t of toks){if(t==='אלף'||t==='אלפים'){current=(current||1)*1000;found=true;}else if(t==='מאה'||t==='מאות'){current=(current||1)*100;found=true;}else if(t in HE_NUM){current+=HE_NUM[t];found=true;}}total+=current;return found?total:null;}
@@ -1509,7 +1809,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1916,6 +2216,7 @@ const App={
      ${item('tracking','📤','הצעות ומעקב','מעקב אחר סטטוס ואישורים',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
      ${item('stats','📊','דו"ח חודשי','סטטיסטיקות והכנסות',false)}
+     ${item('guide','📘','מדריך שימוש','28 נושאים · הכל על האפליקציה',false)}
      ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
  },
@@ -2307,6 +2608,43 @@ const App={
    </div>
    ${s?`<div style="font-size:11.5px;color:var(--ok);margin-top:10px">\u2713 \u05d4\u05e1\u05d2\u05e0\u05d5\u05df \u05e9\u05de\u05d5\u05e8 \u2014 \u05de\u05e9\u05de\u05e9 \u05d1\u05db\u05dc \u05e0\u05d9\u05e1\u05d5\u05d7</div>`:''}`;
  },
+ guideModal(){
+  const q=(this.state.gQ||'').trim();
+  let html='';
+  GUIDE.forEach(function(grp){
+    var items=grp.items;
+    if(q)items=items.filter(function(it){return (it.t+' '+it.d).indexOf(q)>=0;});
+    if(!items.length)return;
+    html+='<div class="g-cat">'+grp.c+'</div><div class="aihub-grid">';
+    items.forEach(function(it){
+      html+='<button class="aihub-card" data-gtopic="'+it.id+'">'
+        +'<div class="ah-icon">'+it.ic+'</div>'
+        +'<div class="ah-txt"><div class="ah-t">'+it.t+'</div><div class="ah-d">'+it.d+'</div></div>'
+        +'<div class="ah-arrow">\u2039</div></button>';
+    });
+    html+='</div>';
+  });
+  if(!html)html='<div class="empty">\u05dc\u05d0 \u05e0\u05de\u05e6\u05d0 \u05e0\u05d5\u05e9\u05d0 \u05de\u05ea\u05d0\u05d9\u05dd</div>';
+  return `<h2>\ud83d\udcd8 \u05de\u05d3\u05e8\u05d9\u05da \u05e9\u05d9\u05de\u05d5\u05e9 <button class="x" data-close>\u2715</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">28 \u05e0\u05d5\u05e9\u05d0\u05d9\u05dd \u00b7 \u05d1\u05d7\u05e8 \u05de\u05d4 \u05e9\u05e6\u05e8\u05d9\u05da \u05d0\u05d5 \u05d7\u05e4\u05e9.</div>
+   <input id="g-search" type="search" placeholder="\ud83d\udd0d \u05d7\u05e4\u05e9 \u05e0\u05d5\u05e9\u05d0\u2026" value="${q}" style="margin-bottom:14px"/>
+   ${html}`;
+ },
+ guideTopicModal(){
+  const id=this.state.gTopic;
+  let found=null,idx=-1,flat=[];
+  GUIDE.forEach(function(g){g.items.forEach(function(it){flat.push(it);});});
+  flat.forEach(function(it,i){if(it.id===id){found=it;idx=i;}});
+  if(!found)return `<h2>\u05de\u05d3\u05e8\u05d9\u05da <button class="x" data-close>\u2715</button></h2><div class="empty">\u05dc\u05d0 \u05e0\u05de\u05e6\u05d0</div>`;
+  const prev=idx>0?flat[idx-1]:null, next=idx<flat.length-1?flat[idx+1]:null;
+  return `<h2>${found.ic} ${found.t} <button class="x" data-close>\u2715</button></h2>
+   <div class="g-body">${found.b}</div>
+   <div class="g-nav">
+     ${prev?`<button class="btn-ghost" data-gtopic="${prev.id}">\u203a ${prev.t}</button>`:'<span></span>'}
+     ${next?`<button class="btn-ghost" data-gtopic="${next.id}">${next.t} \u2039</button>`:'<span></span>'}
+   </div>
+   <button class="btn-block" id="g-back" style="margin-top:10px">\u05d7\u05d6\u05e8\u05d4 \u05dc\u05e8\u05e9\u05d9\u05de\u05d4</button>`;
+ },
  galleryModal(){
   const clients=Store.get('clients',[]);
   const pick=this.state.galPick||'';
@@ -2616,6 +2954,14 @@ const App={
     this.haptic(20);
     window.open(waLink(cl.phone,txt),'_blank');
   };});
+  const gsr=document.getElementById('g-search');if(gsr)gsr.oninput=e=>{this.state.gQ=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('g-search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(_){}}};
+  document.querySelectorAll('[data-gtopic]').forEach(b=>{b.onclick=()=>{if(this.state.modal==='guide')this._navStack.push('guide');this.state.gTopic=b.dataset.gtopic;this.state.modal='gtopic';this.haptic(12);this.render();};});
+  const gbk2=document.getElementById('g-back');if(gbk2)gbk2.onclick=()=>{this.state.modal='guide';this.haptic(10);this.render();};
+  document.querySelectorAll('[data-gchk]').forEach(el=>{
+    const i=el.dataset.gchk;const saved=Store.get('guideChk',{});
+    if(saved[i])el.classList.add('done');
+    el.onclick=()=>{el.classList.toggle('done');const s2=Store.get('guideChk',{});s2[i]=el.classList.contains('done');Store.set('guideChk',s2);this.haptic(10);};
+  });
   const oneSG=document.getElementById('oneshot-go');if(oneSG)oneSG.onclick=()=>this.oneShotRun();
   const oneST=document.getElementById('oneshot-tx');if(oneST)oneST.oninput=e=>{this._oneShotText=e.target.value;};
   const styS=document.getElementById('style-save');if(styS)styS.onclick=()=>{const el=document.getElementById('style-tx');Store.set('myStyle',el?el.value.trim():'');this.haptic(20);this.toast('הסגנון נשמר');this.render();};
