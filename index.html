@@ -693,6 +693,51 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
   .sheet{animation:none!important;}
   #root:has(.overlay) > div:not(.overlay){transform:none;filter:brightness(.6);}
 }
+
+/* ═══════════════ אפקט לוגו v10.1 ═══════════════ */
+.brand .lg{position:relative;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;}
+.brand .lg img{transition:transform .5s cubic-bezier(.16,1,.3,1),filter .4s;will-change:transform;}
+
+/* התפוצצות בטעינה */
+.brand .lg img{animation:logoBoom 1.5s cubic-bezier(.16,1,.3,1) .25s both;}
+@keyframes logoBoom{
+  0%{transform:scale(.3) rotate(-25deg);opacity:0;filter:blur(6px) brightness(2.4);}
+  32%{transform:scale(1.55) rotate(6deg);opacity:1;filter:blur(0) brightness(1.9);}
+  48%{transform:scale(.9) rotate(-4deg);filter:brightness(1.3);}
+  64%{transform:scale(1.12) rotate(2deg);filter:brightness(1.1);}
+  80%{transform:scale(.97) rotate(-1deg);}
+  100%{transform:scale(1) rotate(0);filter:brightness(1);}
+}
+
+/* גל הדף בהתפוצצות */
+.brand .lg::after{content:'';position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--red);opacity:0;animation:logoRing 1.5s cubic-bezier(.16,1,.3,1) .25s both;pointer-events:none;}
+@keyframes logoRing{
+  0%{transform:scale(.3);opacity:0;}
+  30%{transform:scale(1.1);opacity:.85;}
+  70%{transform:scale(2.1);opacity:0;}
+  100%{transform:scale(2.4);opacity:0;}
+}
+
+/* הילה אדומה שנושמת ברקע */
+.brand .lg::before{content:'';position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(circle,rgba(237,28,36,.3),transparent 68%);filter:blur(9px);animation:logoGlow 3.4s ease-in-out 1.7s infinite;pointer-events:none;z-index:-1;}
+@keyframes logoGlow{0%,100%{opacity:.28;transform:scale(.94);}50%{opacity:.65;transform:scale(1.1);}}
+
+/* התפוצצות חוזרת בנגיעה */
+.brand .lg.pop img{animation:logoBoom 1.1s cubic-bezier(.16,1,.3,1) both;}
+.brand .lg.pop::after{animation:logoRing 1.1s cubic-bezier(.16,1,.3,1) both;}
+
+@media(prefers-reduced-motion:reduce){
+  .brand .lg img,.brand .lg::after,.brand .lg::before{animation:none!important;}
+}
+
+/* ═══ כרטיס סיכום יומי ═══ */
+.sum-card{position:relative;background:linear-gradient(150deg,rgba(237,28,36,.1),var(--bg3));border:1px solid rgba(237,28,36,.28);border-radius:16px;padding:14px 16px;margin-bottom:14px;animation:sumIn .55s cubic-bezier(.16,1,.3,1) both;}
+@keyframes sumIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.sum-h{font-weight:800;font-size:14.5px;color:var(--txt);margin-bottom:7px;}
+.sum-b{font-size:13px;color:var(--muted);line-height:1.85;}
+.sum-b b{color:var(--txt);}
+.sum-x{position:absolute;top:9px;left:9px;background:transparent;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:4px 7px;border-radius:7px;}
+.sum-x:active{background:var(--bg2);}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -726,7 +771,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='10.0';
+const VERSION='10.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -939,11 +984,11 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle'];}};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview'];
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -1299,7 +1344,9 @@ const App={
   if(!imageDataUrl){this.toast('לא נבחרה תמונה');return;}
   this.busy('ה-AI קורא את התמונה…');this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
-  const P=['אתה עוזר לקבלן שיפוצים ישראלי. בתמונה המצורפת יש פתק/מסמך עם תיאור עבודות שיפוץ (יתכן כתב יד, יתכן טבלה מודפסת). קרא את התמונה בעיון והפק רשימת סעיפי עבודה מסודרים להצעת מחיר.',
+  const _wa=(this._visionMode==='wa');
+  const _intro=_wa?'אתה עוזר לקבלן שיפוצים ישראלי. בתמונה צילום מסך של שיחת וואטסאפ. קרא את ההודעות וזהה אילו עבודות הלקוח מבקש. התעלם מברכות, שיחת חולין והודעות לא רלוונטיות. הפק רק סעיפי עבודה.':'אתה עוזר לקבלן שיפוצים ישראלי. בתמונה המצורפת יש פתק/מסמך עם תיאור עבודות שיפוץ (יתכן כתב יד, יתכן טבלה מודפסת). קרא את התמונה בעיון והפק רשימת סעיפי עבודה מסודרים להצעת מחיר.';
+  const P=[_intro,
     '',
     'החזר אך ורק JSON תקין (בלי טקסט לפני/אחרי, בלי markdown) — מערך אובייקטים. לכל סעיף:',
     '{"name":"תיאור העבודה בעברית תקנית","qty":כמות מספרית,"unit":"מ\\"ר או מ\\"א או מ\\"ק או יח׳ או נקודה או גלובלי","price":מחיר_ליחידה_בשקלים,"cat":"אחת מ: '+cats+'"}',
@@ -1437,6 +1484,7 @@ const App={
       <input id="search" placeholder="חיפוש חופשי: עבודה או קטגוריה…" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
+  ${this.summaryBanner()}
   <div class="chips">
     <button class="chip" id="chip-cats">📂 קטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
@@ -1461,7 +1509,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1674,6 +1722,7 @@ const App={
    <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">📥 איסוף חשבוניות מהמייל (${'yuda090581@gmail.com'}) דורש חיבור Gmail מאובטח (OAuth) — נבנה בשלב נפרד.</div>`;
  },
  async geminiAsk(prompt){const provider=Store.get('aiProvider','gemini');const out=document.getElementById('gem-out');
+  try{const _st=Store.get('myStyle','');if(_st&&_st.trim()){prompt=prompt+String.fromCharCode(10)+String.fromCharCode(10)+'חשוב: כתוב באותו טון וסגנון כמו בדוגמאות הבאות שנכתבו על ידי הקבלן:'+String.fromCharCode(10)+_st.slice(0,900);}}catch(e){}
   if(provider==='claude'){
    const key=Store.get('claudeKey','');if(!key){this.toast('הזן מפתח Claude בהגדרות');return;}
    if(out)out.textContent='חושב… (Claude)';
@@ -1895,10 +1944,14 @@ const App={
      ${card('v2q','📋','הדבקת טקסט','הדבק הצעה מבולגנת מוואטסאפ','')}
      ${card('aiphoto','📷','צילום פתקית','צלם פתק בכתב יד וה-AI יקרא','')}
      ${card('aipdf','📄','העלאת קובץ','טען PDF/תמונה של כתב כמויות','')}
+     ${card('aiaudio','🎧','הקלטה קולית','העלה הקלטה מוואטסאפ — ה-AI יאזין ויבנה','חדש')}
+     ${card('washot','📱','צילום מסך וואטסאפ','הלקוח כתב בקשות בהודעה','חדש')}
+     ${card('oneshot','⚡','לכוד מהיר','משפט אחד ← לקוח + הצעה + תזכורת','חדש')}
    </div>
    <div style="font-weight:800;font-size:12.5px;margin:16px 0 8px">3️⃣ כלי כתיבה חכמים:</div>
    <div class="aihub-grid">
      ${card('gemini','🤖','ניסוח וכתיבה','הודעות ללקוח · תיאורי עבודה · טיפים','')}
+     ${card('mystyle','✍️','הסגנון שלי','למד את ה-AI לכתוב כמוך','חדש')}
      <button class="aihub-card" id="hub-check-prices">
        <div class="ah-icon">🔔</div>
        <div class="ah-txt"><div class="ah-t">סריקת מחירון</div><div class="ah-d">השוואה מול מחירי השוק · מומלץ פעם בחצי שנה</div></div>
@@ -2087,6 +2140,172 @@ const App={
      <div class="ah-txt" style="width:100%"><div class="ah-t" style="font-size:13.5px">${t[0]}</div>
      <div class="ah-d" style="white-space:pre-wrap;margin-top:4px;opacity:.75">${t[1]}</div></div></button>`).join('')}
    <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6">\ud83d\udca1 \u05e7\u05d5 \u05ea\u05d7\u05ea\u05d5\u05df (__) = \u05de\u05e7\u05d5\u05dd \u05dc\u05de\u05dc\u05d0. \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e2\u05e8\u05d5\u05da \u05d0\u05ea \u05d4\u05d4\u05d5\u05d3\u05e2\u05d4 \u05d1\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u05dc\u05e4\u05e0\u05d9 \u05e9\u05dc\u05d9\u05d7\u05d4.</div>`;
+ },
+ dailySummary(){
+  const today=new Date();const t0=new Date(today.getFullYear(),today.getMonth(),today.getDate()).getTime();
+  const sent=Store.get('sentLinks',[]).filter(function(x){return (x.ts||0)>=t0;});
+  const links=Store.get('sentLinks',[]);
+  const seen=links.filter(function(x){return x.seenAt&&!x.approvedAt;});
+  const clients=Store.get('clients',[]);
+  const due=clients.filter(function(cl){
+    if(!cl.dueDate)return false;
+    var d=new Date(cl.dueDate);var dd=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();
+    return dd>=t0&&dd<t0+86400000*2;
+  });
+  const stale=links.filter(function(x){
+    if(x.approvedAt)return false;
+    var age=(Date.now()-(x.ts||0))/86400000;
+    return age>=3&&age<=30;
+  });
+  return {sent:sent.length,seen:seen,due:due,stale:stale};
+ },
+ summaryBanner(){
+  try{
+    if(Store.get('sumDismissed','')===new Date().toDateString())return '';
+    const s=this.dailySummary();
+    const rows=[];
+    if(s.sent)rows.push('\u2705 \u05e0\u05e9\u05dc\u05d7\u05d5 \u05d4\u05d9\u05d5\u05dd: <b>'+s.sent+'</b> \u05d4\u05e6\u05e2\u05d5\u05ea');
+    if(s.seen.length)rows.push('\ud83d\udc40 <b>'+s.seen.length+'</b> \u05e0\u05e6\u05e4\u05d5 \u05d5\u05dc\u05d0 \u05d0\u05d5\u05e9\u05e8\u05d5');
+    if(s.stale.length)rows.push('\u23f3 <b>'+s.stale.length+'</b> \u05de\u05de\u05ea\u05d9\u05e0\u05d5\u05ea \u05dc\u05ea\u05e9\u05d5\u05d1\u05d4 \u05de\u05e2\u05dc 3 \u05d9\u05de\u05d9\u05dd');
+    if(s.due.length)rows.push('\ud83d\udcc5 <b>'+s.due.length+'</b> \u05e4\u05e8\u05d5\u05d9\u05e7\u05d8\u05d9\u05dd \u05d1\u05d9\u05e2\u05d3 \u05e7\u05e8\u05d5\u05d1');
+    if(!rows.length)return '';
+    const hh=new Date().getHours();
+    const greet=hh<12?'\u05d1\u05d5\u05e7\u05e8 \u05d8\u05d5\u05d1':(hh<18?'\u05e6\u05d4\u05e8\u05d9\u05d9\u05dd \u05d8\u05d5\u05d1\u05d9\u05dd':'\u05e2\u05e8\u05d1 \u05d8\u05d5\u05d1');
+    return '<div class="sum-card" id="sum-card">'+
+      '<button class="sum-x" id="sum-close">\u2715</button>'+
+      '<div class="sum-h">'+greet+'</div>'+
+      '<div class="sum-b">'+rows.join('<br>')+'</div></div>';
+  }catch(e){return '';}
+ },
+ aiAudioModal(){
+  const has=!!this._aiAudioRaw;
+  return `<h2>\ud83c\udfa7 \u05d4\u05e7\u05dc\u05d8\u05d4 \u05dc\u05d4\u05e6\u05e2\u05d4 <button class="x" data-close>\u2715</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">\u05d4\u05e2\u05dc\u05d4 \u05d4\u05e7\u05dc\u05d8\u05d4 \u05de\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u05d0\u05d5 \u05db\u05dc \u05e7\u05d5\u05d1\u05e5 \u05e7\u05d5\u05dc \u2014 \u05d4-AI \u05d9\u05d0\u05d6\u05d9\u05df \u05d5\u05d9\u05d1\u05e0\u05d4 \u05d4\u05e6\u05e2\u05d4 \u05de\u05e1\u05d5\u05d3\u05e8\u05ea.</div>
+   <div class="qa-box" style="margin-top:0">
+     <div class="qa-head"><span class="qa-ic">\ud83c\udfa4</span><div><div class="qa-t">${has?'\u05e7\u05d5\u05d1\u05e5 \u05e0\u05d8\u05e2\u05df':'\u05d1\u05d7\u05e8 \u05e7\u05d5\u05d1\u05e5 \u05d0\u05d5\u05d3\u05d9\u05d5'}</div><div class="qa-s">${has?(this._aiAudioName||''):'WhatsApp \u00b7 MP3 \u00b7 M4A \u00b7 OGG \u00b7 WAV'}</div></div></div>
+     <button class="btn-ghost" id="aiaud-pick" style="width:100%">\ud83d\udcc1 ${has?'\u05d4\u05d7\u05dc\u05e3 \u05e7\u05d5\u05d1\u05e5':'\u05d1\u05d7\u05e8 \u05d4\u05e7\u05dc\u05d8\u05d4'}</button>
+     ${has?`<audio controls src="${this._aiAudioRaw}" style="width:100%;margin-top:10px;border-radius:10px"></audio>`:''}
+   </div>
+   ${has?`<button class="btn-block" id="aiaud-go" style="margin-top:12px">\u2728 \u05d4\u05d0\u05d6\u05df \u05d5\u05d1\u05e0\u05d4 \u05d4\u05e6\u05e2\u05d4</button>`:''}
+   <input id="aiaud-in" type="file" accept="audio/*,.opus,.ogg,.m4a,.mp3,.wav" class="hidden"/>
+   <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7">\ud83d\udca1 \u05d1\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4: \u05dc\u05d7\u05d9\u05e6\u05d4 \u05d0\u05e8\u05d5\u05db\u05d4 \u05e2\u05dc \u05d4\u05d4\u05e7\u05dc\u05d8\u05d4 \u2190 \u05e9\u05ea\u05e3 \u2190 \u05e9\u05de\u05d5\u05e8 \u05dc\u05e7\u05d1\u05e6\u05d9\u05dd. \u05e2\u05d3 \u05db-10 \u05d3\u05e7\u05d5\u05ea.</div>`;
+ },
+ async aiAudioConvert(){
+  if(!this._aiAudioRaw){this.toast('\u05dc\u05d0 \u05e0\u05d1\u05d7\u05e8 \u05e7\u05d5\u05d1\u05e5');return;}
+  const key=Store.get('geminiKey','');
+  if(!key){this.toast('\u05e0\u05d3\u05e8\u05e9 \u05de\u05e4\u05ea\u05d7 Gemini \u05dc\u05e2\u05d9\u05d1\u05d5\u05d3 \u05d0\u05d5\u05d3\u05d9\u05d5');return;}
+  const m=String(this._aiAudioRaw).match(/^data:([^;]+);base64,(.+)$/);
+  if(!m){this.toast('\u05e9\u05d2\u05d9\u05d0\u05d4 \u05d1\u05e7\u05e8\u05d9\u05d0\u05ea \u05d4\u05e7\u05d5\u05d1\u05e5');return;}
+  let mime=m[1]||'audio/ogg';const b64=m[2];
+  if(mime==='application/octet-stream'||!mime.startsWith('audio')){
+    const n=(this._aiAudioName||'').toLowerCase();
+    if(n.endsWith('.opus')||n.endsWith('.ogg'))mime='audio/ogg';
+    else if(n.endsWith('.m4a')||n.endsWith('.mp4'))mime='audio/mp4';
+    else if(n.endsWith('.wav'))mime='audio/wav';
+    else mime='audio/mpeg';
+  }
+  this.busy('\u05de\u05d0\u05d6\u05d9\u05df \u05dc\u05d4\u05e7\u05dc\u05d8\u05d4...');this.haptic(15);
+  const cats='\u05d4\u05e8\u05d9\u05e1\u05d4 \u05d5\u05e4\u05d9\u05e0\u05d5\u05d9, \u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4, \u05d7\u05e9\u05de\u05dc \u05d5\u05ea\u05e7\u05e9\u05d5\u05e8\u05ea, \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d2\u05de\u05e8 \u05d5\u05e2\u05d9\u05e6\u05d5\u05d1 \u05e4\u05e0\u05d9\u05dd, \u05e0\u05d2\u05e8\u05d5\u05ea \u05de\u05e1\u05d2\u05e8\u05d5\u05ea \u05d5\u05d0\u05dc\u05d5\u05de\u05d9\u05e0\u05d9\u05d5\u05dd, \u05ea\u05db\u05e0\u05d5\u05df \u05e0\u05d9\u05d4\u05d5\u05dc \u05d5\u05e8\u05d9\u05e9\u05d5\u05d9, \u05e9\u05dc\u05d3 \u05d5\u05ea\u05e9\u05ea\u05d9\u05ea \u05db\u05d1\u05d3\u05d4, \u05e4\u05d9\u05ea\u05d5\u05d7 \u05d7\u05d5\u05e5 \u05d5\u05e1\u05d1\u05d9\u05d1\u05d4, \u05d0\u05d7\u05e8';
+  const P=['\u05d0\u05ea\u05d4 \u05e2\u05d5\u05d6\u05e8 \u05dc\u05e7\u05d1\u05dc\u05df \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u05d9\u05e9\u05e8\u05d0\u05dc\u05d9. \u05d1\u05d4\u05e7\u05dc\u05d8\u05d4 \u05d4\u05de\u05e6\u05d5\u05e8\u05e4\u05ea \u05de\u05d3\u05d1\u05e8\u05d9\u05dd \u05e2\u05dc \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5. \u05d4\u05d0\u05d6\u05df \u05d1\u05e2\u05d9\u05d5\u05df \u05d5\u05d4\u05e4\u05e7 \u05e8\u05e9\u05d9\u05de\u05ea \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd.',
+   '\u05d4\u05d3\u05d5\u05d1\u05e8 \u05e2\u05e9\u05d5\u05d9 \u05dc\u05d3\u05d1\u05e8 \u05d1\u05de\u05e9\u05e4\u05d8\u05d9\u05dd \u05dc\u05d0 \u05de\u05e1\u05d5\u05d3\u05e8\u05d9\u05dd, \u05dc\u05d7\u05d6\u05d5\u05e8 \u05d5\u05dc\u05ea\u05e7\u05df \u05d0\u05ea \u05e2\u05e6\u05de\u05d5. \u05e7\u05d7 \u05d0\u05ea \u05d4\u05d2\u05e8\u05e1\u05d4 \u05d4\u05e1\u05d5\u05e4\u05d9\u05ea \u05e9\u05dc\u05d5.',
+   '\u05d4\u05d7\u05d6\u05e8 \u05d0\u05da \u05d5\u05e8\u05e7 JSON \u05ea\u05e7\u05d9\u05df (\u05de\u05e2\u05e8\u05da). \u05dc\u05db\u05dc \u05e1\u05e2\u05d9\u05e3: {"name":"\u05ea\u05d9\u05d0\u05d5\u05e8 \u05d1\u05e2\u05d1\u05e8\u05d9\u05ea","qty":\u05de\u05e1\u05e4\u05e8,"unit":"\u05de\\"\u05e8/\u05de\\"\u05d0/\u05d9\u05d7\u05f3/\u05e0\u05e7\u05d5\u05d3\u05d4/\u05d2\u05dc\u05d5\u05d1\u05dc\u05d9","price":\u05de\u05d7\u05d9\u05e8_\u05dc\u05d9\u05d7\u05d9\u05d3\u05d4,"cat":"\u05d0\u05d7\u05ea \u05de: '+cats+'"}',
+   '\u05d0\u05dd \u05dc\u05d0 \u05e0\u05d0\u05de\u05e8 \u05de\u05d7\u05d9\u05e8 \u2014 price=0. \u05d0\u05dd \u05e0\u05d0\u05de\u05e8 \u05e1\u05db\u05d5\u05dd \u05db\u05d5\u05dc\u05dc \u05dc\u05db\u05de\u05d5\u05ea \u2014 \u05d7\u05dc\u05e7 \u05dc\u05de\u05d7\u05d9\u05e8 \u05dc\u05d9\u05d7\u05d9\u05d3\u05d4. \u05e2\u05d3 30 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd. \u05d1\u05dc\u05d9 markdown, \u05d1\u05dc\u05d9 \u05d4\u05e1\u05d1\u05e8\u05d9\u05dd.'];
+  try{
+   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{
+     method:'POST',headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({contents:[{parts:[
+       {inline_data:{mime_type:mime,data:b64}},
+       {text:P.join(String.fromCharCode(10))}
+     ]}],generationConfig:{maxOutputTokens:2600,temperature:0.2}})
+   });
+   const d=await r.json();
+   if(d&&d.error){this.idle();this.toast('\u05e9\u05d2\u05d9\u05d0\u05d4: '+(d.error.message||'').slice(0,60));return;}
+   let txt='';
+   try{txt=d.candidates[0].content.parts[0].text||'';}catch(e){txt='';}
+   if(!txt.trim()){this.idle();this.toast('\u05d4-AI \u05dc\u05d0 \u05d4\u05d7\u05d6\u05d9\u05e8 \u05ea\u05d5\u05e6\u05d0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
+   const arr=this._parseJSONArray(txt);
+   if(!arr||!arr.length){this.idle();this.toast('\u05dc\u05d0 \u05d6\u05d5\u05d4\u05d5 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d1\u05d4\u05e7\u05dc\u05d8\u05d4');return;}
+   this.idle();this.haptic(25);
+   this._v2qResult=arr;this.state.modal='v2qreview';this.render();
+  }catch(e){this.idle();this.toast('\u05e2\u05d9\u05d1\u05d5\u05d3 \u05d4\u05d4\u05e7\u05dc\u05d8\u05d4 \u05e0\u05db\u05e9\u05dc');}
+ },
+ waShotModal(){
+  const has=!!this._waShotRaw;
+  return `<h2>\ud83d\udcf1 \u05e6\u05d9\u05dc\u05d5\u05dd \u05de\u05e1\u05da \u05de\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 <button class="x" data-close>\u2715</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">\u05d4\u05dc\u05e7\u05d5\u05d7 \u05e9\u05dc\u05d7 \u05d1\u05e7\u05e9\u05d5\u05ea \u05d1\u05d4\u05d5\u05d3\u05e2\u05d4? \u05e6\u05dc\u05dd \u05de\u05e1\u05da \u2014 \u05d4-AI \u05d9\u05e7\u05e8\u05d0 \u05d5\u05d9\u05d4\u05e4\u05d5\u05da \u05dc\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd.</div>
+   <div class="qa-box" style="margin-top:0">
+     <div class="qa-head"><span class="qa-ic">\ud83d\udcf1</span><div><div class="qa-t">${has?'\u05ea\u05de\u05d5\u05e0\u05d4 \u05e0\u05d8\u05e2\u05e0\u05d4':'\u05d1\u05d7\u05e8 \u05e6\u05d9\u05dc\u05d5\u05dd \u05de\u05e1\u05da'}</div><div class="qa-s">\u05d4-AI \u05de\u05ea\u05e2\u05dc\u05dd \u05de\u05d1\u05e8\u05db\u05d5\u05ea \u05d5\u05e9\u05d9\u05d7\u05ea \u05d7\u05d5\u05dc\u05d9\u05df</div></div></div>
+     <button class="btn-ghost" id="washot-pick" style="width:100%">\ud83d\uddbc\ufe0f ${has?'\u05d4\u05d7\u05dc\u05e3 \u05ea\u05de\u05d5\u05e0\u05d4':'\u05d1\u05d7\u05e8 \u05ea\u05de\u05d5\u05e0\u05d4'}</button>
+     ${has?`<img src="${this._waShotRaw}" style="width:100%;border-radius:12px;margin-top:10px;border:1px solid var(--line)"/>`:''}
+   </div>
+   ${has?`<button class="btn-block" id="washot-go" style="margin-top:12px">\u2728 \u05e7\u05e8\u05d0 \u05d5\u05d4\u05e4\u05d5\u05da \u05dc\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd</button>`:''}
+   <input id="washot-in" type="file" accept="image/*" class="hidden"/>`;
+ },
+ oneShotModal(){
+  const t=this._oneShotText||'';
+  return `<h2>\u26a1 \u05dc\u05db\u05d5\u05d3 \u05de\u05d4\u05d9\u05e8 <button class="x" data-close>\u2715</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">\u05de\u05e9\u05e4\u05d8 \u05d0\u05d7\u05d3 \u2014 \u05d5\u05e0\u05d5\u05e6\u05e8\u05d9\u05dd \u05dc\u05e7\u05d5\u05d7, \u05d4\u05e6\u05e2\u05d4 \u05d5\u05ea\u05d6\u05db\u05d5\u05e8\u05ea \u05de\u05e2\u05e7\u05d1.</div>
+   <div class="qa-box" style="margin-top:0">
+     <div class="qa-head"><span class="qa-ic">\u26a1</span><div><div class="qa-t">\u05e1\u05e4\u05e8 \u05d1\u05de\u05e9\u05e4\u05d8 \u05d0\u05d7\u05d3</div><div class="qa-s">\u05e9\u05dd \u00b7 \u05d8\u05dc\u05e4\u05d5\u05df \u00b7 \u05e2\u05d1\u05d5\u05d3\u05d4 \u00b7 \u05de\u05d7\u05d9\u05e8</div></div></div>
+     <textarea id="oneshot-tx" class="qa-ta" placeholder="\u05dc\u05d3\u05d5\u05d2\u05de\u05d4:&#10;\u05d4\u05e6\u05e2\u05d4 \u05dc\u05e8\u05d5\u05e0\u05d9\u05ea \u05db\u05d4\u05df 054-1234567, \u05e9\u05d9\u05e4\u05d5\u05e5 \u05de\u05d8\u05d1\u05d7 \u05d1\u05e8\u05de\u05ea \u05d2\u05df, \u05d4\u05e8\u05d9\u05e1\u05d4 3000 \u05e8\u05d9\u05e6\u05d5\u05e3 12 \u05de\u05d8\u05e8 250 \u05dc\u05de\u05d8\u05e8 \u05d5\u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4 8000">${t}</textarea>
+     <button class="qa-btn" id="oneshot-go">\u2728 \u05e6\u05d5\u05e8 \u05d4\u05db\u05dc</button>
+   </div>
+   <div style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7">\u05de\u05d4 \u05e9\u05d9\u05e7\u05e8\u05d4: \u05d9\u05d9\u05d5\u05e6\u05e8 \u05dc\u05e7\u05d5\u05d7 \u05d7\u05d3\u05e9 (\u05d0\u05d5 \u05d9\u05d9\u05d8\u05e2\u05df \u05e7\u05d9\u05d9\u05dd) \u00b7 \u05d9\u05d9\u05d1\u05e0\u05d5 \u05d4\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05dc\u05e7\u05d8\u05d2\u05d5\u05e8\u05d9\u05d5\u05ea \u00b7 \u05ea\u05d9\u05e7\u05d1\u05e2 \u05ea\u05d6\u05db\u05d5\u05e8\u05ea \u05de\u05e2\u05e7\u05d1 \u05dc\u05e2\u05d5\u05d3 3 \u05d9\u05de\u05d9\u05dd.</div>`;
+ },
+ async oneShotRun(){
+  const el=document.getElementById('oneshot-tx');
+  const t=el?el.value.trim():'';
+  if(!t){this.toast('\u05db\u05ea\u05d5\u05d1 \u05e7\u05d5\u05d3\u05dd \u05de\u05e9\u05e4\u05d8');return;}
+  this._oneShotText=t;
+  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  if(!key){this.toast('\u05d4\u05d2\u05d3\u05e8 \u05e7\u05d5\u05d3\u05dd \u05de\u05e4\u05ea\u05d7 AI');return;}
+  this.busy('\u05de\u05e0\u05ea\u05d7...');this.haptic(15);
+  const cats='\u05d4\u05e8\u05d9\u05e1\u05d4 \u05d5\u05e4\u05d9\u05e0\u05d5\u05d9, \u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4, \u05d7\u05e9\u05de\u05dc \u05d5\u05ea\u05e7\u05e9\u05d5\u05e8\u05ea, \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d2\u05de\u05e8 \u05d5\u05e2\u05d9\u05e6\u05d5\u05d1 \u05e4\u05e0\u05d9\u05dd, \u05e0\u05d2\u05e8\u05d5\u05ea \u05de\u05e1\u05d2\u05e8\u05d5\u05ea \u05d5\u05d0\u05dc\u05d5\u05de\u05d9\u05e0\u05d9\u05d5\u05dd, \u05ea\u05db\u05e0\u05d5\u05df \u05e0\u05d9\u05d4\u05d5\u05dc \u05d5\u05e8\u05d9\u05e9\u05d5\u05d9, \u05e9\u05dc\u05d3 \u05d5\u05ea\u05e9\u05ea\u05d9\u05ea \u05db\u05d1\u05d3\u05d4, \u05e4\u05d9\u05ea\u05d5\u05d7 \u05d7\u05d5\u05e5 \u05d5\u05e1\u05d1\u05d9\u05d1\u05d4, \u05d0\u05d7\u05e8';
+  const P=['\u05d0\u05ea\u05d4 \u05e2\u05d5\u05d6\u05e8 \u05dc\u05e7\u05d1\u05dc\u05df \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd. \u05de\u05d4\u05de\u05e9\u05e4\u05d8 \u05d4\u05d1\u05d0 \u05d7\u05dc\u05e5 \u05d2\u05dd \u05e4\u05e8\u05d8\u05d9 \u05dc\u05e7\u05d5\u05d7 \u05d5\u05d2\u05dd \u05e1\u05e2\u05d9\u05e4\u05d9 \u05e2\u05d1\u05d5\u05d3\u05d4.',
+   '\u05d4\u05de\u05e9\u05e4\u05d8: '+t,
+   '\u05d4\u05d7\u05d6\u05e8 \u05d0\u05da \u05d5\u05e8\u05e7 JSON \u05ea\u05e7\u05d9\u05df \u05d1\u05e4\u05d5\u05e8\u05de\u05d8: {"client":{"name":"\u05e9\u05dd","phone":"\u05d8\u05dc\u05e4\u05d5\u05df","project":"\u05ea\u05d9\u05d0\u05d5\u05e8 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4","address":"\u05db\u05ea\u05d5\u05d1\u05ea"},"items":[{"name":"\u05ea\u05d9\u05d0\u05d5\u05e8","qty":\u05de\u05e1\u05e4\u05e8,"unit":"\u05d9\u05d7\u05f3","price":\u05de\u05d7\u05d9\u05e8_\u05dc\u05d9\u05d7\u05d9\u05d3\u05d4,"cat":"\u05d0\u05d7\u05ea \u05de: '+cats+'"}]}',
+   '\u05e9\u05d3\u05d4 \u05e9\u05dc\u05d0 \u05e0\u05d0\u05de\u05e8 \u2014 \u05de\u05d7\u05e8\u05d5\u05d6\u05ea \u05e8\u05d9\u05e7\u05d4. \u05d0\u05dd \u05e0\u05d0\u05de\u05e8 \u05e1\u05db\u05d5\u05dd \u05db\u05d5\u05dc\u05dc \u05dc\u05db\u05de\u05d5\u05ea \u2014 \u05d7\u05dc\u05e7 \u05dc\u05de\u05d7\u05d9\u05e8 \u05dc\u05d9\u05d7\u05d9\u05d3\u05d4. \u05d1\u05dc\u05d9 markdown.'];
+  try{
+   let txt=await this.callAI(P.join(String.fromCharCode(10)),1400);
+   txt=String(txt||'').replace(/```json/gi,'').replace(/```/g,'').trim();
+   const a=txt.indexOf('{'),b=txt.lastIndexOf('}');
+   if(a<0||b<=a){this.idle();this.toast('\u05dc\u05d0 \u05d4\u05e6\u05dc\u05d7\u05ea\u05d9 \u05dc\u05e0\u05ea\u05d7 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
+   let o;try{o=JSON.parse(txt.slice(a,b+1));}catch(e){this.idle();this.toast('\u05ea\u05e9\u05d5\u05d1\u05d4 \u05dc\u05d0 \u05ea\u05e7\u05d9\u05e0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
+   const cl=o.client||{};const items=Array.isArray(o.items)?o.items:[];
+   if(cl.name){
+     this.state.client.name=cl.name;
+     if(cl.phone)this.state.client.phone=cl.phone;
+     if(cl.project)this.state.client.project=cl.project;
+     if(cl.address)this.state.client.address=cl.address;
+     this.saveClient();
+   }
+   if(items.length){this._v2qResult=items;}
+   // \u05ea\u05d6\u05db\u05d5\u05e8\u05ea \u05de\u05e2\u05e7\u05d1 \u05dc\u05e2\u05d5\u05d3 3 \u05d9\u05de\u05d9\u05dd
+   try{
+     if(cl.name){
+       const rm=Store.get('reminders',[]);
+       const due=new Date(Date.now()+3*86400000);
+       rm.push({id:'r'+Date.now(),text:'\u05de\u05e2\u05e7\u05d1 \u05d0\u05d7\u05e8\u05d9 '+cl.name,date:due.toISOString().slice(0,10),done:false});
+       Store.set('reminders',rm);
+     }
+   }catch(e){}
+   this.idle();this.haptic(25);
+   this._oneShotText='';
+   if(items.length){this.state.modal='v2qreview';}
+   else{this.state.modal='quote';this.toast('\u05d4\u05dc\u05e7\u05d5\u05d7 \u05e0\u05d5\u05e6\u05e8 \u2014 \u05dc\u05d0 \u05d6\u05d5\u05d4\u05d5 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd');}
+   this.render();
+  }catch(e){this.idle();this.toast('\u05d4\u05e4\u05e2\u05d5\u05dc\u05d4 \u05e0\u05db\u05e9\u05dc\u05d4');}
+ },
+ styleModal(){
+  const s=Store.get('myStyle','');
+  return `<h2>\u270d\ufe0f \u05d4\u05e1\u05d2\u05e0\u05d5\u05df \u05e9\u05dc\u05d9 <button class="x" data-close>\u2715</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">\u05d4\u05d3\u05d1\u05e7 \u05db\u05de\u05d4 \u05d4\u05d5\u05d3\u05e2\u05d5\u05ea \u05e9\u05db\u05ea\u05d1\u05ea \u05dc\u05dc\u05e7\u05d5\u05d7\u05d5\u05ea \u2014 \u05d5\u05db\u05dc \u05d8\u05e7\u05e1\u05d8 \u05e9\u05d4-AI \u05d9\u05e0\u05e1\u05d7 \u05d9\u05d9\u05e9\u05de\u05e2 \u05db\u05de\u05d5\u05da.</div>
+   <div class="qa-box" style="margin-top:0">
+     <div class="qa-head"><span class="qa-ic">\u270d\ufe0f</span><div><div class="qa-t">\u05d3\u05d5\u05d2\u05de\u05d0\u05d5\u05ea \u05de\u05d4\u05db\u05ea\u05d9\u05d1\u05d4 \u05e9\u05dc\u05da</div><div class="qa-s">2-4 \u05d4\u05d5\u05d3\u05e2\u05d5\u05ea \u05d0\u05de\u05d9\u05ea\u05d9\u05d5\u05ea \u05de\u05e1\u05e4\u05d9\u05e7</div></div></div>
+     <textarea id="style-tx" class="qa-ta" style="min-height:160px" placeholder="\u05dc\u05d3\u05d5\u05d2\u05de\u05d4:&#10;\u05d4\u05d9\u05d9 \u05d3\u05e0\u05d9, \u05e1\u05d9\u05d9\u05de\u05e0\u05d5 \u05d4\u05d9\u05d5\u05dd \u05d0\u05ea \u05d4\u05d2\u05d1\u05e1. \u05de\u05d7\u05e8 \u05de\u05ea\u05d7\u05d9\u05dc\u05d9\u05dd \u05e6\u05d1\u05e2.&#10;&#10;\u05d1\u05d5\u05e7\u05e8 \u05d8\u05d5\u05d1, \u05d4\u05e6\u05d5\u05d5\u05ea \u05de\u05d2\u05d9\u05e2 \u05d1-8. \u05ea\u05d5\u05d3\u05d4!">${s}</textarea>
+     <button class="qa-btn" id="style-save">\ud83d\udcbe \u05e9\u05de\u05d5\u05e8 \u05e1\u05d2\u05e0\u05d5\u05df</button>
+   </div>
+   ${s?`<div style="font-size:11.5px;color:var(--ok);margin-top:10px">\u2713 \u05d4\u05e1\u05d2\u05e0\u05d5\u05df \u05e9\u05de\u05d5\u05e8 \u2014 \u05de\u05e9\u05de\u05e9 \u05d1\u05db\u05dc \u05e0\u05d9\u05e1\u05d5\u05d7</div>`:''}`;
  },
  galleryModal(){
   const clients=Store.get('clients',[]);
@@ -2351,6 +2570,7 @@ const App={
   on('[data-qtype]','click',e=>{this._aiQuoteType=e.currentTarget.dataset.qtype;this.haptic(10);this.render();});
   on('[data-setplan]','click',e=>{this.captureQuote();this.state.planMode=e.currentTarget.dataset.setplan==='1';Store.set('planMode',this.state.planMode);this.haptic(10);this.render();});
   // עוזר AI — צילום פתקית
+  if(this.state.modal==='aiphoto')this._visionMode='';
   const aphIn=document.getElementById('aiphoto-in');if(aphIn)aphIn.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{this._aiPhotoData=rd.result;this.render();};rd.readAsDataURL(f);};
   const aphGo=document.getElementById('aiphoto-go');if(aphGo)aphGo.onclick=()=>this.aiVisionConvert(this._aiPhotoData);
   const aphClr=document.getElementById('aiphoto-clear');if(aphClr)aphClr.onclick=()=>{this._aiPhotoData=null;this.render();};
@@ -2396,6 +2616,27 @@ const App={
     this.haptic(20);
     window.open(waLink(cl.phone,txt),'_blank');
   };});
+  const oneSG=document.getElementById('oneshot-go');if(oneSG)oneSG.onclick=()=>this.oneShotRun();
+  const oneST=document.getElementById('oneshot-tx');if(oneST)oneST.oninput=e=>{this._oneShotText=e.target.value;};
+  const styS=document.getElementById('style-save');if(styS)styS.onclick=()=>{const el=document.getElementById('style-tx');Store.set('myStyle',el?el.value.trim():'');this.haptic(20);this.toast('הסגנון נשמר');this.render();};
+  const wsp=document.getElementById('washot-pick');if(wsp)wsp.onclick=()=>{const i=document.getElementById('washot-in');if(i)i.click();};
+  const wsi=document.getElementById('washot-in');if(wsi)wsi.onchange=e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    const rd=new FileReader();rd.onload=()=>{this._waShotRaw=rd.result;this.haptic(15);this.render();};rd.readAsDataURL(f);
+  };
+  const wsg=document.getElementById('washot-go');if(wsg)wsg.onclick=()=>{this._visionMode='wa';this.aiVisionConvert(this._waShotRaw);};
+  const aap=document.getElementById('aiaud-pick');if(aap)aap.onclick=()=>{const i=document.getElementById('aiaud-in');if(i)i.click();};
+  const aai=document.getElementById('aiaud-in');if(aai)aai.onchange=e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    if(f.size>20*1024*1024){this.toast('הקובץ גדול מדי (עד 20MB)');return;}
+    this._aiAudioName=f.name||'';
+    const rd=new FileReader();
+    rd.onload=()=>{this._aiAudioRaw=rd.result;this.haptic(15);this.render();};
+    rd.readAsDataURL(f);
+  };
+  const aag=document.getElementById('aiaud-go');if(aag)aag.onclick=()=>this.aiAudioConvert();
+  const sxc=document.getElementById('sum-close');if(sxc)sxc.onclick=()=>{Store.set('sumDismissed',new Date().toDateString());this.haptic(10);this.render();};
+  const lgo=document.querySelector('.brand .lg');if(lgo)lgo.onclick=()=>{lgo.classList.remove('pop');void lgo.offsetWidth;lgo.classList.add('pop');this.haptic(18);};
   const pdd=document.getElementById('prev-dedupe');if(pdd)pdd.onclick=()=>this.dedupeItems();
   const galSel=document.getElementById('gal-pick');if(galSel)galSel.onchange=e=>{this.state.galPick=e.target.value;this.haptic(10);this.render();};
   document.querySelectorAll('[data-galclient]').forEach(b=>{b.onclick=()=>{this._navStack.push('gallery');this.state.photoClient=b.dataset.galclient;this.state.modal='photos';this.render();};});
@@ -2959,6 +3200,16 @@ applyTheme();
 /* ===== auto-backup on every open (local snapshot, no friction) ===== */
 try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
 /* attempt silent Drive backup only if already authorized this session */
+try{
+  // גיבוי מתוזמן לדרייב — אחת לשבוע
+  var lastBk=+Store.get('driveBkAt',0);
+  var weekMs=7*24*60*60*1000;
+  if(Store.get('gClientId','')&&(Date.now()-lastBk)>weekMs){
+    setTimeout(function(){try{
+      if(window.Drive&&Drive.token&&App.driveBackup){App.driveBackup();Store.set('driveBkAt',Date.now());}
+    }catch(e){}},3000);
+  }
+}catch(e){}
 try{if(Store.get('gClientId','')&&window.Drive&&Drive.token){setTimeout(()=>{try{App.driveBackup&&App.driveBackup();}catch(e){}},1500);}}catch(e){}
 document.getElementById('splash-logo').innerHTML=logoBlock(true,1);
 /* ===== Service Worker: offline + auto-update ===== */
