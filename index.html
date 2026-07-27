@@ -785,6 +785,121 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .g-cb{width:20px;height:20px;border:2px solid var(--line);border-radius:6px;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;margin-top:2px;transition:.2s;}
 .g-ci.done .g-cb{background:var(--ok);border-color:var(--ok);color:#fff;}
 .g-ci.done > span:last-child{opacity:.45;text-decoration:line-through;}
+
+/* ═══════════════ מסך פתיחה v10.6 ═══════════════ */
+#splash{overflow:hidden;}
+#splash::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 38%,rgba(237,28,36,.34),transparent 58%);
+  animation:spPulse 1.7s ease-in-out infinite;
+}
+@keyframes spPulse{0%,100%{opacity:.35;transform:scale(.9);}50%{opacity:1;transform:scale(1.16);}}
+
+/* טבעות שמתפשטות החוצה */
+#splash::after{
+  content:'';position:absolute;top:38%;left:50%;width:180px;height:180px;margin:-90px 0 0 -90px;
+  border:2px solid rgba(237,28,36,.6);border-radius:50%;pointer-events:none;
+  animation:spRing 2.1s cubic-bezier(.16,1,.3,1) infinite;
+}
+@keyframes spRing{
+  0%{transform:scale(.35);opacity:0;}
+  22%{opacity:.9;}
+  100%{transform:scale(2.6);opacity:0;}
+}
+
+/* הלוגו נושם וזוהר */
+#splash-logo{position:relative;z-index:2;animation:spLogo 1.5s cubic-bezier(.16,1,.3,1) infinite alternate;}
+@keyframes spLogo{
+  0%{transform:scale(.94);filter:drop-shadow(0 0 10px rgba(237,28,36,.45)) brightness(1);}
+  100%{transform:scale(1.07);filter:drop-shadow(0 0 34px rgba(237,28,36,.95)) brightness(1.35);}
+}
+
+/* הילה פנימית מאחורי הלוגו */
+#splash-logo::before{
+  content:'';position:absolute;inset:-34px;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,rgba(237,28,36,.5),transparent 66%);
+  filter:blur(20px);
+  animation:spGlow 1.1s ease-in-out infinite alternate;
+}
+@keyframes spGlow{0%{opacity:.4;transform:scale(.85);}100%{opacity:1;transform:scale(1.22);}}
+
+/* הטקסט מהבהב עדין */
+#splash .t{position:relative;z-index:2;animation:spText 1.6s ease-in-out infinite;}
+@keyframes spText{0%,100%{opacity:.72;text-shadow:0 0 8px rgba(237,28,36,.3);}50%{opacity:1;text-shadow:0 0 20px rgba(237,28,36,.75);}}
+#splash .s{position:relative;z-index:2;animation:spText 1.6s ease-in-out .3s infinite;}
+
+@media(prefers-reduced-motion:reduce){
+  #splash::before,#splash::after,#splash-logo,#splash-logo::before,#splash .t,#splash .s{animation:none!important;}
+}
+
+/* ═══════════════ ספלאש v10.6 — הילה פועמת ═══════════════ */
+#splash{position:relative;overflow:hidden;}
+#splash::before{
+  content:'';position:absolute;left:50%;top:22%;width:520px;height:520px;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(237,28,36,.34),rgba(237,28,36,.08) 45%,transparent 70%);
+  filter:blur(38px);animation:spAura 2.1s ease-in-out infinite;
+}
+#splash::after{
+  content:'';position:absolute;left:50%;top:22%;width:230px;height:230px;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  border:2px solid rgba(237,28,36,.6);animation:spRing 2.1s cubic-bezier(.2,.8,.3,1) infinite;
+}
+@keyframes spAura{
+  0%,100%{opacity:.42;transform:translate(-50%,-50%) scale(.86);}
+  50%{opacity:1;transform:translate(-50%,-50%) scale(1.16);}
+}
+@keyframes spRing{
+  0%{opacity:.85;transform:translate(-50%,-50%) scale(.62);}
+  70%{opacity:0;transform:translate(-50%,-50%) scale(1.75);}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.9);}
+}
+#splash-logo{position:relative;z-index:2;animation:spLogo 2.1s ease-in-out infinite;}
+@keyframes spLogo{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(237,28,36,.45)) brightness(1);}
+  50%{transform:scale(1.07);filter:drop-shadow(0 0 26px rgba(237,28,36,.95)) brightness(1.35);}
+}
+#splash .t{position:relative;z-index:2;animation:spText 2.1s ease-in-out infinite;}
+@keyframes spText{
+  0%,100%{opacity:.82;text-shadow:0 0 0 rgba(237,28,36,0);}
+  50%{opacity:1;text-shadow:0 0 18px rgba(237,28,36,.7);}
+}
+#tehilim{position:relative;z-index:2;}
+@media(prefers-reduced-motion:reduce){
+  #splash::before,#splash::after,#splash-logo,#splash .t{animation:none!important;}
+}
+
+/* ═══════════════ נספח משפטי v10.6 ═══════════════ */
+.ax-page{background:#fff;color:#111;font-family:'Noto Sans Hebrew',Arial,sans-serif;padding:34px 40px;direction:rtl;font-size:12.5px;line-height:1.85;}
+.ax-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-bottom:3px solid #ED1C24;padding-bottom:16px;margin-bottom:22px;}
+.ax-logo{flex:none;}
+.ax-title{text-align:center;flex:1;}
+.ax-big{font-size:23px;font-weight:900;color:#111;letter-spacing:-.4px;}
+.ax-sub{font-size:11.5px;color:#777;margin-top:3px;letter-spacing:1.5px;}
+.ax-meta{font-size:11px;color:#555;text-align:left;flex:none;line-height:1.8;}
+.ax-cl{margin-bottom:17px;page-break-inside:avoid;}
+.ax-n{display:inline-block;background:#ED1C24;color:#fff;font-weight:900;font-size:11.5px;width:22px;height:22px;line-height:22px;text-align:center;border-radius:4px;vertical-align:top;margin-left:8px;}
+.ax-t{display:inline-block;font-weight:900;font-size:14px;color:#111;margin-bottom:6px;}
+.ax-b{padding-right:30px;color:#333;}
+.ax-b p{margin-bottom:6px;}
+.ax-b b{color:#111;}
+.ax-parties{display:flex;gap:16px;}
+.ax-parties > div{flex:1;background:#F7F5F1;border:1px solid #E2DED7;border-radius:8px;padding:11px 13px;font-size:12px;line-height:1.7;}
+.ax-role{display:block;font-size:9.5px;letter-spacing:1.4px;color:#ED1C24;font-weight:800;margin-bottom:4px;}
+.ax-scope{background:#F7F5F1;border-right:3px solid #ED1C24;padding:8px 11px;margin-bottom:6px;border-radius:0 6px 6px 0;font-size:12px;}
+.ax-scope b{display:block;color:#111;margin-bottom:2px;}
+.ax-scope span{color:#555;font-size:11.5px;}
+.ax-tb{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px;}
+.ax-tb td{padding:7px 10px;border-bottom:1px solid #EEE;}
+.ax-tb td:last-child{text-align:left;font-weight:700;white-space:nowrap;}
+.ax-tb .ax-sum td{border-top:2px solid #ED1C24;border-bottom:none;font-weight:900;font-size:14px;color:#ED1C24;padding-top:9px;}
+.ax-sign{display:flex;gap:24px;margin-top:26px;padding-top:18px;border-top:1px solid #DDD;page-break-inside:avoid;}
+.ax-sb{flex:1;text-align:center;}
+.ax-sl{font-size:10px;letter-spacing:1.3px;color:#ED1C24;font-weight:800;margin-bottom:8px;}
+.ax-line{height:44px;border-bottom:1px solid #999;}
+.ax-sig{height:52px;object-fit:contain;display:block;margin:0 auto;}
+.ax-sn{font-size:11.5px;color:#555;margin-top:5px;border-top:1px solid #DDD;padding-top:5px;}
+.ax-foot{margin-top:18px;padding-top:11px;border-top:1px solid #EEE;font-size:10px;color:#999;text-align:center;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -818,7 +933,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='10.5';
+const VERSION='10.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1284,11 +1399,11 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays'];}};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle'];
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -1809,7 +1924,7 @@ const App={
     <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal'};
+ modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -1844,6 +1959,10 @@ const App={
      <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="475"/></div>
    </div>
    <div style="font-size:11px;color:var(--muted);margin-top:4px">💡 בהצעת תכנון ה-PDF יציג סעיפים וכמויות בלבד (בלי מחיר לכל שורה), ובסוף: המחיר למ"ר.</div>`:''}
+   <div class="sec-title">⚖️ נספח משפטי</div>
+   <div class="row2"><div class="field"><label>אחריות (חודשים)</label><input id="ax_warr" type="number" inputmode="numeric" value="${Store.get('annexWarranty','12')}" placeholder="12"/></div>
+     <div class="field"><label>משך עבודה (ימים)</label><input id="ax_days" type="number" inputmode="numeric" value="${Store.get('annexDays','')}" placeholder="לא חובה"/></div></div>
+   <div style="font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:6px">משמש בנספח המשפטי. אם משך העבודה ריק — ייכתב "ייקבע בכתב".</div>
    <div class="sec-title">הנחת לקוח ומקדמה</div>
    <div class="row2"><div class="field"><label>אחוז הנחה (%)</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
      <div class="field"><label>מקדמה (%) — תופיע בהצעה</label><input id="q_adv" type="number" inputmode="decimal" value="${s.advance||''}" placeholder="0"/></div></div>
@@ -1872,8 +1991,10 @@ const App={
      <button class="qa-btn" id="quick-add-btn">✨ פזר לקטגוריות</button>
    </div>
    <button class="btn-ghost" id="check-missing" style="margin-bottom:8px">💡 בדוק סעיפים חסרים (AI)</button>
+   <button class="btn-ghost" id="gen-annex" style="margin-bottom:8px">⚖️ נספח משפטי להצעה</button>
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
+   <button class="btn-ghost" id="open-annex">⚖️ נספח משפטי — PDF</button>
    <button class="btn-ghost" id="gen-share">📲 צור ושתף (WhatsApp / מייל)</button>
    <button class="btn-ghost" id="weblink" style="border-color:var(--red);color:var(--red)">🔗 צור לינק הצעה לשליחה ללקוח</button>`;
  },
@@ -2216,7 +2337,7 @@ const App={
      ${item('tracking','📤','הצעות ומעקב','מעקב אחר סטטוס ואישורים',false)}
      ${item('reviews','⭐','משובים','ביקורות לקוחות',false)}
      ${item('stats','📊','דו"ח חודשי','סטטיסטיקות והכנסות',false)}
-     ${item('guide','📘','מדריך שימוש','28 נושאים · הכל על האפליקציה',false)}
+     ${item('guide','📘','מדריך שימוש','28 נושאים · הכל על האפליקציה',true)}
      ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
  },
@@ -2645,6 +2766,121 @@ const App={
    </div>
    <button class="btn-block" id="g-back" style="margin-top:10px">\u05d7\u05d6\u05e8\u05d4 \u05dc\u05e8\u05e9\u05d9\u05de\u05d4</button>`;
  },
+ legalAnnexHtml(){
+  const s=this.state,cl=s.client||{};
+  const today=new Date().toLocaleDateString('he-IL');
+  const total=this.grand();
+  const adv=+s.advance||0;
+  const advSum=adv>0?Math.round(total*adv/100):0;
+  const nisf=function(n){return (Math.round(n)).toLocaleString('en-US')+'\u00a0\u20aa';};
+  const days=Store.get('annexDays','')||'__';
+  const warr=Store.get('annexWarranty','12');
+  const cure=Store.get('annexCure','14');
+  const cats=this.chosen().map(function(g){return g.cat.title;}).join(', ')||'\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5';
+  const C=function(n,t,body){return '<div class="lx-c"><div class="lx-h"><span class="lx-n">'+n+'</span>'+t+'</div>'+body+'</div>';};
+  return `<div class="lx">
+   <div class="lx-top">
+     <div class="lx-title">\u05e0\u05e1\u05e4\u05d7 \u05de\u05e9\u05e4\u05d8\u05d9 \u05dc\u05d4\u05e1\u05db\u05dd \u05e2\u05d1\u05d5\u05d3\u05d4</div>
+     <div class="lx-sub">\u05e0\u05e1\u05e4\u05d7 \u05dc\u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05de\u05e1\u05f3 ${s.quoteNo} \u00b7 ${today}</div>
+   </div>
+
+   <div class="lx-parties">
+     <div><b>\u05d4\u05e7\u05d1\u05dc\u05df:</b> \u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998 \u00b7 054-5718316</div>
+     <div><b>\u05d4\u05de\u05d6\u05de\u05d9\u05df:</b> ${cl.name||'________'} ${cl.phone?'\u00b7 '+cl.phone:''}</div>
+     <div><b>\u05de\u05d5\u05e9\u05d0 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4:</b> ${cl.project||cats}</div>
+     <div><b>\u05db\u05ea\u05d5\u05d1\u05ea \u05d4\u05d0\u05ea\u05e8:</b> ${cl.address||'________'}</div>
+   </div>
+
+   ${C('1','\u05de\u05d4\u05d5\u05ea \u05d4\u05d4\u05e1\u05db\u05dd','<p>\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05de\u05d4\u05d5\u05d5\u05d4 \u05d7\u05dc\u05e7 \u05d1\u05dc\u05ea\u05d9 \u05e0\u05e4\u05e8\u05d3 \u05de\u05d4\u05e6\u05e2\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05e9\u05d1\u05e8\u05d0\u05e9\u05d5. \u05d4\u05e7\u05d1\u05dc\u05df \u05de\u05ea\u05d7\u05d9\u05d9\u05d1 \u05dc\u05d1\u05e6\u05e2 \u05d0\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d4\u05de\u05e4\u05d5\u05e8\u05d8\u05d5\u05ea \u05d1\u05d4\u05e6\u05e2\u05d4, \u05d1\u05d0\u05d5\u05e4\u05df \u05de\u05e7\u05e6\u05d5\u05e2\u05d9 \u05d5\u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05ea\u05e7\u05e0\u05d9\u05dd \u05d4\u05d9\u05e9\u05e8\u05d0\u05dc\u05d9\u05d9\u05dd \u05d4\u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9\u05d9\u05dd. \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d0\u05d9\u05e0\u05df \u05de\u05e4\u05d5\u05e8\u05d8\u05d5\u05ea \u05d1\u05d4\u05e6\u05e2\u05d4 \u05d0\u05d9\u05e0\u05df \u05db\u05dc\u05d5\u05dc\u05d5\u05ea \u05d1\u05ea\u05de\u05d5\u05e8\u05d4.</p>')}
+
+   ${C('2','\u05dc\u05d5\u05d7\u05d5\u05ea \u05d6\u05de\u05e0\u05d9\u05dd','<p>\u05de\u05e9\u05da \u05d4\u05d1\u05d9\u05e6\u05d5\u05e2 \u05d4\u05de\u05e9\u05d5\u05e2\u05e8: <b>'+days+'</b> \u05d9\u05de\u05d9 \u05e2\u05d1\u05d5\u05d3\u05d4, \u05d1\u05db\u05e4\u05d5\u05e3 \u05dc\u05d0\u05e1\u05e4\u05e7\u05ea \u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05d1\u05de\u05d5\u05e2\u05d3 \u05d5\u05dc\u05d2\u05d9\u05e9\u05d4 \u05e8\u05e6\u05d5\u05e4\u05d4 \u05dc\u05d0\u05ea\u05e8. \u05e2\u05d9\u05db\u05d5\u05d1\u05d9\u05dd \u05e9\u05de\u05e7\u05d5\u05e8\u05dd \u05d1\u05de\u05d6\u05d2 \u05d0\u05d5\u05d5\u05d9\u05e8, \u05db\u05d5\u05d7 \u05e2\u05dc\u05d9\u05d5\u05df, \u05e2\u05d9\u05db\u05d5\u05d1 \u05d1\u05d0\u05e1\u05e4\u05e7\u05d4 \u05e9\u05d0\u05d9\u05e0\u05d5 \u05d1\u05e9\u05dc\u05d9\u05d8\u05ea \u05d4\u05e7\u05d1\u05dc\u05df, \u05d0\u05d5 \u05e9\u05d9\u05e0\u05d5\u05d9\u05d9\u05dd \u05e9\u05d3\u05e8\u05e9 \u05d4\u05de\u05d6\u05de\u05d9\u05df \u2014 \u05d9\u05d3\u05d7\u05d5 \u05d0\u05ea \u05de\u05d5\u05e2\u05d3 \u05d4\u05e1\u05d9\u05d5\u05dd \u05d1\u05d4\u05ea\u05d0\u05dd.</p>')}
+
+   ${C('3','\u05ea\u05de\u05d5\u05e8\u05d4 \u05d5\u05ea\u05e0\u05d0\u05d9 \u05ea\u05e9\u05dc\u05d5\u05dd','<p>\u05e1\u05da \u05d4\u05ea\u05de\u05d5\u05e8\u05d4: <b>'+nisf(total)+'</b> (\u05db\u05d5\u05dc\u05dc \u05de\u05e2\u05f4\u05de).'+(adv>0?' \u05de\u05e7\u05d3\u05de\u05d4 \u05e2\u05dd \u05ea\u05d7\u05d9\u05dc\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4: <b>'+nisf(advSum)+'</b> ('+adv+'%).':'')+' \u05d9\u05ea\u05e8\u05ea \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u05ea\u05d1\u05d5\u05e6\u05e2 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05d4\u05ea\u05e7\u05d3\u05de\u05d5\u05ea \u05d1\u05e4\u05d5\u05e2\u05dc \u05d5\u05db\u05e0\u05d2\u05d3 \u05d7\u05e9\u05d1\u05d5\u05e0\u05d9\u05d5\u05ea. \u05e2\u05d9\u05db\u05d5\u05d1 \u05d1\u05ea\u05e9\u05dc\u05d5\u05dd \u05de\u05e2\u05dc 14 \u05d9\u05d5\u05dd \u05de\u05d6\u05db\u05d4 \u05d0\u05ea \u05d4\u05e7\u05d1\u05dc\u05df \u05d1\u05d4\u05e9\u05d4\u05d9\u05d9\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e2\u05d3 \u05dc\u05d4\u05e1\u05d3\u05e8\u05ea\u05d5, \u05de\u05d1\u05dc\u05d9 \u05e9\u05d9\u05d9\u05d7\u05e9\u05d1 \u05db\u05d4\u05e4\u05e8\u05d4.</p>')}
+
+   ${C('4','\u05e9\u05d9\u05e0\u05d5\u05d9\u05d9\u05dd \u05d5\u05ea\u05d5\u05e1\u05e4\u05d5\u05ea','<p>\u05db\u05dc \u05e9\u05d9\u05e0\u05d5\u05d9 \u05d0\u05d5 \u05ea\u05d5\u05e1\u05e4\u05ea \u05dc\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d4\u05de\u05e4\u05d5\u05e8\u05d8\u05d5\u05ea \u05d9\u05ea\u05d5\u05de\u05d7\u05e8 \u05d1\u05e0\u05e4\u05e8\u05d3 \u05d5\u05d9\u05d0\u05d5\u05e9\u05e8 \u05d1\u05db\u05ea\u05d1 (\u05dc\u05e8\u05d1\u05d5\u05ea \u05d1\u05d4\u05d5\u05d3\u05e2\u05ea \u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4) \u05dc\u05e4\u05e0\u05d9 \u05d1\u05d9\u05e6\u05d5\u05e2\u05d5. \u05dc\u05d0 \u05ea\u05d1\u05d5\u05e6\u05e2 \u05e2\u05d1\u05d5\u05d3\u05d4 \u05e0\u05d5\u05e1\u05e4\u05ea \u05dc\u05dc\u05d0 \u05d0\u05d9\u05e9\u05d5\u05e8 \u05de\u05d7\u05d9\u05e8 \u05de\u05e8\u05d0\u05e9.</p>')}
+
+   ${C('5','\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea','<p>\u05d4\u05e7\u05d1\u05dc\u05df \u05d0\u05d7\u05e8\u05d0\u05d9 \u05dc\u05d8\u05d9\u05d1 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4 \u05dc\u05de\u05e9\u05da <b>'+warr+' \u05d7\u05d5\u05d3\u05e9\u05d9\u05dd</b> \u05de\u05de\u05d5\u05e2\u05d3 \u05d4\u05de\u05e1\u05d9\u05e8\u05d4. \u05d4\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d0\u05d9\u05e0\u05d4 \u05d7\u05dc\u05d4 \u05e2\u05dc \u05d1\u05dc\u05d0\u05d9 \u05d8\u05d1\u05e2\u05d9, \u05e0\u05d6\u05e7 \u05e9\u05e0\u05d2\u05e8\u05dd \u05d1\u05e9\u05d9\u05de\u05d5\u05e9 \u05dc\u05d0 \u05e0\u05d0\u05d5\u05ea, \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d1\u05d5\u05e6\u05e2\u05d5 \u05e2\u05dc \u05d9\u05d3\u05d9 \u05d2\u05d5\u05e8\u05dd \u05d0\u05d7\u05e8, \u05d0\u05d5 \u05e2\u05dc \u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05e9\u05e1\u05d9\u05e4\u05e7 \u05d4\u05de\u05d6\u05de\u05d9\u05df. \u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d9\u05e6\u05e8\u05df \u05e2\u05dc \u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u05ea\u05e2\u05d1\u05d5\u05e8 \u05dc\u05de\u05d6\u05de\u05d9\u05df.</p>')}
+
+   ${C('6','\u05d0\u05ea\u05e8 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4','<p>\u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d9\u05e2\u05de\u05d9\u05d3 \u05dc\u05e8\u05e9\u05d5\u05ea \u05d4\u05e7\u05d1\u05dc\u05df \u05d0\u05ea \u05d4\u05d0\u05ea\u05e8 \u05e4\u05e0\u05d5\u05d9 \u05d5\u05e0\u05d2\u05d9\u05e9, \u05dc\u05e8\u05d1\u05d5\u05ea \u05d7\u05d9\u05d1\u05d5\u05e8\u05d9 \u05d7\u05e9\u05de\u05dc \u05d5\u05de\u05d9\u05dd \u05ea\u05e7\u05d9\u05e0\u05d9\u05dd. \u05e4\u05d9\u05e0\u05d5\u05d9 \u05ea\u05db\u05d5\u05dc\u05d4 \u05d5\u05d7\u05e4\u05e6\u05d9\u05dd \u05d0\u05d9\u05e9\u05d9\u05d9\u05dd \u05d1\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df, \u05d0\u05dc\u05d0 \u05d0\u05dd \u05e0\u05e7\u05d1\u05e2 \u05d0\u05d7\u05e8\u05ea \u05d1\u05d4\u05e6\u05e2\u05d4.</p>')}
+
+   ${C('7','\u05d1\u05d9\u05d8\u05d5\u05d7 \u05d5\u05d1\u05d8\u05d9\u05d7\u05d5\u05ea','<p>\u05d4\u05e7\u05d1\u05dc\u05df \u05de\u05ea\u05d7\u05d9\u05d9\u05d1 \u05dc\u05e7\u05d9\u05d9\u05dd \u05d0\u05ea \u05d4\u05d5\u05e8\u05d0\u05d5\u05ea \u05d4\u05d1\u05d8\u05d9\u05d7\u05d5\u05ea \u05d1\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d1\u05e0\u05d9\u05d9\u05d4 \u05d5\u05dc\u05d4\u05d7\u05d6\u05d9\u05e7 \u05d1\u05d9\u05d8\u05d5\u05d7 \u05e6\u05d3 \u05d2\u05f3 \u05db\u05de\u05e7\u05d5\u05d1\u05dc. \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d0\u05d7\u05e8\u05d0\u05d9 \u05dc\u05d1\u05d9\u05d8\u05d5\u05d7 \u05d4\u05de\u05d1\u05e0\u05d4 \u05d5\u05ea\u05db\u05d5\u05dc\u05ea\u05d5.</p>')}
+
+   ${C('8','\u05de\u05e1\u05d9\u05e8\u05d4 \u05d5\u05e7\u05d1\u05dc\u05d4','<p>\u05e2\u05dd \u05e1\u05d9\u05d5\u05dd \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d9\u05d1\u05d5\u05e6\u05e2 \u05e1\u05d9\u05d5\u05e8 \u05de\u05e9\u05d5\u05ea\u05e3. \u05dc\u05d9\u05e7\u05d5\u05d9\u05d9\u05dd \u05e9\u05d9\u05d9\u05de\u05e6\u05d0\u05d5 \u05d9\u05ea\u05d5\u05e7\u05e0\u05d5 \u05ea\u05d5\u05da <b>'+cure+' \u05d9\u05de\u05d9\u05dd</b>. \u05dc\u05d0\u05d7\u05e8 \u05d4\u05ea\u05d9\u05e7\u05d5\u05df \u05ea\u05d9\u05d7\u05ea\u05dd \u05ea\u05e2\u05d5\u05d3\u05ea \u05de\u05e1\u05d9\u05e8\u05d4 \u05d5\u05ea\u05e9\u05d5\u05dc\u05dd \u05d4\u05d9\u05ea\u05e8\u05d4.</p>')}
+
+   ${C('9','\u05d4\u05e4\u05e1\u05e7\u05ea \u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea','<p>\u05e6\u05d3 \u05d4\u05de\u05d1\u05e7\u05e9 \u05dc\u05d4\u05e4\u05e1\u05d9\u05e7 \u05d0\u05ea \u05d4\u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea \u05d9\u05d5\u05d3\u05d9\u05e2 \u05e2\u05dc \u05db\u05da \u05d1\u05db\u05ea\u05d1. \u05d1\u05de\u05e7\u05e8\u05d4 \u05db\u05d6\u05d4 \u05d9\u05e9\u05d5\u05dc\u05dd \u05dc\u05e7\u05d1\u05dc\u05df \u05e2\u05d1\u05d5\u05e8 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d1\u05d5\u05e6\u05e2\u05d5 \u05d1\u05e4\u05d5\u05e2\u05dc \u05d5\u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05e9\u05e0\u05e8\u05db\u05e9\u05d5 \u05e2\u05d1\u05d5\u05e8 \u05d4\u05e4\u05e8\u05d5\u05d9\u05e7\u05d8, \u05d1\u05ea\u05d5\u05e1\u05e4\u05ea \u05d4\u05d5\u05e6\u05d0\u05d5\u05ea \u05e1\u05d1\u05d9\u05e8\u05d5\u05ea \u05e9\u05e0\u05d2\u05e8\u05de\u05d5.</p>')}
+
+   ${C('10','\u05d9\u05e9\u05d5\u05d1 \u05de\u05d7\u05dc\u05d5\u05e7\u05d5\u05ea','<p>\u05d4\u05e6\u05d3\u05d3\u05d9\u05dd \u05d9\u05e4\u05e2\u05dc\u05d5 \u05dc\u05d9\u05d9\u05e9\u05d5\u05d1 \u05db\u05dc \u05de\u05d7\u05dc\u05d5\u05e7\u05ea \u05d1\u05d3\u05e8\u05da \u05e9\u05dc \u05d3\u05d9\u05df \u05d5\u05d3\u05d1\u05e8\u05d9\u05dd. \u05dc\u05d0 \u05d4\u05d5\u05e9\u05d2\u05d4 \u05d4\u05e1\u05db\u05de\u05d4, \u05ea\u05d5\u05e4\u05e0\u05d4 \u05d4\u05de\u05d7\u05dc\u05d5\u05e7\u05ea \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05e9\u05e4\u05d8 \u05d4\u05de\u05d5\u05e1\u05de\u05da.</p>')}
+
+   <div class="lx-sign">
+     <div class="lx-sb"><div class="lx-sl"></div>\u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05e7\u05d1\u05dc\u05df<br><span>\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</span></div>
+     <div class="lx-sb"><div class="lx-sl"></div>\u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df<br><span>${cl.name||''}</span></div>
+   </div>
+   <div class="lx-date">\u05ea\u05d0\u05e8\u05d9\u05da: ${today}</div>
+  </div>`;
+ },
+ annexModal(){
+  const days=Store.get('annexDays','');
+  const warr=Store.get('annexWarranty','12');
+  const cure=Store.get('annexCure','14');
+  return `<h2>\u2696\ufe0f \u05e0\u05e1\u05e4\u05d7 \u05de\u05e9\u05e4\u05d8\u05d9 <button class="x" data-close>\u2715</button></h2>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">\u05e0\u05e1\u05e4\u05d7 \u05d1\u05df 10 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05e9\u05e0\u05d1\u05e0\u05d4 \u05de\u05e4\u05e8\u05d8\u05d9 \u05d4\u05d4\u05e6\u05e2\u05d4 \u2014 \u05dc\u05e7\u05d5\u05d7, \u05e1\u05db\u05d5\u05dd, \u05de\u05e7\u05d3\u05de\u05d4 \u05d5\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea.</div>
+   <div class="row2">
+     <div class="field"><label>\u05d9\u05de\u05d9 \u05e2\u05d1\u05d5\u05d3\u05d4 \u05de\u05e9\u05d5\u05e2\u05e8\u05d9\u05dd</label><input id="ax-days" type="number" inputmode="numeric" value="${days}" placeholder="30"/></div>
+     <div class="field"><label>\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea (\u05d7\u05d5\u05d3\u05e9\u05d9\u05dd)</label><input id="ax-warr" type="number" inputmode="numeric" value="${warr}"/></div>
+   </div>
+   <div class="field"><label>\u05d9\u05de\u05d9\u05dd \u05dc\u05ea\u05d9\u05e7\u05d5\u05df \u05dc\u05d9\u05e7\u05d5\u05d9\u05d9\u05dd</label><input id="ax-cure" type="number" inputmode="numeric" value="${cure}"/></div>
+   <button class="btn-block" id="ax-pdf" style="margin-top:14px">\u2696\ufe0f \u05d4\u05e4\u05e7 \u05e0\u05e1\u05e4\u05d7 \u2014 PDF</button>
+   <div class="g-note stop" style="margin-top:16px"><b>\u05dc\u05e4\u05e0\u05d9 \u05e9\u05de\u05e9\u05ea\u05de\u05e9\u05d9\u05dd</b><br>\u05d6\u05d5 \u05ea\u05d1\u05e0\u05d9\u05ea \u05e1\u05d8\u05e0\u05d3\u05e8\u05d8\u05d9\u05ea \u05dc\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5, \u05dc\u05d0 \u05d9\u05d9\u05e2\u05d5\u05e5 \u05de\u05e9\u05e4\u05d8\u05d9. \u05de\u05d5\u05de\u05dc\u05e5 \u05e9\u05e2\u05d5\u05e8\u05da \u05d3\u05d9\u05df \u05d9\u05e2\u05d1\u05d5\u05e8 \u05e2\u05dc \u05d4\u05e0\u05d5\u05e1\u05d7 \u05e4\u05e2\u05dd \u05d0\u05d7\u05ea \u05d5\u05d9\u05ea\u05d0\u05d9\u05dd \u05d0\u05d5\u05ea\u05d5 \u05dc\u05e6\u05e8\u05db\u05d9\u05da \u2014 \u05de\u05e9\u05dd \u05d5\u05d0\u05d9\u05dc\u05da \u05d4\u05d5\u05d0 \u05de\u05e9\u05de\u05e9 \u05dc\u05db\u05dc \u05d4\u05e6\u05e2\u05d4.</div>`;
+ },
+ async generateAnnexPDF(){
+  if(!this.state.client.name||!this.state.client.name.trim()){this.toast('\u05d7\u05e1\u05e8 \u05e9\u05dd \u05dc\u05e7\u05d5\u05d7');return;}
+  this.haptic(15);this.busy('\u05de\u05db\u05d9\u05df \u05e0\u05e1\u05e4\u05d7...');
+  try{
+    const host=document.createElement('div');
+    host.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#fff;';
+    host.innerHTML='<style>'+this.annexCss()+'</style>'+this.legalAnnexHtml();
+    document.body.appendChild(host);
+    await new Promise(r=>setTimeout(r,120));
+    const canvas=await html2canvas(host,{scale:2,backgroundColor:'#ffffff',useCORS:true});
+    document.body.removeChild(host);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF('p','mm','a4');
+    const pw=210, ph=297;
+    const iw=pw, ih=canvas.height*(pw/canvas.width);
+    let left=ih, pos=0, first=true;
+    while(left>0){
+      if(!first)pdf.addPage();
+      pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',0,pos,iw,ih);
+      left-=ph; pos-=ph; first=false;
+    }
+    const fname='\u05e0\u05e1\u05e4\u05d7_\u05de\u05e9\u05e4\u05d8\u05d9_'+(this.state.client.name||'').replace(/[^\u0590-\u05FF\w]/g,'_')+'.pdf';
+    const blob=pdf.output('blob');
+    let shared=false;
+    if(navigator.canShare){
+      try{const f=new File([blob],fname,{type:'application/pdf'});
+        if(navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'\u05e0\u05e1\u05e4\u05d7 \u05de\u05e9\u05e4\u05d8\u05d9'});shared=true;}
+      }catch(e){}
+    }
+    if(!shared)pdf.save(fname);
+    this.idle();this.haptic(25);this.toast('\u05d4\u05e0\u05e1\u05e4\u05d7 \u05d4\u05d5\u05e4\u05e7');
+  }catch(e){this.idle();this.toast('\u05d4\u05e4\u05e7\u05ea \u05d4\u05e0\u05e1\u05e4\u05d7 \u05e0\u05db\u05e9\u05dc\u05d4');}
+ },
+ annexCss(){return `
+  .lx{font-family:'Noto Sans Hebrew','Arial',sans-serif;direction:rtl;padding:38px 42px;color:#1a1a1a;font-size:12.5px;line-height:1.85;background:#fff;}
+  .lx-top{border-bottom:3px solid #ed1c24;padding-bottom:12px;margin-bottom:18px;}
+  .lx-title{font-size:22px;font-weight:900;color:#ed1c24;}
+  .lx-sub{font-size:11.5px;color:#666;margin-top:4px;}
+  .lx-parties{background:#f6f2ea;border:1px solid #e0d9cc;border-radius:6px;padding:12px 14px;margin-bottom:20px;font-size:12px;line-height:2;}
+  .lx-c{margin-bottom:15px;break-inside:avoid;}
+  .lx-h{font-weight:800;font-size:13.5px;margin-bottom:5px;display:flex;gap:8px;align-items:baseline;}
+  .lx-n{background:#ed1c24;color:#fff;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;flex:none;}
+  .lx-c p{margin:0;text-align:justify;}
+  .lx-sign{display:flex;gap:40px;margin-top:34px;}
+  .lx-sb{flex:1;font-size:11.5px;font-weight:700;}
+  .lx-sb span{font-weight:400;color:#666;font-size:10.5px;}
+  .lx-sl{border-bottom:1px solid #333;height:34px;margin-bottom:6px;}
+  .lx-date{margin-top:16px;font-size:11px;color:#666;}
+ `;},
  galleryModal(){
   const clients=Store.get('clients',[]);
   const pick=this.state.galPick||'';
@@ -2813,6 +3049,7 @@ const App={
   const osg=document.getElementById('open-sign');if(osg)osg.onclick=()=>{this.captureQuote();this.state.modal='sign';this.render();};
   const qg=document.getElementById('q_gallery');if(qg)qg.onchange=()=>{this.state.includeGallery=qg.checked;Store.set('includeGallery',qg.checked);};
   const opf=document.getElementById('open-portfolio');if(opf)opf.onclick=()=>{this.captureQuote();this.state.modal='portfolio';this.render();};
+  const gax=document.getElementById('gen-annex');if(gax)gax.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='annex';this.generatePDF(true);};
   const gp=document.getElementById('gen-pdf');if(gp)gp.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='quote';this.generatePDF(false);};
   const cms=document.getElementById('check-missing');if(cms)cms.onclick=()=>{this.captureQuote();this.suggestMissingItems();};
   const qab=document.getElementById('quick-add-btn');if(qab)qab.onclick=()=>{const el=document.getElementById('quick-add');const t=el?el.value.trim():'';if(!t){this.toast('כתוב קודם מה להוסיף');return;}this.captureQuote();this._v2qText=t;this.v2qConvert();};
@@ -2954,6 +3191,14 @@ const App={
     this.haptic(20);
     window.open(waLink(cl.phone,txt),'_blank');
   };});
+  const oax=document.getElementById('open-annex');if(oax)oax.onclick=()=>{this.captureQuote();this.saveClient();if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='annex';this.haptic(12);this.render();};
+  const axp=document.getElementById('ax-pdf');if(axp)axp.onclick=()=>{
+    const d=document.getElementById('ax-days'),w=document.getElementById('ax-warr'),cu=document.getElementById('ax-cure');
+    if(d)Store.set('annexDays',d.value.trim());
+    if(w)Store.set('annexWarranty',w.value.trim()||'12');
+    if(cu)Store.set('annexCure',cu.value.trim()||'14');
+    this.generateAnnexPDF();
+  };
   const gsr=document.getElementById('g-search');if(gsr)gsr.oninput=e=>{this.state.gQ=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('g-search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(_){}}};
   document.querySelectorAll('[data-gtopic]').forEach(b=>{b.onclick=()=>{if(this.state.modal==='guide')this._navStack.push('guide');this.state.gTopic=b.dataset.gtopic;this.state.modal='gtopic';this.haptic(12);this.render();};});
   const gbk2=document.getElementById('g-back');if(gbk2)gbk2.onclick=()=>{this.state.modal='guide';this.haptic(10);this.render();};
@@ -3163,7 +3408,7 @@ const App={
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
- captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}},
+ captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}const axw=g('ax_warr');if(axw!==undefined&&axw!=='')Store.set('annexWarranty',axw);const axd=g('ax_days');if(axd!==undefined)Store.set('annexDays',axd);},
  saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
  exportClients(){const list=Store.get('clients',[]);if(!list.length){this.toast('אין לקוחות לייצוא');return;}
   const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
@@ -3203,6 +3448,84 @@ const App={
  backup(){const data={_v:VERSION};Store.keys().forEach(k=>data[k]=Store.get(k,null));const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yehuda-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();this.toast('גיבוי נוצר ✓');},
  restore(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);Object.keys(d).forEach(k=>{if(k!=='_v'&&d[k]!==null)Store.set(k,d[k]);});this.state.catalog=Store.get('catalog',this.state.catalog);this.state.custom=Store.get('customItems',[]);this.toast('שוחזר בהצלחה ✓');this.state.modal=null;this.render();}catch(x){this.toast('קובץ לא תקין');}};rd.readAsText(f);},
 
+ buildAnnexHtml(){
+  const s=this.state,cl=s.client||{};
+  const groups=this.chosen();
+  const total=this.grand();
+  const sub=this.subtotal();
+  const adv=+s.advance||0;
+  const advAmt=adv>0?Math.round(total*adv/100):0;
+  const today=new Date().toLocaleDateString('he-IL');
+  const scope=[];
+  groups.forEach(function(g){
+    const names=g.lines.map(function(l){return l.name;}).slice(0,6);
+    scope.push({cat:g.cat.title,items:names,more:Math.max(0,g.lines.length-6)});
+  });
+  const nis2=function(n){return Math.round(+n||0).toLocaleString('he-IL')+'\u00a0\u20aa';};
+  let sc='';
+  scope.forEach(function(x){
+    sc+='<div class="ax-scope"><b>'+x.cat+'</b><span>'+x.items.join(' \u00b7 ')+(x.more?' \u05d5\u05e2\u05d5\u05d3 '+x.more+' \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd':'')+'</span></div>';
+  });
+  const warr=Store.get('annexWarranty','12');
+  const days=Store.get('annexDays','');
+  const cl_=function(n,t,b){return '<div class="ax-cl"><div class="ax-n">'+n+'</div><div class="ax-t">'+t+'</div><div class="ax-b">'+b+'</div></div>';};
+
+  return `<div class="ax-page">
+   <div class="ax-head">
+     <div class="ax-logo">${logoBlock(false,.7)}</div>
+     <div class="ax-title"><div class="ax-big">\u05e0\u05e1\u05e4\u05d7 \u05dc\u05d4\u05e1\u05db\u05dd \u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea</div><div class="ax-sub">\u05ea\u05e0\u05d0\u05d9\u05dd \u05db\u05dc\u05dc\u05d9\u05d9\u05dd \u05dc\u05d1\u05d9\u05e6\u05d5\u05e2 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5</div></div>
+     <div class="ax-meta"><b>\u05e0\u05e1\u05e4\u05d7 \u05dc\u05d4\u05e6\u05e2\u05d4:</b> ${s.quoteNo}<br><b>\u05ea\u05d0\u05e8\u05d9\u05da:</b> ${today}</div>
+   </div>
+
+   ${cl_('1','\u05d4\u05e6\u05d3\u05d3\u05d9\u05dd',
+     '<div class="ax-parties"><div><span class="ax-role">\u05d4\u05e7\u05d1\u05dc\u05df</span><b>\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</b><br>\u05d7.\u05e4 311834998<br>054-5718316<br>yuda090581@gmail.com</div>'+
+     '<div><span class="ax-role">\u05d4\u05de\u05d6\u05de\u05d9\u05df</span><b>'+(cl.name||'\u2014')+'</b>'+(cl.phone?'<br>'+cl.phone:'')+(cl.address?'<br>'+cl.address:'')+'</div></div>')}
+
+   ${cl_('2','\u05de\u05d4\u05d5\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4',
+     '<p>\u05d4\u05e7\u05d1\u05dc\u05df \u05d9\u05d1\u05e6\u05e2 \u05e2\u05d1\u05d5\u05e8 \u05d4\u05de\u05d6\u05de\u05d9\u05df '+(cl.project?'<b>'+cl.project+'</b>':'\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5')+(cl.address?' \u05d1\u05db\u05ea\u05d5\u05d1\u05ea <b>'+cl.address+'</b>':'')+', \u05d1\u05d4\u05d9\u05e7\u05e3 \u05d4\u05de\u05e4\u05d5\u05e8\u05d8 \u05d1\u05d4\u05e6\u05e2\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05e1\u05f3 '+s.quoteNo+' \u05d4\u05de\u05d4\u05d5\u05d5\u05d4 \u05d7\u05dc\u05e7 \u05d1\u05dc\u05ea\u05d9 \u05e0\u05e4\u05e8\u05d3 \u05de\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4.</p>'+sc)}
+
+   ${cl_('3','\u05d4\u05ea\u05de\u05d5\u05e8\u05d4',
+     '<table class="ax-tb"><tr><td>\u05e1\u05db\u05d5\u05dd \u05dc\u05e4\u05e0\u05d9 \u05de\u05e2\u05f4\u05de</td><td>'+nis2(sub)+'</td></tr>'+
+     (s.vatOn?'<tr><td>\u05de\u05e2\u05f4\u05de '+s.vatPct+'%</td><td>'+nis2(this.vat())+'</td></tr>':'')+
+     '<tr class="ax-sum"><td>\u05e1\u05d4\u05f4\u05db \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd</td><td>'+nis2(total)+'</td></tr></table>'+
+     '<p>\u05d4\u05ea\u05de\u05d5\u05e8\u05d4 \u05e1\u05d5\u05e4\u05d9\u05ea \u05d5\u05db\u05d5\u05dc\u05dc\u05ea \u05d0\u05ea \u05db\u05dc \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d5\u05d4\u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05d4\u05de\u05e4\u05d5\u05e8\u05d8\u05d9\u05dd \u05d1\u05d4\u05e6\u05e2\u05d4. \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d0\u05d9\u05e0\u05df \u05de\u05e4\u05d5\u05e8\u05d8\u05d5\u05ea \u05d0\u05d9\u05e0\u05df \u05db\u05dc\u05d5\u05dc\u05d5\u05ea.</p>')}
+
+   ${cl_('4','\u05ea\u05e0\u05d0\u05d9 \u05ea\u05e9\u05dc\u05d5\u05dd',
+     (adv>0?'<p>\u05de\u05e7\u05d3\u05de\u05d4 \u05d1\u05e9\u05d9\u05e2\u05d5\u05e8 <b>'+adv+'%</b> ('+nis2(advAmt)+') \u05ea\u05e9\u05d5\u05dc\u05dd \u05e2\u05dd \u05d7\u05ea\u05d9\u05de\u05ea \u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d5\u05dc\u05e4\u05e0\u05d9 \u05ea\u05d7\u05d9\u05dc\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea.</p>':'')+
+     '<p>\u05d9\u05ea\u05e8\u05ea \u05d4\u05ea\u05de\u05d5\u05e8\u05d4 \u05ea\u05e9\u05d5\u05dc\u05dd \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05d4\u05ea\u05e7\u05d3\u05de\u05d5\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea, \u05db\u05e4\u05d9 \u05e9\u05d9\u05e1\u05d5\u05db\u05dd \u05d1\u05d9\u05df \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd \u05d1\u05db\u05ea\u05d1. \u05ea\u05e9\u05dc\u05d5\u05dd \u05e1\u05d5\u05e4\u05d9 \u05d9\u05e9\u05d5\u05dc\u05dd \u05e2\u05dd \u05de\u05e1\u05d9\u05e8\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4 \u05d5\u05d0\u05d9\u05e9\u05d5\u05e8 \u05d4\u05de\u05d6\u05de\u05d9\u05df.</p>'+
+     '<p>\u05e2\u05d9\u05db\u05d5\u05d1 \u05d1\u05ea\u05e9\u05dc\u05d5\u05dd \u05de\u05e2\u05dc 14 \u05d9\u05de\u05d9\u05dd \u05de\u05d6\u05db\u05d4 \u05d0\u05ea \u05d4\u05e7\u05d1\u05dc\u05df \u05d1\u05d4\u05e9\u05d4\u05d9\u05d9\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e2\u05d3 \u05dc\u05d4\u05e1\u05d3\u05e8\u05ea\u05d5.</p>')}
+
+   ${cl_('5','\u05dc\u05d5\u05d7\u05d5\u05ea \u05d6\u05de\u05e0\u05d9\u05dd',
+     '<p>'+(days?'\u05de\u05e9\u05da \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d4\u05de\u05e9\u05d5\u05e2\u05e8 \u05d4\u05d5\u05d0 <b>'+days+' \u05d9\u05de\u05d9 \u05e2\u05d1\u05d5\u05d3\u05d4</b>':'\u05de\u05e9\u05da \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d9\u05d9\u05e7\u05d1\u05e2 \u05d1\u05db\u05ea\u05d1 \u05d1\u05d9\u05df \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd')+', \u05d1\u05db\u05e4\u05d5\u05e3 \u05dc\u05d6\u05de\u05d9\u05e0\u05d5\u05ea \u05d0\u05ea\u05e8 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4 \u05d5\u05dc\u05e7\u05d1\u05dc\u05ea \u05d4\u05d7\u05dc\u05d8\u05d5\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d1\u05de\u05d5\u05e2\u05d3.</p>'+
+     '<p>\u05e2\u05d9\u05db\u05d5\u05d1\u05d9\u05dd \u05d4\u05e0\u05d5\u05d1\u05e2\u05d9\u05dd \u05de\u05e9\u05d9\u05e0\u05d5\u05d9\u05d9 \u05de\u05d6\u05d2 \u05d0\u05d5\u05d5\u05d9\u05e8, \u05d0\u05d9 \u05d0\u05e1\u05e4\u05e7\u05ea \u05d7\u05d5\u05de\u05e8\u05d9\u05dd, \u05e9\u05d9\u05e0\u05d5\u05d9\u05d9\u05dd \u05e9\u05d3\u05e8\u05e9 \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d0\u05d5 \u05db\u05d5\u05d7 \u05e2\u05dc\u05d9\u05d5\u05df \u2014 \u05d0\u05d9\u05e0\u05dd \u05d1\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d4\u05e7\u05d1\u05dc\u05df.</p>')}
+
+   ${cl_('6','\u05e9\u05d9\u05e0\u05d5\u05d9\u05d9\u05dd \u05d5\u05ea\u05d5\u05e1\u05e4\u05d5\u05ea',
+     '<p>\u05db\u05dc \u05e9\u05d9\u05e0\u05d5\u05d9 \u05d0\u05d5 \u05ea\u05d5\u05e1\u05e4\u05ea \u05dc\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d9\u05e1\u05d5\u05db\u05de\u05d5 <b>\u05d1\u05db\u05ea\u05d1 \u05de\u05e8\u05d0\u05e9</b>, \u05dc\u05e8\u05d1\u05d5\u05ea \u05d4\u05e9\u05e4\u05e2\u05ea\u05dd \u05e2\u05dc \u05d4\u05ea\u05de\u05d5\u05e8\u05d4 \u05d5\u05e2\u05dc \u05dc\u05d5\u05d7\u05d5\u05ea \u05d4\u05d6\u05de\u05e0\u05d9\u05dd.</p>'+
+     '<p>\u05dc\u05d0 \u05ea\u05d1\u05d5\u05e6\u05e2 \u05e2\u05d1\u05d5\u05d3\u05d4 \u05e0\u05d5\u05e1\u05e4\u05ea \u05dc\u05dc\u05d0 \u05d0\u05d9\u05e9\u05d5\u05e8 \u05de\u05d7\u05d9\u05e8 \u05de\u05e8\u05d0\u05e9.</p>')}
+
+   ${cl_('7','\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea',
+     '<p>\u05d4\u05e7\u05d1\u05dc\u05df \u05d0\u05d7\u05e8\u05d0\u05d9 \u05dc\u05d8\u05d9\u05d1 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05dc\u05ea\u05e7\u05d5\u05e4\u05d4 \u05e9\u05dc <b>'+warr+' \u05d7\u05d5\u05d3\u05e9\u05d9\u05dd</b> \u05de\u05de\u05d5\u05e2\u05d3 \u05d4\u05de\u05e1\u05d9\u05e8\u05d4.</p>'+
+     '<p>\u05d4\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d0\u05d9\u05e0\u05d4 \u05d7\u05dc\u05d4 \u05e2\u05dc: \u05d1\u05dc\u05d0\u05d9 \u05d8\u05d1\u05e2\u05d9, \u05e0\u05d6\u05e7 \u05e9\u05e0\u05d2\u05e8\u05dd \u05d1\u05d9\u05d3\u05d9 \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d0\u05d5 \u05e6\u05d3 \u05e9\u05dc\u05d9\u05e9\u05d9, \u05e9\u05d9\u05de\u05d5\u05e9 \u05dc\u05d0 \u05e1\u05d1\u05d9\u05e8, \u05d0\u05d5 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d1\u05d5\u05e6\u05e2\u05d5 \u05e2\u05dc \u05d9\u05d3\u05d9 \u05d0\u05d7\u05e8\u05d9\u05dd.</p>'+
+     '<p>\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d9\u05e6\u05e8\u05df \u05e2\u05dc \u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05d5\u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u2014 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05ea\u05e0\u05d0\u05d9 \u05d4\u05d9\u05e6\u05e8\u05df.</p>')}
+
+   ${cl_('8','\u05d0\u05ea\u05e8 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4',
+     '<p>\u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d9\u05e2\u05de\u05d9\u05d3 \u05dc\u05e8\u05e9\u05d5\u05ea \u05d4\u05e7\u05d1\u05dc\u05df \u05d0\u05ea \u05d4\u05e0\u05db\u05e1 \u05e4\u05e0\u05d5\u05d9 \u05dc\u05e2\u05d1\u05d5\u05d3\u05d4, \u05dc\u05e8\u05d1\u05d5\u05ea \u05d7\u05d9\u05d1\u05d5\u05e8\u05d9 \u05d7\u05e9\u05de\u05dc \u05d5\u05de\u05d9\u05dd \u05ea\u05e7\u05d9\u05e0\u05d9\u05dd.</p>'+
+     '<p>\u05e4\u05d9\u05e0\u05d5\u05d9 \u05e8\u05d4\u05d9\u05d8\u05d9\u05dd \u05d5\u05d7\u05e4\u05e6\u05d9\u05dd \u05d0\u05d9\u05e9\u05d9\u05d9\u05dd \u05d1\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df, \u05d0\u05dc\u05d0 \u05d0\u05dd \u05e1\u05d5\u05db\u05dd \u05d0\u05d7\u05e8\u05ea \u05d1\u05db\u05ea\u05d1.</p>')}
+
+   ${cl_('9','\u05d4\u05e4\u05e1\u05e7\u05ea \u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea',
+     '<p>\u05e6\u05d3 \u05d4\u05de\u05e2\u05d5\u05e0\u05d9\u05d9\u05df \u05dc\u05d4\u05e4\u05e1\u05d9\u05e7 \u05d0\u05ea \u05d4\u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea \u05d9\u05d5\u05d3\u05d9\u05e2 \u05e2\u05dc \u05db\u05da \u05d1\u05db\u05ea\u05d1. \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d9\u05e9\u05dc\u05dd \u05e2\u05d1\u05d5\u05e8 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d1\u05d5\u05e6\u05e2\u05d5 \u05d1\u05e4\u05d5\u05e2\u05dc \u05d5\u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05e9\u05d4\u05d5\u05d6\u05de\u05e0\u05d5 \u05e2\u05d3 \u05dc\u05de\u05d5\u05e2\u05d3 \u05d4\u05d4\u05d5\u05d3\u05e2\u05d4.</p>')}
+
+   ${cl_('10','\u05db\u05dc\u05dc\u05d9',
+     '<p>\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d5\u05d4\u05e6\u05e2\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05e1\u05f3 '+s.quoteNo+' \u05de\u05d4\u05d5\u05d5\u05d9\u05dd \u05d9\u05d7\u05d3 \u05d0\u05ea \u05de\u05dc\u05d5\u05d0 \u05d4\u05d4\u05e1\u05db\u05dd \u05d1\u05d9\u05df \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd.</p>'+
+     '<p>\u05db\u05dc \u05e9\u05d9\u05e0\u05d5\u05d9 \u05d1\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d9\u05d9\u05e2\u05e9\u05d4 \u05d1\u05db\u05ea\u05d1 \u05d5\u05d1\u05d7\u05ea\u05d9\u05de\u05ea \u05e9\u05e0\u05d9 \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd.</p>')}
+
+   <div class="ax-sign">
+     <div class="ax-sb"><div class="ax-sl">\u05d4\u05e7\u05d1\u05dc\u05df</div>${Store.get('sigData','')?'<img src="'+Store.get('sigData','')+'" class="ax-sig"/>':'<div class="ax-line"></div>'}<div class="ax-sn">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</div></div>
+     <div class="ax-sb"><div class="ax-sl">\u05d4\u05de\u05d6\u05de\u05d9\u05df</div>${s.clientSig?'<img src="'+s.clientSig+'" class="ax-sig"/>':'<div class="ax-line"></div>'}<div class="ax-sn">${cl.name||''}</div></div>
+   </div>
+   <div class="ax-foot">\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d4\u05d5\u05d0 \u05de\u05e1\u05de\u05da \u05ea\u05e0\u05d0\u05d9\u05dd \u05db\u05dc\u05dc\u05d9. \u05d1\u05e2\u05e1\u05e7\u05d0\u05d5\u05ea \u05de\u05d5\u05e8\u05db\u05d1\u05d5\u05ea \u05de\u05d5\u05de\u05dc\u05e5 \u05dc\u05d4\u05d9\u05d5\u05e2\u05e5 \u05e2\u05dd \u05e2\u05d5\u05e8\u05da \u05d3\u05d9\u05df.</div>
+  </div>`;
+ },
  buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=s.lang==='en'?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
   const plan=s.planMode;const cspan=plan?4:6;
   groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?g.cat.title:`<div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
@@ -3396,7 +3719,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
     <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
   </div></div>`;
  },
- async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');
+ async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=(this.state.docType==='annex'?this.buildAnnexHtml():this.buildPDFHtml());try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');
    // High-res capture; scale adapts so tall documents stay sharp but memory-safe
    const targetPx=page.scrollHeight;const scale=targetPx>4000?2:3;
    const canvas=await html2canvas(page,{scale:scale,backgroundColor:'#ffffff',useCORS:true,windowWidth:page.scrollWidth,height:page.scrollHeight});
