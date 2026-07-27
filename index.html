@@ -869,37 +869,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
   #splash::before,#splash::after,#splash-logo,#splash .t{animation:none!important;}
 }
 
-/* ═══════════════ נספח משפטי v10.6 ═══════════════ */
-.ax-page{background:#fff;color:#111;font-family:'Noto Sans Hebrew',Arial,sans-serif;padding:34px 40px;direction:rtl;font-size:12.5px;line-height:1.85;}
-.ax-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-bottom:3px solid #ED1C24;padding-bottom:16px;margin-bottom:22px;}
-.ax-logo{flex:none;}
-.ax-title{text-align:center;flex:1;}
-.ax-big{font-size:23px;font-weight:900;color:#111;letter-spacing:-.4px;}
-.ax-sub{font-size:11.5px;color:#777;margin-top:3px;letter-spacing:1.5px;}
-.ax-meta{font-size:11px;color:#555;text-align:left;flex:none;line-height:1.8;}
-.ax-cl{margin-bottom:17px;page-break-inside:avoid;}
-.ax-n{display:inline-block;background:#ED1C24;color:#fff;font-weight:900;font-size:11.5px;width:22px;height:22px;line-height:22px;text-align:center;border-radius:4px;vertical-align:top;margin-left:8px;}
-.ax-t{display:inline-block;font-weight:900;font-size:14px;color:#111;margin-bottom:6px;}
-.ax-b{padding-right:30px;color:#333;}
-.ax-b p{margin-bottom:6px;}
-.ax-b b{color:#111;}
-.ax-parties{display:flex;gap:16px;}
-.ax-parties > div{flex:1;background:#F7F5F1;border:1px solid #E2DED7;border-radius:8px;padding:11px 13px;font-size:12px;line-height:1.7;}
-.ax-role{display:block;font-size:9.5px;letter-spacing:1.4px;color:#ED1C24;font-weight:800;margin-bottom:4px;}
-.ax-scope{background:#F7F5F1;border-right:3px solid #ED1C24;padding:8px 11px;margin-bottom:6px;border-radius:0 6px 6px 0;font-size:12px;}
-.ax-scope b{display:block;color:#111;margin-bottom:2px;}
-.ax-scope span{color:#555;font-size:11.5px;}
-.ax-tb{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px;}
-.ax-tb td{padding:7px 10px;border-bottom:1px solid #EEE;}
-.ax-tb td:last-child{text-align:left;font-weight:700;white-space:nowrap;}
-.ax-tb .ax-sum td{border-top:2px solid #ED1C24;border-bottom:none;font-weight:900;font-size:14px;color:#ED1C24;padding-top:9px;}
-.ax-sign{display:flex;gap:24px;margin-top:26px;padding-top:18px;border-top:1px solid #DDD;page-break-inside:avoid;}
-.ax-sb{flex:1;text-align:center;}
-.ax-sl{font-size:10px;letter-spacing:1.3px;color:#ED1C24;font-weight:800;margin-bottom:8px;}
-.ax-line{height:44px;border-bottom:1px solid #999;}
-.ax-sig{height:52px;object-fit:contain;display:block;margin:0 auto;}
-.ax-sn{font-size:11.5px;color:#555;margin-top:5px;border-top:1px solid #DDD;padding-top:5px;}
-.ax-foot{margin-top:18px;padding-top:11px;border-top:1px solid #EEE;font-size:10px;color:#999;text-align:center;}
+
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -933,7 +903,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='10.7';
+const VERSION='10.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1959,10 +1929,6 @@ const App={
      <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="475"/></div>
    </div>
    <div style="font-size:11px;color:var(--muted);margin-top:4px">💡 בהצעת תכנון ה-PDF יציג סעיפים וכמויות בלבד (בלי מחיר לכל שורה), ובסוף: המחיר למ"ר.</div>`:''}
-   <div class="sec-title">⚖️ נספח משפטי</div>
-   <div class="row2"><div class="field"><label>אחריות (חודשים)</label><input id="ax_warr" type="number" inputmode="numeric" value="${Store.get('annexWarranty','12')}" placeholder="12"/></div>
-     <div class="field"><label>משך עבודה (ימים)</label><input id="ax_days" type="number" inputmode="numeric" value="${Store.get('annexDays','')}" placeholder="לא חובה"/></div></div>
-   <div style="font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:6px">משמש בנספח המשפטי. אם משך העבודה ריק — ייכתב "ייקבע בכתב".</div>
    <div class="sec-title">הנחת לקוח ומקדמה</div>
    <div class="row2"><div class="field"><label>אחוז הנחה (%)</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
      <div class="field"><label>מקדמה (%) — תופיע בהצעה</label><input id="q_adv" type="number" inputmode="decimal" value="${s.advance||''}" placeholder="0"/></div></div>
@@ -1991,7 +1957,6 @@ const App={
      <button class="qa-btn" id="quick-add-btn">✨ פזר לקטגוריות</button>
    </div>
    <button class="btn-ghost" id="check-missing" style="margin-bottom:8px">💡 בדוק סעיפים חסרים (AI)</button>
-   <button class="btn-ghost" id="gen-annex" style="margin-bottom:8px">⚖️ נספח משפטי להצעה</button>
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="open-annex">⚖️ נספח משפטי — PDF</button>
@@ -3049,7 +3014,6 @@ const App={
   const osg=document.getElementById('open-sign');if(osg)osg.onclick=()=>{this.captureQuote();this.state.modal='sign';this.render();};
   const qg=document.getElementById('q_gallery');if(qg)qg.onchange=()=>{this.state.includeGallery=qg.checked;Store.set('includeGallery',qg.checked);};
   const opf=document.getElementById('open-portfolio');if(opf)opf.onclick=()=>{this.captureQuote();this.state.modal='portfolio';this.render();};
-  const gax=document.getElementById('gen-annex');if(gax)gax.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='annex';this.generatePDF(true);};
   const gp=document.getElementById('gen-pdf');if(gp)gp.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='quote';this.generatePDF(false);};
   const cms=document.getElementById('check-missing');if(cms)cms.onclick=()=>{this.captureQuote();this.suggestMissingItems();};
   const qab=document.getElementById('quick-add-btn');if(qab)qab.onclick=()=>{const el=document.getElementById('quick-add');const t=el?el.value.trim():'';if(!t){this.toast('כתוב קודם מה להוסיף');return;}this.captureQuote();this._v2qText=t;this.v2qConvert();};
@@ -3408,7 +3372,7 @@ const App={
  find(cid,iid){if(cid==='custom')return this.state.custom.find(i=>i.id===iid);const cat=this.state.catalog.find(c=>c.id===cid);let it=cat&&cat.items.find(i=>i.id===iid);if(!it&&this.state.subItems[cid])it=this.state.subItems[cid].find(i=>i.id===iid);return it;},
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
- captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}const axw=g('ax_warr');if(axw!==undefined&&axw!=='')Store.set('annexWarranty',axw);const axd=g('ax_days');if(axd!==undefined)Store.set('annexDays',axd);},
+ captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}},
  saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
  exportClients(){const list=Store.get('clients',[]);if(!list.length){this.toast('אין לקוחות לייצוא');return;}
   const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
@@ -3448,84 +3412,6 @@ const App={
  backup(){const data={_v:VERSION};Store.keys().forEach(k=>data[k]=Store.get(k,null));const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='yehuda-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click();this.toast('גיבוי נוצר ✓');},
  restore(e){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);Object.keys(d).forEach(k=>{if(k!=='_v'&&d[k]!==null)Store.set(k,d[k]);});this.state.catalog=Store.get('catalog',this.state.catalog);this.state.custom=Store.get('customItems',[]);this.toast('שוחזר בהצלחה ✓');this.state.modal=null;this.render();}catch(x){this.toast('קובץ לא תקין');}};rd.readAsText(f);},
 
- buildAnnexHtml(){
-  const s=this.state,cl=s.client||{};
-  const groups=this.chosen();
-  const total=this.grand();
-  const sub=this.subtotal();
-  const adv=+s.advance||0;
-  const advAmt=adv>0?Math.round(total*adv/100):0;
-  const today=new Date().toLocaleDateString('he-IL');
-  const scope=[];
-  groups.forEach(function(g){
-    const names=g.lines.map(function(l){return l.name;}).slice(0,6);
-    scope.push({cat:g.cat.title,items:names,more:Math.max(0,g.lines.length-6)});
-  });
-  const nis2=function(n){return Math.round(+n||0).toLocaleString('he-IL')+'\u00a0\u20aa';};
-  let sc='';
-  scope.forEach(function(x){
-    sc+='<div class="ax-scope"><b>'+x.cat+'</b><span>'+x.items.join(' \u00b7 ')+(x.more?' \u05d5\u05e2\u05d5\u05d3 '+x.more+' \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd':'')+'</span></div>';
-  });
-  const warr=Store.get('annexWarranty','12');
-  const days=Store.get('annexDays','');
-  const cl_=function(n,t,b){return '<div class="ax-cl"><div class="ax-n">'+n+'</div><div class="ax-t">'+t+'</div><div class="ax-b">'+b+'</div></div>';};
-
-  return `<div class="ax-page" id="pdf-page">
-   <div class="ax-head">
-     <div class="ax-logo">${logoBlock(false,.7)}</div>
-     <div class="ax-title"><div class="ax-big">\u05e0\u05e1\u05e4\u05d7 \u05dc\u05d4\u05e1\u05db\u05dd \u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea</div><div class="ax-sub">\u05ea\u05e0\u05d0\u05d9\u05dd \u05db\u05dc\u05dc\u05d9\u05d9\u05dd \u05dc\u05d1\u05d9\u05e6\u05d5\u05e2 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5</div></div>
-     <div class="ax-meta"><b>\u05e0\u05e1\u05e4\u05d7 \u05dc\u05d4\u05e6\u05e2\u05d4:</b> ${s.quoteNo}<br><b>\u05ea\u05d0\u05e8\u05d9\u05da:</b> ${today}</div>
-   </div>
-
-   ${cl_('1','\u05d4\u05e6\u05d3\u05d3\u05d9\u05dd',
-     '<div class="ax-parties"><div><span class="ax-role">\u05d4\u05e7\u05d1\u05dc\u05df</span><b>\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</b><br>\u05d7.\u05e4 311834998<br>054-5718316<br>yuda090581@gmail.com</div>'+
-     '<div><span class="ax-role">\u05d4\u05de\u05d6\u05de\u05d9\u05df</span><b>'+(cl.name||'\u2014')+'</b>'+(cl.phone?'<br>'+cl.phone:'')+(cl.address?'<br>'+cl.address:'')+'</div></div>')}
-
-   ${cl_('2','\u05de\u05d4\u05d5\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4',
-     '<p>\u05d4\u05e7\u05d1\u05dc\u05df \u05d9\u05d1\u05e6\u05e2 \u05e2\u05d1\u05d5\u05e8 \u05d4\u05de\u05d6\u05de\u05d9\u05df '+(cl.project?'<b>'+cl.project+'</b>':'\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5')+(cl.address?' \u05d1\u05db\u05ea\u05d5\u05d1\u05ea <b>'+cl.address+'</b>':'')+', \u05d1\u05d4\u05d9\u05e7\u05e3 \u05d4\u05de\u05e4\u05d5\u05e8\u05d8 \u05d1\u05d4\u05e6\u05e2\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05e1\u05f3 '+s.quoteNo+' \u05d4\u05de\u05d4\u05d5\u05d5\u05d4 \u05d7\u05dc\u05e7 \u05d1\u05dc\u05ea\u05d9 \u05e0\u05e4\u05e8\u05d3 \u05de\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4.</p>'+sc)}
-
-   ${cl_('3','\u05d4\u05ea\u05de\u05d5\u05e8\u05d4',
-     '<table class="ax-tb"><tr><td>\u05e1\u05db\u05d5\u05dd \u05dc\u05e4\u05e0\u05d9 \u05de\u05e2\u05f4\u05de</td><td>'+nis2(sub)+'</td></tr>'+
-     (s.vatOn?'<tr><td>\u05de\u05e2\u05f4\u05de '+s.vatPct+'%</td><td>'+nis2(this.vat())+'</td></tr>':'')+
-     '<tr class="ax-sum"><td>\u05e1\u05d4\u05f4\u05db \u05dc\u05ea\u05e9\u05dc\u05d5\u05dd</td><td>'+nis2(total)+'</td></tr></table>'+
-     '<p>\u05d4\u05ea\u05de\u05d5\u05e8\u05d4 \u05e1\u05d5\u05e4\u05d9\u05ea \u05d5\u05db\u05d5\u05dc\u05dc\u05ea \u05d0\u05ea \u05db\u05dc \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d5\u05d4\u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05d4\u05de\u05e4\u05d5\u05e8\u05d8\u05d9\u05dd \u05d1\u05d4\u05e6\u05e2\u05d4. \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d0\u05d9\u05e0\u05df \u05de\u05e4\u05d5\u05e8\u05d8\u05d5\u05ea \u05d0\u05d9\u05e0\u05df \u05db\u05dc\u05d5\u05dc\u05d5\u05ea.</p>')}
-
-   ${cl_('4','\u05ea\u05e0\u05d0\u05d9 \u05ea\u05e9\u05dc\u05d5\u05dd',
-     (adv>0?'<p>\u05de\u05e7\u05d3\u05de\u05d4 \u05d1\u05e9\u05d9\u05e2\u05d5\u05e8 <b>'+adv+'%</b> ('+nis2(advAmt)+') \u05ea\u05e9\u05d5\u05dc\u05dd \u05e2\u05dd \u05d7\u05ea\u05d9\u05de\u05ea \u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d5\u05dc\u05e4\u05e0\u05d9 \u05ea\u05d7\u05d9\u05dc\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea.</p>':'')+
-     '<p>\u05d9\u05ea\u05e8\u05ea \u05d4\u05ea\u05de\u05d5\u05e8\u05d4 \u05ea\u05e9\u05d5\u05dc\u05dd \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05d4\u05ea\u05e7\u05d3\u05de\u05d5\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea, \u05db\u05e4\u05d9 \u05e9\u05d9\u05e1\u05d5\u05db\u05dd \u05d1\u05d9\u05df \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd \u05d1\u05db\u05ea\u05d1. \u05ea\u05e9\u05dc\u05d5\u05dd \u05e1\u05d5\u05e4\u05d9 \u05d9\u05e9\u05d5\u05dc\u05dd \u05e2\u05dd \u05de\u05e1\u05d9\u05e8\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4 \u05d5\u05d0\u05d9\u05e9\u05d5\u05e8 \u05d4\u05de\u05d6\u05de\u05d9\u05df.</p>'+
-     '<p>\u05e2\u05d9\u05db\u05d5\u05d1 \u05d1\u05ea\u05e9\u05dc\u05d5\u05dd \u05de\u05e2\u05dc 14 \u05d9\u05de\u05d9\u05dd \u05de\u05d6\u05db\u05d4 \u05d0\u05ea \u05d4\u05e7\u05d1\u05dc\u05df \u05d1\u05d4\u05e9\u05d4\u05d9\u05d9\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e2\u05d3 \u05dc\u05d4\u05e1\u05d3\u05e8\u05ea\u05d5.</p>')}
-
-   ${cl_('5','\u05dc\u05d5\u05d7\u05d5\u05ea \u05d6\u05de\u05e0\u05d9\u05dd',
-     '<p>'+(days?'\u05de\u05e9\u05da \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d4\u05de\u05e9\u05d5\u05e2\u05e8 \u05d4\u05d5\u05d0 <b>'+days+' \u05d9\u05de\u05d9 \u05e2\u05d1\u05d5\u05d3\u05d4</b>':'\u05de\u05e9\u05da \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d9\u05d9\u05e7\u05d1\u05e2 \u05d1\u05db\u05ea\u05d1 \u05d1\u05d9\u05df \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd')+', \u05d1\u05db\u05e4\u05d5\u05e3 \u05dc\u05d6\u05de\u05d9\u05e0\u05d5\u05ea \u05d0\u05ea\u05e8 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4 \u05d5\u05dc\u05e7\u05d1\u05dc\u05ea \u05d4\u05d7\u05dc\u05d8\u05d5\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d1\u05de\u05d5\u05e2\u05d3.</p>'+
-     '<p>\u05e2\u05d9\u05db\u05d5\u05d1\u05d9\u05dd \u05d4\u05e0\u05d5\u05d1\u05e2\u05d9\u05dd \u05de\u05e9\u05d9\u05e0\u05d5\u05d9\u05d9 \u05de\u05d6\u05d2 \u05d0\u05d5\u05d5\u05d9\u05e8, \u05d0\u05d9 \u05d0\u05e1\u05e4\u05e7\u05ea \u05d7\u05d5\u05de\u05e8\u05d9\u05dd, \u05e9\u05d9\u05e0\u05d5\u05d9\u05d9\u05dd \u05e9\u05d3\u05e8\u05e9 \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d0\u05d5 \u05db\u05d5\u05d7 \u05e2\u05dc\u05d9\u05d5\u05df \u2014 \u05d0\u05d9\u05e0\u05dd \u05d1\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d4\u05e7\u05d1\u05dc\u05df.</p>')}
-
-   ${cl_('6','\u05e9\u05d9\u05e0\u05d5\u05d9\u05d9\u05dd \u05d5\u05ea\u05d5\u05e1\u05e4\u05d5\u05ea',
-     '<p>\u05db\u05dc \u05e9\u05d9\u05e0\u05d5\u05d9 \u05d0\u05d5 \u05ea\u05d5\u05e1\u05e4\u05ea \u05dc\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d9\u05e1\u05d5\u05db\u05de\u05d5 <b>\u05d1\u05db\u05ea\u05d1 \u05de\u05e8\u05d0\u05e9</b>, \u05dc\u05e8\u05d1\u05d5\u05ea \u05d4\u05e9\u05e4\u05e2\u05ea\u05dd \u05e2\u05dc \u05d4\u05ea\u05de\u05d5\u05e8\u05d4 \u05d5\u05e2\u05dc \u05dc\u05d5\u05d7\u05d5\u05ea \u05d4\u05d6\u05de\u05e0\u05d9\u05dd.</p>'+
-     '<p>\u05dc\u05d0 \u05ea\u05d1\u05d5\u05e6\u05e2 \u05e2\u05d1\u05d5\u05d3\u05d4 \u05e0\u05d5\u05e1\u05e4\u05ea \u05dc\u05dc\u05d0 \u05d0\u05d9\u05e9\u05d5\u05e8 \u05de\u05d7\u05d9\u05e8 \u05de\u05e8\u05d0\u05e9.</p>')}
-
-   ${cl_('7','\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea',
-     '<p>\u05d4\u05e7\u05d1\u05dc\u05df \u05d0\u05d7\u05e8\u05d0\u05d9 \u05dc\u05d8\u05d9\u05d1 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05dc\u05ea\u05e7\u05d5\u05e4\u05d4 \u05e9\u05dc <b>'+warr+' \u05d7\u05d5\u05d3\u05e9\u05d9\u05dd</b> \u05de\u05de\u05d5\u05e2\u05d3 \u05d4\u05de\u05e1\u05d9\u05e8\u05d4.</p>'+
-     '<p>\u05d4\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d0\u05d9\u05e0\u05d4 \u05d7\u05dc\u05d4 \u05e2\u05dc: \u05d1\u05dc\u05d0\u05d9 \u05d8\u05d1\u05e2\u05d9, \u05e0\u05d6\u05e7 \u05e9\u05e0\u05d2\u05e8\u05dd \u05d1\u05d9\u05d3\u05d9 \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d0\u05d5 \u05e6\u05d3 \u05e9\u05dc\u05d9\u05e9\u05d9, \u05e9\u05d9\u05de\u05d5\u05e9 \u05dc\u05d0 \u05e1\u05d1\u05d9\u05e8, \u05d0\u05d5 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d1\u05d5\u05e6\u05e2\u05d5 \u05e2\u05dc \u05d9\u05d3\u05d9 \u05d0\u05d7\u05e8\u05d9\u05dd.</p>'+
-     '<p>\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d9\u05e6\u05e8\u05df \u05e2\u05dc \u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05d5\u05de\u05d5\u05e6\u05e8\u05d9\u05dd \u2014 \u05d1\u05d4\u05ea\u05d0\u05dd \u05dc\u05ea\u05e0\u05d0\u05d9 \u05d4\u05d9\u05e6\u05e8\u05df.</p>')}
-
-   ${cl_('8','\u05d0\u05ea\u05e8 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4',
-     '<p>\u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d9\u05e2\u05de\u05d9\u05d3 \u05dc\u05e8\u05e9\u05d5\u05ea \u05d4\u05e7\u05d1\u05dc\u05df \u05d0\u05ea \u05d4\u05e0\u05db\u05e1 \u05e4\u05e0\u05d5\u05d9 \u05dc\u05e2\u05d1\u05d5\u05d3\u05d4, \u05dc\u05e8\u05d1\u05d5\u05ea \u05d7\u05d9\u05d1\u05d5\u05e8\u05d9 \u05d7\u05e9\u05de\u05dc \u05d5\u05de\u05d9\u05dd \u05ea\u05e7\u05d9\u05e0\u05d9\u05dd.</p>'+
-     '<p>\u05e4\u05d9\u05e0\u05d5\u05d9 \u05e8\u05d4\u05d9\u05d8\u05d9\u05dd \u05d5\u05d7\u05e4\u05e6\u05d9\u05dd \u05d0\u05d9\u05e9\u05d9\u05d9\u05dd \u05d1\u05d0\u05d7\u05e8\u05d9\u05d5\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df, \u05d0\u05dc\u05d0 \u05d0\u05dd \u05e1\u05d5\u05db\u05dd \u05d0\u05d7\u05e8\u05ea \u05d1\u05db\u05ea\u05d1.</p>')}
-
-   ${cl_('9','\u05d4\u05e4\u05e1\u05e7\u05ea \u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea',
-     '<p>\u05e6\u05d3 \u05d4\u05de\u05e2\u05d5\u05e0\u05d9\u05d9\u05df \u05dc\u05d4\u05e4\u05e1\u05d9\u05e7 \u05d0\u05ea \u05d4\u05d4\u05ea\u05e7\u05e9\u05e8\u05d5\u05ea \u05d9\u05d5\u05d3\u05d9\u05e2 \u05e2\u05dc \u05db\u05da \u05d1\u05db\u05ea\u05d1. \u05d4\u05de\u05d6\u05de\u05d9\u05df \u05d9\u05e9\u05dc\u05dd \u05e2\u05d1\u05d5\u05e8 \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d1\u05d5\u05e6\u05e2\u05d5 \u05d1\u05e4\u05d5\u05e2\u05dc \u05d5\u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05e9\u05d4\u05d5\u05d6\u05de\u05e0\u05d5 \u05e2\u05d3 \u05dc\u05de\u05d5\u05e2\u05d3 \u05d4\u05d4\u05d5\u05d3\u05e2\u05d4.</p>')}
-
-   ${cl_('10','\u05db\u05dc\u05dc\u05d9',
-     '<p>\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d5\u05d4\u05e6\u05e2\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05e1\u05f3 '+s.quoteNo+' \u05de\u05d4\u05d5\u05d5\u05d9\u05dd \u05d9\u05d7\u05d3 \u05d0\u05ea \u05de\u05dc\u05d5\u05d0 \u05d4\u05d4\u05e1\u05db\u05dd \u05d1\u05d9\u05df \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd.</p>'+
-     '<p>\u05db\u05dc \u05e9\u05d9\u05e0\u05d5\u05d9 \u05d1\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d9\u05d9\u05e2\u05e9\u05d4 \u05d1\u05db\u05ea\u05d1 \u05d5\u05d1\u05d7\u05ea\u05d9\u05de\u05ea \u05e9\u05e0\u05d9 \u05d4\u05e6\u05d3\u05d3\u05d9\u05dd.</p>')}
-
-   <div class="ax-sign">
-     <div class="ax-sb"><div class="ax-sl">\u05d4\u05e7\u05d1\u05dc\u05df</div>${Store.get('sigData','')?'<img src="'+Store.get('sigData','')+'" class="ax-sig"/>':'<div class="ax-line"></div>'}<div class="ax-sn">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</div></div>
-     <div class="ax-sb"><div class="ax-sl">\u05d4\u05de\u05d6\u05de\u05d9\u05df</div>${s.clientSig?'<img src="'+s.clientSig+'" class="ax-sig"/>':'<div class="ax-line"></div>'}<div class="ax-sn">${cl.name||''}</div></div>
-   </div>
-   <div class="ax-foot">\u05e0\u05e1\u05e4\u05d7 \u05d6\u05d4 \u05d4\u05d5\u05d0 \u05de\u05e1\u05de\u05da \u05ea\u05e0\u05d0\u05d9\u05dd \u05db\u05dc\u05dc\u05d9. \u05d1\u05e2\u05e1\u05e7\u05d0\u05d5\u05ea \u05de\u05d5\u05e8\u05db\u05d1\u05d5\u05ea \u05de\u05d5\u05de\u05dc\u05e5 \u05dc\u05d4\u05d9\u05d5\u05e2\u05e5 \u05e2\u05dd \u05e2\u05d5\u05e8\u05da \u05d3\u05d9\u05df.</div>
-  </div>`;
- },
  buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=s.lang==='en'?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
   const plan=s.planMode;const cspan=plan?4:6;
   groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?g.cat.title:`<div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
@@ -3719,7 +3605,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
     <div class="prop-foot">בלחיצה על "מאשר" תיפתח הודעת אישור בוואטסאפ ליהודה שיפוצים · מסמך זה הופק ע"י יהודה שיפוצים</div>
   </div></div>`;
  },
- async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=(this.state.docType==='annex'?this.buildAnnexHtml():this.buildPDFHtml());try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');
+ async makePdfBlob(){const stage=document.getElementById('pdf-stage');this._galleryImgs=this.state.includeGallery?((await Photos.list('__portfolio__')).slice(0,4)):[];stage.innerHTML=this.buildPDFHtml();try{new QRCode(document.getElementById('pdf-qr'),{text:'https://yehuda-shipuzim.netlify.app',width:80,height:80,correctLevel:QRCode.CorrectLevel.M});}catch(e){}await new Promise(r=>setTimeout(r,350));const page=document.getElementById('pdf-page');
    // High-res capture; scale adapts so tall documents stay sharp but memory-safe
    const targetPx=page.scrollHeight;const scale=targetPx>4000?2:3;
    const canvas=await html2canvas(page,{scale:scale,backgroundColor:'#ffffff',useCORS:true,windowWidth:page.scrollWidth,height:page.scrollHeight});
