@@ -903,7 +903,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='11.0';
+const VERSION='11.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1343,12 +1343,25 @@ const UNITS=['מ"ר','יח׳','נקודה','מ"א','גלובלי','מ"ק','יו�
 const WHITE_MAT=['אסלה תלויה','אסלה רגילה','ניאגרה סמויה','כיור אמבטיה','כיור מטבח','ברז אמבטיה','ברז מטבח','אמבטיה','אגנית מקלחון','מקלחון זכוכית','ארון אמבטיה','מראה'];
 const BLACK_MAT=['בלוקים','מלט ובטון','חול וחצץ','טיח','ברזל זיון','צנרת מים','צנרת ביוב','כבלים וחשמל','דבק ורובה','גבס ופרופילים','בידוד','חומרי איטום'];
 const PRESETS=[
-  {name:'שיפוץ אמבטיה קומפלט',emoji:'🚿',pick:{demo:{dm1:{q:8},dm2:{q:6},dm4:{q:1}},plumb:{pl1:{q:3},pl2:{q:1},pl5:{q:2}},finish:{fn7:{q:22},fn8:{q:8},fn5:{q:6}},elec:{el1:{q:3}}}},
-  {name:'צביעת דירה 4 חד׳',emoji:'🎨',pick:{finish:{fn3:{q:120},fn4:{q:4}}}},
-  {name:'מטבח בסיסי',emoji:'🍳',pick:{alum:{al3:{q:5}},plumb:{pl5:{q:1}},elec:{el2:{q:2},el1:{q:4}}}},
-  {name:'חשמל – דירה מלאה',emoji:'⚡',pick:{elec:{el1:{q:18},el2:{q:2}}}},
-  {name:'אינסטלציה – דירה',emoji:'🚰',pick:{plumb:{pl1:{q:6},pl2:{q:2},pl5:{q:2}}}},
-  {name:'הריסה ופינוי',emoji:'🧱',pick:{demo:{dm1:{q:12},dm2:{q:40},dm4:{q:1}}}},
+  {name:'\u05e9\u05d9\u05e4\u05d5\u05e5 \u05d0\u05de\u05d1\u05d8\u05d9\u05d4 \u05e7\u05d5\u05de\u05e4\u05dc\u05d8',emoji:'\ud83d\udebf',kw:[
+    ['\u05d4\u05e8\u05d9\u05e1|\u05e4\u05d9\u05e8\u05d5\u05e7',6],['\u05e4\u05d9\u05e0\u05d5\u05d9|\u05e4\u05e1\u05d5\u05dc\u05ea',1],
+    ['\u05d0\u05d9\u05e0\u05e1\u05d8\u05dc|\u05e0\u05e7\u05d5\u05d3\u05ea \u05de\u05d9\u05dd|\u05e6\u05e0\u05e8\u05ea',3],['\u05e0\u05d9\u05e7\u05d5\u05d6',2],
+    ['\u05d0\u05d9\u05d8\u05d5\u05dd|\u05d0\u05d8\u05d9\u05de',1],['\u05e8\u05d9\u05e6\u05d5\u05e3',8],['\u05d7\u05d9\u05e4\u05d5\u05d9|\u05e7\u05d9\u05e8\u05d5\u05ea',22],
+    ['\u05e0\u05e7\u05d5\u05d3\u05ea \u05d7\u05e9\u05de\u05dc|\u05e9\u05e7\u05e2',3]]},
+  {name:'\u05e6\u05d1\u05d9\u05e2\u05ea \u05d3\u05d9\u05e8\u05d4 4 \u05d7\u05d3\u05f3',emoji:'\ud83c\udfa8',kw:[
+    ['\u05e6\u05d1\u05e2|\u05e6\u05d1\u05d9\u05e2',120],['\u05e9\u05e4\u05db\u05d8\u05dc',80]]},
+  {name:'\u05de\u05d8\u05d1\u05d7 \u05d1\u05e1\u05d9\u05e1\u05d9',emoji:'\ud83c\udf73',kw:[
+    ['\u05e0\u05d2\u05e8|\u05d0\u05e8\u05d5\u05df|\u05de\u05d8\u05d1\u05d7',5],['\u05e0\u05e7\u05d5\u05d3\u05ea \u05de\u05d9\u05dd|\u05db\u05d9\u05d5\u05e8',1],
+    ['\u05e0\u05e7\u05d5\u05d3\u05ea \u05d7\u05e9\u05de\u05dc|\u05e9\u05e7\u05e2',4],['\u05e8\u05d9\u05e6\u05d5\u05e3',12]]},
+  {name:'\u05d7\u05e9\u05de\u05dc \u2013 \u05d3\u05d9\u05e8\u05d4 \u05de\u05dc\u05d0\u05d4',emoji:'\u26a1',kw:[
+    ['\u05e0\u05e7\u05d5\u05d3\u05ea \u05d7\u05e9\u05de\u05dc|\u05e9\u05e7\u05e2|\u05de\u05d0\u05d5\u05e8',18],['\u05dc\u05d5\u05d7 \u05d7\u05e9\u05de\u05dc|\u05d0\u05e8\u05d5\u05df \u05d7\u05e9\u05de\u05dc',1],
+    ['\u05ea\u05e7\u05e9\u05d5\u05e8\u05ea|\u05e8\u05e9\u05ea',4]]},
+  {name:'\u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4 \u2013 \u05d3\u05d9\u05e8\u05d4',emoji:'\ud83d\udeb0',kw:[
+    ['\u05e0\u05e7\u05d5\u05d3\u05ea \u05de\u05d9\u05dd|\u05d0\u05d9\u05e0\u05e1\u05d8\u05dc',6],['\u05e0\u05d9\u05e7\u05d5\u05d6',2],['\u05d1\u05d9\u05d5\u05d1',2]]},
+  {name:'\u05d4\u05e8\u05d9\u05e1\u05d4 \u05d5\u05e4\u05d9\u05e0\u05d5\u05d9',emoji:'\ud83e\uddf1',kw:[
+    ['\u05d4\u05e8\u05d9\u05e1|\u05e4\u05d9\u05e8\u05d5\u05e7',12],['\u05e4\u05d9\u05e0\u05d5\u05d9|\u05e4\u05e1\u05d5\u05dc\u05ea',1]]},
+  {name:'\u05d2\u05d1\u05e1 \u05d5\u05ea\u05e7\u05e8\u05d5\u05ea',emoji:'\ud83c\udfd7\ufe0f',kw:[
+    ['\u05d2\u05d1\u05e1',60],['\u05ea\u05e7\u05e8\u05d4',40]]},
 ];
 const WA='972545718316'; // עותק קבלן — 054-571-8316
 /* ===== Missing-item suggestion rules: when an item is selected, suggest these related ids ===== */
@@ -2244,7 +2257,7 @@ const App={
    <div id="pf-grid" class="photo-grid" style="margin-top:12px"></div>`;
  },
  templatesModal(){const user=Store.get('userTemplates',[]);
-  const presetInfo=p=>{let n=0,sum=0;for(const cid in p.pick){for(const iid in p.pick[cid]){const it=this.find(cid,iid);if(it){n++;sum+=(+it.price||0)*(+p.pick[cid][iid].q||1);}}}return{n,sum};};
+  const presetInfo=p=>this._presetInfo(p);
   return `<h2>⚡ הצעות מהירות <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">לחיצה טוענת סעיפים טיפוסיים — אפשר לערוך כמויות ומחירים אחרי כן.</div>
    <button class="btn-block" id="save-tpl" style="margin-bottom:14px">💾 שמור את ההצעה הנוכחית לשימוש חוזר</button>
@@ -3385,26 +3398,59 @@ const App={
   const a=document.createElement('a');a.href=url;a.download='לקוחות-יהודה-שיפוצים.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   this.toast('קובץ CSV נוצר ✓');
  },
- loadPreset(idx){const p=PRESETS[idx];const r=this._applyPick(p.pick);this.save();
-   if(!r.hit){this.toast('\u05d4\u05ea\u05d1\u05e0\u05d9\u05ea \u05dc\u05d0 \u05ea\u05d5\u05d0\u05de\u05ea \u05dc\u05de\u05d7\u05d9\u05e8\u05d5\u05df \u05d4\u05e0\u05d5\u05db\u05d7\u05d9 \u2014 \u05d1\u05d7\u05e8 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d9\u05d3\u05e0\u05d9\u05ea');return;}
+ loadPreset(idx){const p=PRESETS[idx];
+   const r=p.kw?this._applyKw(p.kw):this._applyPick(p.pick);
+   this.save();
+   if(!r.hit){this.toast('\u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d5 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05de\u05ea\u05d0\u05d9\u05de\u05d9\u05dd \u05d1\u05de\u05d7\u05d9\u05e8\u05d5\u05df');return;}
    this.state.modal=null;this.toast('\u05e0\u05d8\u05e2\u05e0\u05d5 '+r.hit+' \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd'+(r.miss?' ('+r.miss+' \u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d5)':'')+' \u2014 \u05d1\u05d3\u05d5\u05e7 \u05db\u05de\u05d5\u05d9\u05d5\u05ea');this.render();},
  _applyPick(pick){
-   // \u05de\u05e9\u05d1\u05e5 \u05e1\u05e2\u05d9\u05e4\u05d9 \u05ea\u05d1\u05e0\u05d9\u05ea \u05dc\u05de\u05d7\u05d9\u05e8\u05d5\u05df. \u05e0\u05d5\u05e4\u05dc \u05dc\u05d7\u05d9\u05e4\u05d5\u05e9 \u05dc\u05e4\u05d9 \u05e9\u05dd \u05d0\u05dd \u05d4\u05de\u05d6\u05d4\u05d4 \u05dc\u05d0 \u05e7\u05d9\u05d9\u05dd
    let hit=0,miss=0;
    const norm=s=>String(s||'').replace(/\s+/g,' ').trim();
    const allItems=[];
-   this.state.catalog.forEach(cat=>{(cat.items||[]).forEach(it=>allItems.push({cat:cat,it:it}));});
+   this.state.catalog.forEach(cat=>{(cat.items||[]).forEach(it=>allItems.push(it));});
    for(const cid in pick){
      const cat=this.state.catalog.find(c=>c.id===cid);
      for(const iid in pick[cid]){
        const rec=pick[cid][iid]||{};
        let it=cat?cat.items.find(i=>i.id===iid):null;
-       if(!it&&rec.n){const t=norm(rec.n);const f=allItems.find(x=>norm(x.it.name)===t);if(f)it=f.it;}
+       if(!it&&rec.n){const t=norm(rec.n);const f=allItems.find(x=>norm(x.name)===t);if(f)it=f;}
        if(it){it.selected=true;it.qty=rec.q||1;hit++;}else{miss++;}
      }
    }
    return {hit:hit,miss:miss};
  },
+ _applyKw(kw){
+   // \u05de\u05ea\u05d0\u05d9\u05dd \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05dc\u05e4\u05d9 \u05de\u05d9\u05dc\u05d5\u05ea \u05de\u05e4\u05ea\u05d7 \u2014 \u05e2\u05d5\u05d1\u05d3 \u05e2\u05dc \u05db\u05dc \u05de\u05d7\u05d9\u05e8\u05d5\u05df
+   let hit=0,miss=0;const used={};
+   const all=[];
+   this.state.catalog.forEach(cat=>{(cat.items||[]).forEach(it=>all.push(it));});
+   (kw||[]).forEach(pair=>{
+     const rx=new RegExp(pair[0]);const q=pair[1]||1;
+     const f=all.find(it=>!used[it.id]&&rx.test(it.name||''));
+     if(f){used[f.id]=1;f.selected=true;f.qty=q;hit++;}else{miss++;}
+   });
+   return {hit:hit,miss:miss};
+ },
+ _presetInfo(p){
+   // \u05ea\u05e6\u05d5\u05d2\u05d4 \u05de\u05e7\u05d3\u05d9\u05de\u05d4 \u05d1\u05dc\u05d9 \u05dc\u05e9\u05e0\u05d5\u05ea \u05d0\u05ea \u05d4\u05de\u05d7\u05d9\u05e8\u05d5\u05df
+   let n=0,sum=0;const used={};
+   const all=[];
+   this.state.catalog.forEach(cat=>{(cat.items||[]).forEach(it=>all.push(it));});
+   if(p.kw){
+     p.kw.forEach(pair=>{
+       const rx=new RegExp(pair[0]);
+       const f=all.find(it=>!used[it.id]&&rx.test(it.name||''));
+       if(f){used[f.id]=1;n++;sum+=(+f.price||0)*(pair[1]||1);}
+     });
+   }else if(p.pick){
+     for(const cid in p.pick){for(const iid in p.pick[cid]){
+       const it=this.find(cid,iid);
+       if(it){n++;sum+=(+it.price||0)*(+p.pick[cid][iid].q||1);}
+     }}
+   }
+   return {n:n,sum:sum};
+ },
+
  loadUserTemplate(idx){const list=Store.get('userTemplates',[]);const p=list[idx];if(!p)return;
    const r=this._applyPick(p.pick);this.save();
    if(!r.hit){this.toast('\u05d4\u05ea\u05d1\u05e0\u05d9\u05ea \u05dc\u05d0 \u05ea\u05d5\u05d0\u05de\u05ea \u05dc\u05de\u05d7\u05d9\u05e8\u05d5\u05df \u05d4\u05e0\u05d5\u05db\u05d7\u05d9');return;}
