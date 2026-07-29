@@ -870,6 +870,54 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 }
 
 
+
+/* ═══════════════ לינק חי — עיצוב ═══════════════ */
+.lv-wrap{max-width:560px;margin:0 auto;padding:18px 14px 60px;background:#0d0d0f;min-height:100vh;color:#f3f3f5;font-family:'Noto Sans Hebrew',Arial,sans-serif;direction:rtl;}
+.lv-head{text-align:center;padding:14px 0 18px;border-bottom:2px solid var(--red);margin-bottom:16px;}
+.lv-logo{width:150px;height:auto;display:block;margin:0 auto 8px;}
+.lv-co{font-weight:900;font-size:20px;letter-spacing:-.3px;}
+.lv-sub{font-size:12px;color:#9a9aa6;margin-top:3px;letter-spacing:1px;}
+.lv-card{background:#17171b;border:1px solid #33333b;border-radius:14px;padding:13px 15px;margin-bottom:12px;}
+.lv-to{font-size:15px;}
+.lv-to b{color:#fff;}
+.lv-meta{font-size:11.5px;color:#9a9aa6;margin-top:4px;}
+.lv-tip{background:rgba(237,28,36,.1);border:1px solid rgba(237,28,36,.3);border-radius:11px;padding:10px 13px;font-size:13px;color:#f3f3f5;margin-bottom:14px;line-height:1.6;}
+.lv-cat{font-size:11.5px;letter-spacing:1.4px;color:var(--red);font-weight:800;margin:16px 0 7px;padding-bottom:5px;border-bottom:1px solid #33333b;}
+.lv-row{display:flex;align-items:center;gap:11px;background:#17171b;border:1px solid #33333b;border-radius:12px;padding:12px 13px;margin-bottom:8px;cursor:pointer;transition:opacity .25s,border-color .25s,background .25s;-webkit-tap-highlight-color:transparent;}
+.lv-row.off{opacity:.42;border-color:#2a2a30;background:#131317;}
+.lv-row.off .lv-txt b{text-decoration:line-through;}
+.lv-chk{position:absolute;opacity:0;pointer-events:none;}
+.lv-box{width:23px;height:23px;flex:none;border:2px solid #4a4a55;border-radius:7px;position:relative;transition:.2s;}
+.lv-chk:checked + .lv-box{background:var(--red);border-color:var(--red);}
+.lv-chk:checked + .lv-box::after{content:'';position:absolute;inset:0;background:no-repeat center/13px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");}
+.lv-txt{flex:1;min-width:0;}
+.lv-txt b{display:block;font-size:14px;font-weight:700;line-height:1.4;}
+.lv-txt span{display:block;font-size:11.5px;color:#9a9aa6;margin-top:2px;}
+.lv-price{font-weight:800;font-size:14px;white-space:nowrap;}
+.lv-sum{background:#17171b;border:1px solid #33333b;border-radius:16px;padding:15px 17px;margin-top:18px;}
+.lv-sum .r{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px;color:#9a9aa6;}
+.lv-sum .r b{color:#f3f3f5;font-weight:700;}
+.lv-sum .r.tot{border-top:2px solid var(--red);margin-top:8px;padding-top:11px;font-size:17px;color:#f3f3f5;font-weight:800;}
+.lv-sum .r.tot b{color:var(--red);font-size:22px;font-weight:900;transition:transform .25s;}
+.lv-sum .r.tot b.pulse{animation:lvPulse .45s cubic-bezier(.3,1.4,.5,1);}
+@keyframes lvPulse{0%{transform:scale(1);}45%{transform:scale(1.14);}100%{transform:scale(1);}}
+.lv-note{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed #33333b;font-size:12.5px;color:var(--warn);}
+.lv-ok{width:100%;margin-top:16px;padding:17px;border:none;border-radius:15px;background:linear-gradient(135deg,#2ec26b,#25a85c);color:#fff;font-weight:900;font-size:16.5px;cursor:pointer;box-shadow:0 6px 22px rgba(46,194,107,.32);}
+.lv-ok:active{transform:scale(.98);}
+.lv-ok.done{background:#33333b;box-shadow:none;}
+.lv-call{display:block;text-align:center;margin-top:11px;padding:14px;border:1px solid #33333b;border-radius:13px;color:#f3f3f5;text-decoration:none;font-size:14px;background:#17171b;}
+.lv-foot{text-align:center;margin-top:22px;padding-top:16px;border-top:1px solid #33333b;font-size:11.5px;color:#9a9aa6;line-height:1.8;}
+
+/* ═══ כרטיס פעילות לינק חי ═══ */
+.lv-act{width:100%;margin-top:10px;background:rgba(46,194,107,.07);border:1px solid rgba(46,194,107,.3);border-radius:12px;padding:11px 13px;}
+.lv-act-h{font-size:11.5px;letter-spacing:1px;font-weight:800;color:var(--ok);margin-bottom:7px;}
+.lv-act-r{font-size:12.8px;color:var(--muted);padding:3px 0;line-height:1.6;}
+.lv-act-r b{color:var(--txt);}
+.lv-act-r.warn{color:var(--warn);}
+.lv-act-r.ok{color:var(--ok);font-weight:700;}
+.lv-act-e{font-size:12.5px;color:var(--muted);}
+.lv-act-btn{width:100%;margin-top:9px;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#4fc3f7,var(--blue));color:#fff;font-weight:800;font-size:13px;cursor:pointer;}
+.lv-act-btn:active{transform:scale(.98);}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -903,7 +951,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='11.2';
+const VERSION='11.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -924,6 +972,80 @@ const LOGO_PDF="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAvcAAAGkCAIAAAA675
 function logoBlock(dark,scale){scale=scale||1;
  const src=dark?LOGO_APP:LOGO_PDF;
  return `<img src="${src}" alt="יהודה שיפוצים" style="width:${130*scale}px;height:auto;display:inline-block"/>`;}
+
+/* ═══════════════ לינק חי — צד לקוח ═══════════════ */
+function initLiveUI(id,d){
+  var vat=+d.vat||0, dis=+d.dis||0;
+  var q=[], timer=null;
+  function nf(n){return Math.round(+n||0).toLocaleString('he-IL')+'\u00a0\u20aa';}
+  function push(ev){
+    q.push(ev);
+    clearTimeout(timer);
+    timer=setTimeout(flush,1200);
+  }
+  function flush(){
+    if(!q.length||!window._db)return;
+    var batch=q.slice(); q=[];
+    try{
+      window._db.collection('proposals').doc(id).update({
+        events: firebase.firestore.FieldValue.arrayUnion.apply(null,batch),
+        lastSeen: Date.now(),
+        curTotal: calc().tot
+      });
+    }catch(e){}
+  }
+  function calc(){
+    var sub=0, off=[];
+    document.querySelectorAll('.lv-chk').forEach(function(ch){
+      var p=+ch.dataset.lvp||0;
+      if(ch.checked){sub+=p;}else{off.push(ch.dataset.lvn);}
+    });
+    if(dis>0)sub=sub-(sub*dis/100);
+    var v=vat?sub*vat/100:0;
+    return {sub:sub, vat:v, tot:sub+v, off:off};
+  }
+  function refresh(){
+    var r=calc();
+    var e;
+    if(e=document.getElementById('lv-sub'))e.textContent=nf(r.sub);
+    if(e=document.getElementById('lv-vat'))e.textContent=nf(r.vat);
+    if(e=document.getElementById('lv-tot'))e.textContent=nf(r.tot);
+    var n=document.getElementById('lv-note');
+    if(n){
+      if(r.off.length){
+        var orig=(+d.tot||0), saved=orig-r.tot;
+        n.innerHTML='\u05d1\u05d5\u05d8\u05dc\u05d5 '+r.off.length+' \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u00b7 \u05d7\u05d9\u05e1\u05db\u05d5\u05df '+nf(saved);
+        n.style.display='block';
+      }else{n.style.display='none';}
+    }
+    var t=document.getElementById('lv-tot');
+    if(t){t.classList.remove('pulse');void t.offsetWidth;t.classList.add('pulse');}
+  }
+  document.querySelectorAll('.lv-chk').forEach(function(ch){
+    ch.addEventListener('change',function(){
+      var row=ch.closest('.lv-row');
+      if(row)row.classList.toggle('off',!ch.checked);
+      push({t:Date.now(), a:ch.checked?'on':'off', n:ch.dataset.lvn, p:+ch.dataset.lvp||0});
+      refresh();
+      try{if(navigator.vibrate)navigator.vibrate(8);}catch(e){}
+    });
+  });
+  var ap=document.getElementById('lv-approve');
+  if(ap)ap.onclick=function(){
+    var r=calc();
+    push({t:Date.now(), a:'approve', tot:r.tot, off:r.off.length});
+    flush();
+    try{window._db.collection('proposals').doc(id).update({approvedAt:Date.now(), curTotal:r.tot});}catch(e){}
+    ap.textContent='\u2713 \u05d4\u05d0\u05d9\u05e9\u05d5\u05e8 \u05e0\u05e9\u05dc\u05d7 \u2014 \u05ea\u05d5\u05d3\u05d4!';
+    ap.disabled=true; ap.classList.add('done');
+    var msg='\u05e9\u05dc\u05d5\u05dd, \u05d0\u05e0\u05d9 \u05de\u05d0\u05e9\u05e8 \u05d0\u05ea \u05d4\u05d4\u05e6\u05e2\u05d4 \u05de\u05e1\u05f3 '+(d.no||'')+' \u05d1\u05e1\u05da '+nf(r.tot)+
+      (r.off.length?' (\u05dc\u05d0\u05d7\u05e8 \u05d1\u05d9\u05d8\u05d5\u05dc '+r.off.length+' \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd)':'')+'. \u05d0\u05e4\u05e9\u05e8 \u05dc\u05d4\u05ea\u05e7\u05d3\u05dd \ud83d\ude42';
+    setTimeout(function(){try{window.open('https://wa.me/972545718316?text='+encodeURIComponent(msg),'_blank');}catch(e){}},700);
+  };
+  push({t:Date.now(), a:'open'});
+  window.addEventListener('beforeunload',flush);
+  document.addEventListener('visibilitychange',function(){if(document.hidden)flush();});
+}
 
 /* ===== Voice helpers (Hebrew) ===== */
 /* ═══════════════ מדריך שימוש — נתונים ═══════════════ */
@@ -1974,6 +2096,7 @@ const App={
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="open-annex">⚖️ נספח משפטי — PDF</button>
    <button class="btn-ghost" id="gen-share">📲 צור ושתף (WhatsApp / מייל)</button>
+   <button class="btn-ghost" id="livelink" style="border-color:var(--ok);color:var(--ok);margin-bottom:8px">⚡ לינק חי — הלקוח מסמן ורואה מחיר</button>
    <button class="btn-ghost" id="weblink" style="border-color:var(--red);color:var(--red)">🔗 צור לינק הצעה לשליחה ללקוח</button>`;
  },
 
@@ -2222,11 +2345,67 @@ const App={
        <button class="del" data-trkdel="${l.id}">🗑️</button>
        ${d.signature?`<button class="mini" data-trksig="${l.id}">✍️ הצג חתימה</button>`:''}
        ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${d.comment}</div>`:''}
+       ${this.liveActivity(l.id)}
        </div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
+ },
+ liveActivity(id){
+  const d=(this._trackData||{})[id];
+  if(!d||!d.live)return '';
+  const ev=d.events||[];
+  if(!ev.length)return '<div class="lv-act"><div class="lv-act-h">\u26a1 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9</div><div class="lv-act-e">\u05e2\u05d3\u05d9\u05d9\u05df \u05dc\u05d0 \u05e0\u05e4\u05ea\u05d7</div></div>';
+  // ספירת ביטולים לפי סעיף
+  const cnt={};
+  ev.forEach(e=>{if(e.a==='off'&&e.n){cnt[e.n]=cnt[e.n]||{off:0,p:e.p||0};cnt[e.n].off++;}});
+  const hesit=Object.keys(cnt).sort((a,b)=>cnt[b].off-cnt[a].off);
+  const opened=ev.filter(e=>e.a==='open').length;
+  const appr=ev.find(e=>e.a==='approve');
+  const last=d.lastSeen?new Date(d.lastSeen):null;
+  const ago=t=>{if(!t)return '';const m=Math.round((Date.now()-t)/60000);
+    if(m<1)return '\u05e2\u05db\u05e9\u05d9\u05d5';if(m<60)return '\u05dc\u05e4\u05e0\u05d9 '+m+' \u05d3\u05e7\u05f3';
+    const h=Math.round(m/60);if(h<24)return '\u05dc\u05e4\u05e0\u05d9 '+h+' \u05e9\u05e2\u05f3';return '\u05dc\u05e4\u05e0\u05d9 '+Math.round(h/24)+' \u05d9\u05de\u05d9\u05dd';};
+  let rows='';
+  if(opened)rows+='<div class="lv-act-r">\ud83d\udc41 \u05e0\u05e4\u05ea\u05d7 '+opened+' \u05e4\u05e2\u05de\u05d9\u05dd'+(last?' \u00b7 \u05d0\u05d7\u05e8\u05d5\u05df '+ago(d.lastSeen):'')+'</div>';
+  hesit.slice(0,4).forEach(n=>{
+    const x=cnt[n];
+    rows+='<div class="lv-act-r warn">\u26a0\ufe0f \u05d1\u05d9\u05d8\u05dc <b>'+n+'</b>'+(x.off>1?' ('+x.off+' \u05e4\u05e2\u05de\u05d9\u05dd)':'')+(x.p?' \u00b7 '+Math.round(x.p).toLocaleString('he-IL')+'\u20aa':'')+'</div>';
+  });
+  if(d.curTotal!=null)rows+='<div class="lv-act-r">\ud83d\udcb0 \u05d4\u05e1\u05db\u05d5\u05dd \u05e9\u05dc\u05d5 \u05db\u05e8\u05d2\u05e2: <b>'+Math.round(d.curTotal).toLocaleString('he-IL')+'\u20aa</b></div>';
+  rows+= appr ? '<div class="lv-act-r ok">\u2705 \u05d0\u05d9\u05e9\u05e8</div>'
+              : '<div class="lv-act-r">\u274c \u05d9\u05e6\u05d0 \u05d1\u05dc\u05d9 \u05dc\u05d0\u05e9\u05e8</div>';
+  const btn = (!appr&&hesit.length) ? '<button class="lv-act-btn" data-lvmsg="'+id+'">\u26a1 \u05e0\u05e1\u05d7 \u05dc\u05d5 \u05d4\u05d5\u05d3\u05e2\u05d4</button>' : '';
+  return '<div class="lv-act"><div class="lv-act-h">\u26a1 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9 \u2014 \u05de\u05d4 \u05d4\u05dc\u05e7\u05d5\u05d7 \u05e2\u05e9\u05d4</div>'+rows+btn+'</div>';
+ },
+ async liveDraftMsg(id){
+  const d=(this._trackData||{})[id];const l=Store.get('sentLinks',[]).find(x=>x.id===id);
+  if(!d||!l){this.toast('\u05d0\u05d9\u05df \u05e0\u05ea\u05d5\u05e0\u05d9\u05dd');return;}
+  const cnt={};(d.events||[]).forEach(e=>{if(e.a==='off'&&e.n){cnt[e.n]=(cnt[e.n]||0)+1;}});
+  const items=Object.keys(cnt);
+  if(!items.length){this.toast('\u05d4\u05dc\u05e7\u05d5\u05d7 \u05dc\u05d0 \u05d1\u05d9\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd');return;}
+  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const nm=(l.client||'').split(' ')[0];
+  if(!key){
+    const msg='\u05e9\u05dc\u05d5\u05dd'+(nm?' '+nm:'')+' \ud83d\udc4b'+String.fromCharCode(10)+'\u05e8\u05d0\u05d9\u05ea\u05d9 \u05e9\u05d4\u05ea\u05dc\u05d1\u05d8\u05ea \u05e2\u05dc '+items[0]+'.'+String.fromCharCode(10)+'\u05d9\u05e9 \u05dc\u05d9 \u05db\u05de\u05d4 \u05d7\u05dc\u05d5\u05e4\u05d5\u05ea \u2014 \u05e0\u05e9\u05de\u05d7 \u05dc\u05d3\u05d1\u05e8.';
+    window.open(waLink(l.phone,msg),'_blank');return;
+  }
+  this.busy('\u05de\u05e0\u05e1\u05d7\u2026');
+  const st=Store.get('myStyle','');
+  const P=['\u05d0\u05ea\u05d4 \u05e2\u05d5\u05d6\u05e8 \u05dc\u05e7\u05d1\u05dc\u05df \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd. \u05d4\u05dc\u05e7\u05d5\u05d7 \u05e4\u05ea\u05d7 \u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u05d5\u05d1\u05d9\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd, \u05d5\u05dc\u05d0 \u05d0\u05d9\u05e9\u05e8.',
+   '\u05e9\u05dd \u05d4\u05dc\u05e7\u05d5\u05d7: '+(nm||''),
+   '\u05d4\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05e9\u05d1\u05d9\u05d8\u05dc: '+items.join(', '),
+   '\u05db\u05ea\u05d5\u05d1 \u05d4\u05d5\u05d3\u05e2\u05ea \u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4 \u05e7\u05e6\u05e8\u05d4 (\u05e2\u05d3 3 \u05e9\u05d5\u05e8\u05d5\u05ea), \u05d7\u05de\u05d4 \u05d5\u05dc\u05d0 \u05dc\u05d5\u05d7\u05e6\u05ea, \u05e9\u05de\u05ea\u05d9\u05d9\u05d7\u05e1\u05ea \u05dc\u05e1\u05e2\u05d9\u05e3 \u05e9\u05d1\u05d5\u05d8\u05dc \u05d5\u05de\u05e6\u05d9\u05e2\u05d4 \u05d7\u05dc\u05d5\u05e4\u05d4 \u05d6\u05d5\u05dc\u05d4 \u05d9\u05d5\u05ea\u05e8 \u05d0\u05d5 \u05d4\u05ea\u05d0\u05de\u05d4.',
+   '\u05d4\u05d7\u05d6\u05e8 \u05d0\u05da \u05d5\u05e8\u05e7 \u05d0\u05ea \u05d8\u05e7\u05e1\u05d8 \u05d4\u05d4\u05d5\u05d3\u05e2\u05d4.'];
+  if(st)P.push('\u05db\u05ea\u05d5\u05d1 \u05d1\u05e1\u05d2\u05e0\u05d5\u05df \u05d4\u05d1\u05d0:'+String.fromCharCode(10)+st.slice(0,500));
+  try{
+    let t=await this.callAI(P.join(String.fromCharCode(10)),400);
+    this.idle();
+    t=String(t||'').trim();
+    if(!t){this.toast('\u05dc\u05d0 \u05d4\u05ea\u05e7\u05d1\u05dc \u05e0\u05d9\u05e1\u05d5\u05d7');return;}
+    window.open(waLink(l.phone,t),'_blank');
+  }catch(e){this.idle();this.toast('\u05d4\u05e0\u05d9\u05e1\u05d5\u05d7 \u05e0\u05db\u05e9\u05dc');}
  },
  async loadTracking(){const links=Store.get('sentLinks',[]);if(!links.length||!window._db)return;
   const out={};
-  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||''};}}catch(e){}}));}catch(e){}
+  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||'',live:!!v.live,events:v.events||[],curTotal:v.curTotal||null,lastSeen:v.lastSeen||null};}}catch(e){}}));}catch(e){}
   this._trackData=out;
   // סנכרון: לקוח שההצעה שלו אושרה בענן — מעדכנים את הסטטוס המקומי ל'בוצע' כדי שלא יופיע בתזכורות
   try{const clients=Store.get('clients',[]);let changed=false;
@@ -3097,6 +3276,7 @@ const App={
     this.loadQuote(q.id);
     setTimeout(async()=>{this.state.clientSig=s.img;this.state.docType='quote';try{await this.generatePDF();this.toast('PDF חתום הופק ✓');}catch(e){this.toast('ההפקה נכשלה');}},400);
   };
+  on('[data-lvmsg]','click',e=>this.liveDraftMsg(e.currentTarget.dataset.lvmsg));
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
   on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
   on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
@@ -3147,6 +3327,7 @@ const App={
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
   on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=(+it.qty>0);this.saveActive(cid);this.render();}});
+  const lvl=document.getElementById('livelink');if(lvl)lvl.onclick=()=>this.makeLiveLink();
   const wl=document.getElementById('weblink');if(wl)wl.onclick=()=>this.makeProposalLink();
   on('[data-review]','click',e=>this.sendReview(e.currentTarget.dataset.review));
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
@@ -3548,6 +3729,79 @@ const App={
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.render();
  },
+ liveView(d,id){
+  const nf=n=>Math.round(+n||0).toLocaleString('he-IL')+'\u00a0\u20aa';
+  const items=d.it||[];
+  const groups=[];
+  items.forEach((it,i)=>{
+    let g=groups.find(x=>x.title===(it.c||''));
+    if(!g){g={title:it.c||'',rows:[]};groups.push(g);}
+    g.rows.push({i:i,it:it});
+  });
+  let body='';
+  groups.forEach(g=>{
+    body+='<div class="lv-cat">'+(g.title||'\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd')+'</div>';
+    g.rows.forEach(r=>{
+      const tot=(+r.it.q||0)*(+r.it.p||0);
+      body+='<label class="lv-row" data-lvrow="'+r.i+'">'+
+        '<input type="checkbox" class="lv-chk" data-lvi="'+r.i+'" data-lvp="'+tot+'" data-lvn="'+String(r.it.n||'').replace(/"/g,'&quot;')+'" checked/>'+
+        '<span class="lv-box"></span>'+
+        '<span class="lv-txt"><b>'+(r.it.n||'')+'</b><span>'+(r.it.q||1)+' '+(r.it.u||'')+'</span></span>'+
+        '<span class="lv-price">'+nf(tot)+'</span></label>';
+    });
+  });
+  const vat=+d.vat||0;
+  return '<div class="lv-wrap">'+
+   '<div class="lv-head"><img src="'+LOGO_APP+'" class="lv-logo"/>'+
+     '<div class="lv-co">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</div>'+
+     '<div class="lv-sub">\u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea</div></div>'+
+   '<div class="lv-card"><div class="lv-to">\u05dc\u05db\u05d1\u05d5\u05d3 <b>'+(d.cn||'')+'</b>'+(d.pr?' \u00b7 '+d.pr:'')+'</div>'+
+     '<div class="lv-meta">\u05de\u05e1\u05f3 '+(d.no||'')+' \u00b7 '+(d.dt||'')+'</div></div>'+
+   '<div class="lv-tip">\u2728 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05e9\u05dc\u05d0 \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9\u05d9\u05dd \u2014 \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df \u05de\u05d9\u05d3</div>'+
+   '<div class="lv-items">'+body+'</div>'+
+   '<div class="lv-sum" id="lv-sum">'+
+     '<div class="r"><span>\u05e1\u05db\u05d5\u05dd \u05d1\u05d9\u05e0\u05d9\u05d9\u05dd</span><b id="lv-sub">'+nf(d.sub)+'</b></div>'+
+     (vat?'<div class="r"><span>\u05de\u05e2"\u05de '+vat+'%</span><b id="lv-vat">'+nf(d.sub*vat/100)+'</b></div>':'')+
+     '<div class="r tot"><span>\u05e1\u05d4"\u05db</span><b id="lv-tot">'+nf(d.tot)+'</b></div>'+
+     '<div class="lv-note" id="lv-note"></div></div>'+
+   '<button class="lv-ok" id="lv-approve">\u2705 \u05d0\u05e0\u05d9 \u05de\u05d0\u05e9\u05e8 \u05d0\u05ea \u05d4\u05d4\u05e6\u05e2\u05d4</button>'+
+   '<a class="lv-call" href="tel:0545718316">\ud83d\udcde \u05d9\u05e9 \u05dc\u05d9 \u05e9\u05d0\u05dc\u05d4 \u2014 054-571-8316</a>'+
+   '<div class="lv-foot">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998<br>yehuda-shipuzim.netlify.app</div>'+
+   '</div>';
+ },
+ async makeLiveLink(){
+  this.captureQuote();
+  const s=this.state,cl=s.client;
+  if(!cl.name||!cl.name.trim()){this.toast('\u05d7\u05e1\u05e8 \u05e9\u05dd \u05dc\u05e7\u05d5\u05d7');return;}
+  if(!this.chosen().length){this.toast('\u05d1\u05d7\u05e8 \u05dc\u05e4\u05d7\u05d5\u05ea \u05e4\u05e8\u05d9\u05d8 \u05d0\u05d7\u05d3');return;}
+  if(!window._db){this.toast('\u05d0\u05d9\u05df \u05d7\u05d9\u05d1\u05d5\u05e8 \u05dc\u05e2\u05e0\u05df \u2014 \u05e0\u05d3\u05e8\u05e9 \u05dc\u05dc\u05d9\u05e0\u05e7 \u05d4\u05d7\u05d9');return;}
+  if(!confirm('\u05dc\u05e9\u05dc\u05d5\u05d7 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9 \u05dc'+cl.name+'?'))return;
+  this.busy('\u05de\u05db\u05d9\u05df \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9\u2026');this.saveClient();
+  const groups=this.chosen();const items=[];
+  groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+  const data={cn:cl.name||'',pr:cl.project||'',ph:cl.phone||'',ad:cl.address||'',no:s.quoteNo,
+    dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,
+    sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,
+    tot:this.grand(),terms:(s.showTerms?this.termsText():'')||''};
+  try{
+    const id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+    await window._db.collection('proposals').doc(id).set({
+      data:data,live:true,createdAt:Date.now(),viewedAt:null,
+      events:[],curTotal:this.grand(),owner:'yehuda'
+    });
+    const link=location.origin+location.pathname+'#L='+id;
+    const sent=Store.get('sentLinks',[]);
+    sent.unshift({id:id,live:true,client:cl.name,phone:cl.phone||'',ts:Date.now(),total:this.grand(),no:s.quoteNo});
+    Store.set('sentLinks',sent.slice(0,300));
+    this.recordQuote();
+    this.idle();this.haptic(25);
+    const msg='\u05e9\u05dc\u05d5\u05dd'+(cl.name?' '+cl.name.split(' ')[0]:'')+' \ud83d\udc4b'+String.fromCharCode(10)+
+      '\u05de\u05e6\u05d5\u05e8\u05e3 \u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u2014 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e1\u05de\u05df \u05d5\u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d5\u05dc\u05e8\u05d0\u05d5\u05ea \u05d0\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df:'+String.fromCharCode(10)+link;
+    window.open(waLink(cl.phone,msg),'_blank');
+    this.toast('\u05d4\u05dc\u05d9\u05e0\u05e7 \u05d4\u05d7\u05d9 \u05e0\u05e9\u05dc\u05d7 \u2713');
+    this.render();
+  }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05dc\u05d9\u05e0\u05e7 \u05e0\u05db\u05e9\u05dc\u05d4');}
+ },
  async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
@@ -3921,6 +4175,26 @@ document.addEventListener('DOMContentLoaded',()=>{
      try{initReviewUI(rid,d);}catch(e){}
    }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסו לרענן.</div>';});}
    else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888">לא ניתן לטעון כרגע.</div>';}
+   return;
+ }
+
+ // ── לינק חי (#L=XXXX) ──
+ if(location.hash&&location.hash.indexOf('#L=')===0){
+   const lid=location.hash.slice(3).replace(/[^A-Za-z0-9]/g,'');
+   const sp0=document.getElementById('splash');if(sp0)sp0.style.display='none';
+   document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;font-size:16px">\u05d8\u05d5\u05e2\u05df \u05d4\u05e6\u05e2\u05d4\u2026</div>';
+   if(window._db){
+     window._db.collection('proposals').doc(lid).get().then(doc=>{
+       if(doc.exists){
+         const dd=doc.data();
+         document.getElementById('root').innerHTML=App.liveView(dd.data,lid);
+         try{initLiveUI(lid,dd.data);}catch(e){}
+         try{if(!dd.viewedAt)window._db.collection('proposals').doc(lid).update({viewedAt:Date.now()});}catch(e){}
+       }else{
+         document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">\u05d4\u05d4\u05e6\u05e2\u05d4 \u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d4.<br>\u05d1\u05e7\u05e9/\u05d9 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d3\u05e9.</div>';
+       }
+     }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">\u05dc\u05d0 \u05e0\u05d9\u05ea\u05df \u05dc\u05d8\u05e2\u05d5\u05df \u05db\u05e8\u05d2\u05e2.</div>';});
+   }
    return;
  }
  // client-facing proposal via SHORT link (#id=XXXX) — fetch from Firestore
