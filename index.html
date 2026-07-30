@@ -896,6 +896,30 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .lv-act-e{font-size:12.5px;color:var(--muted);}
 .lv-act-btn{width:100%;margin-top:9px;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#4fc3f7,var(--blue));color:#fff;font-weight:800;font-size:13px;cursor:pointer;}
 .lv-act-btn:active{transform:scale(.98);}
+
+.lv-sum .r.disc b{color:var(--ok);}
+.lv-sum .r.adv{border-top:1px dashed #33333b;margin-top:7px;padding-top:9px;font-size:13px;}
+.lv-sum .r.adv b{color:var(--warn);}
+
+.lv-tap{display:flex;align-items:center;gap:11px;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.lv-qline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px;color:#9a9aa6;margin-top:4px;}
+.lv-qb{width:26px;height:26px;flex:none;border:1px solid #4a4a55;background:#1f1f26;color:#f3f3f5;border-radius:8px;font-size:15px;font-weight:800;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;}
+.lv-qb:active{background:var(--red);border-color:var(--red);}
+.lv-qv{min-width:22px;text-align:center;font-weight:800;color:#f3f3f5;font-size:13.5px;}
+.lv-unit{opacity:.7;}
+.lv-row.off .lv-qb{pointer-events:none;opacity:.4;}
+
+/* ═══ קיפול אזור כלי AI ═══ */
+.ai-fold{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bg3);border:1px solid var(--line);border-radius:13px;padding:13px 15px;
+  color:var(--txt);font-weight:800;font-size:14px;cursor:pointer;margin:14px 0 0;
+  transition:border-color .2s,background .2s;}
+.ai-fold.open{border-color:var(--red);background:rgba(43,168,224,.06);}
+.ai-fold-c{color:var(--red);font-size:17px;transition:transform .3s cubic-bezier(.16,1,.3,1);}
+.ai-fold.open .ai-fold-c{transform:rotate(-90deg);}
+.ai-fold-b{max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.16,1,.3,1);}
+.ai-fold-b.open{max-height:900px;}
+.ai-fold-b .qa-box{margin-top:12px;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -929,7 +953,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='11.6';
+const VERSION='11.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -973,21 +997,29 @@ function initLiveUI(id,d){
     }catch(e){}
   }
   function calc(){
-    var sub=0, off=[];
+    var raw=0, off=[];
     document.querySelectorAll('.lv-chk').forEach(function(ch){
-      var p=+ch.dataset.lvp||0;
-      if(ch.checked){sub+=p;}else{off.push(ch.dataset.lvn);}
+      var i=ch.dataset.lvi, u=+ch.dataset.lvu||0;
+      var qEl=document.getElementById('lv-q'+i);
+      var q=qEl?(+qEl.textContent||0):(+ch.dataset.lvq0||1);
+      var p=u*q;
+      var pEl=document.getElementById('lv-p'+i);
+      if(pEl)pEl.textContent=nf(p);
+      if(ch.checked){raw+=p;}else{off.push(ch.dataset.lvn);}
     });
-    if(dis>0)sub=sub-(sub*dis/100);
-    var v=vat?sub*vat/100:0;
-    return {sub:sub, vat:v, tot:sub+v, off:off};
+    var discAmt = dis>0 ? raw*dis/100 : 0;
+    var afterDisc = raw - discAmt;
+    var v = vat ? afterDisc*vat/100 : 0;
+    return {raw:raw, discAmt:discAmt, sub:afterDisc, vat:v, tot:afterDisc+v, off:off};
   }
   function refresh(){
     var r=calc();
     var e;
-    if(e=document.getElementById('lv-sub'))e.textContent=nf(r.sub);
+    if(e=document.getElementById('lv-sub'))e.textContent=nf(r.raw);
+    if(e=document.getElementById('lv-dis'))e.textContent='-\u00a0'+nf(r.discAmt);
     if(e=document.getElementById('lv-vat'))e.textContent=nf(r.vat);
     if(e=document.getElementById('lv-tot'))e.textContent=nf(r.tot);
+    if(e=document.getElementById('lv-adv'))e.textContent=nf(r.tot*(+d.adv||0)/100);
     var n=document.getElementById('lv-note');
     if(n){
       if(r.off.length){
@@ -1006,6 +1038,22 @@ function initLiveUI(id,d){
       push({t:Date.now(), a:ch.checked?'on':'off', n:ch.dataset.lvn, p:+ch.dataset.lvp||0});
       refresh();
       try{if(navigator.vibrate)navigator.vibrate(8);}catch(e){}
+    });
+  });
+  document.querySelectorAll('.lv-qb').forEach(function(btn){
+    btn.addEventListener('click',function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      var parts=btn.dataset.lvq.split('|'), i=parts[0], step=+parts[1];
+      var el=document.getElementById('lv-q'+i);
+      if(!el)return;
+      var cur=+el.textContent||1;
+      var nx=Math.max(1,cur+step);
+      if(nx===cur)return;
+      el.textContent=nx;
+      var ch=document.querySelector('.lv-chk[data-lvi="'+i+'"]');
+      push({t:Date.now(), a:'qty', n:ch?ch.dataset.lvn:'', from:cur, to:nx});
+      refresh();
+      try{if(navigator.vibrate)navigator.vibrate(6);}catch(e){}
     });
   });
   var ap=document.getElementById('lv-approve');
@@ -1482,11 +1530,11 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru'];}};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm'];
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -2064,12 +2112,16 @@ const App={
      ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>
    <div class="sec-title">שפת המסמך</div>
    <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English'],['ru','Русский']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
+   ${(s.lang&&s.lang!=='he')?`<button class="btn-ghost" id="tr-run" style="margin:4px 0 8px;font-size:12.5px">🌐 תרגם סעיפים ב-AI</button>`:''}
+   <button class="ai-fold" id="ai-fold-t">✨ כלי AI להצעה<span class="ai-fold-c">›</span></button>
+   <div class="ai-fold-b" id="ai-fold-b">
    <div class="qa-box">
      <div class="qa-head"><span class="qa-ic">🪄</span><div><div class="qa-t">הוספה מהירה</div><div class="qa-s">כתוב חופשי — ה-AI יסדר ויפזר לקטגוריות</div></div></div>
      <textarea id="quick-add" class="qa-ta" placeholder="לדוגמה:&#10;החלפת 3 שקעים 450 שח&#10;צביעת מרפסת 800&#10;פינוי פסולת 1200"></textarea>
      <button class="qa-btn" id="quick-add-btn">✨ פזר לקטגוריות</button>
    </div>
    <button class="btn-ghost" id="check-missing" style="margin-bottom:8px">💡 בדוק סעיפים חסרים (AI)</button>
+      </div>
    <button class="btn-block" id="gen-pdf">📄 הצעת מחיר — PDF</button>
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="open-annex">⚖️ נספח משפטי — PDF</button>
@@ -3186,6 +3238,12 @@ const App={
   const qg=document.getElementById('q_gallery');if(qg)qg.onchange=()=>{this.state.includeGallery=qg.checked;Store.set('includeGallery',qg.checked);};
   const opf=document.getElementById('open-portfolio');if(opf)opf.onclick=()=>{this.captureQuote();this.state.modal='portfolio';this.render();};
   const gp=document.getElementById('gen-pdf');if(gp)gp.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='quote';this.generatePDF(false);};
+  const trr=document.getElementById('tr-run');if(trr)trr.onclick=()=>this.translateQuote();
+  const aft=document.getElementById('ai-fold-t'),afb=document.getElementById('ai-fold-b');
+  if(aft&&afb){
+    if(this._aiFoldOpen){aft.classList.add('open');afb.classList.add('open');}
+    aft.onclick=()=>{this._aiFoldOpen=!this._aiFoldOpen;aft.classList.toggle('open');afb.classList.toggle('open');this.haptic(10);};
+  }
   const cms=document.getElementById('check-missing');if(cms)cms.onclick=()=>{this.captureQuote();this.suggestMissingItems();};
   const qab=document.getElementById('quick-add-btn');if(qab)qab.onclick=()=>{const el=document.getElementById('quick-add');const t=el?el.value.trim():'';if(!t){this.toast('כתוב קודם מה להוסיף');return;}this.captureQuote();this._v2qText=t;this.v2qConvert();};
   const madd=document.getElementById('miss-add');if(madd)madd.onclick=()=>{
@@ -3643,7 +3701,7 @@ const App={
  buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=s.lang==='en'?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
   const plan=s.planMode;const cspan=plan?4:6;
   groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?g.cat.title:`<div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
-    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${i.name}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
+    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.tr(i.name)}</td><td>${i.qty}</td><td>${i.unit}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.tr(i.name)}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
   // materials as a real table category (not a footnote)
   if(s.whiteOn||s.blackOn){
     const mrows=[];
@@ -3720,32 +3778,82 @@ const App={
   groups.forEach(g=>{
     body+='<div class="lv-cat">'+(g.title||'\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd')+'</div>';
     g.rows.forEach(r=>{
-      const tot=(+r.it.q||0)*(+r.it.p||0);
-      body+='<label class="lv-row" data-lvrow="'+r.i+'">'+
-        '<input type="checkbox" class="lv-chk" data-lvi="'+r.i+'" data-lvp="'+tot+'" data-lvn="'+String(r.it.n||'').replace(/"/g,'&quot;')+'" checked/>'+
+      const q0=+r.it.q||1, unit=+r.it.p||0, tot=q0*unit;
+      const canQty=(q0>1)&&(unit>0);
+      body+='<div class="lv-row" data-lvrow="'+r.i+'">'+
+        '<label class="lv-tap">'+
+        '<input type="checkbox" class="lv-chk" data-lvi="'+r.i+'" data-lvu="'+unit+'" data-lvq0="'+q0+'" data-lvn="'+String(r.it.n||'').replace(/"/g,'&quot;')+'" checked/>'+
         '<span class="lv-box"></span>'+
-        '<span class="lv-txt"><b>'+(r.it.n||'')+'</b><span>'+(r.it.q||1)+' '+(r.it.u||'')+'</span></span>'+
-        '<span class="lv-price">'+nf(tot)+'</span></label>';
+        '<span class="lv-txt"><b>'+(r.it.n||'')+'</b>'+
+          '<span class="lv-qline">'+
+            (canQty?'<button class="lv-qb" data-lvq="'+r.i+'|-1" type="button">\u2212</button>':'')+
+            '<span class="lv-qv" id="lv-q'+r.i+'">'+q0+'</span> '+(r.it.u||'')+
+            (canQty?'<button class="lv-qb" data-lvq="'+r.i+'|1" type="button">+</button>':'')+
+            (unit?'<span class="lv-unit">\u00b7 '+nf(unit)+' \u05dc\u05d9\u05d7\u05f3</span>':'')+
+          '</span></span>'+
+        '<span class="lv-price" id="lv-p'+r.i+'">'+nf(tot)+'</span></label></div>';
     });
   });
-  const vat=+d.vat||0;
+  const vat=+d.vat||0, dis=+d.dis||0, adv=+d.adv||0;
   return '<div class="lv-wrap">'+
    '<div class="lv-head"><img src="'+LOGO_APP+'" class="lv-logo"/>'+
      '<div class="lv-co">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</div>'+
      '<div class="lv-sub">\u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea</div></div>'+
    '<div class="lv-card"><div class="lv-to">\u05dc\u05db\u05d1\u05d5\u05d3 <b>'+(d.cn||'')+'</b>'+(d.pr?' \u00b7 '+d.pr:'')+'</div>'+
      '<div class="lv-meta">\u05de\u05e1\u05f3 '+(d.no||'')+' \u00b7 '+(d.dt||'')+'</div></div>'+
-   '<div class="lv-tip">\u2728 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05e9\u05dc\u05d0 \u05e8\u05dc\u05d5\u05d5\u05e0\u05d8\u05d9\u05d9\u05dd \u2014 \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df \u05de\u05d9\u05d3</div>'+
+   '<div class="lv-tip">\u2728 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d0\u05d5 \u05dc\u05e9\u05e0\u05d5\u05ea \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u2014 \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df \u05de\u05d9\u05d3</div>'+
    '<div class="lv-items">'+body+'</div>'+
    '<div class="lv-sum" id="lv-sum">'+
      '<div class="r"><span>\u05e1\u05db\u05d5\u05dd \u05d1\u05d9\u05e0\u05d9\u05d9\u05dd</span><b id="lv-sub">'+nf(d.sub)+'</b></div>'+
-     (vat?'<div class="r"><span>\u05de\u05e2"\u05de '+vat+'%</span><b id="lv-vat">'+nf(d.sub*vat/100)+'</b></div>':'')+
+     (dis?'<div class="r disc"><span>\u05d4\u05e0\u05d7\u05d4 '+dis+'%</span><b id="lv-dis">-\u00a0'+nf(d.sub*dis/100)+'</b></div>':'')+
+     (vat?'<div class="r"><span>\u05de\u05e2"\u05de '+vat+'%</span><b id="lv-vat">'+nf((d.sub-(d.sub*dis/100))*vat/100)+'</b></div>':'')+
      '<div class="r tot"><span>\u05e1\u05d4"\u05db</span><b id="lv-tot">'+nf(d.tot)+'</b></div>'+
+     (adv?'<div class="r adv"><span>\u05de\u05e7\u05d3\u05de\u05d4 '+adv+'% \u05e2\u05dd \u05ea\u05d7\u05d9\u05dc\u05ea \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4</span><b id="lv-adv">'+nf(d.tot*adv/100)+'</b></div>':'')+
      '<div class="lv-note" id="lv-note"></div></div>'+
    '<button class="lv-ok" id="lv-approve">\u2705 \u05d0\u05e0\u05d9 \u05de\u05d0\u05e9\u05e8 \u05d0\u05ea \u05d4\u05d4\u05e6\u05e2\u05d4</button>'+
    '<a class="lv-call" href="tel:0545718316">\ud83d\udcde \u05d9\u05e9 \u05dc\u05d9 \u05e9\u05d0\u05dc\u05d4 \u2014 054-571-8316</a>'+
    '<div class="lv-foot">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998<br>yehuda-shipuzim.netlify.app</div>'+
    '</div>';
+ },
+ async translateQuote(){
+  const lang=this.state.lang||'he';
+  if(lang==='he'){this.toast('\u05d1\u05d7\u05e8 \u05e9\u05e4\u05d4 \u05d0\u05d7\u05e8\u05ea \u05e7\u05d5\u05d3\u05dd');return;}
+  const groups=this.chosen();
+  if(!groups.length){this.toast('\u05d1\u05d7\u05e8 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05e7\u05d5\u05d3\u05dd');return;}
+  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  if(!key){this.toast('\u05d4\u05d2\u05d3\u05e8 \u05de\u05e4\u05ea\u05d7 AI \u05d1\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7');return;}
+  const LN={ar:'\u05e2\u05e8\u05d1\u05d9\u05ea',en:'\u05d0\u05e0\u05d2\u05dc\u05d9\u05ea',ru:'\u05e8\u05d5\u05e1\u05d9\u05ea'}[lang]||lang;
+  const names=[];
+  groups.forEach(g=>g.lines.forEach(l=>{if(names.indexOf(l.name)<0)names.push(l.name);}));
+  const cached=Store.get('trans_'+lang,{});
+  const need=names.filter(n=>!cached[n]);
+  if(!need.length){this.toast('\u05db\u05dc \u05d4\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05db\u05d1\u05e8 \u05de\u05ea\u05d5\u05e8\u05d2\u05de\u05d9\u05dd \u2713');return;}
+  this.busy('\u05de\u05ea\u05e8\u05d2\u05dd \u05dc'+LN+'\u2026');this.haptic(15);
+  const CH=25;const chunks=[];
+  for(let i=0;i<need.length;i+=CH)chunks.push(need.slice(i,i+CH));
+  let done=0,fail=0;
+  for(let i=0;i<chunks.length;i++){
+    if(chunks.length>1)this.busy('\u05de\u05ea\u05e8\u05d2\u05dd\u2026 '+(i+1)+'/'+chunks.length);
+    const P=['\u05ea\u05e8\u05d2\u05dd \u05dc'+LN+' \u05de\u05d5\u05e0\u05d7\u05d9 \u05e9\u05d9\u05e4\u05d5\u05e5 \u05d5\u05d1\u05e0\u05d9\u05d9\u05d4 \u05de\u05e2\u05d1\u05e8\u05d9\u05ea. \u05e9\u05de\u05d5\u05e8 \u05e2\u05dc \u05de\u05d5\u05e0\u05d7\u05d9\u05dd \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d9\u05dd \u05de\u05d3\u05d5\u05d9\u05e7\u05d9\u05dd \u05d1\u05ea\u05d7\u05d5\u05dd \u05d4\u05d1\u05e0\u05d9\u05d9\u05d4.',
+      '\u05d4\u05d7\u05d6\u05e8 \u05d0\u05da \u05d5\u05e8\u05e7 JSON: \u05de\u05e2\u05e8\u05da \u05d0\u05d5\u05d1\u05d9\u05e7\u05d8\u05d9\u05dd {"o":"\u05d4\u05de\u05e7\u05d5\u05e8 \u05d1\u05e2\u05d1\u05e8\u05d9\u05ea","t":"\u05d4\u05ea\u05e8\u05d2\u05d5\u05dd"}. \u05d1\u05dc\u05d9 markdown, \u05d1\u05dc\u05d9 \u05d4\u05e1\u05d1\u05e8\u05d9\u05dd.',
+      '\u05d4\u05e1\u05e2\u05d9\u05e4\u05d9\u05dd:',chunks[i].join(' | ')];
+    try{
+      const txt=await this.callAI(P.join(String.fromCharCode(10)),1800);
+      const arr=this._parseJSONArray(txt);
+      if(arr&&arr.length){arr.forEach(x=>{if(x&&x.o&&x.t){cached[String(x.o).trim()]=String(x.t).trim();done++;}});}
+      else fail++;
+    }catch(e){fail++;}
+  }
+  Store.set('trans_'+lang,cached);
+  this.idle();this.haptic(20);
+  if(!done){this.toast('\u05d4\u05ea\u05e8\u05d2\u05d5\u05dd \u05e0\u05db\u05e9\u05dc \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
+  this.toast('\u05ea\u05d5\u05e8\u05d2\u05de\u05d5 '+done+' \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05dc'+LN+' \u2713'+(fail?' ('+fail+' \u05de\u05e0\u05d5\u05ea \u05e0\u05db\u05e9\u05dc\u05d5)':''));
+  this.render();
+ },
+ tr(name){
+  const lang=this.state.lang||'he';
+  if(lang==='he')return name;
+  try{const m=Store.get('trans_'+lang,{});return m[String(name).trim()]||name;}catch(e){return name;}
  },
  async makeLiveLink(){
   this.captureQuote();
@@ -3756,7 +3864,14 @@ const App={
   if(!confirm('\u05dc\u05e9\u05dc\u05d5\u05d7 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9 \u05dc'+cl.name+'?'))return;
   this.busy('\u05de\u05db\u05d9\u05df \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9\u2026');this.saveClient();
   const groups=this.chosen();const items=[];
-  groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+  groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.tr(l.name),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+  // \u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05db\u05e9\u05d5\u05e8\u05d5\u05ea \u05d0\u05de\u05d9\u05ea\u05d9\u05d5\u05ea \u2014 \u05db\u05de\u05d5 \u05d1\u05d4\u05e6\u05e2\u05d4 \u05d4\u05e8\u05d2\u05d9\u05dc\u05d4
+  const matRow=(on,inc,price,mi,label)=>{if(!on)return null;
+    const names=(mi&&mi.length)?mi.join(', '):'\u05db\u05dc\u05d5\u05dc';
+    return {n:label+': '+names,q:1,p:(inc?0:(+price||0)),u:'\u05d2\u05dc\u05d5\u05d1\u05dc\u05d9',c:'\u05d7\u05d5\u05de\u05e8\u05d9\u05dd'};};
+  const mw=matRow(s.whiteOn,s.whiteInc!==false,s.whitePrice,s.whiteItems,'\u05d7\u05d5\u05de\u05e8 \u05dc\u05d1\u05df');
+  const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,'\u05d7\u05d5\u05de\u05e8 \u05e9\u05d7\u05d5\u05e8');
+  if(mw)items.push(mw); if(mb)items.push(mb);
   const data={cn:cl.name||'',pr:cl.project||'',ph:cl.phone||'',ad:cl.address||'',no:s.quoteNo,
     dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,
     sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,
@@ -3780,7 +3895,7 @@ const App={
     this.render();
   }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05dc\u05d9\u05e0\u05e7 \u05e0\u05db\u05e9\u05dc\u05d4');}
  },
- async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:l.name,q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+ async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.tr(l.name),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
