@@ -2,7 +2,7 @@
    מטרה: עבודה אופליין + עדכון אוטומטי.
    בכל שדרוג: העלה את מספר הגרסה כאן (CACHE) והאפליקציה תתעדכן לבד אצל כל המשתמשים.
 */
-const CACHE = 'ys-cache-v11.3';
+const CACHE = 'ys-cache-v11.5';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './version.json'];
 
 self.addEventListener('message', e => { if (e.data === 'SKIP_WAITING') self.skipWaiting(); });
@@ -31,13 +31,27 @@ self.addEventListener('fetch', e => {
 
   // Network-first for the app document + version file → always pulls the newest deploy
   if (isDoc || isVersion) {
-    e.respondWith(
-      fetch(req).then(r => {
-        const copy = r.clone();
-        caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+    // Network-first with a real timeout: on slow mobile we still wait up to 6s
+    // before falling back to cache, so a weak signal doesn't serve a stale app.
+    e.respondWith((async () => {
+      // \u05d4\u05e8\u05e9\u05ea \u05de\u05de\u05e9\u05d9\u05db\u05d4 \u05d1\u05e8\u05e7\u05e2 \u05d2\u05dd \u05d0\u05dd \u05e0\u05e4\u05dc\u05e0\u05d5 \u05dc\u05de\u05d8\u05de\u05d5\u05df \u2014 \u05db\u05da \u05d4\u05de\u05d8\u05de\u05d5\u05df \u05de\u05ea\u05e2\u05d3\u05db\u05df \u05dc\u05e4\u05e2\u05dd \u05d4\u05d1\u05d0\u05d4
+      const net = fetch(req, { cache: 'no-store' }).then(r => {
+        if (r && r.status === 200) {
+          const copy = r.clone();
+          caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+        }
         return r;
-      }).catch(() => caches.match(req).then(m => m || caches.match('./index.html')))
-    );
+      });
+      try {
+        const timed = new Promise((_, rej) => setTimeout(() => rej(new Error('slow')), 12000));
+        return await Promise.race([net, timed]);
+      } catch (_) {
+        net.catch(() => {});   // \u05de\u05de\u05e9\u05d9\u05da \u05d1\u05e8\u05e7\u05e2, \u05dc\u05dc\u05d0 \u05e9\u05d2\u05d9\u05d0\u05d4 \u05dc\u05d0 \u05de\u05d8\u05d5\u05e4\u05dc\u05ea
+        const m = await caches.match(req);
+        return m || (await caches.match('./index.html')) ||
+               new Response('offline', { status: 503 });
+      }
+    })());
     return;
   }
 

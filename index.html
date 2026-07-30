@@ -951,7 +951,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='11.3';
+const VERSION='11.5';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -4075,6 +4075,55 @@ window.addEventListener('popstate',()=>{
 
 function applyTheme(){try{document.documentElement.classList.toggle('light',Store.get('theme','dark')==='light');}catch(e){}}
 applyTheme();
+/* ═══════════════ ריפוי עצמי — זיהוי גרסה תקועה במטמון ═══════════════ */
+(function(){
+  // אם ה-HTML שנטען ישן מהגרסה שבשרת — נקה מטמון וטען מחדש (פעם אחת בלבד)
+  function ver2num(v){var p=String(v||'0').split('.');return (+p[0]||0)*10000+(+p[1]||0)*100+(+p[2]||0);}
+  setTimeout(function(){
+    try{
+      fetch('version.json?t='+Date.now(),{cache:'no-store'})
+        .then(function(r){return r.json();})
+        .then(function(j){
+          var remote=j&&j.version?String(j.version):'';
+          if(!remote||remote===VERSION)return;
+          if(ver2num(remote)<=ver2num(VERSION))return;   // לא מורידים גרסה
+          var guard='ys_heal_'+remote;
+          if(sessionStorage.getItem(guard))return;        // כבר ניסינו בסשן הזה
+          sessionStorage.setItem(guard,'1');
+          // הצג הודעה קצרה ואז רענן נקי
+          try{
+            var t=document.createElement('div');
+            t.style.cssText='position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:9999;'+
+              'background:#17171b;color:#f3f3f5;border:1px solid #33333b;border-radius:12px;'+
+              'padding:13px 18px;font:600 14px system-ui,Arial;direction:rtl;box-shadow:0 8px 30px rgba(0,0,0,.5)';
+            t.textContent='\u05de\u05e2\u05d3\u05db\u05df \u05dc\u05d2\u05e8\u05e1\u05d4 '+remote+'\u2026';
+            document.body.appendChild(t);
+          }catch(e){}
+          Promise.resolve()
+            .then(function(){
+              if('serviceWorker' in navigator){
+                return navigator.serviceWorker.getRegistrations().then(function(rs){
+                  return Promise.all(rs.map(function(x){return x.unregister();}));
+                });
+              }
+            })
+            .then(function(){
+              if('caches' in window){
+                return caches.keys().then(function(ks){
+                  return Promise.all(ks.map(function(k){return caches.delete(k);}));
+                });
+              }
+            })
+            .catch(function(){})
+            .then(function(){
+              setTimeout(function(){location.replace(location.pathname+'?v='+remote);},600);
+            });
+        })
+        .catch(function(){});
+    }catch(e){}
+  },2500);
+})();
+
 /* ===== auto-backup on every open (local snapshot, no friction) ===== */
 try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
 /* attempt silent Drive backup only if already authorized this session */
@@ -4090,6 +4139,29 @@ try{
 }catch(e){}
 try{if(Store.get('gClientId','')&&window.Drive&&Drive.token){setTimeout(()=>{try{App.driveBackup&&App.driveBackup();}catch(e){}},1500);}}catch(e){}
 document.getElementById('splash-logo').innerHTML=logoBlock(true,1);
+/* ═══ תיקון עצמי: אם הוגשה גרסה ישנה מהמטמון — רענון אוטומטי חד-פעמי ═══ */
+(function(){
+  if(typeof isClientView==='function' && isClientView())return;   // לא בדפי לקוח
+  setTimeout(async function(){
+    try{
+      var r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
+      if(!r||r.status!==200)return;
+      var j=await r.json();
+      var remote=(j&&j.version)||'';
+      if(!remote||remote===VERSION)return;
+      // מונע לופ: רק רענון אחד לכל גרסה
+      var flag='ys_autoreload_'+remote;
+      if(sessionStorage.getItem(flag))return;
+      sessionStorage.setItem(flag,'1');
+      try{
+        if('caches' in window){var ks=await caches.keys();await Promise.all(ks.map(function(k){return caches.delete(k);}));}
+        if('serviceWorker' in navigator){var regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(function(g){return g.update();}));}
+      }catch(e){}
+      location.reload();
+    }catch(e){}
+  },2500);
+})();
+
 /* ===== Service Worker: offline + auto-update ===== */
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
