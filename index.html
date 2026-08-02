@@ -941,6 +941,25 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .lv-price{font-weight:900;font-size:16px;color:#f3f3f5;white-space:nowrap;}
 .lv-row.off .lv-qb{pointer-events:none;opacity:.35;}
 .lv-row.off .lv-stepper{opacity:.5;}
+
+/* ═══════════════ ציר סטטוס אחוד ═══════════════ */
+.dl-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:14px 15px;margin-bottom:11px;}
+.dl-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:11px;}
+.dl-name{font-weight:800;font-size:15px;color:var(--txt);line-height:1.35;}
+.dl-meta{font-size:11.5px;color:var(--muted);margin-top:3px;}
+.dl-amt{font-weight:900;font-size:16px;color:var(--red);white-space:nowrap;}
+.dl-bar{display:flex;align-items:center;gap:0;margin:12px 0 10px;}
+.dl-node{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;}
+.dl-node::before{content:'';position:absolute;top:13px;right:50%;left:-50%;height:2px;background:var(--line);z-index:0;}
+.dl-node:first-child::before{display:none;}
+.dl-node.past::before,.dl-node.now::before{background:var(--ok);}
+.dl-dot{width:27px;height:27px;border-radius:50%;background:var(--bg3);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;position:relative;z-index:1;transition:.25s;}
+.dl-node.past .dl-dot{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:900;}
+.dl-node.now .dl-dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 4px rgba(237,28,36,.18);transform:scale(1.15);}
+.dl-lbl{font-size:10px;font-weight:800;color:var(--red);white-space:nowrap;position:absolute;top:32px;}
+.dl-flag{display:flex;align-items:center;gap:7px;background:var(--bg3);border-right:3px solid var(--warn);border-radius:9px;padding:9px 12px;margin-top:18px;font-size:12.5px;color:var(--txt);}
+.dl-acts{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
+.dl-acts .mini{flex:1;min-width:88px;text-align:center;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -974,7 +993,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='11.9';
+const VERSION='12.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1396,6 +1415,19 @@ const CATALOG=[
    {id:'dm16',name:'הסרת טפטים/שכבות צבע ישנות',price:35,unit:'מ"ר',range:'25–55 ₪ / מ"ר'},
    {id:'dm17',name:'פירוק תקרה אקוסטית/מונמכת ישנה',price:40,unit:'מ"ר',range:'30–60 ₪ / מ"ר'},
    {id:'dm18',name:'ניקיון גס אחרי הריסה (הכנה לעבודה)',price:600,unit:'גלובלי',range:'400–900 ₪'},
+   {id:'dm19',name:'פירוק מטבח קיים כולל ארונות ומשטח',price:1200,unit:'יח׳',range:'900–1,800 ₪'},
+   {id:'dm20',name:'פירוק כלים סניטריים (אסלה/כיור/מקלחת)',price:250,unit:'יח׳',range:'180–350 ₪'},
+   {id:'dm21',name:'פירוק דלת פנים כולל משקוף',price:180,unit:'יח׳',range:'120–250 ₪'},
+   {id:'dm22',name:'פירוק חלון/ויטרינה אלומיניום',price:280,unit:'יח׳',range:'200–400 ₪'},
+   {id:'dm23',name:'הריסת קיר גבס כולל שלד',price:45,unit:'מ"ר',range:'30–70 ₪ / מ"ר'},
+   {id:'dm24',name:'פירוק תקרה אקוסטית/מונמכת',price:40,unit:'מ"ר',range:'25–60 ₪ / מ"ר'},
+   {id:'dm25',name:'קרצוף/הסרת טיח קיים עד המצע',price:55,unit:'מ"ר',range:'40–80 ₪ / מ"ר'},
+   {id:'dm26',name:'פירוק פרקט/למינציה כולל תשתית',price:35,unit:'מ"ר',range:'25–55 ₪ / מ"ר'},
+   {id:'dm27',name:'חציבת חריצים לתשתיות בבטון',price:90,unit:'מ"א',range:'60–130 ₪ / מ"א'},
+   {id:'dm28',name:'פינוי פסולת בשקי ביג-בג (עד 1 קוב)',price:320,unit:'יח׳',range:'250–450 ₪'},
+   {id:'dm29',name:'הגנת רצפות ומעברים ביריעות',price:18,unit:'מ"ר',range:'12–28 ₪ / מ"ר'},
+   {id:'dm30',name:'פירוק מעקה/סורג מתכת',price:220,unit:'מ"א',range:'150–320 ₪ / מ"א'},
+   {id:'dm31',name:'קידוח ליבה בקיר בטון (עד 10 ס"מ)',price:280,unit:'יח׳',range:'200–400 ₪'}
  ]},
  {id:'plumb',title:'אינסטלציה',emoji:'🚰',hot:true,items:[
    {id:'pl1',name:'נקודת אינסטלציה קרה/חמה + ניקוז',price:1600,unit:'נקודה',range:'1,300–1,900 ₪',hot:true},
@@ -1415,6 +1447,22 @@ const CATALOG=[
    {id:'pl15',name:'הזזת/הארכת נקודת מים קיימת',price:400,unit:'נקודה',range:'300–600 ₪'},
    {id:'pl16',name:'התקנת משאבת ביוב (סניקה)',price:1800,unit:'יח׳',range:'1,300–2,600 ₪'},
    {id:'pl17',name:'בדיקת לחץ ואיטום מערכת מים',price:450,unit:'גלובלי',range:'300–700 ₪'},
+   {id:'pl18',name:'החלפת קו מים ראשי בדירה',price:2800,unit:'גלובלי',range:'2,000–4,000 ₪'},
+   {id:'pl19',name:'נקודת ניקוז למכונת כביסה',price:550,unit:'נקודה',range:'400–750 ₪'},
+   {id:'pl20',name:'התקנת אסלה תלויה כולל מיכל סמוי',price:1300,unit:'יח׳',range:'900–1,800 ₪'},
+   {id:'pl21',name:'התקנת אסלה רגילה',price:450,unit:'יח׳',range:'300–650 ₪'},
+   {id:'pl22',name:'התקנת כיור מטבח כולל ברז',price:700,unit:'יח׳',range:'500–950 ₪'},
+   {id:'pl23',name:'התקנת ברז פרח/קיר',price:280,unit:'יח׳',range:'200–400 ₪'},
+   {id:'pl24',name:'התקנת מקלחון/אמבטיה',price:900,unit:'יח׳',range:'650–1,400 ₪'},
+   {id:'pl25',name:'צנרת ניקוז אמבטיה כולל שיפועים',price:850,unit:'גלובלי',range:'600–1,200 ₪'},
+   {id:'pl26',name:'החלפת דוד שמש/חשמל',price:1600,unit:'יח׳',range:'1,100–2,400 ₪'},
+   {id:'pl27',name:'נקודת מים למקרר/מטהר',price:450,unit:'נקודה',range:'320–620 ₪'},
+   {id:'pl28',name:'בדיקת לחץ ואיטום מערכת (טסט מים)',price:600,unit:'גלובלי',range:'400–900 ₪'},
+   {id:'pl29',name:'התקנת משאבת ביוב/סמפית',price:1800,unit:'יח׳',range:'1,300–2,600 ₪'},
+   {id:'pl30',name:'צנרת גז כולל אישור גזזן',price:1400,unit:'גלובלי',range:'1,000–2,000 ₪'},
+   {id:'pl31',name:'נקודת מיזוג מפוצל (צנרת+ניקוז)',price:1200,unit:'נקודה',range:'900–1,700 ₪'},
+   {id:'pl32',name:'התקנת מזגן מיני מרכזי',price:4800,unit:'יח׳',range:'3,500–7,000 ₪'},
+   {id:'pl33',name:'מערכת ספרינקלרים — נקודה',price:380,unit:'נקודה',range:'280–520 ₪'}
  ]},
  {id:'elec',title:'חשמל ותקשורת',emoji:'⚡',hot:true,items:[
    {id:'el1',name:'נקודת חשמל רגילה (מאור / שקע חד-פאזי)',price:350,unit:'נקודה',range:'280–420 ₪',hot:true},
@@ -1436,6 +1484,21 @@ const CATALOG=[
    {id:'el17',name:'הארקה ובדיקת חשמל (טופס בודק מוסמך)',price:850,unit:'יח׳',range:'600–1,300 ₪'},
    {id:'el18',name:'נקודת רמקול/מולטירום (סאונד)',price:350,unit:'נקודה',range:'250–500 ₪'},
    {id:'el19',name:'מפסק חכם/תריס חשמלי (נקודה)',price:480,unit:'נקודה',range:'350–700 ₪'},
+   {id:'el20',name:'נקודת תקשורת/רשת CAT6',price:380,unit:'נקודה',range:'280–500 ₪'},
+   {id:'el21',name:'נקודת טלוויזיה/כבלים',price:320,unit:'נקודה',range:'240–450 ₪'},
+   {id:'el22',name:'החלפת לוח חשמל דירתי',price:2800,unit:'יח׳',range:'2,000–4,200 ₪'},
+   {id:'el23',name:'ארון חשמל תלת-פאזי כולל אבזור',price:8500,unit:'גלובלי',range:'6,000–13,000 ₪'},
+   {id:'el24',name:'נקודת מאור עם דימר',price:480,unit:'נקודה',range:'350–650 ₪'},
+   {id:'el25',name:'התקנת גוף תאורה שקוע',price:120,unit:'יח׳',range:'80–180 ₪'},
+   {id:'el26',name:'פס תאורת LED מוסתר',price:180,unit:'מ"א',range:'130–260 ₪ / מ"א'},
+   {id:'el27',name:'נקודת חשמל למזגן (מאמ"ת ייעודי)',price:520,unit:'נקודה',range:'400–700 ₪'},
+   {id:'el28',name:'נקודת כוח לתנור/כיריים',price:580,unit:'נקודה',range:'420–780 ₪'},
+   {id:'el29',name:'התקנת אינטרקום/וידאו',price:1400,unit:'יח׳',range:'1,000–2,200 ₪'},
+   {id:'el30',name:'מערכת אזעקה בסיסית',price:3200,unit:'גלובלי',range:'2,400–5,000 ₪'},
+   {id:'el31',name:'נקודת מצלמת אבטחה',price:450,unit:'נקודה',range:'330–620 ₪'},
+   {id:'el32',name:'הארקת יסוד/השוואת פוטנציאלים',price:900,unit:'גלובלי',range:'650–1,400 ₪'},
+   {id:'el33',name:'בדיקת חשמלאי בודק ואישור',price:1200,unit:'גלובלי',range:'900–1,800 ₪'},
+   {id:'el34',name:'נקודת טעינה לרכב חשמלי',price:2600,unit:'יח׳',range:'1,900–3,800 ₪'}
  ]},
  {id:'finish',title:'עבודות גמר ועיצוב פנים',emoji:'🎨',hot:true,items:[
    {id:'fn1',name:'בניית קיר גבס (לוח כפול + צמר סלעים)',price:230,unit:'מ"ר',range:'190–280 ₪ / מ"ר',hot:true},
@@ -1461,6 +1524,23 @@ const CATALOG=[
    {id:'fn21',name:'הדבקת טפט/פאנל תלת-ממד',price:120,unit:'מ"ר',range:'80–200 ₪ / מ"ר'},
    {id:'fn22',name:'בניית נישה/מדף גבס דקורטיבי',price:450,unit:'יח׳',range:'300–700 ₪'},
    {id:'fn23',name:'ליטוש והברקת ריצוף טרצו/שיש קיים',price:95,unit:'מ"ר',range:'70–140 ₪ / מ"ר'},
+   {id:'fn24',name:'ריצוף אריחים גדולים 80/80',price:145,unit:'מ"ר',range:'110–200 ₪ / מ"ר'},
+   {id:'fn25',name:'חיפוי קירות אריחים',price:130,unit:'מ"ר',range:'100–180 ₪ / מ"ר'},
+   {id:'fn26',name:'התקנת פנלים',price:28,unit:'מ"א',range:'20–40 ₪ / מ"א'},
+   {id:'fn27',name:'ריצוף פרקט עץ/SPC',price:95,unit:'מ"ר',range:'70–140 ₪ / מ"ר'},
+   {id:'fn28',name:'מחיצת גבס כפולה כולל בידוד',price:190,unit:'מ"ר',range:'150–260 ₪ / מ"ר'},
+   {id:'fn29',name:'הנמכת תקרת גבס',price:150,unit:'מ"ר',range:'110–200 ₪ / מ"ר'},
+   {id:'fn30',name:'תקרה אקוסטית מגשים/אריחים',price:165,unit:'מ"ר',range:'120–230 ₪ / מ"ר'},
+   {id:'fn31',name:'ניסה/פינת גבס דקורטיבית',price:180,unit:'מ"א',range:'130–250 ₪ / מ"א'},
+   {id:'fn32',name:'איטום חדר רטוב כולל טסט',price:1400,unit:'גלובלי',range:'1,000–2,000 ₪'},
+   {id:'fn33',name:'איטום גג/מרפסת',price:95,unit:'מ"ר',range:'70–140 ₪ / מ"ר'},
+   {id:'fn34',name:'מילוי שומשום/חול ויציקת פילוס',price:65,unit:'מ"ר',range:'45–95 ₪ / מ"ר'},
+   {id:'fn35',name:'משטח שיש/קוורץ למטבח',price:1800,unit:'מ"א',range:'1,300–2,800 ₪ / מ"א'},
+   {id:'fn36',name:'חיפוי שיש קיר מטבח',price:750,unit:'מ"א',range:'550–1,100 ₪ / מ"א'},
+   {id:'fn37',name:'טיח פנים/חוץ',price:65,unit:'מ"ר',range:'45–95 ₪ / מ"ר'},
+   {id:'fn38',name:'צבע אפקט/דקורטיבי',price:180,unit:'מ"ר',range:'130–280 ₪ / מ"ר'},
+   {id:'fn39',name:'ניקיון סופי לפני מסירה',price:1500,unit:'גלובלי',range:'1,000–2,500 ₪'},
+   {id:'fn40',name:'תיקוני טיח וסגירת חציבות',price:70,unit:'מ"א',range:'50–100 ₪ / מ"א'}
  ]},
  {id:'alum',title:'נגרות, מסגרות ואלומיניום',emoji:'🪟',hot:true,items:[
    {id:'al1',name:'חלון אלומיניום + זכוכית בידודית',price:2000,unit:'מ"ר',range:'1,400–2,600 ₪ / מ"ר',hot:true},
@@ -1480,6 +1560,19 @@ const CATALOG=[
    {id:'al15',name:'דלת הזזה/כיס פנימית',price:2400,unit:'יח׳',range:'1,800–3,400 ₪'},
    {id:'al16',name:'סורגים/סבכה לחלון (ברזל)',price:550,unit:'מ"ר',range:'400–800 ₪ / מ"ר'},
    {id:'al17',name:'ארון קיר/הזזה בהתאמה (חדר שינה)',price:2800,unit:'מ"ר',range:'2,000–4,000 ₪ / מ"ר'},
+   {id:'al18',name:'דלת כניסה פלדה כולל התקנה',price:4200,unit:'יח׳',range:'3,000–6,500 ₪'},
+   {id:'al19',name:'דלת פנים כולל משקוף',price:1600,unit:'יח׳',range:'1,100–2,400 ₪'},
+   {id:'al20',name:'דלת זכוכית חלבית 120/210',price:1600,unit:'יח׳',range:'1,200–2,300 ₪'},
+   {id:'al21',name:'חלון אלומיניום כולל תריס',price:2200,unit:'מ"ר',range:'1,600–3,200 ₪ / מ"ר'},
+   {id:'al22',name:'ויטרינה/דלת הזזה אלומיניום',price:2600,unit:'מ"ר',range:'1,900–3,800 ₪ / מ"ר'},
+   {id:'al23',name:'מחיצת זכוכית אקוסטית + דלת',price:1900,unit:'מ"ר',range:'1,400–2,800 ₪ / מ"ר'},
+   {id:'al24',name:'נגרות מטבח (ארונות)',price:2400,unit:'מ"א',range:'1,800–3,600 ₪ / מ"א'},
+   {id:'al25',name:'ארון קיר נגרות',price:2200,unit:'מ"ר',range:'1,600–3,200 ₪ / מ"ר'},
+   {id:'al26',name:'מקלחון זכוכית',price:2400,unit:'יח׳',range:'1,700–3,600 ₪'},
+   {id:'al27',name:'מעקה מתכת/נירוסטה',price:850,unit:'מ"א',range:'600–1,300 ₪ / מ"א'},
+   {id:'al28',name:'סורגים לחלון',price:480,unit:'מ"ר',range:'350–700 ₪ / מ"ר'},
+   {id:'al29',name:'פרגולת אלומיניום',price:1400,unit:'מ"ר',range:'1,000–2,000 ₪ / מ"ר'},
+   {id:'al30',name:'שער כניסה חשמלי',price:6500,unit:'יח׳',range:'4,500–10,000 ₪'}
  ]},
  {id:'plan',title:'תכנון, ניהול ורישוי',emoji:'📐',items:[
    {id:'pn1',name:'אדריכלות ועיצוב פנים (תכנון מלא 4 חד׳)',price:25000,unit:'גלובלי',range:'15,000–35,000 ₪',hot:true},
@@ -1495,6 +1588,15 @@ const CATALOG=[
    {id:'pn11',name:'יועץ בטיחות/נגישות',price:2800,unit:'גלובלי',range:'2,000–4,000 ₪'},
    {id:'pn12',name:'ייעוץ אקוסטי/תרמי לדירה',price:1800,unit:'גלובלי',range:'1,200–2,800 ₪'},
    {id:'pn13',name:'לוח זמנים וכתב כמויות מפורט',price:2200,unit:'גלובלי',range:'1,500–3,500 ₪'},
+   {id:'pn14',name:'תוכנית אדריכלית לשיפוץ',price:4500,unit:'גלובלי',range:'3,000–8,000 ₪'},
+   {id:'pn15',name:'הדמיה תלת-ממדית',price:1800,unit:'גלובלי',range:'1,200–3,000 ₪'},
+   {id:'pn16',name:'היתר בנייה — ליווי והגשה',price:8000,unit:'גלובלי',range:'5,000–15,000 ₪'},
+   {id:'pn17',name:'פיקוח הנדסי צמוד (חודשי)',price:3500,unit:'חודש',range:'2,500–5,500 ₪'},
+   {id:'pn18',name:'יועץ קונסטרוקציה',price:3000,unit:'גלובלי',range:'2,000–5,000 ₪'},
+   {id:'pn19',name:'תוכנית חשמל ותאורה',price:1600,unit:'גלובלי',range:'1,100–2,600 ₪'},
+   {id:'pn20',name:'בדיקת מהנדס לפני רכישה',price:1500,unit:'גלובלי',range:'1,000–2,500 ₪'},
+   {id:'pn21',name:'תיאום מול ועד בית/עירייה',price:1200,unit:'גלובלי',range:'800–2,000 ₪'},
+   {id:'pn22',name:'מדידה ותוכנית מצב קיים',price:1400,unit:'גלובלי',range:'900–2,200 ₪'}
  ]},
  {id:'struct',title:'שלד ותשתית כבדה',emoji:'🏗️',items:[
    {id:'st1',name:'חפירה ופינוי עפר במחפר',price:3500,unit:'יום',range:'2,500–4,500 ₪'},
@@ -1512,6 +1614,18 @@ const CATALOG=[
    {id:'st13',name:'ממ"ד — יציקת קירות בטון מזוין',price:5500,unit:'מ"ק',range:'4,000–7,500 ₪ / מ"ק'},
    {id:'st14',name:'קיר גבס עמיד אש/מבנה תעשייתי',price:260,unit:'מ"ר',range:'190–380 ₪ / מ"ר'},
    {id:'st15',name:'הגבהת/תיקון גג רעפים',price:380,unit:'מ"ר',range:'280–550 ₪ / מ"ר'},
+   {id:'st16',name:'יציקת רצפת בטון מזוין',price:320,unit:'מ"ר',range:'240–450 ₪ / מ"ר'},
+   {id:'st17',name:'קורת פלדה לחיזוק פתח',price:2800,unit:'מ"א',range:'2,000–4,200 ₪ / מ"א'},
+   {id:'st18',name:'עמוד בטון/פלדה',price:3200,unit:'יח׳',range:'2,300–4,800 ₪'},
+   {id:'st19',name:'חיזוק יסודות',price:4500,unit:'גלובלי',range:'3,000–8,000 ₪'},
+   {id:'st20',name:'בניית קיר בלוקים',price:180,unit:'מ"ר',range:'130–250 ₪ / מ"ר'},
+   {id:'st21',name:'תוספת ממ"ד',price:65000,unit:'גלובלי',range:'50,000–95,000 ₪'},
+   {id:'st22',name:'מרפסת/הרחבה — שלד',price:3800,unit:'מ"ר',range:'2,800–5,500 ₪ / מ"ר'},
+   {id:'st23',name:'מדרגות בטון יצוק',price:1800,unit:'מ"א',range:'1,300–2,700 ₪ / מ"א'},
+   {id:'st24',name:'איטום יסודות ביריעות ביטומן',price:120,unit:'מ"ר',range:'85–180 ₪ / מ"ר'},
+   {id:'st25',name:'מיגון קרינה — לוחות עופרת',price:1400,unit:'מ"ר',range:'1,000–2,100 ₪ / מ"ר'},
+   {id:'st26',name:'חיזוק תקרה/הוספת קורות',price:2600,unit:'מ"א',range:'1,900–3,900 ₪ / מ"א'},
+   {id:'st27',name:'פתיחת פתח בקיר תומך + חיזוק',price:5500,unit:'יח׳',range:'4,000–8,500 ₪'}
  ]},
  {id:'outdoor',title:'פיתוח חוץ וסביבה',emoji:'🌿',items:[
    {id:'od1',name:'יציקת משטח בטון מוחלק לחצר',price:365,unit:'מ"ר',range:'280–450 ₪ / מ"ר',hot:true},
@@ -1527,6 +1641,16 @@ const CATALOG=[
    {id:'od11',name:'תשתית לבריכה/גקוזי',price:15000,unit:'גלובלי',range:'10,000–25,000 ₪'},
    {id:'od12',name:'מחסן גינה/פרגולה מקורה',price:6500,unit:'גלובלי',range:'4,500–9,500 ₪'},
    {id:'od13',name:'מערכת ניקוז/תיעול מי גשם לחצר',price:220,unit:'מ"א',range:'160–320 ₪ / מ"א'},
+   {id:'od14',name:'ריצוף חצר אבן משתלבת',price:190,unit:'מ"ר',range:'140–270 ₪ / מ"ר'},
+   {id:'od15',name:'דק סינטטי כולל תשתית',price:380,unit:'מ"ר',range:'280–550 ₪ / מ"ר'},
+   {id:'od16',name:'דשא סינטטי',price:120,unit:'מ"ר',range:'85–180 ₪ / מ"ר'},
+   {id:'od17',name:'גינון והשקיה אוטומטית',price:250,unit:'מ"ר',range:'180–380 ₪ / מ"ר'},
+   {id:'od18',name:'קיר תומך',price:850,unit:'מ"א',range:'600–1,300 ₪ / מ"א'},
+   {id:'od19',name:'מקלחת חוץ',price:2200,unit:'יח׳',range:'1,600–3,300 ₪'},
+   {id:'od20',name:'תאורת גינה — נקודה',price:420,unit:'נקודה',range:'300–600 ₪'},
+   {id:'od21',name:'חיפוי קיר חוץ אבן טבעית',price:420,unit:'מ"ר',range:'300–620 ₪ / מ"ר'},
+   {id:'od22',name:'מחסן גינה',price:6500,unit:'יח׳',range:'4,500–10,000 ₪'},
+   {id:'od23',name:'ניקוז וקולטנים בחצר',price:380,unit:'מ"א',range:'270–550 ₪ / מ"א'}
  ]},
 ];
 const UNITS=['מ"ר','יח׳','נקודה','מ"א','גלובלי','מ"ק','יום','חודשי'];
@@ -2265,7 +2389,10 @@ const App={
    <div class="chips" style="padding:0 0 8px">${filters.map(x=>`<button class="chip ${f===x[0]?'on':''}" data-clfilter="${x[0]}">${x[1]}</button>`).join('')}</div>
    <button class="btn-ghost" id="export-clients" style="margin-bottom:10px">📊 ייצוא לאקסל (CSV)</button>
    ${list.length?list.map(cl=>`<div class="list-item">
-     <span class="status ${cl.status||'q'}">${lbl[cl.status||'q']}</span>
+     ${(()=>{const links=Store.get('sentLinks',[])||[];const l=links.find(x=>x.client===cl.name);
+       const d=(this._trackData||{})[l?l.id:'']||{};
+       const st=this.dealStage(l,d,cl);
+       return `<span class="status" style="background:${st.cur.c};color:#fff">${st.cur.i} ${st.cur.n}</span>`;})()}
      <div class="info"><div class="t">${esc(cl.name)||'—'}</div><div class="s">${cl.phone?esc(cl.phone)+' · ':''}${esc(cl.project)||''}</div>${cl.notes?`<div class="s" style="margin-top:4px;background:var(--bg2,#1a1a1e);border-right:3px solid var(--red);border-radius:6px;padding:6px 8px;white-space:pre-wrap">📝 ${esc(cl.notes)}</div>`:''}</div>
      <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
      <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
@@ -2407,6 +2534,40 @@ const App={
    ${s.img?`<div style="background:#fff;border-radius:12px;padding:12px;text-align:center"><img src="${s.img}" style="max-width:100%;height:auto"/></div>`:'<div class="empty">אין חתימה</div>'}
    ${s.img?`<button class="btn-block" id="sig-pdf" style="margin-top:12px">📄 הפק PDF עם החתימה</button><button class="btn-ghost" id="sig-dl">⬇️ הורד תמונת חתימה</button>`:''}`;
  },
+ dealStage(l,d,cl){
+  // מנוע סטטוס אחוד — שלב אחד לכל עסקה, מכל מקורות המידע
+  d=d||{}; cl=cl||{};
+  const S=[
+    {k:'sent',    n:'נשלח',      i:'📤', c:'var(--muted)'},
+    {k:'viewed',  n:'נצפה',      i:'👁',  c:'var(--blue)'},
+    {k:'played',  n:'התלבט',     i:'⚡', c:'var(--warn)'},
+    {k:'approved',n:'אושר',      i:'✅', c:'var(--ok)'},
+    {k:'doing',   n:'בביצוע',    i:'🔨', c:'var(--blue)'},
+    {k:'done',    n:'הושלם',     i:'🏁', c:'var(--ok)'},
+    {k:'review',  n:'קיבל משוב', i:'⭐', c:'var(--warn)'}
+  ];
+  let idx=0;
+  if(d.viewedAt)idx=1;
+  if(d.live&&(d.events||[]).some(e=>e.a==='off'||e.a==='qty'))idx=2;
+  if(d.approvedAt)idx=3;
+  if(cl.status==='doing')idx=4;
+  if(cl.status==='done')idx=5;
+  if(cl.status==='sent'||cl.reviewDone)idx=6;
+  const age=l&&l.ts?Math.floor((Date.now()-l.ts)/86400000):0;
+  let flag=null;
+  if(idx===0&&age>=3)flag={t:'לא נפתח '+age+' ימים',c:'var(--warn)'};
+  else if(idx===1&&age>=2)flag={t:'נצפה ולא אושר',c:'var(--warn)'};
+  else if(idx===2)flag={t:'התלבט על סעיפים — הזדמנות',c:'var(--red)'};
+  return {idx:idx, cur:S[idx], steps:S, age:age, flag:flag};
+ },
+ stageBar(st){
+  // ציר זמן ויזואלי
+  return '<div class="dl-bar">'+st.steps.map((s,i)=>
+    '<div class="dl-node'+(i<st.idx?' past':(i===st.idx?' now':''))+'" title="'+s.n+'">'+
+      '<span class="dl-dot">'+(i<st.idx?'✓':s.i)+'</span>'+
+      (i===st.idx?'<span class="dl-lbl">'+s.n+'</span>':'')+
+    '</div>').join('')+'</div>';
+ },
  trackingModal(){const tab=this.state.trkTab||'track';
   if(tab==='all')return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
    <div class="chips" style="padding:0 0 10px"><button class="chip" data-trktab="track">👁 מעקב לינקים</button><button class="chip on" data-trktab="all">📋 כל ההצעות</button></div>
@@ -2430,16 +2591,24 @@ const App={
      return hot.length?`<div class="trk-alert"><div class="ta-h">🔥 זמן להתקשר — צפו ולא אישרו</div>${hot.map(l=>`<div class="ta-row"><span>${esc(l.client)||'—'} · ${nis(l.total)} · צפה ${ago((live[l.id]||{}).viewedAt)}</span>${l.phone?`<button class="mini" data-trknudge="${l.id}">📲</button>`:''}</div>`).join('')}</div>`:'';})()}
    <button class="btn-ghost" id="trk-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
    ${links.length?links.map(l=>{const d=live[l.id]||{};
-     const st=d.approvedAt?['✅ אושר','var(--ok)']:(d.viewedAt?['👁 נצפה','var(--blue)']:['📤 נשלח','var(--muted)']);
-     return `<div class="list-item">
-       <span class="status" style="background:${st[1]};color:#fff">${st[0]}</span>
-       <div class="info"><div class="t">${esc(l.client)||'ללא שם'} — ${nis(l.total)}</div>
-         <div class="s">${esc(l.no)} · נשלח ${ago(l.ts)}${d.viewedAt?' · נצפה '+ago(d.viewedAt):''}${d.approvedAt?' · אושר '+ago(d.approvedAt):''}</div></div>
-       ${(!d.approvedAt&&l.phone)?`<button class="mini" data-trknudge="${l.id}">📲 תזכורת</button>`:''}
-       <button class="del" data-trkdel="${l.id}">🗑️</button>
-       ${d.signature?`<button class="mini" data-trksig="${l.id}">✍️ הצג חתימה</button>`:''}
+     const cl=(Store.get('clients',[])||[]).find(x=>x.name===l.client)||{};
+     const st=this.dealStage(l,d,cl);
+     return `<div class="dl-card">
+       <div class="dl-top">
+         <div><div class="dl-name">${esc(l.client)||'ללא שם'}</div>
+           <div class="dl-meta">${esc(l.no)} · נשלח ${ago(l.ts)}${d.live?' · ⚡ לינק חי':''}</div></div>
+         <div class="dl-amt">${nis(d.curTotal!=null?d.curTotal:l.total)}</div>
+       </div>
+       ${this.stageBar(st)}
+       ${st.flag?`<div class="dl-flag" style="border-right-color:${st.flag.c}"><span>${st.idx===2?'⚡':'⏳'}</span><span>${st.flag.t}</span></div>`:''}
        ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${esc(d.comment)}</div>`:''}
        ${this.liveActivity(l.id)}
+       <div class="dl-acts">
+         ${(!d.approvedAt&&l.phone)?`<button class="mini" data-trknudge="${l.id}">📲 תזכורת</button>`:''}
+         ${d.signature?`<button class="mini" data-trksig="${l.id}">✍️ חתימה</button>`:''}
+         ${(d.approvedAt&&l.phone)?`<button class="mini" data-review="${cl.id||''}">📩 בקש משוב</button>`:''}
+         <button class="del" data-trkdel="${l.id}">🗑️</button>
+       </div>
        </div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
  },
  liveActivity(id){
