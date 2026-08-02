@@ -110,9 +110,23 @@ input,select,textarea{font-family:inherit;}
 .statcard.clickable{cursor:pointer;border-color:rgba(237,28,36,.4);}
 .statcard.clickable:active{background:var(--red);}
 .trk-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
-.trk-box{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 6px;text-align:center;}
-.trk-box .n{font-size:22px;font-weight:900;color:var(--txt);}
-.trk-box .l{font-size:11px;color:var(--muted);margin-top:2px;}
+.trk-stats4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
+.trk-box{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 4px;text-align:center;position:relative;}
+.trk-stats4 .trk-box{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.trk-stats4 .trk-box:active{transform:scale(.96);}
+.trk-box.on{border-color:var(--red);background:rgba(237,28,36,.10);box-shadow:0 0 0 1px rgba(237,28,36,.35) inset;}
+.trk-box.on::after{content:'✕';position:absolute;top:3px;left:6px;font-size:10px;color:var(--red);opacity:.85;}
+.trk-box .n{font-size:21px;font-weight:900;color:var(--txt);line-height:1.1;}
+.trk-box .l{font-size:10.5px;color:var(--muted);margin-top:3px;}
+.trk-search{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:10px;}
+.trk-search .mg{font-size:14px;opacity:.6;flex:none;}
+.trk-search input{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-size:14px;font-family:inherit;padding:0;}
+.trk-search .cl{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:3px 8px;font-size:12px;flex:none;}
+.trk-count{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-bottom:10px;}
+.trk-sort{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:5px 8px;font-size:12px;font-family:inherit;flex:none;}
+.trk-dupe{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);border-radius:11px;padding:9px 11px;margin-bottom:10px;font-size:11.5px;color:var(--warn);}
+.dl-dup{display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:10.5px;color:var(--muted);margin-right:6px;}
+.trk-none{text-align:center;padding:26px 16px;color:var(--muted);font-size:13px;background:var(--bg3);border:1px dashed var(--line);border-radius:14px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
 .pv-cat{margin-bottom:14px;}
@@ -993,7 +1007,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='12.3';
+const VERSION='12.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1950,6 +1964,7 @@ const Drive={token:null,
 };
 
 const nis=n=>(Math.round((+n||0)*100)/100).toLocaleString('en-US')+'\u00a0₪';
+const nisR=n=>Math.round(+n||0).toLocaleString('en-US')+'\u00a0₪';
 const today=()=>new Date().toLocaleDateString('en-GB');
 const addMonth=()=>{const d=new Date();d.setMonth(d.getMonth()+1);return d.toLocaleDateString('en-GB');};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -2725,30 +2740,75 @@ const App={
    <div class="tab-swap">${this.sentQuotesBody()}</div>`;
   const links=Store.get('sentLinks',[]);const live=this._trackData||{};
   const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<1)return 'הרגע';if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';const d=Math.floor(hr/24);return 'לפני '+d+' ימים';};
-  // stats (feature 9)
-  let sent=links.length,viewed=0,approved=0,sumApproved=0;
-  links.forEach(l=>{const d=live[l.id]||{};if(d.viewedAt)viewed++;if(d.approvedAt){approved++;sumApproved+=(+l.total||0);}});
+  const f=this.state.trkFilter||'all';
+  const q=(this.state.trkQ||'').trim();
+  const sortBy=this.state.trkSort||'new';
+  const isPlayed=d=>!!(d.live&&(d.events||[]).some(e=>e.a==='off'||e.a==='qty'));
+  let sent=links.length,viewed=0,approved=0,played=0,sumApproved=0;
+  links.forEach(l=>{const d=live[l.id]||{};
+    if(d.viewedAt)viewed++;
+    if(isPlayed(d))played++;
+    if(d.approvedAt){approved++;sumApproved+=(+l.total||0);}});
+  // כפילויות: אותה הצעה שנשלחה יותר מפעם אחת
+  const byNo={};links.forEach(l=>{if(l.no)byNo[l.no]=(byNo[l.no]||0)+1;});
+  const dupes=Object.keys(byNo).reduce((n,k)=>n+(byNo[k]>1?byNo[k]-1:0),0);
+  // סינון לפי הכרטיסייה שנלחצה + חיפוש חופשי
+  const norm=s=>String(s||'').toLowerCase().replace(/[\s\-\u05be']/g,'');
+  const nq=norm(q);
+  let shown=links.filter(l=>{const d=live[l.id]||{};
+    if(f==='viewed'&&!d.viewedAt)return false;
+    if(f==='played'&&!isPlayed(d))return false;
+    if(f==='approved'&&!d.approvedAt)return false;
+    if(nq&&!(norm(l.client).indexOf(nq)>=0||norm(l.no).indexOf(nq)>=0||norm(l.phone).indexOf(nq)>=0||norm(l.project).indexOf(nq)>=0))return false;
+    return true;});
+  if(sortBy==='amount')shown=shown.slice().sort((a,b)=>(+b.total||0)-(+a.total||0));
+  else if(sortBy==='urgent')shown=shown.slice().sort((a,b)=>{
+    const A=this.dealStage(a,live[a.id]||{},{}),B=this.dealStage(b,live[b.id]||{},{});
+    const sc=x=>(x.flag?100:0)+(x.idx===2?60:0)+(x.age||0);
+    return sc(B)-sc(A);});
+  else shown=shown.slice().sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const FL={all:'הכל',viewed:'נצפו',played:'התלבטו',approved:'אושרו'};
   const pct=sent?Math.round(approved/sent*100):0;
   const vpct=sent?Math.round(viewed/sent*100):0;
   return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
    <div class="chips" style="padding:0 0 10px"><button class="chip on" data-trktab="track">👁 מעקב לינקים</button><button class="chip" data-trktab="all">📋 כל ההצעות</button></div>
-   <div class="trk-stats">
-     <div class="trk-box"><div class="n">${sent}</div><div class="l">נשלחו</div></div>
-     <div class="trk-box"><div class="n" style="color:var(--blue)">${viewed}</div><div class="l">נצפו (${vpct}%)</div></div>
-     <div class="trk-box"><div class="n" style="color:var(--ok)">${approved}</div><div class="l">אושרו (${pct}%)</div></div>
+   <div class="trk-stats4">
+     <div class="trk-box ${f==='all'?'on':''}" data-trkf="all"><div class="n">${sent}</div><div class="l">נשלחו</div></div>
+     <div class="trk-box ${f==='viewed'?'on':''}" data-trkf="viewed"><div class="n" style="color:var(--blue)">${viewed}</div><div class="l">נצפו ${vpct}%</div></div>
+     <div class="trk-box ${f==='played'?'on':''}" data-trkf="played"><div class="n" style="color:var(--warn)">${played}</div><div class="l">התלבטו</div></div>
+     <div class="trk-box ${f==='approved'?'on':''}" data-trkf="approved"><div class="n" style="color:var(--ok)">${approved}</div><div class="l">אושרו ${pct}%</div></div>
    </div>
-   ${approved?`<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px">היקף שאושר: <b style="color:var(--ok)">${nis(sumApproved)}</b></div>`:''}
+   <div class="trk-search"><span class="mg">🔍</span>
+     <input id="trk-q" placeholder="חיפוש: שם לקוח, מס׳ הצעה או טלפון" value="${String(q).replace(/"/g,'&quot;')}"/>
+     ${q?`<button class="cl" id="trk-qclear">✕</button>`:''}</div>
+   ${approved?`<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px">היקף שאושר: <b style="color:var(--ok)">${nisR(sumApproved)}</b></div>`:''}
+   ${dupes>0?`<div class="trk-dupe"><span>⚠️ ${dupes} כרטיסים כפולים — אותה הצעה נשלחה שוב</span><button class="mini" id="trk-dedupe">🧹 מזג</button></div>`:''}
    ${(()=>{const hot=links.filter(l=>{const d=live[l.id]||{};return d.viewedAt&&!d.approvedAt&&(Date.now()-d.viewedAt)>2*864e5;});
-     return hot.length?`<div class="trk-alert"><div class="ta-h">🔥 זמן להתקשר — צפו ולא אישרו</div>${hot.map(l=>`<div class="ta-row"><span>${esc(l.client)||'—'} · ${nis(l.total)} · צפה ${ago((live[l.id]||{}).viewedAt)}</span>${l.phone?`<button class="mini" data-trknudge="${l.id}">📲</button>`:''}</div>`).join('')}</div>`:'';})()}
+     // לקוח אחד = שורה אחת (הצפייה העדכנית ביותר), עד 5 שורות
+     const seen={},uniq=[];
+     hot.slice().sort((a,b)=>((live[b.id]||{}).viewedAt||0)-((live[a.id]||{}).viewedAt||0))
+        .forEach(l=>{const k=String(l.client||'—').trim();if(seen[k])return;seen[k]=1;uniq.push(l);});
+     if(!uniq.length)return '';
+     const top=uniq.slice(0,5),more=uniq.length-top.length;
+     return `<div class="trk-alert"><div class="ta-h">🔥 זמן להתקשר — ${uniq.length} לקוחות צפו ולא אישרו</div>${top.map(l=>`<div class="ta-row"><span>${esc(l.client)||'—'} · ${nisR(l.total)} · צפה ${ago((live[l.id]||{}).viewedAt)}</span>${l.phone?`<button class="mini" data-trknudge="${l.id}">📲</button>`:''}</div>`).join('')}${more>0?`<div class="ta-row" style="opacity:.75;font-size:11.5px"><span>ועוד ${more} לקוחות</span><button class="mini" data-trkf2="viewed">הצג</button></div>`:''}</div>`;})()}
+   <div class="trk-count">
+     <span>מציג <b style="color:var(--txt)">${shown.length}</b> מתוך ${sent}${(f!=='all'||q)?' · '+FL[f]+(q?' · "'+esc(q)+'"':''):''}</span>
+     <select class="trk-sort" id="trk-sort">
+       <option value="new" ${sortBy==='new'?'selected':''}>הכי חדש</option>
+       <option value="amount" ${sortBy==='amount'?'selected':''}>סכום גבוה</option>
+       <option value="urgent" ${sortBy==='urgent'?'selected':''}>הכי דחוף</option>
+     </select>
+   </div>
    <button class="btn-ghost" id="trk-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
-   ${links.length?links.map(l=>{const d=live[l.id]||{};
+   ${shown.length?shown.map(l=>{const d=live[l.id]||{};
      const cl=(Store.get('clients',[])||[]).find(x=>x.name===l.client)||{};
      const st=this.dealStage(l,d,cl);
+     const dupN=l.no?(byNo[l.no]||1):1;
      return `<div class="dl-card">
        <div class="dl-top">
          <div><div class="dl-name">${esc(l.client)||'ללא שם'}</div>
-           <div class="dl-meta">${esc(l.no)} · נשלח ${ago(l.ts)}${d.live?' · ⚡ לינק חי':''}</div></div>
-         <div class="dl-amt">${nis(d.curTotal!=null?d.curTotal:l.total)}</div>
+           <div class="dl-meta">${dupN>1?`<span class="dl-dup">נשלח ×${dupN}</span>`:''}${esc(l.no)} · נשלח ${ago(l.ts)}${d.live?' · ⚡ לינק חי':''}</div></div>
+         <div class="dl-amt">${nisR(d.curTotal!=null?d.curTotal:l.total)}</div>
        </div>
        ${this.stageBar(st)}
        ${st.flag?`<div class="dl-flag" style="border-right-color:${st.flag.c}"><span>${st.idx===2?'⚡':'⏳'}</span><span>${st.flag.t}</span></div>`:''}
@@ -2760,7 +2820,7 @@ const App={
          ${(d.approvedAt&&l.phone)?`<button class="mini" data-review="${cl.id||''}">📩 בקש משוב</button>`:''}
          <button class="del" data-trkdel="${l.id}">🗑️</button>
        </div>
-       </div>`;}).join(''):'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>'}`;
+       </div>`;}).join(''):(sent?`<div class="trk-none">אין תוצאות ${q?`עבור "${esc(q)}"`:`בקטגוריה "${FL[f]}"`}<br><button class="mini" id="trk-clearall" style="margin-top:10px">↺ נקה סינון</button></div>`:'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>')}`;
  },
  liveActivity(id){
   const d=(this._trackData||{})[id];
@@ -3543,7 +3603,8 @@ const App={
     const chk=row.querySelector('.chk');if(chk){chk.classList.toggle('on',!!it.selected);chk.textContent=it.selected?'✓':'';}
     const cs=e.currentTarget.closest('.cat').querySelector('.cat-sum');const cObj=this.allCats().find(x=>x.id===c);if(cs)cs.textContent=nis(this.catTotal(cObj));this.updateBottom();});
   on('[data-fld]','change',e=>{if(e.currentTarget.dataset.fld==='unit'){const[c,i]=e.currentTarget.dataset.k.split('|');this.find(c,i).unit=e.currentTarget.value;this.saveActive(c);}});
-  on('[data-modal]','click',e=>{this.state.modal=e.currentTarget.dataset.modal;this.render();});
+  on('[data-modal]','click',e=>{
+    if(e.currentTarget.dataset.modal==='track'){this.state.trkFilter='all';this.state.trkQ='';}this.state.modal=e.currentTarget.dataset.modal;this.render();});
   on('[data-close]','click',e=>{if(e.target.hasAttribute('data-close')){if(this._voiceOn)this.voiceStop();this.captureQuote();this._navStack=[];this.state.modal=null;this.render();}});
 
   const ac=document.getElementById('add-custom');if(ac)ac.onclick=()=>{this.state.addTarget='custom';this.state.modal='addcustom';this.render();};
@@ -3700,6 +3761,54 @@ const App={
   on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id));this.render();}});
   on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
+  // ── סינון בלחיצה על כרטיסי הסיכום ──
+  on('[data-trkf]','click',e=>{
+    const v=e.currentTarget.dataset.trkf;
+    // לחיצה חוזרת על אותו מסנן מבטלת אותו
+    this.state.trkFilter=(this.state.trkFilter===v&&v!=='all')?'all':v;
+    this.haptic(12);this.render();
+    setTimeout(()=>{const el=document.querySelector('.trk-count');if(el){try{el.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(x){}}},60);
+  });
+  on('[data-trkf2]','click',e=>{this.state.trkFilter=e.currentTarget.dataset.trkf2;this.haptic(12);this.render();});
+  // ── חיפוש חופשי — ללא איבוד פוקוס/סמן ──
+  const tq=document.getElementById('trk-q');
+  if(tq){
+    tq.oninput=()=>{
+      this.state.trkQ=tq.value;
+      clearTimeout(this._trkQT);
+      this._trkQT=setTimeout(()=>{
+        const pos=tq.selectionStart;this.render();
+        const n=document.getElementById('trk-q');
+        if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(x){}}
+      },260);
+    };
+    tq.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();tq.blur();}};
+  }
+  const tqc=document.getElementById('trk-qclear');
+  if(tqc)tqc.onclick=()=>{this.state.trkQ='';this.haptic(10);this.render();};
+  const tca=document.getElementById('trk-clearall');
+  if(tca)tca.onclick=()=>{this.state.trkQ='';this.state.trkFilter='all';this.haptic(10);this.render();};
+  const tso=document.getElementById('trk-sort');
+  if(tso)tso.onchange=()=>{this.state.trkSort=tso.value;this.render();};
+  // ── מיזוג כפילויות: אותה הצעה שנשלחה שוב ──
+  const tdd=document.getElementById('trk-dedupe');
+  if(tdd)tdd.onclick=()=>{
+    const links=Store.get('sentLinks',[]);
+    const live=this._trackData||{};
+    const score=l=>{const d=live[l.id]||{};return (d.approvedAt?4e12:0)+(d.viewedAt||0)+(l.ts||0)/1e3;};
+    const best={},noKey=[];
+    links.forEach(l=>{
+      if(!l.no){noKey.push(l);return;}
+      if(!best[l.no]||score(l)>score(best[l.no]))best[l.no]=l;
+    });
+    const kept=Object.keys(best).map(k=>best[k]).concat(noKey).sort((a,b)=>(b.ts||0)-(a.ts||0));
+    const removed=links.length-kept.length;
+    if(!removed){this.toast('אין מה למזג');return;}
+    if(!confirm('למזג '+removed+' כרטיסים כפולים?\nנשמר הכרטיס עם ההתקדמות הרבה ביותר לכל הצעה.'))return;
+    Store.set('sentLinks',kept);
+    try{Sync.push&&Sync.push();}catch(x){}
+    this.haptic(20);this.toast(removed+' כפילויות מוזגו ✓');this.render();
+  };
   on('[data-trksig]','click',e=>{const id=e.currentTarget.dataset.trksig;const l=Store.get('sentLinks',[]).find(x=>x.id===id)||{};const d=(this._trackData||{})[id]||{};this._sigView={img:d.signature,client:l.client,no:l.no,at:d.approvedAt,linkId:id};this.state.modal='sigview';this.render();});
   const sdl=document.getElementById('sig-dl');if(sdl)sdl.onclick=()=>{const s=this._sigView||{};if(!s.img)return;const a=document.createElement('a');a.href=s.img;a.download='חתימה-'+(s.client||'לקוח')+'.png';a.click();};
   const spdf=document.getElementById('sig-pdf');if(spdf)spdf.onclick=async()=>{const s=this._sigView||{};if(!s.img)return;
