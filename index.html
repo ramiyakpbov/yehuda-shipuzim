@@ -993,7 +993,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='12.0';
+const VERSION='12.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1696,7 +1696,119 @@ const SUGGEST_RULES={
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
  return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
  set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;}catch(e){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage'];}};
+})();
+
+
+/* ===== AI Layer — v12.1 =====
+   שכבה מרכזית אחת לכל קריאות ה-AI באפליקציה.
+   • מודלים מעודכנים (Haiku 3.5 הוסר מה-API של Anthropic)
+   • שרשרת נפילה אמיתית: ספק ראשי → אם נופל → הספק השני
+   • אודיו תמיד ל-Gemini (Claude לא מקבל קלט קולי)
+   • מונה טוקנים לכל ספק, לפי חודש
+   קודי שגיאה תואמים ל-aiErrMsg הקיים: no-key / quota / bad-key / ai-error / network
+*/
+const AI=(()=>{
+ const M={cFast:'claude-haiku-4-5-20251001',cSmart:'claude-sonnet-5',g:'gemini-flash-latest'};
+ const AV='2023-06-01';
+ const keyOf=p=>String((p==='claude'?Store.get('claudeKey',''):Store.get('geminiKey',''))||'').trim();
+ const has=p=>!!keyOf(p);
+ const anyKey=()=>keyOf(Store.get('aiProvider','gemini'))||keyOf('claude')||keyOf('gemini');
+ const nameOf=p=>p==='claude'?'Claude':'Gemini';
+ function E(code,soft){const e=new Error(code);e.soft=soft!==false;return e;}
+ function classify(status,msg){
+  const m=String(msg||'');
+  if(status===429||/quota|rate.?limit|exhausted|overload/i.test(m))return 'quota';
+  if(status===401||status===403||/api key|permission|invalid.?key|authentication/i.test(m))return 'bad-key';
+  if(status===500||status===502||status===503||status===504||status===529)return 'quota';
+  return 'ai-error';
+ }
+ function bump(p,inTok,outTok){
+  try{const s=Store.get('aiUsage',{});const k=p+':'+new Date().toISOString().slice(0,7);
+   const c=s[k]||{i:0,o:0,n:0};c.i+=(+inTok||0);c.o+=(+outTok||0);c.n++;s[k]=c;Store.set('aiUsage',s);}catch(e){}
+ }
+
+ async function claude(parts,maxTokens,smart){
+  const k=keyOf('claude');if(!k)throw E('no-key',false);
+  const content=[];
+  parts.forEach(p=>{
+   if(p.t==='text')content.push({type:'text',text:p.v});
+   else if(p.t==='image')content.push({type:'image',source:{type:'base64',media_type:p.mime,data:p.data}});
+   else if(p.t==='pdf')content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:p.data}});
+  });
+  if(!content.length)throw E('ai-error',false);
+  let r;
+  try{
+   r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':AV,'anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:smart?M.cSmart:M.cFast,max_tokens:maxTokens||1000,messages:[{role:'user',content}]})});
+  }catch(e){throw E('network');}
+  let d=null;try{d=await r.json();}catch(e){}
+  if(!r.ok||(d&&d.error))throw E(classify(r.status,d&&d.error&&d.error.message));
+  const u=(d&&d.usage)||{};bump('claude',u.input_tokens,u.output_tokens);
+  const txt=((d&&d.content)||[]).filter(b=>b&&b.type==='text').map(b=>b.text||'').join('');
+  if(!txt)throw E('ai-error');
+  return txt;
+ }
+
+ async function gemini(parts,maxTokens){
+  const k=keyOf('gemini');if(!k)throw E('no-key',false);
+  const gp=[];
+  parts.forEach(p=>{
+   if(p.t==='text')gp.push({text:p.v});
+   else if(p.t==='image')gp.push({inline_data:{mime_type:p.mime,data:p.data}});
+   else if(p.t==='pdf')gp.push({inline_data:{mime_type:'application/pdf',data:p.data}});
+   else if(p.t==='audio')gp.push({inline_data:{mime_type:p.mime,data:p.data}});
+  });
+  if(!gp.length)throw E('ai-error',false);
+  let r;
+  try{
+   r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+M.g+':generateContent?key='+encodeURIComponent(k),
+    {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:gp}]})});
+  }catch(e){throw E('network');}
+  let d=null;try{d=await r.json();}catch(e){}
+  if(d&&d.error)throw E(classify(d.error.code||r.status,d.error.message));
+  if(!r.ok)throw E(classify(r.status,''));
+  const u=(d&&d.usageMetadata)||{};bump('gemini',u.promptTokenCount,u.candidatesTokenCount);
+  const pr=(((d&&d.candidates||[])[0]||{}).content||{}).parts||[];
+  const txt=pr.map(x=>x&&x.text||'').join('');
+  if(!txt)throw E('ai-error');
+  return txt;
+ }
+
+ /* parts: [{t:'text',v}] / [{t:'image',mime,data}] / [{t:'pdf',data}] / [{t:'audio',mime,data}]
+    opts: {maxTokens, smart, onFallback(providerName)} */
+ async function run(parts,opts){
+  opts=opts||{};
+  const audio=parts.some(p=>p&&p.t==='audio');
+  const pri=Store.get('aiProvider','gemini');
+  const sec=pri==='claude'?'gemini':'claude';
+  let chain=[];
+  if(audio){chain=has('gemini')?['gemini']:[];}
+  else{
+   if(has(pri))chain.push(pri);
+   if(Store.get('aiFallback',true)&&has(sec))chain.push(sec);
+  }
+  if(!chain.length)throw E('no-key',false);
+  let last=null;
+  for(let i=0;i<chain.length;i++){
+   const p=chain[i];
+   try{
+    const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart):await gemini(parts,opts.maxTokens);
+    if(i>0&&typeof opts.onFallback==='function'){try{opts.onFallback(nameOf(p));}catch(e){}}
+    return txt;
+   }catch(e){last=e;if(e&&e.soft===false&&e.message!=='no-key')break;}
+  }
+  throw last||E('ai-error');
+ }
+
+ function report(){
+  const s=Store.get('aiUsage',{});const mo=new Date().toISOString().slice(0,7);const out=[];
+  ['gemini','claude'].forEach(p=>{const c=s[p+':'+mo];if(c&&c.n)out.push(nameOf(p)+': '+c.n+' קריאות · '+(c.i+c.o).toLocaleString()+' טוקנים');});
+  return out.length?out.join(' | '):'אין שימוש החודש';
+ }
+
+ return{run,claude,gemini,has,anyKey,nameOf,report,models:M};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -1828,44 +1940,23 @@ const App={
  allCats(){const sub=this.state.subItems||{};const c=this.state.catalog.map(cat=>({...cat,items:[...cat.items,...(sub[cat.id]||[])]}));c.push({id:'custom',title:'אחר (מותאם אישית)',emoji:'➕',custom:true,items:this.state.custom});return c;},
  suggestions(){const cats=this.allCats();const sel=new Set();cats.forEach(c=>c.items.forEach(i=>{if(i.selected)sel.add(i.id);}));const out=[];const seen=new Set();sel.forEach(id=>{(SUGGEST_RULES[id]||[]).forEach(sid=>{if(sel.has(sid)||seen.has(sid))return;seen.add(sid);for(const c of cats){const it=c.items.find(x=>x.id===sid);if(it){out.push({cid:c.id,iid:sid,name:it.name});break;}}});});return out.slice(0,6);},
  gotoItem(cid,iid){this.state.open[cid]=true;this.render();setTimeout(()=>{const el=document.querySelector('.item[data-iid="'+iid+'"]');if(el){try{el.scrollIntoView({behavior:'smooth',block:'center'});}catch(e){}el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),1700);}},90);},
- async aiSuggest(){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key){this.toast('להצעות AI — הגדר מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
+ async aiSuggest(){const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();if(!key){this.toast('להצעות AI — הגדר מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
   const chosen=[];this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected)chosen.push(i.name);}));if(!chosen.length){this.toast('בחר קודם כמה סעיפים');return;}
   this.toast('שואל את ה-AI על סעיפים חסרים…');
   const prompt='אני קבלן שיפוצים בונה הצעת מחיר. הסעיפים שבחרתי: '+chosen.join(', ')+'. מהם עד 5 סעיפי עבודה נלווים שאולי שכחתי לכלול (כאלה שהולכים יחד עם מה שבחרתי)? החזר רק רשימה קצרה בעברית, כל סעיף בשורה, בלי הסברים ובלי מספור.';
-  try{let txt='';if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:400,messages:[{role:'user',content:prompt}]})});const d=await r.json();txt=(d.content&&d.content[0]&&d.content[0].text)||'';}else{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const d=await r.json();txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';}
+  try{const txt=await AI.run([{t:'text',v:prompt}],{maxTokens:400,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
    const lines=txt.split('\n').map(l=>l.replace(/^[\d\-•*.\)\s]+/,'').trim()).filter(l=>l.length>2).slice(0,5);
    if(!lines.length){this.toast('לא התקבלו הצעות');return;}
    this._aiSuggestions=lines;this.state.modal='aisuggest';this.render();
-  }catch(e){this.toast('שגיאת רשת/מפתח AI');}
+  }catch(e){this.toast(this.aiErrMsg(e));}
  },
- async callAIVision(prompt,imageDataUrl,maxTokens){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key)throw new Error('no-key');
+ async callAIVision(prompt,imageDataUrl,maxTokens){const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();if(!key)throw new Error('no-key');
   // חלץ base64 ו-mime מה-data URL
   const m=String(imageDataUrl).match(/^data:([^;]+);base64,(.+)$/);if(!m)throw new Error('bad-image');
-  const mime=m[1],b64=m[2];
-  if(provider==='claude'){
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||2000,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mime,data:b64}},{type:'text',text:prompt}]}]})});
-    const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';
-  }
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:mime,data:b64}},{text:prompt}]}]})});
-  const d=await r.json();return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
+  return await AI.run([{t:'image',mime:m[1],data:m[2]},{t:'text',v:prompt}],{maxTokens:maxTokens||2000});
  },
- async callAI(prompt,maxTokens){const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');if(!key)throw new Error('no-key');
-  if(provider==='claude'){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:maxTokens||800,messages:[{role:'user',content:prompt}]})});const d=await r.json();return (d.content&&d.content[0]&&d.content[0].text)||'';}
-  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-  const d=await r.json();
-  // \u05d6\u05d9\u05d4\u05d5\u05d9 \u05e9\u05d2\u05d9\u05d0\u05d5\u05ea \u05de\u05e4\u05d5\u05e8\u05e9\u05d5\u05ea \u2014 \u05d1\u05de\u05e7\u05d5\u05dd \u05dc\u05d4\u05d7\u05d6\u05d9\u05e8 \u05e8\u05d9\u05e7 \u05d5\u05dc\u05d4\u05d9\u05e8\u05d0\u05d5\u05ea \u05e9\u05d1\u05d5\u05e8
-  if(d&&d.error){
-    const m=String(d.error.message||''), code=d.error.code||r.status;
-    if(code===429||/quota|rate.?limit|exhausted/i.test(m))throw new Error('quota');
-    if(code===403||/api key|permission|invalid/i.test(m))throw new Error('bad-key');
-    throw new Error('ai-error');
-  }
-  if(!r.ok){
-    if(r.status===429)throw new Error('quota');
-    if(r.status===403||r.status===400)throw new Error('bad-key');
-    throw new Error('ai-error');
-  }
-  return (((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
+ async callAI(prompt,maxTokens){const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();if(!key)throw new Error('no-key');
+  return await AI.run([{t:'text',v:prompt}],{maxTokens:maxTokens||800});
  },
  aiErrMsg(e){
   const k=(e&&e.message)||'';
@@ -1873,6 +1964,7 @@ const App={
   if(k==='quota')return '\ud83d\udd34 \u05de\u05db\u05e1\u05ea \u05d4-AI \u05d4\u05d9\u05d5\u05de\u05d9\u05ea \u05e0\u05d2\u05de\u05e8\u05d4 \u2014 \u05ea\u05ea\u05d7\u05d3\u05e9 \u05de\u05d7\u05e8. \u05db\u05dc \u05e9\u05d0\u05e8 \u05d4\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d4 \u05e2\u05d5\u05d1\u05d3\u05ea \u05db\u05e8\u05d2\u05d9\u05dc';
   if(k==='bad-key')return '\u05d4\u05de\u05e4\u05ea\u05d7 \u05dc\u05d0 \u05ea\u05e7\u05d9\u05df \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d1\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7';
   if(k==='ai-error')return '\u05d4-AI \u05d4\u05d7\u05d6\u05d9\u05e8 \u05e9\u05d2\u05d9\u05d0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1';
+  if(k==='network')return '\u05d0\u05d9\u05df \u05d7\u05d9\u05d1\u05d5\u05e8 \u05dc\u05e8\u05e9\u05ea \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d0\u05d9\u05e0\u05d8\u05e8\u05e0\u05d8';
   return '\u05e9\u05d2\u05d9\u05d0\u05ea \u05d7\u05d9\u05d1\u05d5\u05e8 \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d0\u05d9\u05e0\u05d8\u05e8\u05e0\u05d8';
  },
  // #29: תמחור חכם — מציע מחיר ליחידה לפי ההיסטוריה של המשתמש + טווח מומלץ
@@ -1882,7 +1974,7 @@ const App={
    });}catch(e){}return hist;},
  async aiPriceFor(cid,iid,btn){const it=this.find(cid,iid);if(!it)return;if(btn){btn.classList.add('working');btn.textContent='⏳';}try{const hist=this.priceHistory();const exact=hist[it.name.trim()];if(exact&&exact.length){const avg=Math.round(exact.reduce((s,x)=>s+x.p,0)/exact.length);this.setField(cid,iid,'price',avg);this.haptic(20);this.toast('מחיר מההיסטוריה שלך: '+nis(avg));this.render();return;}const keys=Object.keys(hist).slice(0,25);const samples=keys.map(k=>{const a=hist[k];const av=Math.round(a.reduce((s,x)=>s+x.p,0)/a.length);return k+' = '+av+' ILS/'+(a[0].u||'');}).join('; ');const parts=['אתה מתמחר עבור קבלן שיפוצים בישראל 2026.','עבודה: '+it.name+' (יחידה: '+(it.unit||'')+')'];if(it.range)parts.push('טווח שוק: '+it.range);if(samples)parts.push('מחירים קודמים של הקבלן: '+samples);parts.push('החזר אך ורק מספר שלם בשקלים ליחידה, בלי טקסט ובלי סימנים.');const prompt=parts.join(String.fromCharCode(10));const txt=await this.callAI(prompt,50);const num=parseInt(String(txt||'').replace(/[^0-9]/g,''),10);if(!num||num<1){this.toast('לא התקבל מחיר תקין');if(btn){btn.classList.remove('working');btn.textContent='🤖';}return;}this.setField(cid,iid,'price',num);this.haptic(20);this.toast('הצעת AI: '+nis(num)+' — בדוק והתאם');this.render();}catch(e){this.toast('שגיאת AI — בדוק מפתח');if(btn){btn.classList.remove('working');btn.textContent='🤖';}} },
  v2qStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
-  const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();
   if(!key){this.toast('הגדר קודם מפתח '+(provider==='claude'?'Claude':'Gemini')+' בהגדרות');return;}
   const r=new SR();r._stop=false;r.lang='he-IL';r.continuous=false;r.interimResults=true;this._v2qRec=r;this._v2qOn=true;
   // הטקסט שכבר "ננעל" — לא ייגע בו שוב
@@ -1942,7 +2034,7 @@ const App={
  async aiPdfConvert(){
   if(this._aiPdfData){return this.aiVisionConvert(this._aiPdfData);}
   if(!this._aiPdfRaw){this.toast('לא נבחר קובץ');return;}
-  const provider=Store.get('aiProvider','gemini');const key=provider==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();
   if(!key){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
   this.busy('ה-AI קורא את הקובץ…');this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
@@ -1953,13 +2045,7 @@ const App={
   const m=String(this._aiPdfRaw).match(/^data:([^;]+);base64,(.+)$/);if(!m){this.idle();this.toast('שגיאה בקריאת הקובץ');return;}
   const b64=m[2];
   try{let txt='';
-   if(provider==='claude'){
-     const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:3000,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:prompt}]}]})});
-     const d=await r.json();txt=(d.content&&d.content[0]&&d.content[0].text)||'';
-   }else{
-     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{inline_data:{mime_type:'application/pdf',data:b64}},{text:prompt}]}]})});
-     const d=await r.json();txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
-   }
+   txt=await AI.run([{t:'pdf',data:b64},{t:'text',v:prompt}],{maxTokens:3000,smart:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
    txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
    let arr=JSON.parse(txt);if(!Array.isArray(arr)||!arr.length){throw new Error('empty');}
    arr=arr.filter(x=>x&&x.name).map(x=>({name:String(x.name).trim(),qty:(+x.qty>0?+x.qty:1),unit:String(x.unit||'גלובלי').trim(),price:(+x.price>0?Math.round(+x.price):0),cat:String(x.cat||'אחר').trim(),ok:true})).slice(0,30);
@@ -1967,7 +2053,7 @@ const App={
   }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
  },
  async checkPriceFreshness(){
-  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const key=AI.anyKey();
   if(!key){this.toast('\u05d4\u05d2\u05d3\u05e8 \u05e7\u05d5\u05d3\u05dd \u05de\u05e4\u05ea\u05d7 AI \u05d1\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7');return;}
   const samples=[];this.state.catalog.forEach(cat=>{(cat.items||[]).forEach(it=>{if(+it.price>0)samples.push(it.name+' = '+it.price+'\u20aa/'+(it.unit||''));});});
   if(!samples.length){this.toast('\u05d0\u05d9\u05df \u05de\u05d7\u05d9\u05e8\u05d9\u05dd \u05d1\u05de\u05d7\u05d9\u05e8\u05d5\u05df \u05dc\u05d1\u05d3\u05d9\u05e7\u05d4');return;}
@@ -2034,7 +2120,7 @@ const App={
  async suggestMissingItems(){
   const groups=this.chosen();
   if(!groups.length){this.toast('בחר קודם כמה סעיפים');return;}
-  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const key=AI.anyKey();
   if(!key){this.toast('הגדר קודם מפתח AI בהגדרות מפתח');return;}
   this.busy('ה-AI בודק מה חסר…');this.haptic(15);
   const have=[];groups.forEach(g=>g.lines.forEach(l=>have.push(l.name)));
@@ -2334,6 +2420,8 @@ const App={
    <button class="btn-ghost" id="grev-save">💾 שמור קישור ביקורת</button>
    <div class="sec-title" style="margin-top:16px">🤖 עוזר AI</div>
    <div class="field"><label>בחר עוזר פעיל</label><select id="ai-provider">${[['gemini','Gemini (Google)'],['claude','Claude (Anthropic)']].map(o=>`<option value="${o[0]}" ${Store.get('aiProvider','gemini')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
+   <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="ai-fallback" ${Store.get('aiFallback',true)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>גיבוי אוטומטי — אם ספק אחד עמוס או נגמרה לו המכסה, עבור לשני</span></label></div>
+   <div class="field"><label>שימוש החודש</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${AI.report()}</div></div>
    <div class="field"><label>Gemini API Key</label><div style="display:flex;gap:8px"><input id="gem-key" type="password" value="${Store.get('geminiKey','')}" placeholder="AIza…" style="flex:1"/><button class="mini2" id="gem-eye" type="button">👁</button></div></div>
    <div class="field"><label>Claude API Key (Anthropic · בתשלום)</label><div style="display:flex;gap:8px"><input id="cla-key" type="password" value="${Store.get('claudeKey','')}" placeholder="sk-ant-…" style="flex:1"/><button class="mini2" id="cla-eye" type="button">👁</button></div></div>
    <button class="btn-ghost" id="gem-save">💾 שמור מפתחות AI</button>
@@ -2467,18 +2555,12 @@ const App={
  },
  async geminiAsk(prompt){const provider=Store.get('aiProvider','gemini');const out=document.getElementById('gem-out');
   try{const _st=Store.get('myStyle','');if(_st&&_st.trim()){prompt=prompt+String.fromCharCode(10)+String.fromCharCode(10)+'חשוב: כתוב באותו טון וסגנון כמו בדוגמאות הבאות שנכתבו על ידי הקבלן:'+String.fromCharCode(10)+_st.slice(0,900);}}catch(e){}
-  if(provider==='claude'){
-   const key=Store.get('claudeKey','');if(!key){this.toast('הזן מפתח Claude בהגדרות');return;}
-   if(out)out.textContent='חושב… (Claude)';
-   try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-3-5-haiku-latest',max_tokens:1024,messages:[{role:'user',content:prompt}]})});
-    const d=await r.json();const txt=(d.content&&d.content[0]&&d.content[0].text)||(d.error&&d.error.message)||'לא התקבלה תשובה';if(out)out.textContent=txt;}catch(e){if(out)out.textContent='שגיאת רשת/מפתח (Claude)';}
-   return;
-  }
-  const key=Store.get('geminiKey','');if(!key){this.toast('הזן מפתח Gemini בהגדרות');return;}if(out)out.textContent='חושב… (Gemini)';
-  try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-   const d=await r.json();let txt=(((d.candidates||[])[0]||{}).content||{}).parts?.[0]?.text||'';
-   if(!txt){const em=d.error?.message||'';if(/quota|rate|limit|429/i.test(em)){txt='⚠️ חרגת מהמכסה החינמית של Gemini כרגע.\n\nמה לעשות:\n• המתן דקה ונסה שוב (המכסה מתאפסת)\n• אם זה חוזר — ודא שהפעלת "Billing" בפרויקט ב-Google Cloud (גם השכבה החינמית דורשת זאת לפעמים)\n• ודא שהמפתח מתחיל ב-AIza (נוצר מ-aistudio.google.com/app/apikey)';}else{txt=em||'לא התקבלה תשובה';}}
-   if(out)out.textContent=txt;}catch(e){if(out)out.textContent='שגיאת רשת/מפתח';}
+  if(!AI.anyKey()){this.toast('הזן מפתח AI בהגדרות');return;}
+  if(out)out.textContent='חושב… ('+AI.nameOf(provider)+')';
+  try{
+   const txt=await AI.run([{t:'text',v:prompt}],{maxTokens:1024,onFallback:p=>{if(out)out.textContent='('+p+' נכנס כגיבוי)\n\n'+(out.textContent||'');}});
+   if(out)out.textContent=txt;
+  }catch(e){if(out)out.textContent=this.aiErrMsg(e);}
  },
  previewModal(){const groups=this.chosen();
   if(!groups.length)return `<h2>תצוגה מקדימה <button class="x" data-close>✕</button></h2><div class="empty" style="padding:20px">לא נבחרו סעיפים עדיין.<br>סמן סעיפים ותוכל לראות אותם כאן.</div>`;
@@ -2644,7 +2726,7 @@ const App={
   const cnt={};(d.events||[]).forEach(e=>{if(e.a==='off'&&e.n){cnt[e.n]=(cnt[e.n]||0)+1;}});
   const items=Object.keys(cnt);
   if(!items.length){this.toast('\u05d4\u05dc\u05e7\u05d5\u05d7 \u05dc\u05d0 \u05d1\u05d9\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd');return;}
-  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const key=AI.anyKey();
   const nm=(l.client||'').split(' ')[0];
   if(!key){
     const msg='\u05e9\u05dc\u05d5\u05dd'+(nm?' '+nm:'')+' \ud83d\udc4b'+String.fromCharCode(10)+'\u05e8\u05d0\u05d9\u05ea\u05d9 \u05e9\u05d4\u05ea\u05dc\u05d1\u05d8\u05ea \u05e2\u05dc '+items[0]+'.'+String.fromCharCode(10)+'\u05d9\u05e9 \u05dc\u05d9 \u05db\u05de\u05d4 \u05d7\u05dc\u05d5\u05e4\u05d5\u05ea \u2014 \u05e0\u05e9\u05de\u05d7 \u05dc\u05d3\u05d1\u05e8.';
@@ -3100,7 +3182,7 @@ const App={
   const t=el?el.value.trim():'';
   if(!t){this.toast('\u05db\u05ea\u05d5\u05d1 \u05e7\u05d5\u05d3\u05dd \u05de\u05e9\u05e4\u05d8');return;}
   this._oneShotText=t;
-  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const key=AI.anyKey();
   if(!key){this.toast('\u05d4\u05d2\u05d3\u05e8 \u05e7\u05d5\u05d3\u05dd \u05de\u05e4\u05ea\u05d7 AI');return;}
   this.busy('\u05de\u05e0\u05ea\u05d7...');this.haptic(15);
   const cats='\u05d4\u05e8\u05d9\u05e1\u05d4 \u05d5\u05e4\u05d9\u05e0\u05d5\u05d9, \u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4, \u05d7\u05e9\u05de\u05dc \u05d5\u05ea\u05e7\u05e9\u05d5\u05e8\u05ea, \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d2\u05de\u05e8 \u05d5\u05e2\u05d9\u05e6\u05d5\u05d1 \u05e4\u05e0\u05d9\u05dd, \u05e0\u05d2\u05e8\u05d5\u05ea \u05de\u05e1\u05d2\u05e8\u05d5\u05ea \u05d5\u05d0\u05dc\u05d5\u05de\u05d9\u05e0\u05d9\u05d5\u05dd, \u05ea\u05db\u05e0\u05d5\u05df \u05e0\u05d9\u05d4\u05d5\u05dc \u05d5\u05e8\u05d9\u05e9\u05d5\u05d9, \u05e9\u05dc\u05d3 \u05d5\u05ea\u05e9\u05ea\u05d9\u05ea \u05db\u05d1\u05d3\u05d4, \u05e4\u05d9\u05ea\u05d5\u05d7 \u05d7\u05d5\u05e5 \u05d5\u05e1\u05d1\u05d9\u05d1\u05d4, \u05d0\u05d7\u05e8';
@@ -3445,6 +3527,7 @@ const App={
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
+  const aifb=document.getElementById('ai-fallback');if(aifb)aifb.onchange=()=>Store.set('aiFallback',aifb.checked);
   const gemEye=document.getElementById('gem-eye');if(gemEye)gemEye.onclick=()=>{const t=document.getElementById('gem-key');if(t)t.type=t.type==='password'?'text':'password';};
   const gcs=document.getElementById('g-save');if(gcs)gcs.onclick=()=>{Store.set('gClientId',(document.getElementById('g-cid').value||'').trim());this.toast('נשמר ✓');};
   const gcn=document.getElementById('g-connect');if(gcn)gcn.onclick=()=>{Store.set('gClientId',(document.getElementById('g-cid').value||'').trim());this.driveConnect();};
@@ -4095,7 +4178,7 @@ const App={
   if(lang==='he'){this.toast('\u05d1\u05d7\u05e8 \u05e9\u05e4\u05d4 \u05d0\u05d7\u05e8\u05ea \u05e7\u05d5\u05d3\u05dd');return;}
   const groups=this.chosen();
   if(!groups.length){this.toast('\u05d1\u05d7\u05e8 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05e7\u05d5\u05d3\u05dd');return;}
-  const key=Store.get('aiProvider','gemini')==='claude'?Store.get('claudeKey',''):Store.get('geminiKey','');
+  const key=AI.anyKey();
   if(!key){this.toast('\u05d4\u05d2\u05d3\u05e8 \u05de\u05e4\u05ea\u05d7 AI \u05d1\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7');return;}
   const LN={ar:'\u05e2\u05e8\u05d1\u05d9\u05ea',en:'\u05d0\u05e0\u05d2\u05dc\u05d9\u05ea',ru:'\u05e8\u05d5\u05e1\u05d9\u05ea'}[lang]||lang;
   const names=[];
