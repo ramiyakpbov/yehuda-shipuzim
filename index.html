@@ -993,7 +993,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='12.2';
+const VERSION='12.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1732,6 +1732,7 @@ const AI=(()=>{
     במקום שהמודל ימציא שמות סעיפים ומחירים, הוא מקבל את המחירון המלא
     ומחזיר ref (מזהה סעיף). ב-Claude הבלוק מסומן cache_control —
     הקריאה הראשונה כותבת לקאש, כל הבאות קוראות ממנו ב-10% מהמחיר. */
+  // כותרות הקטגוריות — נחשפות דרך AI.catTitles
  const CAT_TITLES={demo:'הריסה ופינוי',plumb:'אינסטלציה',elec:'חשמל ותקשורת',finish:'עבודות גמר ועיצוב פנים',alum:'נגרות, מסגרות ואלומיניום',plan:'תכנון, ניהול ורישוי',struct:'שלד ותשתית כבדה',outdoor:'פיתוח חוץ וסביבה',custom:'אחר (מותאם אישית)'};
  let _cIdx=null,_cTxt='',_cSig='';
 
@@ -1845,7 +1846,7 @@ const AI=(()=>{
   return out.length?out.join(' | '):'אין שימוש החודש';
  }
 
- return{run,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats};
+ return{run,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -1955,6 +1956,18 @@ const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const phoneValid=p=>{const d=(p||'').replace(/\D/g,'');return d.length>=9&&d.length<=15;};
 const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);if(p&&!p.startsWith('972'))p='972'+p;return 'https://wa.me/'+(p||'')+'?text='+encodeURIComponent(text);};
 function nextQuoteNo(){let seq=Store.get('qseq',0)+1;const ymd=new Date().toISOString().slice(0,10).replace(/-/g,'');return 'YS-'+ymd+'-'+String(seq).padStart(3,'0');}
+
+const CAT_IDS=(()=>{const o={};try{const T=AI.catTitles;Object.keys(T).forEach(k=>{o[T[k]]=k;o[T[k].replace(/,/g,'')]=k;o[k]=k;});}catch(e){}return o;})();
+
+/* v12.3 — תיקון נתונים: סעיפים שנוספו ע"י AI ללא id היו בלתי ניתנים לעריכה */
+try{
+ let fixed=0;
+ const si=Store.get('subItems',{})||{};
+ Object.keys(si).forEach(cid=>{(si[cid]||[]).forEach(it=>{if(it&&!it.id){it.id='fx'+Math.random().toString(36).slice(2,9);it.perm=true;fixed++;}});});
+ const cu=Store.get('customItems',[])||[];
+ cu.forEach(it=>{if(it&&!it.id){it.id='fx'+Math.random().toString(36).slice(2,9);it.perm=true;fixed++;}});
+ if(fixed){Store.set('subItems',si);Store.set('customItems',cu);}
+}catch(e){}
 
 /* v12.2 — ברירת מחדל: Gemini ראשי, Claude גיבוי אוטומטי */
 try{if(Store.get('aiSetup122',0)!==1){Store.set('aiProvider','gemini');Store.set('aiFallback',true);Store.set('aiSetup122',1);}}catch(e){}
@@ -2168,15 +2181,21 @@ const App={
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
   const P=['אתה קבלן שיפוצים ותיק בישראל. לפניך רשימת סעיפים בהצעת מחיר. זהה עד 6 סעיפים חשובים שכנראה חסרים ומקובל לכלול בעבודה כזו (למשל: אטימה בעבודות רטובות, פינוי פסולת, ניקיון סופי, חשמל נלווה).',
     'הסעיפים הקיימים: '+have.join(', '),
-    'החזר אך ורק JSON: מערך אובייקטים {"name":"שם הסעיף החסר","cat":"אחת מ: '+cats+'"}. אם לא חסר כלום — החזר [].',
-    'דוגמה: [{"name":"פינוי פסולת לאתר מורשה","cat":"הריסה ופינוי"},{"name":"ניקיון סופי","cat":"עבודות גמר ועיצוב פנים"}]'];
+    'החזר אך ורק JSON: מערך אובייקטים {"ref":"מזהה מהמחירון או ריק","name":"שם הסעיף","cat":"אחת מ: '+cats+'","unit":"גלובלי/מ\\"ר/מ\\"א/יח׳/נק׳","price":מחיר_ליחידה_בשקלים}. אם לא חסר כלום — החזר [].',
+    'לכל סעיף חפש קודם התאמה במחירון והחזר את ה-ref שלו עם המחיר מהמחירון.',
+    'סעיף שאינו במחירון — ref ריק, ואז תן מחיר שוק ריאלי ועדכני בישראל לקבלן שיפוצים, מספר בלבד בלי סימנים. אל תחזיר 0.',
+    'דוגמה: [{"ref":"dm4","name":"פינוי פסולת במכולה","cat":"הריסה ופינוי","unit":"יח׳","price":1700}]'];
   const prompt=P.join(String.fromCharCode(10));
-  try{let txt=await this.callAI(prompt,600);
+  try{let txt=await AI.run([{t:'text',v:prompt}],{maxTokens:900,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
    if(!txt||!txt.trim()){this.idle();this.toast('ה-AI לא החזיר תשובה — ייתכן שהמכסה נגמרה. נסה שוב');return;}
    txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
    let arr;try{arr=JSON.parse(txt);}catch(pe){this.idle();this.toast('ה-AI החזיר תשובה לא תקינה — נסה שוב');return;}
    if(!Array.isArray(arr))arr=[];
-   arr=arr.filter(x=>x&&x.name&&String(x.name).trim()).map(x=>({name:String(x.name).trim(),cat:String(x.cat||'אחר').trim()})).slice(0,6);
+   arr=arr.filter(x=>x&&(x.name||x.ref)).map(x=>{
+     const hit=x.ref?AI.resolveRef(x.ref):null;
+     if(hit)return{name:hit.name,cat:hit.cid,price:hit.price,unit:hit.unit,ref:hit.ref,fromCat:true};
+     return{name:String(x.name||'').trim(),cat:String(x.cat||'אחר').trim(),price:Math.max(0,Math.round(+x.price||0)),unit:String(x.unit||'גלובלי').trim(),ref:'',fromCat:false};
+   }).filter(x=>x.name).slice(0,6);
    this.idle();
    if(!arr.length){this.toast('👍 ההצעה נראית מלאה — לא חסר כלום');return;}
    this._missingItems=arr;this.state.modal='missing';this.render();
@@ -2186,16 +2205,16 @@ const App={
   const arr=this._missingItems||[];
   const units=['גלובלי','מ"ר','מ"א','מ"ק','יח׳','נק׳','ימי עבודה'];
   return `<h2>💡 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">ה-AI זיהה סעיפים חסרים ושייך כל אחד לקטגוריה. מלא כאן מחיר וכמות — והם יתפזרו לקטגוריות מוכנים:</div>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">המחירים מולאו מראש — מהמחירון שלך כשקיים, אחרת הערכת שוק. שנה מה שצריך. מה שתאשר יישמר בקטגוריה גם להצעות הבאות:</div>
    ${arr.map((it,i)=>`<div class="miss-row" style="background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px">
      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px">
        <input type="checkbox" class="miss-chk" data-i="${i}" checked style="width:20px;height:20px;accent-color:var(--red);flex:none"/>
-       <div style="flex:1"><div style="font-weight:700;font-size:13px">${esc(it.name)}</div><div style="font-size:11px;color:var(--muted)">📁 ${it.cat||'אחר'}</div></div>
+       <div style="flex:1"><div style="font-weight:700;font-size:13px">${esc(it.name)}</div><div style="font-size:11px;color:var(--muted)">📁 ${esc((AI.catTitles&&AI.catTitles[it.cat])||it.cat||'אחר')} ${it.fromCat?'· <span style="color:var(--red)">מהמחירון שלך</span>':(it.price>0?'· מחיר שוק משוער':'')}</div></div>
      </label>
      <div style="display:flex;gap:6px">
-       <input type="number" class="miss-price" data-i="${i}" inputmode="decimal" placeholder="מחיר ₪" style="flex:1;padding:8px;border-radius:8px;font-size:13px"/>
+       <input type="number" class="miss-price" data-i="${i}" inputmode="decimal" placeholder="מחיר ₪" value="${it.price>0?it.price:''}" style="flex:1;padding:8px;border-radius:8px;font-size:13px"/>
        <input type="number" class="miss-qty" data-i="${i}" inputmode="decimal" placeholder="כמות" value="1" style="width:70px;padding:8px;border-radius:8px;font-size:13px"/>
-       <select class="miss-unit" data-i="${i}" style="width:90px;padding:8px;border-radius:8px;font-size:12px">${units.map(u=>`<option value="${u}">${u}</option>`).join('')}</select>
+       <select class="miss-unit" data-i="${i}" style="width:90px;padding:8px;border-radius:8px;font-size:12px">${units.map(u=>`<option value="${u}" ${u===it.unit?'selected':''}>${u}</option>`).join('')}</select>
      </div>
    </div>`).join('')}
    <button class="btn-block" id="miss-add" style="margin-top:6px">➕ הוסף מסומנים להצעה</button>
@@ -2565,13 +2584,18 @@ const App={
  resetCurrentQuote(){
    this.allCats().forEach(c=>{(c.items||[]).forEach(i=>{i.selected=false;i.qty=0;});});
    this.save();
-   this.state.custom=[];Store.set('customItems',[]);
-   this.state.subItems={};Store.set('subItems',{});
+   // סעיפים קבועים (perm) נשמרים לצמיתות — רק הבחירה והכמות מתאפסות
+   this.state.custom=(this.state.custom||[]).filter(i=>i&&i.perm).map(i=>Object.assign({},i,{selected:false,qty:0}));
+   Store.set('customItems',this.state.custom);
+   const _si={};Object.keys(this.state.subItems||{}).forEach(cid=>{
+     const keep=(this.state.subItems[cid]||[]).filter(i=>i&&i.perm).map(i=>Object.assign({},i,{selected:false,qty:0}));
+     if(keep.length)_si[cid]=keep;});
+   this.state.subItems=_si;Store.set('subItems',_si);
    this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
    this.state.discount=0;this.state.advance=0;this.state.planMode=false;this.state.planPerSqm='';this.state.planTotalSqm='';
    Store.set('planMode',false);
    this.state.quoteNo=nextQuoteNo();this._aiQuoteType='calc';
-   this.haptic(20);this.toast('ההצעה אופסה ✓ — מוכן להצעה חדשה');this.state.modal=null;this.render();
+   this.haptic(20);this.toast('ההצעה אופסה ✓ — הסעיפים הקבועים נשמרו');this.state.modal=null;this.render();
  },
  geminiModal(){const prov=Store.get('aiProvider','gemini');const hasKey=prov==='claude'?!!Store.get('claudeKey',''):!!Store.get('geminiKey','');
   const acts=[['📝 נסח הודעה ללקוח','נסח הודעת וואטסאפ קצרה, מנומסת ומקצועית בעברית ללקוח בשם הקבלן "יהודה שיפוצים", בנוגע להצעת מחיר ששלחתי.'],
@@ -3504,7 +3528,7 @@ const App={
   const v2bk=document.getElementById('v2q-back');if(v2bk)v2bk.onclick=()=>{this.state.modal='v2q';this.render();};
   on('[data-v2qtoggle]','change',e=>{const i=+e.currentTarget.dataset.v2qtoggle;if(this._v2qResult&&this._v2qResult[i]){this._v2qResult[i].ok=e.currentTarget.checked;this.render();}});
   const v2t=document.getElementById('v2q-text');if(v2t)v2t.oninput=e=>{this._v2qText=e.target.value;};
-  on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
+  on('[data-sel]','click',e=>{const[c,i]=e.currentTarget.dataset.sel.split('|');const it=this.find(c,i);if(!it){this.toast('סעיף פגום — רענן את הדף');return;}it.selected=!it.selected;if(it.selected&&!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.render();});
   on('[data-suggest]','click',e=>{const[c,i]=e.currentTarget.dataset.suggest.split('|');const it=this.find(c,i);if(it){it.selected=true;if(!it.qty)it.qty=(it.unit==='גלובלי'||it.unit==='יח׳')?1:'';this.saveActive(c);this.toast('נוסף: '+it.name+' — עדכן מחיר/כמות');this.gotoItem(c,i);}});
   on('[data-suggest-ai]','click',()=>this.aiSuggest());
   const srt=document.getElementById('sync-retry');if(srt)srt.onclick=async()=>{this.toast('מנסה לסנכרן שוב…');this.haptic(15);await Sync.init(()=>this.render());await Sync.push(true);this.toast(Sync.status==='on'?'סונכרן ✓':'עדיין אין חיבור');this.render();};
@@ -3514,7 +3538,7 @@ const App={
   const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
   const pn=document.getElementById('prev-next');if(pn)pn.onclick=()=>{this.state.modal='quote';this.render();};
   on('[data-aiprice]','click',e=>{const[c,i]=e.currentTarget.dataset.aiprice.split('|');this.aiPriceFor(c,i,e.currentTarget);});
-  on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
+  on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);if(!it)return;const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
     const row=e.currentTarget.closest('.item');const t=(+it.qty||0)*(+it.price||0);const v=row.querySelector('.item-total .val');if(v)v.textContent=nis(t);
     const chk=row.querySelector('.chk');if(chk){chk.classList.toggle('on',!!it.selected);chk.textContent=it.selected?'✓':'';}
     const cs=e.currentTarget.closest('.cat').querySelector('.cat-sum');const cObj=this.allCats().find(x=>x.id===c);if(cs)cs.textContent=nis(this.catTotal(cObj));this.updateBottom();});
@@ -3524,7 +3548,7 @@ const App={
 
   const ac=document.getElementById('add-custom');if(ac)ac.onclick=()=>{this.state.addTarget='custom';this.state.modal='addcustom';this.render();};
   on('[data-addsub]','click',e=>{this.state.addTarget=e.currentTarget.dataset.addsub;this.state.modal='addcustom';this.render();});
-  const cs=document.getElementById('cu-save');if(cs)cs.onclick=()=>{const n=document.getElementById('cu_name').value.trim();if(!n){this.toast('הזן תיאור');return;}const item={id:uid(),name:n,price:+document.getElementById('cu_price').value||0,unit:document.getElementById('cu_unit').value,selected:true,qty:1};const tgt=this.state.addTarget;
+  const cs=document.getElementById('cu-save');if(cs)cs.onclick=()=>{const n=document.getElementById('cu_name').value.trim();if(!n){this.toast('הזן תיאור');return;}const item={id:uid(),name:n,price:+document.getElementById('cu_price').value||0,unit:document.getElementById('cu_unit').value,selected:true,qty:1,perm:true};const tgt=this.state.addTarget;
     if(tgt&&tgt!=='custom'){if(!this.state.subItems[tgt])this.state.subItems[tgt]=[];item.sub=true;this.state.subItems[tgt].push(item);Store.set('subItems',this.state.subItems);this.state.open[tgt]=true;}
     else{this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;}
     this.state.modal=null;this.state.addTarget=null;this.toast('נשמר ✓');this.render();};
@@ -3614,7 +3638,7 @@ const App={
       const pr=document.querySelector('.miss-price[data-i="'+i+'"]');
       const qt=document.querySelector('.miss-qty[data-i="'+i+'"]');
       const un=document.querySelector('.miss-unit[data-i="'+i+'"]');
-      add.push({name:it.name,cat:it.cat,price:(pr?+pr.value||0:0),qty:(qt?+qt.value||1:1),unit:(un?un.value:'גלובלי')});}});
+      add.push({name:it.name,cat:it.cat,ref:it.ref||'',price:(pr?+pr.value||0:(+it.price||0)),qty:(qt?+qt.value||1:1),unit:(un?un.value:(it.unit||'גלובלי'))});}});
     if(!add.length){this.toast('לא סומן כלום');return;}
     const catMap={'הריסה ופינוי':'demo','אינסטלציה':'plumb','חשמל ותקשורת':'elec','עבודות גמר ועיצוב פנים':'finish','נגרות מסגרות ואלומיניום':'alum','תכנון ניהול ורישוי':'plan','שלד ותשתית כבדה':'struct','פיתוח חוץ וסביבה':'outdoor','אחר':'custom'};
     const byName=nm=>{const t=(nm||'');
@@ -3626,17 +3650,28 @@ const App={
       if(/בטון|ברזל|יציקה|שלד|עמוד|פלטת בסיס/.test(t))return 'struct';
       if(/הריסה|פינוי|פסולת/.test(t))return 'demo';
       return 'custom';};
-    let toCat=0;
+    let toCat=0,updated=0,added=0;
     add.forEach(it=>{
-      let cid=this.recallCat(it.name)||catMap[it.cat]||'custom';
-      if(cid==='custom')cid=byName(it.name);
-      const item={name:it.name,price:it.price,qty:it.qty,unit:it.unit,selected:true};
+      // 1. סעיף שזוהה מול המחירון — הקטגוריה נלקחת ממנו ישירות
+      const hit=it.ref?AI.resolveRef(it.ref):null;
+      let cid=hit?hit.cid:(this.recallCat(it.name)||catMap[it.cat]||CAT_IDS[it.cat]||'custom');
+      if(cid==='custom'&&!hit)cid=byName(it.name);
+      const price=+it.price||0, qty=+it.qty||1, unit=it.unit||(hit?hit.unit:'גלובלי');
+      // 2. כבר קיים סעיף באותו שם? עדכן במקום ליצור כפילות
+      const pool=(cid==='custom')?this.state.custom:(this.state.subItems[cid]||[]);
+      let ex=pool.find(i=>i&&String(i.name).trim()===String(it.name).trim());
+      if(!ex&&cid!=='custom'){const bc=this.state.catalog.find(c=>c.id===cid);if(bc)ex=(bc.items||[]).find(i=>i&&String(i.name).trim()===String(it.name).trim());}
+      if(ex){if(price>0)ex.price=price;ex.qty=qty;ex.unit=unit;ex.selected=true;updated++;return;}
+      // 3. סעיף חדש — id אמיתי + perm כדי שיישמר לצמיתות
+      const item={id:uid(),name:it.name,price:price,qty:qty,unit:unit,selected:true,perm:true};
       if(cid==='custom'){this.state.custom.push(item);}
       else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;this.learnCat(it.name,cid);toCat++;}
+      added++;
     });
-    Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
+    this.save();Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
+    try{Sync.push&&Sync.push();}catch(e){}
     this._missingItems=null;this.state.modal=null;this.haptic(20);
-    this.toast('נוספו '+add.length+' סעיפים ✓ ('+toCat+' לקטגוריות)');this.render();};
+    this.toast((added?added+' נוספו':'')+(updated?(added?' · ':'')+updated+' עודכנו':'')+' ✓ — נשמרו לצמיתות');this.render();};
   const mskip=document.getElementById('miss-skip');if(mskip)mskip.onclick=()=>{this._missingItems=null;this.state.modal=null;this.render();};
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
