@@ -109,6 +109,11 @@ input,select,textarea{font-family:inherit;}
 .trk-comment{flex-basis:100%;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--txt);margin-top:8px;line-height:1.5;}
 .statcard.clickable{cursor:pointer;border-color:rgba(237,28,36,.4);}
 .statcard.clickable:active{background:var(--red);}
+.lb-chip{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:4px 10px;font-size:10.5px;font-weight:700;font-family:inherit;-webkit-tap-highlight-color:transparent;}
+.lb-chip:active{transform:scale(.95);}
+.lb-chip.on{background:rgba(255,176,32,.14);border-color:var(--warn);color:var(--warn);}
+.lb-note{color:var(--warn)!important;font-weight:700;}
+.chip.lb-on{border-color:var(--warn)!important;color:var(--warn)!important;font-weight:800;}
 .cat-badge{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:2px 8px;font-size:10.5px;font-weight:700;flex:none;margin-left:6px;}
 .cat-badge.sel{background:var(--red);border-color:var(--red);color:#fff;}
 .srch-info{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg3);border:1px solid var(--line);border-radius:11px;padding:8px 12px;margin:0 0 10px;font-size:12px;color:var(--muted);}
@@ -1012,7 +1017,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='12.9';
+const VERSION='13.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1453,7 +1458,13 @@ const GUIDE=[
    </div>`},
 
   {id:'g30',ic:'🆕',t:'מה חדש בגרסה',d:'v12.1 עד v12.7',
-   b:`<div class="g-plate"><div class="g-ph">v12.9 — עד 60 סעיפים בקריאה אחת</div>
+   b:`<div class="g-plate"><div class="g-ph">v13.0 — התקנה בלבד</div>
+   <ul class="g-ul"><li><b>לא תמיד האספקה עליך.</b> לכל סעיף יש עכשיו מתג ⚙️. לחיצה אחת והמחיר יורד לחלק העבודה בלבד, והשם משתנה ל"התקנה בלבד (חומר של הלקוח)".</li>
+   <li><b>דוגמה</b> — דלת פנים 1,800 ₪ ← לחיצה ← <b>630 ₪</b>. המחיר המלא נשמר מאחורי הקלעים, לחיצה נוספת מחזירה אותו.</li>
+   <li><b>ברירות מחדל</b> — הריסה 95% · שלד 70% · גמר 60% · חשמל ואינסטלציה 55% · נגרות ואלומיניום 35% · תכנון 100%. אפשר לשנות אחוז לסעיף מסוים והוא נשמר.</li>
+   <li><b>מתג לכל ההצעה</b> — הצ׳יפ ⚙️ בראש המסך מעביר את כל הסעיפים המסומנים בבת אחת.</li>
+   <li><b>הלקוח רואה את זה</b> — הסימון מופיע ב-PDF, בלינק החי ובלינק ההצעה, כולל בהצעה מתורגמת לאנגלית, רוסית וערבית. אין מקום לוויכוח על מי מביא את החומר.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v12.9 — עד 60 סעיפים בקריאה אחת</div>
    <ul class="g-ul"><li><b>התקרה הוכפלה</b> — צילום, PDF והקלטה עולים מ-25/30 ל-<b>60 סעיפים</b>. לכוד מהיר ל-25, סעיפים חסרים ל-12.</li>
    <li><b>איך זה נשאר חינם</b> — ה-AI מחזיר עכשיו שורה לכל סעיף במקום אובייקט JSON. <code>תקרת גבס|22|מ"ר|180|finish</code> במקום שורת JSON ארוכה. 64% פחות טקסט, ולכן 60 סעיפים תופסים פחות מקום מ-25 קודם.</li>
    <li><b>אין יותר חיתוך בשקט</b> — אם ה-AI זיהה יותר מ-60, תראה "זוהו 70, מוצגים 60". אם התשובה נקטעה באמצע, תראה "התשובה נחתכה — פצל לשני חלקים". קודם זה פשוט נעלם.</li>
@@ -3014,7 +3025,9 @@ const App={
       return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג הכל':'✓ מסומנים'+(n?' ('+n+')':'')}</button>`;})()}
     <button class="chip" id="chip-cats">📂 קטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
-    <button class="chip" id="chip-reset">🔄 איפוס הצעה</button></div>
+    <button class="chip" id="chip-reset">🔄 איפוס הצעה</button>
+    ${(()=>{const n=this.laborCount();const tot=this.chosen().reduce((k,g)=>k+g.lines.length,0);
+      return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}</div>
   <div class="wrap">${(()=>{
       if(onlySel){const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
         return `<div class="srch-info"><span>מציג <b>${n}</b> סעיפים שבחרת</span><button id="srch-clear">✕ הצג הכל</button></div>`;}
@@ -3029,16 +3042,48 @@ const App={
   ${s.modal?this.modalView():''}`;
  },
 
+ // ===== v13.0 — אספקה+התקנה מול התקנה בלבד =====
+ // חלק העבודה מתוך המחיר המלא, לפי מה שמקובל בשוק. ניתן לשינוי לכל סעיף.
+ LABOR:{demo:95,plumb:55,elec:55,finish:60,alum:35,plan:100,struct:70,outdoor:55,custom:60},
+ laborPct(cid,i){const p=+((i&&i.laborPct)||0);if(p>0&&p<=100)return p;return this.LABOR[cid]||60;},
+ // המחיר המלא נשמר ב-fullPrice, כך שאפשר לחזור אחורה בלי לאבד אותו
+ laborToggle(cid,iid,on){
+  const it=this.find(cid,iid);if(!it)return false;
+  const want=(on===undefined)?!it.laborMode:!!on;
+  if(want===!!it.laborMode)return true;
+  if(want){
+    const full=(+it.price||0);if(full<=0){it.laborMode=true;return true;}
+    it.fullPrice=full;it.price=Math.max(1,Math.round(full*this.laborPct(cid,it)/100));it.laborMode=true;
+  }else{
+    if(+it.fullPrice>0)it.price=+it.fullPrice;
+    it.laborMode=false;delete it.fullPrice;
+  }
+  return true;
+ },
+ // שם הסעיף כפי שהלקוח רואה אותו — במסמכים ובלינקים
+ dispName(i){return (i&&i.laborMode)?(String(i.name||'')+' — התקנה בלבד (חומר של הלקוח)'):String((i&&i.name)||'');},
+ // שם מתורגם + סיומת בשפת המסמך. בלי זה, סעיף "התקנה בלבד" נשאר עברי בהצעה מתורגמת
+ trName(i){
+  const base=this.tr(String((i&&i.name)||''));
+  if(!(i&&i.laborMode))return base;
+  const L={he:' — התקנה בלבד (חומר של הלקוח)',en:' — installation only (materials by client)',
+           ru:' — только монтаж (материалы заказчика)',ar:' — التركيب فقط (المواد على العميل)'};
+  return base+(L[this.state.lang||'he']||L.he);
+ },
+ laborCount(){let n=0;this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0)&&i.laborMode)n++;}));return n;},
+
  itemView(cid,i,custom){const total=(+i.qty||0)*(+i.price||0);
   return `<div class="item ${i.selected?'sel':''}" data-iid="${i.id}"><div class="item-top">
       <div class="chk ${i.selected?'on':''}" data-sel="${cid}|${i.id}">${i.selected?'✓':''}</div>
-      <div class="item-name">${esc(i.name)}<div class="item-range">${i.range||''}</div></div>
+      <div class="item-name">${esc(i.name)}<div class="item-range">${i.laborMode?`<span class="lb-note">⚙️ התקנה בלבד · ${this.laborPct(cid,i)}% מ-${nis(+i.fullPrice||0)}</span>`:(i.range||'')}</div></div>
       ${custom?`<button class="del-custom" data-delcustom="${i.id}">🗑️</button>`:(i.sub?`<button class="del-custom" data-delsub="${cid}|${i.id}">🗑️</button>`:'')}</div>
     <div class="fields">
       <div class="f"><label>מחיר ₪</label><div style="display:flex;gap:5px"><input type="number" inputmode="decimal" value="${i.price}" data-fld="price" data-k="${cid}|${i.id}" class="price-in" style="flex:1"/><button class="ai-price-btn" data-aiprice="${cid}|${i.id}" type="button" title="הצע מחיר AI">🤖</button></div></div>
       <div class="f"><label>יחידה</label><select data-fld="unit" data-k="${cid}|${i.id}">${UNITS.map(u=>`<option ${u===i.unit?'selected':''}>${u}</option>`).join('')}</select></div>
       <div class="f"><label>כמות</label><div class="qty"><button class="qstep" data-step="${cid}|${i.id}|-1" type="button">−</button><input type="number" inputmode="decimal" value="${i.qty||''}" data-fld="qty" data-k="${cid}|${i.id}" class="qty-in"/><button class="qstep" data-step="${cid}|${i.id}|1" type="button">+</button></div></div></div>
-    <div class="item-total"><span class="lbl">סה"כ לשורה</span><span class="val">${nis(total)}</span></div></div>`;
+    <div class="item-total">
+      <button class="lb-chip ${i.laborMode?'on':''}" data-labor="${cid}|${i.id}" type="button">${i.laborMode?'⚙️ התקנה בלבד':'🔧 אספקה + התקנה'}</button>
+      <span class="val">${nis(total)}</span></div></div>`;
  },
 
  modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
@@ -3282,7 +3327,7 @@ const App={
  },
  previewModal(){const groups=this.chosen();
   if(!groups.length)return `<h2>תצוגה מקדימה <button class="x" data-close>✕</button></h2><div class="empty" style="padding:20px">לא נבחרו סעיפים עדיין.<br>סמן סעיפים ותוכל לראות אותם כאן.</div>`;
-  const rows=groups.map(g=>`<div style="margin-bottom:14px"><div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:6px">${g.cat.emoji||''} ${g.cat.title}</div>${g.lines.map(l=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px"><span style="flex:1">${l.name} <span style="color:var(--muted)">×${l.qty}</span></span><b style="white-space:nowrap">${nis((+l.qty||0)*(+l.price||0))}</b></div>`).join('')}</div>`).join('');
+  const rows=groups.map(g=>`<div style="margin-bottom:14px"><div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:6px">${g.cat.emoji||''} ${g.cat.title}</div>${g.lines.map(l=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px"><span style="flex:1">${esc(this.dispName(l))} <span style="color:var(--muted)">×${l.qty}</span></span><b style="white-space:nowrap">${nis((+l.qty||0)*(+l.price||0))}</b></div>`).join('')}</div>`).join('');
   const s=this.state;
   return `<h2>👁 תצוגה מקדימה של ההצעה <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${groups.reduce((n,g)=>n+g.lines.length,0)} סעיפים · בדוק לפני המשך</div>
@@ -4234,7 +4279,9 @@ const App={
   const pb=document.getElementById('prev-back');if(pb)pb.onclick=()=>{this.state.modal=null;this.render();};
   const pn=document.getElementById('prev-next');if(pn)pn.onclick=()=>{this.state.modal='quote';this.render();};
   on('[data-aiprice]','click',e=>{const[c,i]=e.currentTarget.dataset.aiprice.split('|');this.aiPriceFor(c,i,e.currentTarget);});
-  on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);if(!it)return;const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
+  on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);if(!it)return;const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;
+    // שינוי מחיר במצב "התקנה בלבד" נשמר כאחוז העבודה של הסעיף — והמערכת תזכור אותו
+    if(f==='price'&&it.laborMode&&+it.fullPrice>0){const p=Math.round((+it.price||0)/(+it.fullPrice)*100);if(p>0&&p<=100)it.laborPct=p;}if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
     const row=e.currentTarget.closest('.item');const t=(+it.qty||0)*(+it.price||0);const v=row.querySelector('.item-total .val');if(v)v.textContent=nis(t);
     const chk=row.querySelector('.chk');if(chk){chk.classList.toggle('on',!!it.selected);chk.textContent=it.selected?'✓':'';}
     const cs=e.currentTarget.closest('.cat').querySelector('.cat-sum');const cObj=this.allCats().find(x=>x.id===c);if(cs)cs.textContent=nis(this.catTotal(cObj));this.updateBottom();});
@@ -4508,6 +4555,19 @@ const App={
   const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
+  on('[data-labor]','click',e=>{const[c,i]=e.currentTarget.dataset.labor.split('|');
+    if(!this.laborToggle(c,i)){this.toast('סעיף פגום — רענן את הדף');return;}
+    this.saveActive(c);this.haptic(12);this.render();});
+  const clb=document.getElementById('chip-labor');
+  if(clb)clb.onclick=()=>{
+    const lines=[];this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0))lines.push({cid:c.id,iid:i.id,it:i});}));
+    if(!lines.length){this.toast('בחר קודם סעיפים');return;}
+    const allOn=lines.every(x=>x.it.laborMode);
+    const to=!allOn;
+    if(to&&!confirm('להעביר את כל '+lines.length+' הסעיפים ל"התקנה בלבד"?\nהמחירים יעודכנו לחלק העבודה. אפשר להחזיר בלחיצה נוספת.'))return;
+    lines.forEach(x=>this.laborToggle(x.cid,x.iid,to));
+    this.save();Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
+    this.haptic(20);this.toast(to?lines.length+' סעיפים → התקנה בלבד ⚙️':lines.length+' סעיפים → אספקה + התקנה 🔧');this.render();};
   on('[data-step]','click',e=>{const[cid,iid,d]=e.currentTarget.dataset.step.split('|');const it=this.find(cid,iid);if(it){it.qty=Math.max(0,(+it.qty||0)+(+d));it.selected=(+it.qty>0);this.saveActive(cid);this.render();}});
   const lvl=document.getElementById('livelink');if(lvl)lvl.onclick=()=>this.makeLiveLink();
   const wl=document.getElementById('weblink');if(wl)wl.onclick=()=>this.makeProposalLink();
@@ -4847,7 +4907,7 @@ const App={
  buildPDFHtml(){const s=this.state,c=s.client,groups=this.chosen();const L=I18N[s.lang]||I18N.he;const dir=s.lang==='en'?'ltr':'rtl';const isC=s.docType==='contract';let rows='';
   const plan=s.planMode;const cspan=plan?4:6;
   groups.forEach(g=>{rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?g.cat.title:`<div style="display:flex;justify-content:space-between"><span>${g.cat.title}</span><span style="color:var(--red);font-weight:900">${nis(this.catTotal(g.cat))}</span></div>`}</td></tr>`;
-    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.tr(i.name)}</td><td>${i.qty}</td><td>${i.unit}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.tr(i.name)}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
+    g.lines.forEach((i,idx)=>{const t=(+i.qty||0)*(+i.price||0);rows+=plan?`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.trName(i)}</td><td>${i.qty}</td><td>${i.unit}</td></tr>`:`<tr class="line ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${this.trName(i)}</td><td>${i.qty}</td><td>${i.unit}</td><td>${nis(i.price)}</td><td>${nis(t)}</td></tr>`;});});
   // materials as a real table category (not a footnote)
   if(s.whiteOn||s.blackOn){
     const mrows=[];
@@ -5052,7 +5112,7 @@ const App={
   if(!confirm('\u05dc\u05e9\u05dc\u05d5\u05d7 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9 \u05dc'+cl.name+'?'))return;
   this.busy('\u05de\u05db\u05d9\u05df \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9\u2026');this.saveClient();
   const groups=this.chosen();const items=[];
-  groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.tr(l.name),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+  groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.trName(l),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   // \u05d7\u05d5\u05de\u05e8\u05d9\u05dd \u05db\u05e9\u05d5\u05e8\u05d5\u05ea \u05d0\u05de\u05d9\u05ea\u05d9\u05d5\u05ea \u2014 \u05db\u05de\u05d5 \u05d1\u05d4\u05e6\u05e2\u05d4 \u05d4\u05e8\u05d2\u05d9\u05dc\u05d4
   const matRow=(on,inc,price,mi,label)=>{if(!on)return null;
     const names=(mi&&mi.length)?mi.join(', '):'\u05db\u05dc\u05d5\u05dc';
@@ -5084,7 +5144,7 @@ const App={
     this.render();
   }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05dc\u05d9\u05e0\u05e7 \u05e0\u05db\u05e9\u05dc\u05d4');}
  },
- async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.tr(l.name),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+ async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.trName(l),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
