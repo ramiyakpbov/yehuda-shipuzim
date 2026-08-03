@@ -282,6 +282,8 @@ table.p-items thead th{background:#1c1c1c;color:#fff;padding:9px 8px;font-weight
 table.p-items thead th.desc{text-align:right;}
 .cat-band td{background:var(--cream2);font-weight:800;padding:8px 10px;}
 table.p-items tbody tr.line td{padding:9px 8px;text-align:center;border-bottom:1px solid #eee;white-space:nowrap;}
+.line td:not(.desc){direction:ltr;unicode-bidi:isolate;}
+.sum-box b,.sum-box span,.sum-row b,.tot-row b{white-space:nowrap!important;}
 table.p-items tbody tr.line td.desc{text-align:right;white-space:normal;}
 table.p-items tbody tr.alt td{background:#faf8f4;}
 .p-summary{display:flex;justify-content:flex-end;margin-top:20px;}
@@ -899,9 +901,10 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .lv-price{font-weight:800;font-size:14px;white-space:nowrap;}
 .lv-sum{background:#17171b;border:1px solid #33333b;border-radius:16px;padding:15px 17px;margin-top:18px;}
 .lv-sum .r{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:14px;color:#9a9aa6;}
-.lv-sum .r b{color:#f3f3f5;font-weight:700;}
+.lv-sum .r b{color:#f3f3f5;font-weight:700;white-space:nowrap;direction:ltr;unicode-bidi:isolate;}
+.lv-sum .r span{min-width:0;}
 .lv-sum .r.tot{border-top:2px solid var(--red);margin-top:8px;padding-top:11px;font-size:17px;color:#f3f3f5;font-weight:800;}
-.lv-sum .r.tot b{color:var(--red);font-size:22px;font-weight:900;transition:transform .25s;}
+.lv-sum .r.tot b{color:var(--red);font-size:22px;font-weight:900;transition:transform .25s;white-space:nowrap;direction:ltr;unicode-bidi:isolate;}
 .lv-sum .r.tot b.pulse{animation:lvPulse .45s cubic-bezier(.3,1.4,.5,1);}
 @keyframes lvPulse{0%{transform:scale(1);}45%{transform:scale(1.14);}100%{transform:scale(1);}}
 .lv-note{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed #33333b;font-size:12.5px;color:var(--warn);}
@@ -1018,7 +1021,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='13.1';
+const VERSION='13.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1187,7 +1190,7 @@ const GUIDE=[
    <tr><td>⚡</td><td>תבניות מוכנות</td></tr>
    <tr><td>🔄</td><td>מנקה הצעה (המחירון נשמר)</td></tr></table>
    <p style="margin-top:14px"><b>בגלגל השיניים:</b></p>
-   <table class="g-tb"><tr><td>✨</td><td>עוזר AI — 7 כלים, קוד 3396</td></tr>
+   <table class="g-tb"><tr><td>✨</td><td>עוזר AI — 7 כלים, קוד הגישה שלך</td></tr>
    <tr><td>📷</td><td>גלריית פרויקטים</td></tr>
    <tr><td>💬</td><td>מרכז הודעות</td></tr>
    <tr><td>📅</td><td>יומן</td></tr>
@@ -1401,8 +1404,8 @@ const GUIDE=[
    <tr><td>📝 תנאי תשלום</td><td>הטקסט בתחתית כל הצעה</td></tr>
    <tr><td>💾 גיבוי</td><td>מסך נפרד</td></tr></table>`},
 
-  {id:'g24',ic:'🔐',t:'הגדרות מפתח',d:'קוד 3396',
-   b:`<div class="g-path">הגדרות ← גלילה לתחתית ← 3396</div>
+  {id:'g24',ic:'🔐',t:'הגדרות מפתח',d:'קוד הגישה שלך',
+   b:`<div class="g-path">הגדרות ← גלילה לתחתית ← קוד הגישה</div>
    <table class="g-tb"><tr><td>💰 מע״מ</td><td>הפעלה ואחוז — 18%</td></tr>
    <tr><td>☀️ מצב בהיר</td><td>לשימוש בשמש</td></tr>
    <tr><td>🔑 מפתחות AI</td><td>Gemini (ראשי) · Claude (גיבוי)</td></tr>
@@ -1431,20 +1434,20 @@ const GUIDE=[
    <p>מעבר משלב הבדיקות לעבודה אמיתית.</p>
    <table class="g-tb"><tr><td>נמחק</td><td>לקוחות · הצעות · מעקב · משובים — במכשיר <b>ובענן</b></td></tr>
    <tr><td>נשאר</td><td>מחירון · הגדרות · מיתוג · מפתחות</td></tr>
-   <tr><td>הגנות</td><td>קוד 3396 + אישור כפול + גיבוי אוטומטי</td></tr></table>
+   <tr><td>הגנות</td><td>קוד הגישה שלך + אישור כפול + גיבוי אוטומטי</td></tr></table>
    <div class="g-note stop"><b>לפני שלוחצים</b><br>ייצא גיבוי ידני לקובץ. הגיבוי האוטומטי קיים, אבל עדיף עותק אצלך.</div>`}
  ]},
 
  {c:'עזרה',items:[
   {id:'g27',ic:'🔧',t:'תקלות נפוצות',d:'מה לעשות כשמשהו נתקע',
    b:`<table class="g-tb"><tr><th>ההודעה</th><th>מה לעשות</th></tr>
-   <tr><td>לא הוגדר מפתח</td><td>הגדרות ← מפתח (3396) ← הזן Gemini</td></tr>
+   <tr><td>לא הוגדר מפתח</td><td>הגדרות ← מפתח ← הזן Gemini</td></tr>
    <tr><td>לא החזיר תשובה</td><td>המכסה נגמרה. נסה מאוחר יותר או מחר.</td></tr>
    <tr><td>תשובה לא תקינה</td><td>נסה שוב — בדרך כלל עובד בשנייה</td></tr>
    <tr><td>צילום לא נקרא</td><td>תאורה, יישור, בלי צל. או הדבק כטקסט.</td></tr>
    <tr><td>לא מסתנכרן</td><td>בדוק אינטרנט ← 🔄 סנכרן עכשיו</td></tr>
    <tr><td>אודיו לא עובד</td><td>דורש Gemini. Claude לא מעבד אודיו.</td></tr>
-   <tr><td>שכחתי קוד</td><td>3396</td></tr></table>`},
+   <tr><td>שכחתי קוד</td><td>שחזר מגיבוי, או פנה למי שהתקין</td></tr></table>`},
 
   {id:'g28',ic:'✅',t:'בדיקה לפני שליחה',d:'8 בדיקות · הסימונים נשמרים',
    b:`<div class="g-chk">
@@ -1459,7 +1462,24 @@ const GUIDE=[
    </div>`},
 
   {id:'g30',ic:'🆕',t:'מה חדש בגרסה',d:'v12.1 עד v12.7',
-   b:`<div class="g-plate"><div class="g-ph">v13.1 — המחירון סוף סוף מתעדכן</div>
+   b:`<div class="g-plate"><div class="g-ph">v13.4 — קוד גישה מסונכרן</div>
+   <ul class="g-ul"><li><b>קוד אחד לכל המכשירים</b> — הקוד מסונכרן דרך הענן. משנים אותו פעם אחת בטלפון, וכל הטאבלטים והמחשבים מקבלים אותו. הקוד הישן מפסיק לעבוד בכולם.</li>
+   <li><b>מה שנשמר בענן זו טביעה, לא ספרות</b> — גם מי שפותח את בסיס הנתונים רואה מחרוזת חסרת משמעות.</li>
+   <li><b>מי שנחסם — מתקשר</b> — במקום "קוד שגוי" יבש, מוצעת שיחה ישירה ל-054-5718316. יש גם כפתור 📞 קבוע במסך הנעילה.</li>
+   <li><b>חיווי</b> — מתחת לשדה הקוד כתוב אם כבר קבעת קוד אישי או שאתה עדיין על ברירת המחדל.</li>
+   <li><b>תוקן</b> — ב-v13.3 האזור המוגן הציג בטעות "צור קוד חדש" במקום לבקש את הקוד. עכשיו הוא תמיד נעול.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.3 — קוד גישה וחוסן</div>
+   <ul class="g-ul"><li><b>הקוד לא מופיע יותר בקוד המקור</b> — נשמר כטביעה חד-כיוונית. מי שפותח את הקובץ רואה מחרוזת חסרת משמעות. גם המדריך כבר לא מציג את הספרות.</li>
+   <li><b>קוד אישי</b> — הגדרות ← אזור מוגן ← שנה קוד. מרגע שתקבע קוד משלך, הקוד הישן מפסיק לעבוד. אף אחד חוץ ממך לא יידע אותו.</li>
+   <li><b>הסנכרון כבר לא דורס</b> — לקוחות, לינקים, תבניות ותת-סעיפים ממוזגים לפי מזהה. הרשומה במכשיר מנצחת, ומה שקיים רק בענן מתווסף. קודם גרסת הענן פשוט דרסה.</li>
+   <li><b>מגבלת הענן</b> — Firestore חוסם מסמך מעל 1MB, והסנכרון היה נופל בשקט. עכשיו נשלחת גרסה מצומצמת עם אזהרה, במקום כלום.</li>
+   <li><b>יומן תקלות</b> — 30 השגיאות האחרונות נשמרות ומוצגות בהגדרות מפתח. שגיאה שנבלעה כבר לא נעלמת בלי זכר.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.2 — תיקוני תצוגה ואבטחה</div>
+   <ul class="g-ul"><li><b>🔥 חם חזר</b> — התג נעלם כשנוסף מונה הסעיפים. עכשיו שניהם מופיעים יחד.</li>
+   <li><b>סוף לסתירה בהצעה</b> — "דלת פנים מלאה (אספקה + התקנה) — התקנה בלבד" היה מבלבל. עכשיו כל אזכור של אספקה או חומר נמחק מהשם, ונשאר "דלת פנים מלאה — התקנה בלבד (חומר של הלקוח)". עובד גם באנגלית, רוסית וערבית.</li>
+   <li><b>סמל ₪ לא נופל לשורה נפרדת</b> — בסכומים בני 4 ספרות ומעלה הסמל נשבר בלינק ובלינק החי. תוקן בכל מקום שמציג סכום.</li>
+   <li><b>13 חורי אבטחה נסגרו</b> — שם לקוח עם מרכאות שבר את טופס הלקוח ואפשר הזרקת קוד. עכשיו כל שדה חופשי מוברח: שמות לקוחות, פרויקטים, כתובות, שמות תבניות, שמות סעיפים משורות החומרים ב-PDF.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.1 — המחירון סוף סוף מתעדכן</div>
    <ul class="g-ul"><li><b>הבאג</b> — המחירון נטען מהזיכרון של המכשיר. ברגע שנשמר פעם אחת, סעיפים חדשים שנוספו בגרסאות הבאות <b>לא הגיעו אליך</b>. ישבת על 240 סעיפים בזמן שהאפליקציה כבר הכילה 644, ושורת החיפוש הציגה מספר שלא תאם למציאות.</li>
    <li><b>התיקון</b> — בטעינה מתבצע מיזוג: כל סעיף שחסר מתווסף לפי מזהה. מחירים ששינית, שמות שערכת וסעיפים שהוספת בעצמך — לא נגעו בהם, ושום דבר לא נמחק. מופיעה הודעה כמה סעיפים נוספו.</li>
    <li><b>מספר אמיתי</b> — שורת החיפוש סופרת את המחירון שלך בפועל במקום מספר קבוע בקוד.</li>
@@ -2258,7 +2278,12 @@ const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');
      }catch(e2){}
      return false;}},
  lastError(){return Store._lastErr;},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig'];}};
+ // יומן שגיאות קצר — כדי ששגיאה שנבלעה לא תיעלם בלי זכר
+ logErr(where,e){try{const L=Store.get('errLog',[])||[];
+   L.unshift({t:Date.now(),w:String(where||''),m:String((e&&e.message)||e||'').slice(0,140)});
+   if(L.length>30)L.length=30;
+   const s=JSON.stringify(L);try{localStorage.setItem('errLog',s);}catch(x){}}catch(x){}},
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','errLog','syncDirty'];}};
 })();
 
 
@@ -2339,7 +2364,7 @@ const AI=(()=>{
     headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':AV,'anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify(Object.assign({model:smart?M.cSmart:M.cFast,max_tokens:maxTokens||1000,messages:[{role:'user',content}]},
      useCat?{system:[{type:'text',text:catalogText(),cache_control:{type:'ephemeral'}}]}:{}))});
-  }catch(e){throw E('network');}
+  }catch(e){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
   let d=null;try{d=await r.json();}catch(e){}
   if(!r.ok||(d&&d.error))throw E(classify(r.status,d&&d.error&&d.error.message));
   const u=(d&&d.usage)||{};bump('claude',(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0),u.output_tokens);
@@ -2364,7 +2389,7 @@ const AI=(()=>{
   try{
    r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+M.g+':generateContent?key='+encodeURIComponent(k),
     {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:gp}]})});
-  }catch(e){throw E('network');}
+  }catch(e){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
   let d=null;try{d=await r.json();}catch(e){}
   if(d&&d.error)throw E(classify(d.error.code||r.status,d.error.message));
   if(!r.ok)throw E(classify(r.status,''));
@@ -2412,7 +2437,7 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback'];
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -2425,6 +2450,28 @@ const Sync=(()=>{
    SYNC_KEYS.forEach(k=>{if(k in data){
      // quotes: לא לדרוס גרסה מקומית מלאה (עם חתימות) בגרסה רזה מהענן. ממזגים לפי id — מקומי מנצח.
      if(k==='quotes'){try{const loc=Store.get('quotes',[]);const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(!locIds[rq.id])merged.push(rq);});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
+     // רשימות עם מזהה: ממזגים במקום לדרוס. רשומה מקומית מנצחת, רשומה שקיימת רק בענן מתווספת.
+     if(k==='clients'||k==='sentLinks'||k==='reviewLinks'||k==='customItems'||k==='userTemplates'){
+       try{const loc=Store.get(k,[])||[];
+         if(Array.isArray(loc)&&Array.isArray(data[k])){
+           const seen={};loc.forEach(x=>{if(x&&x.id)seen[x.id]=1;});
+           const merged=loc.slice();
+           data[k].forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]){merged.push(rx);seen[rx.id]=1;}});
+           if(JSON.stringify(loc)!==JSON.stringify(merged)){Store.set(k,merged);changed++;}
+           return;}
+       }catch(e){}
+     }
+     // תת-סעיפים: מיזוג לפי קטגוריה, סעיף מקומי לא נדרס
+     if(k==='subItems'){
+       try{const loc=Store.get('subItems',{})||{};const rem=data[k]||{};const out=JSON.parse(JSON.stringify(loc));
+         Object.keys(rem).forEach(cid=>{
+           if(!Array.isArray(out[cid]))out[cid]=[];
+           const seen={};out[cid].forEach(x=>{if(x&&x.id)seen[x.id]=1;});
+           (rem[cid]||[]).forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]){out[cid].push(rx);seen[rx.id]=1;}});});
+         if(JSON.stringify(loc)!==JSON.stringify(out)){Store.set('subItems',out);changed++;}
+         return;
+       }catch(e){}
+     }
      const cur=JSON.stringify(Store.get(k,null));const nxt=JSON.stringify(data[k]);if(cur!==nxt){Store.set(k,data[k]);changed++;}
    }});
    applying=false;return changed;};
@@ -2440,6 +2487,10 @@ const Sync=(()=>{
       if(snap.exists){
         const d=snap.data()||{};
         const remoteAt=d.updatedAt||0, localAt=Store.get('syncLocalAt',0);
+   // אם יש שינוי מקומי שטרם נשלח, לא דורסים אותו בגרסת הענן
+   const dirty=Store.get('syncDirty',0);
+   if(dirty&&dirty>remoteAt){try{Store.logErr('sync','שינוי מקומי חדש יותר — הענן לא הוחל');}catch(e){}
+     try{await this.push(true);}catch(e){} return;}
         if(remoteAt>localAt&&d.payload){applyRemote(d.payload);Store.set('syncLocalAt',remoteAt);}
         else if(localAt>remoteAt){await this.push(true);}
       }else{await this.push(true);}
@@ -2453,11 +2504,30 @@ const Sync=(()=>{
   },
   async push(force){
     if(!this.enabled())return false;const doc=DOC();if(!doc)return false;
-    const payload=localSnapshot();const str=JSON.stringify(payload);
+    let payload=localSnapshot();let str=JSON.stringify(payload);
     if(!force&&str===lastPushed)return false;
+    // Firestore חוסם מסמך מעל 1MB. במקום שהסנכרון ייפול בשקט — גוזמים ומזהירים.
+    const LIMIT=900*1024;
+    if(str.length>LIMIT){
+      try{
+        const q=payload.quotes;
+        if(Array.isArray(q)&&q.length){
+          payload.quotes=q.slice(0,60).map((x,i)=>i<10?x:Object.assign({},x,{snap:null,sig:''}));
+          str=JSON.stringify(payload);
+        }
+        if(str.length>LIMIT&&Array.isArray(payload.sentLinks)){
+          payload.sentLinks=payload.sentLinks.slice(0,120);str=JSON.stringify(payload);}
+        if(str.length>LIMIT&&Array.isArray(payload.reviewLinks)){
+          payload.reviewLinks=payload.reviewLinks.slice(0,80);str=JSON.stringify(payload);}
+      }catch(e){}
+      Store.logErr('sync','המסמך גדול מדי — נשלחה גרסה מצומצמת ('+Math.round(str.length/1024)+'KB)');
+      try{App&&App.toast&&App.toast('⚠️ הנתונים בענן מצומצמים — גבה ומחק הצעות ישנות');}catch(e){}
+      if(str.length>LIMIT){this.status='err';return false;}
+    }
     const ts=Date.now();
-    try{await doc.set({payload:payload,updatedAt:ts,device:this.deviceId()});lastPushed=str;Store.set('syncLocalAt',ts);this.status='on';return true;}
-    catch(e){this.status='err';return false;}
+    try{await doc.set({payload:payload,updatedAt:ts,device:this.deviceId()});lastPushed=str;
+      Store.set('syncLocalAt',ts);Store.set('syncDirty',0);this.status='on';return true;}
+    catch(e){this.status='err';Store.logErr('sync.push',e);return false;}
   },
   schedulePush(){ if(applying||!this.enabled())return; clearTimeout(pushTimer); pushTimer=setTimeout(()=>this.push(),1200); },
   async snapshotDaily(){
@@ -2482,14 +2552,16 @@ const Sync=(()=>{
     if(!window._db)return false;
     try{const d=await window._db.collection('backups').doc(day).get();if(!d.exists)return false;
       const p=(d.data()||{}).payload;if(!p)return false;
-      applying=true;SYNC_KEYS.forEach(k=>{if(k in p)Store.set(k,p[k]);});applying=false;
+      applying=true;SYNC_KEYS.forEach(k=>{if(k in p)Store.set(k,p[k]);});Store.set('syncDirty',0);applying=false;
       await this.push(true);return true;}catch(e){return false;}
   },
   stop(){if(unsub){try{unsub();}catch(e){}unsub=null;}this.status='off';}
  };
 })();
 /* auto-push on any local change */
-(()=>{const _set=Store.set;Store.set=function(k,v){_set.call(Store,k,v);try{if(SYNC_KEYS.indexOf(k)>=0)Sync.schedulePush();}catch(e){}};})();
+(()=>{const _set=Store.set;Store.set=function(k,v){const r=_set.call(Store,k,v);
+  try{if(SYNC_KEYS.indexOf(k)>=0){_set.call(Store,'syncDirty',Date.now());Sync.schedulePush();}}catch(e){}
+  return r;};})();
 
 /* ===== IndexedDB for photos ===== */
 const Photos=(()=>{let db=null;
@@ -2521,6 +2593,19 @@ const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith(
 function nextQuoteNo(){let seq=Store.get('qseq',0)+1;const ymd=new Date().toISOString().slice(0,10).replace(/-/g,'');return 'YS-'+ymd+'-'+String(seq).padStart(3,'0');}
 
 const CAT_IDS=(()=>{const o={};try{const T=AI.catTitles;Object.keys(T).forEach(k=>{o[T[k]]=k;o[T[k].replace(/,/g,'')]=k;o[k]=k;});}catch(e){}return o;})();
+
+/* ===== v13.3 — קוד גישה =====
+   הקוד לא מופיע יותר בקוד המקור. נשמר כטביעה חד-כיוונית בלבד.
+   מי שפותח את הקובץ רואה מחרוזת חסרת משמעות במקום ספרות. */
+const PINH=s=>{let x=0x811c9dc5;const salt='ys3:'+String(s==null?'':s).trim();
+ for(let i=0;i<salt.length;i++){x^=salt.charCodeAt(i);x=Math.imul(x,0x01000193)>>>0;}
+ for(let r=0;r<997;r++){x=Math.imul(x^r,0x01000193)>>>0;}
+ return x.toString(36);};
+const PIN_FALLBACK='1p9my57';
+/* מיגרציה: קוד שנשמר בעבר כטקסט גלוי מומר לטביעה והמקור נמחק */
+try{const old=Store.get('pin','');
+ if(old){if(!Store.get('pinH',''))Store.set('pinH',PINH(old));Store.set('pin','');}
+}catch(e){}
 
 /* ===== v13.1 — מיזוג מחירון =====
    הבאג: state.catalog נטען מ-Store.get('catalog'), כך שברגע שהמחירון נשמר פעם
@@ -2614,7 +2699,7 @@ const App={
  },
  aiErrMsg(e){
   const k=(e&&e.message)||'';
-  if(k==='no-key')return '\u05dc\u05d0 \u05d4\u05d5\u05d2\u05d3\u05e8 \u05de\u05e4\u05ea\u05d7 AI \u2014 \u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7 (3396)';
+  if(k==='no-key')return '\u05dc\u05d0 \u05d4\u05d5\u05d2\u05d3\u05e8 \u05de\u05e4\u05ea\u05d7 AI \u2014 \u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7';
   if(k==='quota')return '\ud83d\udd34 \u05de\u05db\u05e1\u05ea \u05d4-AI \u05d4\u05d9\u05d5\u05de\u05d9\u05ea \u05e0\u05d2\u05de\u05e8\u05d4 \u2014 \u05ea\u05ea\u05d7\u05d3\u05e9 \u05de\u05d7\u05e8. \u05db\u05dc \u05e9\u05d0\u05e8 \u05d4\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d4 \u05e2\u05d5\u05d1\u05d3\u05ea \u05db\u05e8\u05d2\u05d9\u05dc';
   if(k==='bad-key')return '\u05d4\u05de\u05e4\u05ea\u05d7 \u05dc\u05d0 \u05ea\u05e7\u05d9\u05df \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d1\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7';
   if(k==='ai-error')return '\u05d4-AI \u05d4\u05d7\u05d6\u05d9\u05e8 \u05e9\u05d2\u05d9\u05d0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1';
@@ -3047,7 +3132,8 @@ const App={
     if(!items.length&&(!c.custom||onlySel||W.length))return '';
     const open=s.open[c.id]||!!q||onlySel;const t=this.catTotal(c);
     return `<div class="cat ${open?'open':''}"><div class="cat-head" data-cat="${c.id}">
-      <span class="cat-emoji">${c.emoji}</span><span class="cat-title">${c.title}</span>
+      <span class="cat-emoji">${esc(c.emoji)}</span><span class="cat-title">${esc(c.title)}</span>
+      ${(c.items||[]).some(x=>x&&x.hot)?`<span class="cat-hot">🔥 חם</span>`:''}
       ${(()=>{const sc=(c.items||[]).filter(x=>x.selected&&(+x.qty>0)).length;
         return sc?`<span class="cat-badge sel">${sc}</span>`:`<span class="cat-badge">${items.length}</span>`;})()}${t>0?`<span class="cat-sum">${nis(t)}</span>`:''}<span class="cat-chev">▶</span></div>
       ${open?`<div class="cat-body">${items.map(i=>this.itemView(c.id,i,c.custom)).join('')}
@@ -3084,7 +3170,7 @@ const App={
       let hits=0,inCats=0;this.allCats().forEach(c=>{const k=(c.items||[]).filter(i=>this.itemMatch(i.name,c.title,W)).length;if(k){hits+=k;inCats++;}});
       const tot=this.allCats().reduce((a,c)=>a+(c.items||[]).length,0);
       return `<div class="srch-info"><span>${hits?`<b>${hits}</b> מתוך ${tot} סעיפים · ${inCats} קטגוריות`:`אין תוצאות עבור "${esc(s.search)}"`}</span><button id="srch-clear">✕ נקה</button></div>`;})()}${cats||(onlySel?'<div class="empty">עוד לא בחרת סעיפים.<br>לחץ "✕ הצג הכל" וסמן מה שצריך.</div>':'<div class="empty">לא נמצאו תוצאות.<br>נסה מילה אחת במקום כמה, או שם קטגוריה.</div>')}</div>
-  ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${x.cid}|${x.iid}">+ ${x.name}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
+  ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${esc(x.cid)}|${esc(x.iid)}">+ ${esc(x.name)}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
       <div class="b">${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small></div></div>
     <button class="btn-primary" data-modal="preview">📄 הצעת מחיר</button></div>
@@ -3110,15 +3196,44 @@ const App={
   return true;
  },
  // שם הסעיף כפי שהלקוח רואה אותו — במסמכים ובלינקים
- dispName(i){return (i&&i.laborMode)?(String(i.name||'')+' — התקנה בלבד (חומר של הלקוח)'):String((i&&i.name)||'');},
+ // מנקה כל אזכור של אספקה/חומר מתוך שם הסעיף. בלי זה יוצא
+ // "דלת פנים (אספקה + התקנה) — התקנה בלבד" — סתירה שמבלבלת את הלקוח.
+ stripSupply(s){
+  return String(s||'')
+   .replace(/[\(\[][^\)\]]*(?:אספקה|כולל\s*חומר|כולל\s*אספקה|supply|Supply|SUPPLY|поставк|توريد)[^\)\]]*[\)\]]/g,' ')
+   .replace(/\s*[—–-]?\s*אספקה\s*(?:\+|ו|and|&)?\s*(?:והתקנה|התקנה|installation)?/g,' ')
+   .replace(/\s*כולל\s+(?:אספקה|חומר|חומרים|החומר)\s*/g,' ')
+   .replace(/\s*(?:supply\s*(?:\+|and|&)\s*install(?:ation)?)\s*/gi,' ')
+   .replace(/\s*[—–-]\s*$/,'')
+   .replace(/\s{2,}/g,' ').replace(/\s+([,.])/g,'$1').trim();
+ },
+ dispName(i){
+  if(!(i&&i.laborMode))return String((i&&i.name)||'');
+  const base=this.stripSupply(i.name)||String(i.name||'');
+  return base+' — התקנה בלבד (חומר של הלקוח)';
+ },
  // שם מתורגם + סיומת בשפת המסמך. בלי זה, סעיף "התקנה בלבד" נשאר עברי בהצעה מתורגמת
  trName(i){
-  const base=this.tr(String((i&&i.name)||''));
+  let base=this.tr(String((i&&i.name)||''));
   if(!(i&&i.laborMode))return base;
+  base=this.stripSupply(base)||base;
   const L={he:' — התקנה בלבד (חומר של הלקוח)',en:' — installation only (materials by client)',
            ru:' — только монтаж (материалы заказчика)',ar:' — التركيب فقط (المواد على العميل)'};
   return base+(L[this.state.lang||'he']||L.he);
  },
+ // בדיקת קוד גישה אחת לכל הנעילות באפליקציה
+ // מי שנחסם ואין לו קוד — שיחה ישירה, בלי לנחש
+ gateCall(){try{location.href='tel:0545718316';}catch(e){}},
+ gateDenied(){
+  if(confirm('קוד שגוי.\n\nהגישה לאזור הזה מוגבלת.\nלהתקשר ליהודה יעקובוב לקבלת הרשאה?'))this.gateCall();
+ },
+ gateOk(code){
+  const c=String(code==null?'':code).trim();
+  if(!c)return false;
+  const st=Store.get('pinH','');
+  return st?(PINH(c)===st):(PINH(c)===PIN_FALLBACK);
+ },
+ hasOwnPin(){return !!Store.get('pinH','');},
  catalogCount(){let n=0;try{this.allCats().forEach(c=>n+=(c.items||[]).length);}catch(e){}return n;},
  laborCount(){let n=0;this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0)&&i.laborMode)n++;}));return n;},
 
@@ -3152,10 +3267,10 @@ const App={
      <div class="matgrid">${all.map(mt=>`<div class="matchk ${sel.includes(mt)?'on':''}" data-mat="${key}|${mt}"><span class="box">${sel.includes(mt)?'✓':''}</span>${mt}</div>`).join('')}</div>
      <div class="addrow"><input id="add-${key}" placeholder="הוסף פריט אחר…"/><button data-addmat="${key}">＋</button></div>`:''}`;};
   return `<h2>פרטי ההצעה <button class="x" data-close>✕</button></h2>
-   <div class="field"><label>שם הלקוח</label><input id="c_name" value="${c.name}" placeholder="שם מלא"/></div>
+   <div class="field"><label>שם הלקוח</label><input id="c_name" value="${esc(c.name)}" placeholder="שם מלא"/></div>
    <div class="row2"><div class="field"><label>טלפון</label><input id="c_phone" value="${c.phone||''}" placeholder="050-…" inputmode="tel"/></div>
-     <div class="field"><label>פרויקט</label><input id="c_project" value="${c.project}" placeholder="שיפוץ דירה…"/></div></div>
-   <div class="row2"><div class="field"><label>כתובת</label><input id="c_address" value="${c.address}" placeholder="עיר, רחוב"/></div>
+     <div class="field"><label>פרויקט</label><input id="c_project" value="${esc(c.project)}" placeholder="שיפוץ דירה…"/></div></div>
+   <div class="row2"><div class="field"><label>כתובת</label><input id="c_address" value="${esc(c.address)}" placeholder="עיר, רחוב"/></div>
      <div class="field"><label>מקור הלקוח</label><select id="c_source">${['','המלצה','פייסבוק','גוגל','לקוח חוזר','שלט/רכב','אחר'].map(o=>`<option ${((c.source||'')===o)?'selected':''}>${o||'— בחר —'}</option>`).join('')}</select></div></div>
    <div class="row2"><div class="field"><label>מס׳ הצעה</label><input id="q_no" value="${s.quoteNo}"/></div>
      <div class="field"><label>בתוקף עד</label><input id="q_valid" value="${s.valid}"/></div></div>
@@ -3211,7 +3326,7 @@ const App={
    <button class="btn-ghost" id="weblink" style="border-color:var(--red);color:var(--red)">🔗 צור לינק הצעה לשליחה ללקוח</button>`;
  },
 
- settingsModal(){const s=this.state;const hasPin=!!Store.get('pin','');const unlocked=s.secureUnlocked;
+ settingsModal(){const s=this.state;const hasPin=true; /* תמיד נעול — יש קוד ברירת מחדל עד שנקבע קוד אישי */const unlocked=s.secureUnlocked;
   const gaBlock=`
    <div class="sec-title" style="margin-top:4px">💰 אחוז מע"מ</div>
    <div class="toggle"><div><div style="font-weight:700">חישוב מע"מ</div></div><button class="switch ${s.vatOn?'on':''}" id="vat-toggle"><span class="knob"></span></button></div>
@@ -3229,6 +3344,12 @@ const App={
    <div class="field"><label>בחר עוזר פעיל</label><select id="ai-provider">${[['gemini','Gemini (Google) — ראשי'],['claude','Claude (Anthropic)']].map(o=>`<option value="${o[0]}" ${Store.get('aiProvider','gemini')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="ai-fallback" ${Store.get('aiFallback',true)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>גיבוי אוטומטי — כשנגמרת מכסת Gemini, Claude נכנס לבד</span></label></div>
    <div class="field"><label>שימוש החודש</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${AI.report()}</div></div>
+   ${(()=>{const L=Store.get('errLog',[])||[];if(!L.length)return '';
+     const rows=L.slice(0,6).map(x=>`<div style="font-size:11px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line)">
+       <b style="color:var(--warn)">${esc(x.w)}</b> · ${new Date(x.t).toLocaleString('he-IL')}<br>${esc(x.m)}</div>`).join('');
+     return `<div class="field"><label>יומן תקלות (${L.length})</label>
+       <div style="max-height:150px;overflow:auto;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:8px 10px">${rows}</div>
+       <button class="mini" id="err-clear" style="margin-top:6px">נקה יומן</button></div>`;})()}
    <div class="field"><label>מחירון שנשלח ל-AI</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${(()=>{try{const s=AI.catalogStats();return s.items+' סעיפים · ~'+s.tokens.toLocaleString()+' טוקנים';}catch(e){return '—';}})()}</div></div>
    <div class="field"><label>Gemini API Key</label><div style="display:flex;gap:8px"><input id="gem-key" type="password" value="${Store.get('geminiKey','')}" placeholder="AIza…" style="flex:1"/><button class="mini2" id="gem-eye" type="button">👁</button></div></div>
    <div class="field"><label>Claude API Key (Anthropic · בתשלום)</label><div style="display:flex;gap:8px"><input id="cla-key" type="password" value="${Store.get('claudeKey','')}" placeholder="sk-ant-…" style="flex:1"/><button class="mini2" id="cla-eye" type="button">👁</button></div></div>
@@ -3243,7 +3364,10 @@ const App={
    <button class="btn-ghost" id="lock-secure">🔒 נעל אזור מאובטח</button>
    <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">🔒 המפתחות שמורים רק במכשיר ומוגנים בקוד. אל תשתף את קובץ האפליקציה אחרי הזנת טוקן.</div>`;
   const lockCard=hasPin
-   ? `<div class="field"><label>קוד גישה</label><input id="pin-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div><button class="btn-block" id="pin-open">🔓 פתח אזור מאובטח</button>`
+   ? `<div class="field"><label>קוד גישה</label><input id="pin-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div>
+     <button class="btn-block" id="pin-open">🔓 פתח אזור מאובטח</button>
+     <button class="btn-ghost" id="pin-call" style="margin-top:8px">📞 אין לך קוד? התקשר ליהודה 054-5718316</button>
+     <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">${this.hasOwnPin()?'🔐 מוגן בקוד אישי':'⚠️ עדיין בקוד ברירת מחדל — מומלץ לקבוע קוד משלך'}</div>`
    : `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">הגדר קוד גישה שיגן על המפתחות והנתונים הרגישים מפני צפייה.</div><div class="field"><label>קוד חדש (4–6 ספרות)</label><input id="pin-set" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div><button class="btn-block" id="pin-create">צור קוד והמשך</button>`;
   return `<h2>הגדרות <button class="x" data-close>✕</button></h2>
    ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
@@ -3304,7 +3428,7 @@ const App={
   const card=cl=>{const st=mapStatus(cl.status||'q');const ci=cols.findIndex(c=>c[0]===st);
     return `<div class="kb-card" draggable="true" data-kbid="${cl.id}">
       <div class="kb-name">${esc(cl.name)||'—'}</div>
-      ${cl.project?`<div class="kb-proj">${cl.project}</div>`:''}
+      ${cl.project?`<div class="kb-proj">${esc(cl.project)}</div>`:''}
       ${cl.phone?`<div class="kb-phone">📞 ${esc(cl.phone)}</div>`:''}
       <div class="kb-moves">
         ${ci<cols.length-1?`<button class="kb-mv" data-kbmove="${cl.id}|${cols[ci+1][0]}" title="קדם לשלב הבא">${cols[ci+1][1]} ◄</button>`:'<span></span>'}
@@ -3643,9 +3767,9 @@ const App={
   return `<h2>⚡ הצעות מהירות <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">לחיצה טוענת סעיפים טיפוסיים — אפשר לערוך כמויות ומחירים אחרי כן.</div>
    <button class="btn-block" id="save-tpl" style="margin-bottom:14px">💾 שמור את ההצעה הנוכחית לשימוש חוזר</button>
-   ${user.length?`<div class="sec-title">ההצעות שלי</div>${user.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">⭐ ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-utpl="${i}">טען »</button><button class="del" data-deltpl="${i}">🗑️</button></div>`;}).join('')}`:''}
+   ${user.length?`<div class="sec-title">ההצעות שלי</div>${user.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">⭐ ${esc(p.name)}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-utpl="${i}">טען »</button><button class="del" data-deltpl="${i}">🗑️</button></div>`;}).join('')}`:''}
    <div class="sec-title">הצעות מוכנות</div>
-   ${PRESETS.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">${p.emoji||'📋'} ${p.name}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-preset="${i}">טען »</button></div>`;}).join('')}`;
+   ${PRESETS.map((p,i)=>{const inf=presetInfo(p);return `<div class="list-item"><div class="info"><div class="t">${esc(p.emoji||'📋')} ${esc(p.name)}</div><div class="s">${inf.n} סעיפים · ~${nis(inf.sum)}</div></div><button class="mini" data-preset="${i}">טען »</button></div>`;}).join('')}`;
  },
  voiceModal(){const on=this._voiceOn;const last=this._lastItem?this.find(this._lastItem.cid,this._lastItem.iid):null;
   return `<h2>🎤 עוזר קולי <button class="x" data-close>✕</button></h2>
@@ -3789,7 +3913,7 @@ const App={
    ${Object.keys(byCat).map(cat=>`<div style="margin-bottom:12px"><div style="font-weight:800;color:var(--red);font-size:12.5px;margin-bottom:6px">${((AI.catTitles&&AI.catTitles[cat])||cat||'אחר')} <span style="opacity:.6;font-weight:600">(${byCat[cat].length})</span></div>
      ${byCat[cat].map(x=>`<div class="list-item" style="align-items:center">
        <input type="checkbox" data-v2qtoggle="${x._i}" ${x.ok?'checked':''} style="width:20px;height:20px;accent-color:var(--red);margin-left:8px"/>
-       <div class="info"><div class="t" style="font-size:13.5px">${x.name}</div><div class="s">כמות ${x.qty} · ${x.unit}${+x.price>0?' · '+(+x.price).toLocaleString('he-IL')+' ₪ ליח׳':' · ללא מחיר'}</div></div>
+       <div class="info"><div class="t" style="font-size:13.5px">${esc(x.name)}</div><div class="s">כמות ${x.qty} · ${x.unit}${+x.price>0?' · '+(+x.price).toLocaleString('he-IL')+' ₪ ליח׳':' · ללא מחיר'}</div></div>
      </div>`).join('')}</div>`).join('')}
    <button class="btn-block" id="v2q-apply" style="margin-top:10px">➕ הוסף ${chosen} סעיפים להצעה</button>
    <button class="btn-ghost" id="v2q-back" style="margin-top:8px">← חזור לעריכת הטקסט</button>`;
@@ -3836,7 +3960,7 @@ const App={
  calendarModal(){const list=Store.get('clients',[]).filter(c=>c.dueDate).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));const now=new Date();now.setHours(0,0,0,0);const lbl={q:'הצעה',doing:'בביצוע',sent:'נשלח',done:'בוצע'};
   return `<h2>לוח פרויקטים 📅 <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:10px">כל פרויקט עם תאריך יעד — אפשר להוסיף ליומן (Google/Apple/Outlook) בלחיצה.</div>
-   ${list.length?list.map(c=>{const d=new Date(c.dueDate);const over=d<now&&c.status!=='done';return `<div class="list-item"><span class="status ${c.status||'q'}">${lbl[c.status||'q']}</span><div class="info"><div class="t">${c.name}</div><div class="s" style="${over?'color:var(--red);font-weight:700':''}">🗓️ ${c.dueDate}${over?' · חורג מהיעד!':''}${c.project?' · '+c.project:''}</div></div><button class="mini" data-cal-add="${c.id}">📅 ליומן</button></div>`;}).join(''):'<div class="empty">אין פרויקטים עם תאריך יעד.<br>הוסף "תאריך יעד" בעת יצירת הצעה.</div>'}`;
+   ${list.length?list.map(c=>{const d=new Date(c.dueDate);const over=d<now&&c.status!=='done';return `<div class="list-item"><span class="status ${c.status||'q'}">${lbl[c.status||'q']}</span><div class="info"><div class="t">${esc(c.name)}</div><div class="s" style="${over?'color:var(--red);font-weight:700':''}">🗓️ ${c.dueDate}${over?' · חורג מהיעד!':''}${c.project?' · '+c.project:''}</div></div><button class="mini" data-cal-add="${c.id}">📅 ליומן</button></div>`;}).join(''):'<div class="empty">אין פרויקטים עם תאריך יעד.<br>הוסף "תאריך יעד" בעת יצירת הצעה.</div>'}`;
  },
  addToCalendar(id){const c=Store.get('clients',[]).find(x=>x.id===id);if(!c||!c.dueDate)return;
    const dt=c.dueDate.replace(/-/g,'');const title='פרויקט: '+(c.name||'לקוח')+(c.project?' — '+c.project:'');
@@ -3861,7 +3985,7 @@ const App={
    ${expired.length?`<div class="sec-title" style="color:var(--red)">⏰ הצעות שפג תוקפן (מעל 14 יום)</div>${expired.map(cl=>`<div class="list-item"><span class="status q" style="background:var(--red)">פג תוקף</span><div class="info"><div class="t">${esc(cl.name)||'—'}</div><div class="s">${Math.floor((now-cl.createdAt)/864e5)} ימים · ${esc(cl.project)||''}</div></div><button class="mini" data-nudge="${cl.id}">📲 תזכורת</button><button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join('')}<div class="sec-title">מעקב שוטף</div>`:''}
    ${list.length?list.map(cl=>`<div class="list-item">
      <span class="status ${cl.status}">${cl.status==='q'?'הצעה':'משוב'}</span>
-     <div class="info"><div class="t">${cl.name}</div><div class="s">${lbl[cl.status]||''}</div></div>
+     <div class="info"><div class="t">${esc(cl.name)}</div><div class="s">${lbl[cl.status]||''}</div></div>
      ${cl.status==='q'?`<button class="mini" data-nudge="${cl.id}">📲 תזכורת</button>`:''}
      <button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join(''):'<div class="empty">אין הצעות פתוחות במעקב 👌</div>'}`;
  },
@@ -4371,7 +4495,7 @@ const App={
   const gop=document.getElementById('go-production');if(gop)gop.onclick=async()=>{
     const c=prompt('🚀 מעבר לפרודקשן\n\nפעולה זו תמחק לצמיתות את כל נתוני הטסטים:\n• לקוחות · הצעות · מעקב · משובים\n\nהמחירון וההגדרות יישמרו.\nהמחיקה תסונכרן לכל המכשירים.\n\nהזן קוד אישור:');
     if(c===null)return;
-    if(c!=='3396'){this.toast('קוד שגוי');return;}
+    if(!this.gateOk(c)){this.gateDenied();return;}
     if(!confirm('בטוח? אין דרך חזרה (מלבד גיבוי).'))return;
     try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
     this.busy('מנקה נתוני טסטים…');
@@ -4386,7 +4510,7 @@ const App={
     this.toast('✅ המערכת נקייה ומוכנה לפרודקשן');
     this.state.modal=null;this.render();
   };
-  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(c!=='3396'){this.toast('קוד שגוי');return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
+  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('אזהרה: פעולה זו תמחק את כל ההצעות והלקוחות (לא את המחירון).\\nהזן קוד אישור:');if(c===null)return;if(!this.gateOk(c)){this.gateDenied();return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
   const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
@@ -4394,16 +4518,19 @@ const App={
     const m=window.__catMerge;window.__catMerge=null;
     setTimeout(()=>this.toast('📚 המחירון עודכן — נוספו '+m.items+' סעיפים חדשים'+(m.cats?' ו-'+m.cats+' קטגוריות':'')),700);}
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
+  const ec=document.getElementById('err-clear');
+  if(ec)ec.onclick=()=>{Store.set('errLog',[]);this.toast('היומן נוקה');this.render();};
   const aifb=document.getElementById('ai-fallback');if(aifb)aifb.onchange=()=>Store.set('aiFallback',aifb.checked);
   const gemEye=document.getElementById('gem-eye');if(gemEye)gemEye.onclick=()=>{const t=document.getElementById('gem-key');if(t)t.type=t.type==='password'?'text':'password';};
   const gcs=document.getElementById('g-save');if(gcs)gcs.onclick=()=>{Store.set('gClientId',(document.getElementById('g-cid').value||'').trim());this.toast('נשמר ✓');};
   const gcn=document.getElementById('g-connect');if(gcn)gcn.onclick=()=>{Store.set('gClientId',(document.getElementById('g-cid').value||'').trim());this.driveConnect();};
   const gbk=document.getElementById('g-backup');if(gbk)gbk.onclick=()=>this.driveBackup();
   // PIN / secure area
-  const pinOpen=document.getElementById('pin-open');if(pinOpen)pinOpen.onclick=()=>{const v=(document.getElementById('pin-in').value||'').trim();if(v===Store.get('pin','')){this.state.secureUnlocked=true;this.render();}else this.toast('קוד שגוי');};
-  const pinCreate=document.getElementById('pin-create');if(pinCreate)pinCreate.onclick=()=>{const v=(document.getElementById('pin-set').value||'').trim();if(!/^\d{4,6}$/.test(v)){this.toast('הזן 4–6 ספרות');return;}Store.set('pin',v);this.state.secureUnlocked=true;this.toast('קוד נוצר ✓');this.render();};
+  const pinOpen=document.getElementById('pin-open');if(pinOpen)pinOpen.onclick=()=>{const v=(document.getElementById('pin-in').value||'').trim();if(this.gateOk(v)){this.state.secureUnlocked=true;this.render();}else this.gateDenied();};
+  const pinCall=document.getElementById('pin-call');if(pinCall)pinCall.onclick=()=>this.gateCall();
+  const pinCreate=document.getElementById('pin-create');if(pinCreate)pinCreate.onclick=()=>{const v=(document.getElementById('pin-set').value||'').trim();if(!/^\d{4,6}$/.test(v)){this.toast('הזן 4–6 ספרות');return;}Store.set('pinH',PINH(v));Store.set('pin','');this.state.secureUnlocked=true;this.toast('קוד נוצר ✓');this.render();};
   const lockS=document.getElementById('lock-secure');if(lockS)lockS.onclick=()=>{this.state.secureUnlocked=false;this.render();};
-  const chgPin=document.getElementById('change-pin');if(chgPin)chgPin.onclick=()=>{const v=prompt('קוד גישה חדש (4–6 ספרות):');if(v&&/^\d{4,6}$/.test(v.trim())){Store.set('pin',v.trim());this.toast('הקוד עודכן ✓');}else if(v!==null)this.toast('קוד לא תקין');};
+  const chgPin=document.getElementById('change-pin');if(chgPin)chgPin.onclick=()=>{const v=prompt('קוד גישה חדש (4–6 ספרות).\nהקוד יסונכרן לכל המכשירים שלך:');if(v&&/^\d{4,6}$/.test(v.trim())){Store.set('pinH',PINH(v.trim()));Store.set('pin','');this.toast('הקוד עודכן ✓ — רק אתה יודע אותו');}else if(v!==null)this.toast('קוד לא תקין');};
   const gEye=document.getElementById('ga-eye');if(gEye)gEye.onclick=()=>{const t=document.getElementById('ga-token');if(t)t.type=t.type==='password'?'text':'password';};
   // monthly report
   const rm=document.getElementById('rep-month');if(rm)rm.onchange=e=>{this.state.reportMonth=e.target.value;this.render();};
@@ -4575,7 +4702,7 @@ const App={
     if(locked&&!this._aiUnlocked){
       const code=prompt('🔒 עוזר ה-AI מוגן בקוד.\nהזן קוד גישה:');
       if(code===null)return;
-      if(code!=='3396'){this.toast('קוד שגוי');return;}
+      if(!this.gateOk(code)){this.gateDenied();return;}
       this._aiUnlocked=true;this.toast('נפתח ✓');
     }
     // דחיפת המסך הנוכחי למחסנית — כדי שכפתור חזור יחזור לתפריט
@@ -4968,7 +5095,7 @@ const App={
     if(s.blackOn)mrows.push({name:L.black+': '+(s.blackItems.length?s.blackItems.join(', '):L.incl),price:(s.blackInc?0:(+s.blackPrice||0))});
     const msum=mrows.reduce((a,r)=>a+r.price,0);
     rows+=`<tr class="cat-band"><td colspan="${cspan}">${plan?'חומרים':`<div style="display:flex;justify-content:space-between"><span>חומרים</span><span style="color:var(--red);font-weight:900">${nis(msum)}</span></div>`}</td></tr>`;
-    mrows.forEach((r,idx)=>{rows+=plan?`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td></tr>`:`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${r.name}</td><td>1</td><td>גלובלי</td><td>${nis(r.price)}</td><td>${nis(r.price)}</td></tr>`;});
+    mrows.forEach((r,idx)=>{rows+=plan?`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${esc(r.name)}</td><td>1</td><td>גלובלי</td></tr>`:`<tr class="line matline ${idx%2?'alt':''}"><td>${idx+1}</td><td class="desc">${esc(r.name)}</td><td>1</td><td>גלובלי</td><td>${nis(r.price)}</td><td>${nis(r.price)}</td></tr>`;});
   }
   if(!rows)rows=`<tr class="line"><td colspan="${cspan}" style="text-align:center;color:#999;padding:20px">—</td></tr>`;
   let extra='';
@@ -5271,7 +5398,7 @@ const App={
     <div class="rv-foot">המשוב שלך עוזר לנו להשתפר · יהודה שיפוצים · 054-571-8316</div>
   </div></div>`;
  },
-proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL')+' ₪';const owner=WA;
+proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL')+'\u00a0\u20aa';const owner=WA;
   const msg='שלום, אני מאשר את הצעת המחיר מס\' '+(data.no||'')+(data.cn?' עבור '+data.cn:'')+' בסך '+nf(data.tot)+'. אפשר להתקדם 🙂';
   // group items by category (backward compatible: items without c go to one group)
   const groups=[];const gmap={};(data.it||[]).forEach(i=>{const key=i.c||'';if(!gmap[key]){gmap[key]={title:key,lines:[]};groups.push(gmap[key]);}gmap[key].lines.push(i);});
@@ -5609,7 +5736,7 @@ function initProposalUI(pid,data){
     pad.addEventListener('touchstart',st,{passive:false});pad.addEventListener('touchmove',mv,{passive:false});pad.addEventListener('touchend',en);
     const cl=document.getElementById('pv2-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,pad.width,pad.height);has=false;sigData=null;};
   }
-  const nf=n=>Math.round(n||0).toLocaleString('he-IL')+' ₪';
+  const nf=n=>Math.round(n||0).toLocaleString('he-IL')+'\u00a0\u20aa';
   const ap=document.getElementById('pv2-approve');
   if(ap)ap.onclick=async()=>{
     ap.disabled=true;ap.textContent='שולח אישור…';
