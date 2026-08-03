@@ -57,8 +57,9 @@ input,select,textarea{font-family:inherit;}
 .voice-big.on{animation:pulse 1s infinite;}
 .mic.rec{background:var(--red);border-color:var(--red);animation:pulse 1s infinite;}
 @keyframes pulse{50%{opacity:.55;}}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 12px 2px;}
-.chip{white-space:nowrap;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:7px 13px;font-size:13px;font-weight:600;}
+.chips{display:flex;flex-wrap:wrap;gap:9px;padding:11px 12px 4px;align-items:center;}
+.chip{white-space:nowrap;flex:none;background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:600;line-height:1.25;-webkit-tap-highlight-color:transparent;}
+.chip:active{transform:scale(.95);}
 .chip.on{background:var(--red);color:#fff;border-color:var(--red);}
 .wrap{padding:8px 12px 150px;}
 .cat{background:radial-gradient(120% 100% at 100% 0,#232330,#15151a);border:1px solid #2c2c38;border-radius:22px;margin-bottom:16px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.4);}
@@ -1017,7 +1018,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='13.0';
+const VERSION='13.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1458,7 +1459,14 @@ const GUIDE=[
    </div>`},
 
   {id:'g30',ic:'🆕',t:'מה חדש בגרסה',d:'v12.1 עד v12.7',
-   b:`<div class="g-plate"><div class="g-ph">v13.0 — התקנה בלבד</div>
+   b:`<div class="g-plate"><div class="g-ph">v13.1 — המחירון סוף סוף מתעדכן</div>
+   <ul class="g-ul"><li><b>הבאג</b> — המחירון נטען מהזיכרון של המכשיר. ברגע שנשמר פעם אחת, סעיפים חדשים שנוספו בגרסאות הבאות <b>לא הגיעו אליך</b>. ישבת על 240 סעיפים בזמן שהאפליקציה כבר הכילה 644, ושורת החיפוש הציגה מספר שלא תאם למציאות.</li>
+   <li><b>התיקון</b> — בטעינה מתבצע מיזוג: כל סעיף שחסר מתווסף לפי מזהה. מחירים ששינית, שמות שערכת וסעיפים שהוספת בעצמך — לא נגעו בהם, ושום דבר לא נמחק. מופיעה הודעה כמה סעיפים נוספו.</li>
+   <li><b>מספר אמיתי</b> — שורת החיפוש סופרת את המחירון שלך בפועל במקום מספר קבוע בקוד.</li>
+   <li><b>שורת הכפתורים</b> — נגללה לצדדים והכפתור האחרון נחתך. עכשיו היא גולשת לשורה שנייה, וכל הכפתורים נראים.</li>
+   <li><b>"רק מה שבחרתי"</b> — הכפתור מופיע רק כשיש סעיפים בהצעה, ומסביר את עצמו. לחיצה מסתירה את שאר המחירון ומשאירה רק מה שסימנת — נוח לבדיקה אחרונה לפני שליחה.</li>
+   <li><b>⚙️ הגדרות</b> — קיצור ישיר בשורת הכפתורים, בנוסף לגלגל השיניים למעלה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.0 — התקנה בלבד</div>
    <ul class="g-ul"><li><b>לא תמיד האספקה עליך.</b> לכל סעיף יש עכשיו מתג ⚙️. לחיצה אחת והמחיר יורד לחלק העבודה בלבד, והשם משתנה ל"התקנה בלבד (חומר של הלקוח)".</li>
    <li><b>דוגמה</b> — דלת פנים 1,800 ₪ ← לחיצה ← <b>630 ₪</b>. המחיר המלא נשמר מאחורי הקלעים, לחיצה נוספת מחזירה אותו.</li>
    <li><b>ברירות מחדל</b> — הריסה 95% · שלד 70% · גמר 60% · חשמל ואינסטלציה 55% · נגרות ואלומיניום 35% · תכנון 100%. אפשר לשנות אחוז לסעיף מסוים והוא נשמר.</li>
@@ -2250,7 +2258,7 @@ const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');
      }catch(e2){}
      return false;}},
  lastError(){return Store._lastErr;},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig'];}};
 })();
 
 
@@ -2513,6 +2521,44 @@ const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith(
 function nextQuoteNo(){let seq=Store.get('qseq',0)+1;const ymd=new Date().toISOString().slice(0,10).replace(/-/g,'');return 'YS-'+ymd+'-'+String(seq).padStart(3,'0');}
 
 const CAT_IDS=(()=>{const o={};try{const T=AI.catTitles;Object.keys(T).forEach(k=>{o[T[k]]=k;o[T[k].replace(/,/g,'')]=k;o[k]=k;});}catch(e){}return o;})();
+
+/* ===== v13.1 — מיזוג מחירון =====
+   הבאג: state.catalog נטען מ-Store.get('catalog'), כך שברגע שהמחירון נשמר פעם
+   אחת, הקבוע CATALOG שבקוד מפסיק להשפיע. כל סעיף שנוסף בגרסה חדשה לא הגיע
+   למי שכבר עבד עם האפליקציה. המיזוג מוסיף רק סעיפים חסרים לפי id —
+   מחירים, שמות ועריכות קיימות לא נגעו בהן, ושום דבר לא נמחק. */
+const CATALOG_SIG=(()=>{let n=0;try{CATALOG.forEach(c=>n+=(c.items||[]).length);}catch(e){}return 'v'+n;})();
+window.__catMerge=null;
+try{
+ const saved=Store.get('catalog',null);
+ if(Array.isArray(saved)&&saved.length&&Store.get('catalogSig','')!==CATALOG_SIG){
+   // ניקוי: קטגוריה פגומה או ריקה מפילה את allCats() בהמשך
+   for(let q=saved.length-1;q>=0;q--){const c=saved[q];
+     if(!c||typeof c!=='object'||!c.id){saved.splice(q,1);continue;}
+     if(!Array.isArray(c.items))c.items=[];
+     c.items=c.items.filter(i=>i&&typeof i==='object'&&i.id&&i.name);}
+   const idx={};saved.forEach(c=>{if(c&&c.id)idx[c.id]=c;});
+   let addItems=0,addCats=0;
+   CATALOG.forEach(src=>{
+     let dst=idx[src.id];
+     if(!dst){dst=JSON.parse(JSON.stringify(src));saved.push(dst);idx[src.id]=dst;
+       addCats++;addItems+=(dst.items||[]).length;return;}
+     if(!Array.isArray(dst.items))dst.items=[];
+     if(!dst.title&&src.title)dst.title=src.title;
+     if(!dst.emoji&&src.emoji)dst.emoji=src.emoji;
+     const have={};dst.items.forEach(i=>{if(i&&i.id)have[i.id]=1;});
+     (src.items||[]).forEach(i=>{
+       if(!i||!i.id||have[i.id])return;
+       dst.items.push(JSON.parse(JSON.stringify(i)));addItems++;});
+   });
+   if(addItems||addCats){
+     if(Store.set('catalog',saved))window.__catMerge={items:addItems,cats:addCats};
+   }
+   Store.set('catalogSig',CATALOG_SIG);
+ }else if(!Array.isArray(saved)||!saved.length){
+   Store.set('catalogSig',CATALOG_SIG);
+ }
+}catch(e){}
 
 /* v12.3 — תיקון נתונים: סעיפים שנוספו ע"י AI ללא id היו בלתי ניתנים לעריכה */
 try{
@@ -3016,18 +3062,21 @@ const App={
       <button class="icon-btn" data-modal="clients">👥</button>
       <button class="icon-btn" data-modal="menu">⚙️</button></div>
     <div class="searchwrap"><span class="mag">🔍</span>
-      <input id="search" placeholder="חיפוש ב-644 סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
+      <input id="search" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.summaryBanner()}
   <div class="chips">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
-      return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג הכל':'✓ מסומנים'+(n?' ('+n+')':'')}</button>`;})()}
+      // מופיע רק כשיש סעיפים בהצעה — אחרת הוא סתם מבלבל
+      if(!n&&!onlySel)return '';
+      return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג את כל המחירון':'👁 רק ה-'+n+' שבחרתי'}</button>`;})()}
     <button class="chip" id="chip-cats">📂 קטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     <button class="chip" id="chip-reset">🔄 איפוס הצעה</button>
     ${(()=>{const n=this.laborCount();const tot=this.chosen().reduce((k,g)=>k+g.lines.length,0);
-      return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}</div>
+      return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}
+    <button class="chip" data-modal="settings">⚙️ הגדרות</button></div>
   <div class="wrap">${(()=>{
       if(onlySel){const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
         return `<div class="srch-info"><span>מציג <b>${n}</b> סעיפים שבחרת</span><button id="srch-clear">✕ הצג הכל</button></div>`;}
@@ -3070,6 +3119,7 @@ const App={
            ru:' — только монтаж (материалы заказчика)',ar:' — التركيب فقط (المواد على العميل)'};
   return base+(L[this.state.lang||'he']||L.he);
  },
+ catalogCount(){let n=0;try{this.allCats().forEach(c=>n+=(c.items||[]).length);}catch(e){}return n;},
  laborCount(){let n=0;this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0)&&i.laborMode)n++;}));return n;},
 
  itemView(cid,i,custom){const total=(+i.qty||0)*(+i.price||0);
@@ -4340,6 +4390,9 @@ const App={
   const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
+  if(window.__catMerge&&!this._catMergeShown){this._catMergeShown=true;
+    const m=window.__catMerge;window.__catMerge=null;
+    setTimeout(()=>this.toast('📚 המחירון עודכן — נוספו '+m.items+' סעיפים חדשים'+(m.cats?' ו-'+m.cats+' קטגוריות':'')),700);}
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   const aifb=document.getElementById('ai-fallback');if(aifb)aifb.onchange=()=>Store.set('aiFallback',aifb.checked);
   const gemEye=document.getElementById('gem-eye');if(gemEye)gemEye.onclick=()=>{const t=document.getElementById('gem-key');if(t)t.type=t.type==='password'?'text':'password';};
