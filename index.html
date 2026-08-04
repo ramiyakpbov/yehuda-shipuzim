@@ -139,6 +139,20 @@ input,select,textarea{font-family:inherit;}
 .trk-sort{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:5px 8px;font-size:12px;font-family:inherit;flex:none;}
 .trk-dupe{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);border-radius:11px;padding:9px 11px;margin-bottom:10px;font-size:11.5px;color:var(--warn);}
 .dl-dup{display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:10.5px;color:var(--muted);margin-right:6px;}
+.rm-card{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:10px;position:relative;overflow:hidden;}
+.rm-card::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--line);}
+.rm-card.warn::before{background:var(--warn);} .rm-card.hot::before{background:var(--red);}
+.rm-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.rm-name{font-weight:800;font-size:15px;}
+.rm-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+.rm-age{flex:none;font-size:11px;font-weight:800;border-radius:20px;padding:4px 9px;background:var(--bg2);color:var(--muted);white-space:nowrap;}
+.rm-age.warn{background:rgba(255,176,32,.15);color:var(--warn);}
+.rm-age.hot{background:rgba(237,28,36,.15);color:var(--red);}
+.rm-acts{display:flex;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line);}
+.rm-acts .mini{flex:1;text-align:center;padding:9px 10px;font-size:12.5px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px;font-weight:600;}
+.rm-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
+.rm-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:800;color:var(--muted);margin:14px 0 8px;}
+.rm-head b{color:var(--txt);}
 .cl-card{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
 .cl-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .cl-name{font-weight:800;font-size:15px;line-height:1.3;}
@@ -146,9 +160,12 @@ input,select,textarea{font-family:inherit;}
 .cl-pill{flex:none;font-size:11px;font-weight:800;color:#fff;border-radius:20px;padding:4px 10px;white-space:nowrap;}
 .cl-note{font-size:12px;background:var(--bg2);border-right:3px solid var(--red);border-radius:8px;padding:7px 9px;margin-top:8px;white-space:pre-wrap;color:var(--muted);}
 .cl-acts{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line);}
-.cl-acts .mini{flex:1 1 auto;min-width:72px;text-align:center;padding:8px 10px;font-size:12.5px;}
+.cl-acts .mini{flex:1 1 auto;min-width:74px;text-align:center;padding:9px 10px;font-size:12.5px;
+  background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px;font-weight:600;}
+.cl-acts .mini:active{transform:scale(.96);}
 .cl-acts .mini.go{background:var(--red);border-color:var(--red);color:#fff;font-weight:800;flex:1 1 100%;}
-.cl-acts .del{flex:0 0 auto;padding:8px 11px;}
+.cl-acts .del{flex:0 0 auto;padding:9px 12px;background:var(--bg2)!important;
+  border:1px solid var(--line)!important;border-radius:10px;opacity:.65;}
 .trk-none{text-align:center;padding:26px 16px;color:var(--muted);font-size:13px;background:var(--bg3);border:1px dashed var(--line);border-radius:14px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
@@ -1033,7 +1050,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='14.0';
+const VERSION='14.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1479,6 +1496,12 @@ const GUIDE=[
    <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
    <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
    <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v14.1 — הצעות שלא נשמרו</div>
+   <ul class="g-ul"><li><b>הבאג</b> — כל הצעה שמורה הכילה <b>עותק מלא של המחירון</b>. עם 654 סעיפים זה 65KB להצעה, מכסת האחסון נגמרה מיד, והשמירה נכשלה. לכן "כל ההצעות" הראה "אין עדיין הצעות שנשלחו" גם אחרי ששלחת לינק.</li>
+   <li><b>עכשיו נשמרים רק הסעיפים שנבחרו</b> — 2KB במקום 65KB. מאות הצעות במקום 78 תיאורטיות (ובפועל אפס).</li>
+   <li><b>בונוס</b> — טעינת הצעה ישנה כבר לא דורסת את המחירון. קודם היא החזירה את כל המחירים למצב שהיה בזמן ההצעה. סעיף שנמחק מהמחירון עדיין מוחזר להצעה שנשמרה.</li>
+   <li><b>מעקב ותזכורות</b> — עוצב מחדש: כרטיס לכל לקוח עם פס צבע לפי דחיפות (אדום מעל 14 יום, כתום מעל 7), גיל ההצעה, טלפון ופרויקט, וכפתורי חיוג · תזכורת · בוצע.</li>
+   <li><b>מאגר לקוחות</b> — הכפתורים היו לבנים על רקע כהה. תוקנו.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v14.0 — שחזור מהענן</div>
    <ul class="g-ul"><li><b>☁️ שחזר מהענן</b> — כפתור חדש במסך המעקב. קורא את כל ההצעות שנשלחו מהענן ובונה מחדש את רשימת המעקב. עוזר כשרשומה מקומית אבדה: אחרי איפוס, בהחלפת מכשיר, או כשכתיבה לאחסון נכשלה.</li>
    <li>לא משכפל הצעות שכבר קיימות, ולא מושך הצעות של עסק אחר.</li>
@@ -3517,16 +3540,37 @@ const App={
    <button class="btn-ghost" id="cal-ics">📥 הורד קובץ ליומן (Apple / Outlook)</button>
    <div style="font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.7">💡 Google Calendar נפתח ישירות. לאייפון/אאוטלוק — הורד את הקובץ ופתח אותו.</div>`;
  },
- remindersModal(){const list=this.reminders();const lbl={q:'הצעה נשלחה — ממתין לתשובה',sent:'משוב נשלח — ממתין לתגובה'};
-  const now=Date.now();const EXP=14*864e5;
-  const expired=Store.get('clients',[]).filter(c=>(c.status||'q')==='q'&&c.createdAt&&(now-c.createdAt)>EXP);
+ remindersModal(){const list=this.reminders();
+  const lbl={q:'הצעה נשלחה — ממתין לתשובה',sent:'משוב נשלח — ממתין לתגובה'};
+  const now=Date.now(),EXP=14*864e5;
+  const clients=Store.get('clients',[])||[];
+  const expired=clients.filter(c=>(c.status||'q')==='q'&&c.createdAt&&(now-c.createdAt)>EXP);
+  const expIds={};expired.forEach(c=>expIds[c.id]=1);
+  const days=c=>c.createdAt?Math.floor((now-c.createdAt)/864e5):null;
+  const card=(cl,isExp)=>{
+    const dd=days(cl);
+    const lvl=isExp?'hot':(dd!=null&&dd>=7?'warn':'');
+    const age=dd==null?'':(dd===0?'היום':(dd===1?'אתמול':'לפני '+dd+' ימים'));
+    return `<div class="rm-card ${lvl}">
+      <div class="rm-top">
+        <div style="flex:1;min-width:0">
+          <div class="rm-name">${esc(cl.name)||'—'}</div>
+          <div class="rm-sub">${esc(lbl[cl.status||'q']||'')}</div>
+          ${(cl.phone||cl.project)?`<div class="rm-sub">${[cl.phone?esc(cl.phone):'',cl.project?esc(cl.project):''].filter(Boolean).join(' · ')}</div>`:''}
+        </div>
+        ${age?`<span class="rm-age ${lvl}">${isExp?'⏰ ':''}${age}</span>`:''}
+      </div>
+      <div class="rm-acts">
+        ${cl.phone?`<button class="mini" onclick="location.href='tel:${esc(cl.phone).replace(/[^0-9+]/g,'')}'">📞 חיוג</button>`:''}
+        ${(cl.status||'q')==='q'?`<button class="mini pri" data-nudge="${cl.id}">📲 תזכורת</button>`:''}
+        <button class="mini" data-markdone="${cl.id}">✓ בוצע</button>
+      </div></div>`;};
+  const open=list.filter(c=>!expIds[c.id]);
   return `<h2>מעקב ותזכורות 🔔 <button class="x" data-close>✕</button></h2>
-   ${expired.length?`<div class="sec-title" style="color:var(--red)">⏰ הצעות שפג תוקפן (מעל 14 יום)</div>${expired.map(cl=>`<div class="list-item"><span class="status q" style="background:var(--red)">פג תוקף</span><div class="info"><div class="t">${esc(cl.name)||'—'}</div><div class="s">${Math.floor((now-cl.createdAt)/864e5)} ימים · ${esc(cl.project)||''}</div></div><button class="mini" data-nudge="${cl.id}">📲 תזכורת</button><button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join('')}<div class="sec-title">מעקב שוטף</div>`:''}
-   ${list.length?list.map(cl=>`<div class="list-item">
-     <span class="status ${cl.status}">${cl.status==='q'?'הצעה':'משוב'}</span>
-     <div class="info"><div class="t">${esc(cl.name)}</div><div class="s">${lbl[cl.status]||''}</div></div>
-     ${cl.status==='q'?`<button class="mini" data-nudge="${cl.id}">📲 תזכורת</button>`:''}
-     <button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join(''):`<div class="empty">אין הצעות פתוחות במעקב 👌<br><span style="font-size:12px">לקוח נכנס לכאן אוטומטית כשמפיקים לו הצעה או שולחים לינק.</span></div>`}`;
+   ${(expired.length||open.length)?`<div style="font-size:12px;color:var(--muted);margin-bottom:4px">לקוח נכנס לכאן אוטומטית כשמפיקים לו הצעה או שולחים לינק.</div>`:''}
+   ${expired.length?`<div class="rm-head"><span style="color:var(--red)">⏰ פג תוקף — מעל 14 יום</span><b>${expired.length}</b></div>${expired.map(c=>card(c,true)).join('')}`:''}
+   ${open.length?`<div class="rm-head"><span>מעקב שוטף</span><b>${open.length}</b></div>${open.map(c=>card(c,false)).join('')}`:''}
+   ${(!expired.length&&!open.length)?`<div class="empty">אין הצעות פתוחות במעקב 👌<br><span style="font-size:12px">לקוח נכנס לכאן אוטומטית כשמפיקים לו הצעה או שולחים לינק.</span></div>`:''}`;
  },
 
 
@@ -5106,7 +5150,15 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   }
   return t;},
  recordQuote(){const qs=Store.get('quotes',[]);
-  const snap={clientSig:this.state.clientSig||'',catalog:JSON.parse(JSON.stringify(this.state.catalog)),subItems:JSON.parse(JSON.stringify(this.state.subItems||{})),custom:JSON.parse(JSON.stringify(this.state.custom||[])),client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice};
+  // רק הסעיפים שנבחרו. קודם נשמר כאן עותק מלא של המחירון (65KB להצעה),
+  // האחסון נגמר והשמירה נכשלה בשקט — ולכן "כל ההצעות" נשאר ריק.
+  const lines=[];
+  try{this.allCats().forEach(c=>(c.items||[]).forEach(i=>{
+    if(!i||!i.selected||!(+i.qty>0))return;
+    lines.push({cid:c.id,id:i.id,name:i.name,price:+i.price||0,qty:+i.qty||1,
+      unit:i.unit||'גלובלי',sub:!!i.sub,perm:!!i.perm,
+      laborMode:!!i.laborMode,laborPct:+i.laborPct||0,fullPrice:+i.fullPrice||0});}));}catch(e){}
+  const snap={clientSig:this.state.clientSig||'',lines:lines,client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice};
   qs.unshift({id:uid(),ts:Date.now(),no:this.state.quoteNo,client:this.state.client.name,phone:this.state.client.phone||'',project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap});
   Store.set('quotes',qs.slice(0,200));Store.set('qseq',Store.get('qseq',0)+1);
   // הפקת הצעה יוצרת/מעדכנת גם רשומת לקוח. בלי זה מסך "מעקב ותזכורות"
@@ -5132,7 +5184,40 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   }catch(e){try{Store.logErr('recordQuote.client',e);}catch(x){}}
   this.state.quoteNo=nextQuoteNo();},
  loadQuote(id){const qs=Store.get('quotes',[]);const q=qs.find(x=>x.id===id);if(!q||!q.snap){this.toast('להצעה זו אין נתונים שמורים');return;}
-  const d=q.snap;Object.assign(this.state,{clientSig:d.clientSig||null,catalog:JSON.parse(JSON.stringify(d.catalog)),subItems:JSON.parse(JSON.stringify(d.subItems||{})),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:q.no,valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
+  const d=q.snap;
+  if(Array.isArray(d.lines)){
+    // מבנה חדש: מנקים בחירה ומחילים רק את הסעיפים ששמורים בהצעה.
+    // המחירון הנוכחי נשאר כמו שהוא — טעינת הצעה ישנה לא מחזירה מחירים ישנים.
+    try{
+      this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(i){i.selected=false;i.qty=0;}}));
+      const byId={};this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(i&&i.id)byId[i.id]=i;}));
+      d.lines.forEach(L=>{
+        let it=byId[L.id];
+        if(!it){
+          // סעיף שכבר לא קיים במחירון — מוחזר לקטגוריה שלו כדי שההצעה תישאר שלמה
+          const item={id:L.id,name:L.name,price:L.price,unit:L.unit,selected:true,qty:L.qty,perm:true,sub:true};
+          if(L.laborMode){item.laborMode=true;if(L.laborPct)item.laborPct=L.laborPct;if(L.fullPrice)item.fullPrice=L.fullPrice;}
+          if(L.cid==='custom'){this.state.custom.push(item);}
+          else{if(!this.state.subItems[L.cid])this.state.subItems[L.cid]=[];this.state.subItems[L.cid].push(item);}
+          this.state.open[L.cid]=true;return;
+        }
+        it.selected=true;it.qty=L.qty;
+        if(L.price>0)it.price=L.price;
+        if(L.unit)it.unit=L.unit;
+        it.laborMode=!!L.laborMode;
+        if(L.laborPct)it.laborPct=L.laborPct; else delete it.laborPct;
+        if(L.fullPrice)it.fullPrice=L.fullPrice; else delete it.fullPrice;
+        this.state.open[L.cid]=true;
+      });
+    }catch(e){try{Store.logErr('loadQuote',e);}catch(x){}}
+    Object.assign(this.state,{clientSig:d.clientSig||null,client:{...d.client},quoteNo:q.no,
+      valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,
+      showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,
+      whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
+    this.save();Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
+    this.state.modal=null;this.toast('ההצעה נטענה לעריכה ✓');this.render();return;
+  }
+  Object.assign(this.state,{clientSig:d.clientSig||null,catalog:JSON.parse(JSON.stringify(d.catalog)),subItems:JSON.parse(JSON.stringify(d.subItems||{})),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:q.no,valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
   this.save();Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
   this.state.modal=null;this.toast('ההצעה נטענה לעריכה ✓');this.render();},
  duplicateQuoteAsNew(id){this.loadQuote(id);this.state.quoteNo=nextQuoteNo();this.toast('נוצר עותק חדש לעריכה ✓');this.render();},
