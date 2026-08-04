@@ -1033,7 +1033,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='13.9';
+const VERSION='14.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1474,7 +1474,16 @@ const GUIDE=[
    </div>`},
 
   {id:'g30',ic:'🆕',t:'מה חדש בגרסה',d:'v12.1 עד v12.7',
-   b:`<div class="g-plate"><div class="g-ph">v13.9 — סוף להתראות</div>
+   b:`<div class="g-plate"><div class="g-ph">v14.0 — מעקב ותזכורות עובדים</div>
+   <ul class="g-ul"><li><b>למה המסך היה ריק</b> — הפקת הצעה שמרה את ההצעה, אבל <b>לא יצרה רשומת לקוח</b>. מסך "מעקב ותזכורות" קורא מרשימת הלקוחות, ולכן נשאר ריק גם אחרי ששלחת לינק ונפתח.</li>
+   <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
+   <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
+   <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v14.0 — שחזור מהענן</div>
+   <ul class="g-ul"><li><b>☁️ שחזר מהענן</b> — כפתור חדש במסך המעקב. קורא את כל ההצעות שנשלחו מהענן ובונה מחדש את רשימת המעקב. עוזר כשרשומה מקומית אבדה: אחרי איפוס, בהחלפת מכשיר, או כשכתיבה לאחסון נכשלה.</li>
+   <li>לא משכפל הצעות שכבר קיימות, ולא מושך הצעות של עסק אחר.</li>
+   <li>כשרשימת המעקב ריקה מופיע הסבר קצר שמפנה לכפתור.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.9 — סוף להתראות</div>
    <ul class="g-ul"><li><b>מה גרם להתראות החוזרות</b> — סגירת מודל בכפתור חזור צרכה כניסה אחת מההיסטוריה, אבל הקוד דחף שתיים. כל פתיחה־סגירה השאירה כניסה עודפת, וכל אחת מהן דרשה אישור נפרד. לכן "הצעות מהירות" ביקש 3 אישורים, ואחר כך 2.</li>
    <li><b>נבדק ב-20 מחזורי פתיחה־סגירה</b> — עומק ההיסטוריה נשאר קבוע. אפס התראות.</li>
    <li><b>אין יותר דיאלוג יציאה</b> — במקומו הודעה קצרה "לחץ שוב ליציאה". לחיצה שנייה תוך 2.5 שניות יוצאת, אחרת ההודעה מתאפסת. אי אפשר להיתקע בלולאת אישורים.</li>
@@ -2493,7 +2502,10 @@ const App={
  afterDiscount(){return this.subtotal()-this.discountAmt();},
  vat(){return this.state.vatOn?this.afterDiscount()*this.state.vatPct/100:0;},
  grand(){return this.afterDiscount()+this.vat();},
- reminders(){return Store.get('clients',[]).filter(c=>(c.status==='q'||c.status==='sent')&&!c.approvedAt);},
+ reminders(){return Store.get('clients',[]).filter(c=>{
+   if(!c||c.approvedAt)return false;
+   const st=c.status||'q';   // סטטוס חסר נחשב "הצעה פתוחה" במקום להיעלם
+   return st==='q'||st==='sent'||st==='pending';});},
  toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);},
  async checkUpdate(){this.busy('בודק עדכונים…');this.haptic(15);
   try{
@@ -3145,7 +3157,11 @@ const App={
        <option value="urgent" ${sortBy==='urgent'?'selected':''}>הכי דחוף</option>
      </select>
    </div>
-   <button class="btn-ghost" id="trk-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
+   <div style="display:flex;gap:8px;margin-bottom:12px">
+     <button class="btn-ghost" id="trk-refresh" style="flex:1;margin:0">🔄 רענן</button>
+     <button class="btn-ghost" id="trk-recover" style="flex:1;margin:0">☁️ שחזר מהענן</button>
+   </div>
+   ${!sent?`<div style="font-size:11.5px;color:var(--muted);text-align:center;margin:-4px 0 12px">רשימת המעקב ריקה. אם שלחת לינקים — "שחזר מהענן" יביא אותם חזרה.</div>`:''}
    ${shown.length?shown.map(l=>{const d=live[l.id]||{};
      const cl=(Store.get('clients',[])||[]).find(x=>x.name===l.client)||{};
      const st=this.dealStage(l,d,cl);
@@ -3222,6 +3238,36 @@ const App={
     if(!t){this.toast('\u05dc\u05d0 \u05d4\u05ea\u05e7\u05d1\u05dc \u05e0\u05d9\u05e1\u05d5\u05d7');return;}
     window.open(waLink(l.phone,t),'_blank');
   }catch(e){this.idle();this.toast('\u05d4\u05e0\u05d9\u05e1\u05d5\u05d7 \u05e0\u05db\u05e9\u05dc');}
+ },
+ // שחזור: קורא את כל ההצעות מהענן ובונה מחדש את רשימת המעקב.
+ // עוזר כשרשומה מקומית אבדה — אחרי איפוס, החלפת מכשיר או כתיבה שנכשלה.
+ async recoverLinks(){
+  if(!window._db){this.toast('אין חיבור לענן');return;}
+  this.busy('מחפש הצעות בענן…');
+  try{
+   const snap=await window._db.collection('proposals').get();
+   const cur=Store.get('sentLinks',[])||[];
+   const have={};cur.forEach(l=>{if(l&&l.id)have[l.id]=1;});
+   const add=[];let total=0;
+   snap.forEach(doc=>{
+    total++;
+    if(have[doc.id])return;
+    const v=doc.data()||{};const d=v.data||{};
+    if(v.owner&&v.owner!=='yehuda')return;
+    add.push({id:doc.id,live:!!v.live,client:d.cn||'',phone:d.ph||'',
+      project:d.pr||'',no:d.no||'',total:(v.curTotal!=null?v.curTotal:(d.tot||0)),
+      ts:v.createdAt||Date.now()});
+   });
+   if(!add.length){this.idle();this.toast(total?('כל '+total+' ההצעות כבר במעקב'):'לא נמצאו הצעות בענן');return;}
+   const merged=cur.concat(add).sort((a,b)=>(b.ts||0)-(a.ts||0)).slice(0,300);
+   if(!Store.set('sentLinks',merged)){this.idle();this.toast('⚠️ השמירה נכשלה — האחסון מלא');return;}
+   try{Sync.push&&Sync.push();}catch(e){}
+   this._trackData=null;
+   await this.loadTracking();
+   this.idle();this.haptic(20);
+   this.toast('✅ שוחזרו '+add.length+' הצעות מהענן');
+   this.render();
+  }catch(e){this.idle();try{Store.logErr('recoverLinks',e);}catch(x){}this.toast('השחזור נכשל — בדוק חיבור');}
  },
  async loadTracking(){const links=Store.get('sentLinks',[]);if(!links.length||!window._db)return;
   const out={};
@@ -3480,7 +3526,7 @@ const App={
      <span class="status ${cl.status}">${cl.status==='q'?'הצעה':'משוב'}</span>
      <div class="info"><div class="t">${esc(cl.name)}</div><div class="s">${lbl[cl.status]||''}</div></div>
      ${cl.status==='q'?`<button class="mini" data-nudge="${cl.id}">📲 תזכורת</button>`:''}
-     <button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join(''):'<div class="empty">אין הצעות פתוחות במעקב 👌</div>'}`;
+     <button class="mini" data-markdone="${cl.id}">✓ בוצע</button></div>`).join(''):`<div class="empty">אין הצעות פתוחות במעקב 👌<br><span style="font-size:12px">לקוח נכנס לכאן אוטומטית כשמפיקים לו הצעה או שולחים לינק.</span></div>`}`;
  },
 
 
@@ -3954,7 +4000,7 @@ const App={
     const cs=e.currentTarget.closest('.cat').querySelector('.cat-sum');const cObj=this.allCats().find(x=>x.id===c);if(cs)cs.textContent=nis(this.catTotal(cObj));this.updateBottom();});
   on('[data-fld]','change',e=>{if(e.currentTarget.dataset.fld==='unit'){const[c,i]=e.currentTarget.dataset.k.split('|');this.find(c,i).unit=e.currentTarget.value;this.saveActive(c);}});
   on('[data-modal]','click',e=>{
-    if(e.currentTarget.dataset.modal==='track'){this.state.trkFilter='all';this.state.trkQ='';}this.state.modal=e.currentTarget.dataset.modal;this.render();});
+    if(e.currentTarget.dataset.modal==='tracking'){this.state.trkFilter='all';this.state.trkQ='';}this.state.modal=e.currentTarget.dataset.modal;this.render();});
   on('[data-close]','click',e=>{if(e.target.hasAttribute('data-close')){if(this._voiceOn)this.voiceStop();this.captureQuote();this._navStack=[];this.state.modal=null;this.render();}});
 
   const ac=document.getElementById('add-custom');if(ac)ac.onclick=()=>{this.state.addTarget='custom';this.state.modal='addcustom';this.render();};
@@ -4195,6 +4241,7 @@ const App={
   };
   on('[data-lvmsg]','click',e=>this.liveDraftMsg(e.currentTarget.dataset.lvmsg));
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
+   const trc=document.getElementById('trk-recover');if(trc)trc.onclick=()=>this.recoverLinks();
   on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
   on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
   on('[data-qsig]','click',e=>{const id=e.currentTarget.dataset.qsig;const q=Store.get('quotes',[]).find(x=>x.id===id);if(!q)return;const img=q.sig||(q.snap&&q.snap.clientSig)||'';this._sigView={img:img,client:q.client,no:q.no,at:q.ts,quoteId:id};this.state.modal='sigview';this.render();});
@@ -5061,7 +5108,29 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
  recordQuote(){const qs=Store.get('quotes',[]);
   const snap={clientSig:this.state.clientSig||'',catalog:JSON.parse(JSON.stringify(this.state.catalog)),subItems:JSON.parse(JSON.stringify(this.state.subItems||{})),custom:JSON.parse(JSON.stringify(this.state.custom||[])),client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice};
   qs.unshift({id:uid(),ts:Date.now(),no:this.state.quoteNo,client:this.state.client.name,phone:this.state.client.phone||'',project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap});
-  Store.set('quotes',qs.slice(0,200));Store.set('qseq',Store.get('qseq',0)+1);this.state.quoteNo=nextQuoteNo();},
+  Store.set('quotes',qs.slice(0,200));Store.set('qseq',Store.get('qseq',0)+1);
+  // הפקת הצעה יוצרת/מעדכנת גם רשומת לקוח. בלי זה מסך "מעקב ותזכורות"
+  // נשאר ריק גם אחרי שליחת לינק, כי הוא קורא מרשימת הלקוחות.
+  try{
+   const c=this.state.client||{};
+   const nm=String(c.name||'').trim();
+   if(nm){
+    const cls=Store.get('clients',[])||[];
+    let rec=cls.find(x=>x&&String(x.name||'').trim()===nm&&(!c.phone||!x.phone||x.phone===c.phone));
+    if(!rec){rec={id:uid(),createdAt:Date.now(),status:'q'};cls.unshift(rec);}
+    rec.name=nm;
+    if(c.phone)rec.phone=c.phone;
+    if(c.project)rec.project=c.project;
+    if(c.address)rec.address=c.address;
+    if(c.notes)rec.notes=c.notes;
+    if(c.dueDate)rec.dueDate=c.dueDate;
+    if(!rec.createdAt)rec.createdAt=Date.now();
+    if(!rec.status||rec.status==='')rec.status='q';
+    rec.lastQuoteAt=Date.now();rec.lastQuoteNo=this.state.quoteNo;rec.lastTotal=this.grand();
+    Store.set('clients',cls);
+   }
+  }catch(e){try{Store.logErr('recordQuote.client',e);}catch(x){}}
+  this.state.quoteNo=nextQuoteNo();},
  loadQuote(id){const qs=Store.get('quotes',[]);const q=qs.find(x=>x.id===id);if(!q||!q.snap){this.toast('להצעה זו אין נתונים שמורים');return;}
   const d=q.snap;Object.assign(this.state,{clientSig:d.clientSig||null,catalog:JSON.parse(JSON.stringify(d.catalog)),subItems:JSON.parse(JSON.stringify(d.subItems||{})),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:q.no,valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
   this.save();Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
