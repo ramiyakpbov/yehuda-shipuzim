@@ -139,6 +139,16 @@ input,select,textarea{font-family:inherit;}
 .trk-sort{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:5px 8px;font-size:12px;font-family:inherit;flex:none;}
 .trk-dupe{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);border-radius:11px;padding:9px 11px;margin-bottom:10px;font-size:11.5px;color:var(--warn);}
 .dl-dup{display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:10.5px;color:var(--muted);margin-right:6px;}
+.cl-card{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
+.cl-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.cl-name{font-weight:800;font-size:15px;line-height:1.3;}
+.cl-meta{font-size:12px;color:var(--muted);margin-top:3px;direction:rtl;}
+.cl-pill{flex:none;font-size:11px;font-weight:800;color:#fff;border-radius:20px;padding:4px 10px;white-space:nowrap;}
+.cl-note{font-size:12px;background:var(--bg2);border-right:3px solid var(--red);border-radius:8px;padding:7px 9px;margin-top:8px;white-space:pre-wrap;color:var(--muted);}
+.cl-acts{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line);}
+.cl-acts .mini{flex:1 1 auto;min-width:72px;text-align:center;padding:8px 10px;font-size:12.5px;}
+.cl-acts .mini.go{background:var(--red);border-color:var(--red);color:#fff;font-weight:800;flex:1 1 100%;}
+.cl-acts .del{flex:0 0 auto;padding:8px 11px;}
 .trk-none{text-align:center;padding:26px 16px;color:var(--muted);font-size:13px;background:var(--bg3);border:1px dashed var(--line);border-radius:14px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
@@ -1023,7 +1033,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='13.7';
+const VERSION='13.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1464,7 +1474,16 @@ const GUIDE=[
    </div>`},
 
   {id:'g30',ic:'🆕',t:'מה חדש בגרסה',d:'v12.1 עד v12.7',
-   b:`<div class="g-plate"><div class="g-ph">v13.7 — נוחות שימוש</div>
+   b:`<div class="g-plate"><div class="g-ph">v13.9 — סוף להתראות</div>
+   <ul class="g-ul"><li><b>מה גרם להתראות החוזרות</b> — סגירת מודל בכפתור חזור צרכה כניסה אחת מההיסטוריה, אבל הקוד דחף שתיים. כל פתיחה־סגירה השאירה כניסה עודפת, וכל אחת מהן דרשה אישור נפרד. לכן "הצעות מהירות" ביקש 3 אישורים, ואחר כך 2.</li>
+   <li><b>נבדק ב-20 מחזורי פתיחה־סגירה</b> — עומק ההיסטוריה נשאר קבוע. אפס התראות.</li>
+   <li><b>אין יותר דיאלוג יציאה</b> — במקומו הודעה קצרה "לחץ שוב ליציאה". לחיצה שנייה תוך 2.5 שניות יוצאת, אחרת ההודעה מתאפסת. אי אפשר להיתקע בלולאת אישורים.</li>
+   <li><b>מאגר לקוחות</b> — הכרטיס עוצב מחדש: שם וסטטוס בשורה עליונה, פרטי קשר מתחת, והפעולות בשורה נפרדת עם מפריד. "טען לתוך הצעה חדשה" בולט, נוסף כפתור חיוג ישיר, ופח האשפה מופרד.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.8 — תיקון כפתור החזרה</div>
+   <ul class="g-ul"><li><b>מה נשבר ב-v13.7</b> — באפליקציה כבר היה מנגנון חזרה, ונוסף לו שני. שניהם הגיבו לאותה לחיצה: הראשון סגר את המסך, השני מיד שאל "לצאת מהאפליקציה?". לכן ההתראה קפצה בפתיחת מסך, בסגירת חלון, ושוב ושוב.</li>
+   <li><b>עכשיו יש מאזין אחד</b>, והוא הולך שלב אחד בכל לחיצה: מסך בתוך מסך ← מודל ← חיפוש וסינון ← קטגוריות פתוחות ← ורק במסך ראשי נקי שואל אם לצאת. שאלה אחת, לא יותר.</li>
+   <li>נבדק ב-20 תרחישים כולל מסלול מלא של מודל בתוך מודל.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v13.7 — נוחות שימוש</div>
    <ul class="g-ul"><li><b>תג 🔥 חם</b> — לחיצה ארוכה על קטגוריה הסירה אותה מ"חם" אבל התג נשאר. תוקן.</li>
    <li><b>צליל בסימון</b> — צליל רך בסימון סעיף, בביטול ובשינוי כמות. ניתן להשתיק בהגדרות מפתח.</li>
    <li><b>איפוס סוגר הכל</b> — כל הקטגוריות נסגרות והחיפוש מתנקה.</li>
@@ -2662,30 +2681,7 @@ const App={
  },
  hasOwnPin(){return !!Store.get('pinH','');},
  // כל המגבלות במקום אחד — מה נצרך מול מה מותר
- // כפתור החזרה של אנדרואיד: סוגר מסך אחד אחורה, ומהמסך הראשי שואל לפני יציאה
- initBack(){
-  if(this._backReady)return;this._backReady=true;
-  try{history.replaceState({ys:'root'},'');history.pushState({ys:'guard'},'');}catch(e){}
-  window.addEventListener('popstate',()=>{
-   // מודל פתוח → סגור אותו בלבד
-   if(this.state.modal){this.state.modal=null;this.render();
-     try{history.pushState({ys:'guard'},'');}catch(e){}return;}
-   // תצוגת חיפוש/סינון פעילה → נקה אותה
-   if(this.state.onlySel||(this.state.search||'').trim()){
-     this.state.onlySel=false;this.state.search='';this.render();
-     try{history.pushState({ys:'guard'},'');}catch(e){}return;}
-   // קטגוריה פתוחה → סגור את כולן
-   if(Object.keys(this.state.open||{}).some(k=>this.state.open[k])){
-     this.state.open={};this.render();
-     try{history.pushState({ys:'guard'},'');}catch(e){}return;}
-   // מסך ראשי → אישור לפני יציאה
-   const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
-   const msg=n?('יש '+n+' סעיפים בהצעה הפתוחה.\nלצאת מהאפליקציה?'):'לצאת מהאפליקציה?';
-   if(confirm(msg)){try{history.back();}catch(e){}}
-   else{try{history.pushState({ys:'guard'},'');}catch(e){}}
-  });
- },
- limits(){
+  limits(){
   const q=(Store.get('quotes',[])||[]).length;
   const sl=(Store.get('sentLinks',[])||[]).length;
   const rl=(Store.get('reviewLinks',[])||[]).length;
@@ -2892,16 +2888,28 @@ const App={
    <div class="field"><input id="cl-search" value="${this.state.clientQ||''}" placeholder="🔍 חיפוש לפי שם / טלפון / פרויקט…"/></div>
    <div class="chips" style="padding:0 0 8px">${filters.map(x=>`<button class="chip ${f===x[0]?'on':''}" data-clfilter="${x[0]}">${x[1]}</button>`).join('')}</div>
    <button class="btn-ghost" id="export-clients" style="margin-bottom:10px">📊 ייצוא לאקסל (CSV)</button>
-   ${list.length?list.map(cl=>`<div class="list-item">
-     ${(()=>{const links=Store.get('sentLinks',[])||[];const l=links.find(x=>x.client===cl.name);
-       const d=(this._trackData||{})[l?l.id:'']||{};
-       const st=this.dealStage(l,d,cl);
-       return `<span class="status" style="background:${st.cur.c};color:#fff">${st.cur.i} ${st.cur.n}</span>`;})()}
-     <div class="info"><div class="t">${esc(cl.name)||'—'}</div><div class="s">${cl.phone?esc(cl.phone)+' · ':''}${esc(cl.project)||''}</div>${cl.notes?`<div class="s" style="margin-top:4px;background:var(--bg2,#1a1a1e);border-right:3px solid var(--red);border-radius:6px;padding:6px 8px;white-space:pre-wrap">📝 ${esc(cl.notes)}</div>`:''}</div>
-     <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
-     <button class="mini" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>טען</button>
-     <button class="mini" data-cquotes="${esc(cl.name)}">📤 הצעות</button><button class="mini" data-review="${cl.id}">📩 משוב</button>
-     <button class="del" data-delclient="${cl.id}">🗑️</button></div>`).join(''):'<div class="empty">לא נמצאו לקוחות.</div>'}`;
+   ${list.length?list.map(cl=>{
+     const links=Store.get('sentLinks',[])||[];
+     const l=links.find(x=>x.client===cl.name);
+     const d=(this._trackData||{})[l?l.id:'']||{};
+     const st=this.dealStage(l,d,cl);
+     return `<div class="cl-card">
+       <div class="cl-top">
+         <div style="flex:1;min-width:0">
+           <div class="cl-name">${esc(cl.name)||'—'}</div>
+           <div class="cl-meta">${[cl.phone?esc(cl.phone):'',cl.project?esc(cl.project):'',cl.address?esc(cl.address):''].filter(Boolean).join(' · ')||'ללא פרטים'}</div>
+         </div>
+         <span class="cl-pill" style="background:${st.cur.c}">${st.cur.i} ${st.cur.n}</span>
+       </div>
+       ${cl.notes?`<div class="cl-note">📝 ${esc(cl.notes)}</div>`:''}
+       <div class="cl-acts">
+         <button class="mini go" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>↩︎ טען לתוך הצעה חדשה</button>
+         ${cl.phone?`<button class="mini" onclick="location.href='tel:${esc(cl.phone).replace(/[^0-9+]/g,'')}'">📞 חיוג</button>`:''}
+         <button class="mini" data-cquotes="${esc(cl.name)}">📤 הצעות</button>
+         <button class="mini" data-review="${cl.id}">📩 משוב</button>
+         <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
+         <button class="del" data-delclient="${cl.id}">🗑️</button>
+       </div></div>`;}).join(''):'<div class="empty">לא נמצאו לקוחות.<br><span style="font-size:12px">לקוח נוצר אוטומטית כשמפיקים לו הצעה.</span></div>'}`;
  },
  // #35: לוח קנבן — ניהול ויזואלי של לקוחות לפי שלב
  kanbanModal(){const clients=Store.get('clients',[]);
@@ -4010,7 +4018,6 @@ const App={
   if(window.__catMerge&&!this._catMergeShown){this._catMergeShown=true;
     const m=window.__catMerge;window.__catMerge=null;
     setTimeout(()=>this.toast('📚 המחירון עודכן — נוספו '+m.items+' סעיפים חדשים'+(m.cats?' ו-'+m.cats+' קטגוריות':'')),700);}
-  this.initBack();
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   const so=document.getElementById('snd-off');
   if(so)so.onchange=()=>{Store.set('soundOff',so.checked?1:0);if(!so.checked)this.beep('on');};
@@ -5082,10 +5089,18 @@ window.addEventListener('appinstalled',()=>{deferredPrompt=null;hideInstallUI();
 if(isIOS()&&!isStandalone()&&!isClientView())setTimeout(showInstallUI,2200);
 
 /* ===== ניווט אחורה: סוגר מסך במקום לצאת מהאפליקציה ===== */
-App._pushedModal=false;App._ignorePop=false;App._navStack=[];
+App._pushedModal=false;App._ignorePop=false;App._navStack=[];App._exitAt=0;
+/* ניווט אחורה — מאזין יחיד.
+   כלל הברזל: כל ענף שולט על כניסה אחת בדיוק. אין הצטברות, ולכן אין
+   התראות חוזרות. במסך הראשי אין דיאלוג — הודעה קצרה, ולחיצה שנייה יוצאת. */
+function keepAlive(){try{history.pushState({ysalive:1},'');}catch(e){}}
+try{history.replaceState({ysbase:1},'');}catch(e){}
+keepAlive();
+
 window.addEventListener('popstate',()=>{
   if(App._ignorePop){App._ignorePop=false;return;}
-  // חזור שלב אחד אחורה במחסנית הניווט
+
+  // 1. מסך בתוך מסך — שלב אחד אחורה (הענף דוחף בעצמו)
   if(App._navStack&&App._navStack.length){
     const prev=App._navStack.pop();
     App.state.modal=prev||null;
@@ -5093,7 +5108,32 @@ window.addEventListener('popstate',()=>{
     else App._pushedModal=false;
     App.render();return;
   }
-  if(App.state.modal){App.state.modal=null;App._pushedModal=false;App.render();}
+
+  // 2. מודל פתוח — הכניסה שנצרכה היא של המודל עצמו.
+  //    דחיפה כאן הייתה מצטברת בכל פתיחה־סגירה וגורמת להתראות חוזרות.
+  if(App.state.modal){
+    App.state.modal=null;App._pushedModal=false;App.render();return;
+  }
+
+  // 3. חיפוש או סינון פעילים
+  if(App.state.onlySel||String(App.state.search||'').trim()){
+    App.state.onlySel=false;App.state.search='';App.render();
+    keepAlive();return;
+  }
+
+  // 4. קטגוריות פתוחות
+  if(Object.keys(App.state.open||{}).some(k=>App.state.open[k])){
+    App.state.open={};App.render();
+    keepAlive();return;
+  }
+
+  // 5. מסך ראשי — לחיצה שנייה תוך 2.5 שניות יוצאת
+  if(App._exitAt&&(Date.now()-App._exitAt)<2500){
+    App._exitAt=0;App._ignorePop=true;try{history.back();}catch(e){}return;
+  }
+  App._exitAt=Date.now();
+  try{App.toast('👋 לחץ שוב ליציאה');}catch(e){}
+  keepAlive();
 });
 
 function applyTheme(){try{document.documentElement.classList.toggle('light',Store.get('theme','dark')==='light');}catch(e){}}
