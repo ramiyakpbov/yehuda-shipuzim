@@ -193,6 +193,14 @@ input,select,textarea{font-family:inherit;}
 .acc-head.on{border-color:var(--red);}
 .acc-head::after{content:'⌄';font-size:17px;opacity:.55;transition:transform .2s;flex:none;}
 .acc-head.on::after{transform:rotate(180deg);opacity:1;}
+.pf-row{display:flex;gap:10px;align-items:flex-start;background:var(--bg3);border:1px solid var(--line);
+  border-radius:12px;padding:11px 12px;margin-bottom:8px;position:relative;overflow:hidden;}
+.pf-row::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;}
+.pf-row.red::before{background:var(--red);} .pf-row.yellow::before{background:var(--warn);}
+.pf-ic{font-size:17px;flex:none;line-height:1.2;}
+.pf-t{font-weight:800;font-size:13.5px;line-height:1.35;}
+.pf-d{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.45;}
+.pf-f{font-size:11.5px;color:var(--warn);margin-top:4px;}
 .acc-body{display:none;padding:6px 3px 4px;}
 .acc-body.on{display:block;animation:accIn .18s ease;}
 @keyframes accIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
@@ -1087,7 +1095,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='14.9';
+const VERSION='15.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1533,6 +1541,13 @@ const GUIDE=[
    <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
    <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
    <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.0 — 🛡️ בדיקה לפני שליחה</div>
+   <ul class="g-ul"><li><b>12 בדיקות רגע לפני שההצעה יוצאת ללקוח.</b> תופס את הטעויות שאי אפשר להחזיר אחרי שנשלחו.</li>
+   <li><b>⛔ עוצר</b> — סעיף במחיר 0 · סעיף כפול · טלפון לא תקין · חסר שם לקוח · תוקף שכבר עבר · מקדמה גבוהה מהסכום.</li>
+   <li><b>⚠️ מעיר</b> — כמות 1 ביחידת מ"ר או מ"א (כמעט תמיד שכחה למלא) · מע"מ כבוי · הנחה מעל 25% · חסר תיאור פרויקט · חלק מהסעיפים "התקנה בלבד" וחלק לא.</li>
+   <li><b>הסכום מול ההיסטוריה שלך</b> — אם ההצעה גבוהה או נמוכה פי ארבעה מהחציון של ההצעות האחרונות, תקבל התראה. תופס ספרה מיותרת או חסרה.</li>
+   <li><b>איך זה עובד</b> — רץ לבד בלחיצה על לינק חי, לינק הצעה או PDF. אם הכל תקין הוא שקוף לגמרי. יש בעיה אדומה — נעצר ומראה מה. תמיד אפשר "שלח בכל זאת".</li>
+   <li>יש גם כפתור ידני בתחתית מסך ההצעה שמראה את מצב ההצעה בכל רגע.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v14.9 — "התקנה בלבד" משנה נוסח בלבד</div>
    <ul class="g-ul"><li><b>המחיר נשאר שלך.</b> הסימון כבר לא מקטין את המחיר לפי אחוז עבודה — הוא רק משנה את נוסח הסעיף בהצעה. אתה קובע את המחיר במחשבון, ולפעמים יש אספקה ולפעמים לא.</li>
    <li><b>מה שהסימון עושה</b> — מוחק מהשם כל אזכור של אספקה ומוסיף "התקנה בלבד (חומר של הלקוח)". מופיע ב-PDF, בלינק החי ובלינק ההצעה, גם בתרגום.</li>
@@ -2870,6 +2885,120 @@ const App={
  // (טבלת אחוזי העבודה הוסרה — הסימון משנה נוסח בלבד)
  // סימון "התקנה בלבד" משנה רק את נוסח הסעיף. המחיר נשאר בדיוק
  // כפי שנקבע במחשבון — לפעמים יש אספקה ולפעמים לא, וזו החלטה של הקבלן.
+ /* ===== v15.0 — בדיקה לפני שליחה =====
+    12 בדיקות על ההצעה רגע לפני שהיא יוצאת ללקוח. תופס את הטעויות
+    שאי אפשר להחזיר: מחיר 0, כמות שנשכחה, טלפון שגוי, סעיף כפול. */
+ preflight(){
+  const out=[];const s=this.state,cl=s.client||{};
+  const groups=this.chosen();
+  const lines=[];groups.forEach(g=>g.lines.forEach(l=>lines.push({cat:g.cat,it:l})));
+  const R=(lvl,t,d,fix)=>out.push({lvl:lvl,t:t,d:d||'',fix:fix||''});
+
+  // ── פרטי הלקוח ──
+  const nm=String(cl.name||'').trim();
+  if(!nm)R('red','חסר שם לקוח','ההצעה תצא ללא נמען');
+  const ph=String(cl.phone||'').replace(/[^0-9]/g,'');
+  if(!ph)R('yellow','חסר טלפון','בלי טלפון אין שליחה בוואטסאפ ואין מעקב');
+  else if(!(ph.length===10&&ph.slice(0,2)==='05')&&!(ph.length===9&&ph[0]==='0'))
+    R('red','הטלפון לא תקין','"'+esc(cl.phone)+'" — בדוק מספר ספרות');
+  if(!String(cl.project||'').trim())R('yellow','אין תיאור פרויקט','הלקוח לא יידע על מה ההצעה');
+
+  // ── הסעיפים ──
+  if(!lines.length){R('red','אין סעיפים בהצעה','');return out;}
+  const zero=lines.filter(x=>!(+x.it.price>0));
+  if(zero.length)R('red',zero.length+' סעיפים במחיר 0',
+    zero.slice(0,3).map(x=>x.it.name).join(' · '),'מלא מחיר או הסר');
+
+  // כמות 1 בסעיף שנמדד בשטח/אורך — כמעט תמיד שכחה
+  const AREA=['מ"ר','מ"א','מ"ק'];
+  const suspect=lines.filter(x=>AREA.indexOf(x.it.unit)>=0&&(+x.it.qty)===1);
+  if(suspect.length)R('yellow',suspect.length+' סעיפים בכמות 1 ביחידת שטח/אורך',
+    suspect.slice(0,3).map(x=>x.it.name+' — 1 '+x.it.unit).join(' · '),'ודא שזו הכמות הנכונה');
+
+  // אותו שם פעמיים
+  const seen={},dup=[];
+  lines.forEach(x=>{const k=String(x.it.name).trim();if(seen[k])dup.push(k);else seen[k]=1;});
+  if(dup.length)R('red',dup.length+' סעיפים כפולים',
+    Array.from(new Set(dup)).slice(0,3).join(' · '),'הלקוח יראה את אותו סעיף פעמיים');
+
+  const huge=lines.filter(x=>(+x.it.qty)>500);
+  if(huge.length)R('yellow','כמות חריגה',
+    huge.slice(0,2).map(x=>x.it.name+' — '+x.it.qty+' '+x.it.unit).join(' · '));
+
+  // ── מסחר ──
+  const sub=lines.reduce((a,x)=>a+(+x.it.price||0)*(+x.it.qty||0),0);
+  const disc=+s.discount||0;
+  if(disc>25)R('yellow','הנחה של '+disc+'%','גבוה מהרגיל — ודא שזה מכוון');
+  if(!s.vatOn)R('yellow','מע"מ כבוי','ההצעה תצא בלי מע"מ');
+  else if(+s.vatPct!==18)R('yellow','מע"מ '+s.vatPct+'%','השיעור כיום 18%');
+  const adv=+s.advance||0;
+  if(adv>0&&adv>sub)R('red','המקדמה גבוהה מסכום ההצעה','');
+
+  // סכום חריג מול ההיסטוריה
+  try{
+    const prev=(Store.get('quotes',[])||[]).filter(q=>q&&+q.grand>0).slice(0,12).map(q=>+q.grand);
+    if(prev.length>=4){
+      const med=prev.slice().sort((a,b)=>a-b)[Math.floor(prev.length/2)];
+      const g=this.grand();
+      if(med>0&&g>med*4)R('yellow','הסכום גבוה פי '+(g/med).toFixed(1)+' מהחציון שלך','חציון אחרון: '+nisR(med));
+      if(med>0&&g<med/4)R('yellow','הסכום נמוך משמעותית מהרגיל','חציון אחרון: '+nisR(med));
+    }
+  }catch(e){}
+
+  // ── תוקף ──
+  try{
+    if(s.valid){
+      const v=new Date(s.valid);
+      if(!isNaN(v)&&v.getTime()<Date.now())R('red','תוקף ההצעה כבר עבר',s.valid);
+    }
+  }catch(e){}
+
+  // ── התקנה בלבד: כדאי שיהיה עקבי ──
+  const lm=lines.filter(x=>x.it.laborMode).length;
+  if(lm>0&&lm<lines.length)R('yellow',lm+' מתוך '+lines.length+' מסומנים "התקנה בלבד"',
+    'ודא שזה מכוון — הלקוח יראה תערובת');
+
+  return out;
+ },
+
+ preflightModal(){
+  const list=this._preflight||[];
+  const reds=list.filter(x=>x.lvl==='red').length;
+  const rows=list.map(x=>`<div class="pf-row ${x.lvl}">
+     <div class="pf-ic">${x.lvl==='red'?'⛔':'⚠️'}</div>
+     <div style="flex:1;min-width:0">
+       <div class="pf-t">${esc(x.t)}</div>
+       ${x.d?`<div class="pf-d">${esc(x.d)}</div>`:''}
+       ${x.fix?`<div class="pf-f">← ${esc(x.fix)}</div>`:''}
+     </div></div>`).join('');
+  return `<h2>🛡️ בדיקה לפני שליחה <button class="x" data-close>✕</button></h2>
+   ${list.length?`<div style="font-size:12px;color:var(--muted);margin-bottom:12px">
+      ${reds?`<b style="color:var(--red)">${reds} דברים שכדאי לתקן</b> · `:''}${list.length-reds} הערות</div>
+     ${rows}
+     <button class="btn-block" id="pf-fix" style="margin-top:14px">✏️ חזור ותקן</button>
+     <button class="btn-ghost" id="pf-send" style="margin-top:8px">שלח בכל זאת ←</button>`
+   :`<div style="text-align:center;padding:26px 10px">
+      <div style="font-size:44px;line-height:1">✅</div>
+      <div style="font-weight:800;font-size:16px;margin-top:10px">ההצעה נקייה</div>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:6px">12 בדיקות עברו — אפשר לשלוח בביטחון</div>
+      <button class="btn-block" id="pf-send" style="margin-top:18px">המשך לשליחה ←</button></div>`}`;
+ },
+
+ // מחזיר true אם צריך לעצור. פותח את המסך רק כשיש בעיה אדומה.
+ preflightBlock(action){
+  if(this._pfOk){this._pfOk=false;return false;}
+  const list=this.preflight();
+  const reds=list.filter(x=>x.lvl==='red').length;
+  if(!reds){
+    const y=list.length;
+    if(y)setTimeout(()=>this.toast('⚠️ '+y+' הערות — 🛡️ בדיקה לפני שליחה'),500);
+    return false;
+  }
+  this._preflight=list;this._pfAction=action;
+  this.state.modal='preflight';this.haptic(20);this.render();
+  return true;
+ },
+
  laborToggle(cid,iid,on){
   const it=this.find(cid,iid);if(!it)return false;
   it.laborMode=(on===undefined)?!it.laborMode:!!on;
@@ -2968,7 +3097,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
+ modalView(){const m=this.state.modal;const map={preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -3039,6 +3168,8 @@ const App={
    <button class="btn-ghost" id="gen-contract">📑 חוזה / הזמנת עבודה — PDF</button>
    <button class="btn-ghost" id="open-annex">⚖️ נספח משפטי — PDF</button>
    <button class="btn-ghost" id="gen-share">📲 צור ושתף (WhatsApp / מייל)</button>
+   ${(()=>{const n=this.preflight().length;
+     return `<button class="btn-ghost" id="pf-open" style="margin-bottom:10px;${n?'border-color:var(--warn);color:var(--warn)':'border-color:var(--ok);color:var(--ok)'}">🛡️ בדיקה לפני שליחה${n?' · '+n+' הערות':' · נקי'}</button>`;})()}
    <button class="btn-ghost" id="livelink" style="border-color:var(--ok);color:var(--ok);margin-bottom:8px">⚡ לינק חי — הלקוח מסמן ורואה מחיר</button>
    <button class="btn-ghost" id="weblink" style="border-color:var(--red);color:var(--red)">🔗 צור לינק הצעה לשליחה ללקוח</button>`;
  },
@@ -4371,6 +4502,21 @@ const App={
   
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   this.sectionizeSettings();
+  const pfF=document.getElementById('pf-fix');
+  if(pfF)pfF.onclick=()=>{this.state.modal='quote';this.render();};
+  const pfS=document.getElementById('pf-send');
+  if(pfS)pfS.onclick=()=>{
+    const a=this._pfAction;this._pfOk=true;this.state.modal=null;this.render();
+    setTimeout(()=>{
+      if(a==='live')this.makeLiveLink();
+      else if(a==='link')this.makeProposalLink();
+      else if(a==='pdf')this.generatePDF(false);
+      else if(a==='pdfshare')this.generatePDF(true);
+      else this._pfOk=false;
+    },120);
+  };
+  const pfOpen=document.getElementById('pf-open');
+  if(pfOpen)pfOpen.onclick=()=>{this._preflight=this.preflight();this._pfAction=null;this.state.modal='preflight';this.render();};
   const qrb=document.getElementById('q-rebuild');
   if(qrb)qrb.onclick=()=>this.rebuildQuotesFromLinks();
   const sc=document.getElementById('stg-clean');
@@ -5157,6 +5303,7 @@ const App={
  },
  async makeLiveLink(){
   this.captureQuote();
+  if(this.preflightBlock('live'))return;
   const s=this.state,cl=s.client;
   if(!cl.name||!cl.name.trim()){this.toast('\u05d7\u05e1\u05e8 \u05e9\u05dd \u05dc\u05e7\u05d5\u05d7');return;}
   if(!this.chosen().length){this.toast('\u05d1\u05d7\u05e8 \u05dc\u05e4\u05d7\u05d5\u05ea \u05e4\u05e8\u05d9\u05d8 \u05d0\u05d7\u05d3');return;}
@@ -5199,7 +5346,8 @@ const App={
     this.render();
   }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05dc\u05d9\u05e0\u05e7 \u05e0\u05db\u05e9\u05dc\u05d4');}
  },
- async makeProposalLink(){this.captureQuote();if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.trName(l),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+ async makeProposalLink(){this.captureQuote();
+  if(this.preflightBlock('link'))return;if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.trName(l),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
   if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
   // materials as real rows inside the items table
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
@@ -5409,6 +5557,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
  },
  async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}
   this.captureQuote();
+  if(this.preflightBlock(share?'pdfshare':'pdf'))return;
   if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
   this.haptic(15);this.busy('מכין PDF…');
   try{const{pdf,blob,fname}=await this.makePdfBlob();this._quoteKind='pdf';this.recordQuote();
