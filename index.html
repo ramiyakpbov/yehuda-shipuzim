@@ -153,6 +153,26 @@ input,select,textarea{font-family:inherit;}
 .rm-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
 .rm-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:800;color:var(--muted);margin:14px 0 8px;}
 .rm-head b{color:var(--txt);}
+.q-card{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
+.q-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.q-name{font-weight:800;font-size:15px;line-height:1.3;}
+.q-meta{font-size:11.5px;color:var(--muted);margin-top:3px;direction:rtl;}
+.q-amt{flex:none;font-weight:900;font-size:16px;color:var(--red);white-space:nowrap;direction:ltr;unicode-bidi:isolate;}
+.q-kinds{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.q-kind{font-size:10.5px;font-weight:800;border-radius:20px;padding:3px 9px;white-space:nowrap;border:1px solid;}
+.q-kind.pdf{color:#ff6b6b;border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.1);}
+.q-kind.link{color:#4a9eff;border-color:rgba(74,158,255,.4);background:rgba(74,158,255,.1);}
+.q-kind.live{color:#3ddc84;border-color:rgba(61,220,132,.4);background:rgba(61,220,132,.1);}
+.q-kind.contract{color:#ffb020;border-color:rgba(255,176,32,.4);background:rgba(255,176,32,.1);}
+.q-kind.signed{color:#c792ea;border-color:rgba(199,146,234,.4);background:rgba(199,146,234,.1);}
+.q-kind.none{color:var(--muted);border-color:var(--line);background:var(--bg2);}
+.q-acts{display:flex;gap:7px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line);}
+.q-acts .mini{flex:1;text-align:center;padding:9px 10px;font-size:12.5px;background:var(--bg2)!important;
+  color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px;font-weight:600;}
+.q-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
+.q-acts .mini:active{transform:scale(.96);}
+.q-acts .del{flex:0 0 auto;padding:9px 12px;background:var(--bg2)!important;border:1px solid var(--line)!important;
+  border-radius:10px;opacity:.6;font-size:15px;}
 .cl-card{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:10px;}
 .cl-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .cl-name{font-weight:800;font-size:15px;line-height:1.3;}
@@ -166,6 +186,25 @@ input,select,textarea{font-family:inherit;}
 .cl-acts .mini.go{background:var(--red);border-color:var(--red);color:#fff;font-weight:800;flex:1 1 100%;}
 .cl-acts .del{flex:0 0 auto;padding:9px 12px;background:var(--bg2)!important;
   border:1px solid var(--line)!important;border-radius:10px;opacity:.65;}
+.acc-head{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bg3);border:1px solid var(--line);border-radius:13px;padding:13px 15px;
+  margin:9px 0 0;-webkit-tap-highlight-color:transparent;transition:border-color .15s;}
+.acc-head:active{transform:scale(.99);}
+.acc-head.on{border-color:var(--red);}
+.acc-head::after{content:'⌄';font-size:17px;opacity:.55;transition:transform .2s;flex:none;}
+.acc-head.on::after{transform:rotate(180deg);opacity:1;}
+.acc-body{display:none;padding:6px 3px 4px;}
+.acc-body.on{display:block;animation:accIn .18s ease;}
+@keyframes accIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.acc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;
+  background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 13px;
+  margin:10px 0 0;-webkit-tap-highlight-color:transparent;}
+.acc-head:active{transform:scale(.99);}
+.acc-head::after{content:'▾';font-size:12px;color:var(--muted);transition:transform .2s;flex:none;}
+.acc-head.on::after{transform:rotate(180deg);}
+.acc-head.on{border-color:var(--red);}
+.acc-body{padding:4px 2px 6px;animation:accIn .18s ease;}
+@keyframes accIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .trk-none{text-align:center;padding:26px 16px;color:var(--muted);font-size:13px;background:var(--bg3);border:1px dashed var(--line);border-radius:14px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
@@ -1057,7 +1096,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='14.4';
+const VERSION='14.5';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1503,6 +1542,10 @@ const GUIDE=[
    <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
    <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
    <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v14.5 — עיצוב ושליחה</div>
+   <ul class="g-ul"><li><b>סוג ההצעה מסומן</b> — בכל כרטיס ב"כל ההצעות" מופיע תג: ⚡ לינק חי · 🔗 לינק הצעה · 📄 הצעת מחיר PDF · 📝 הזמנת עבודה · ✍️ נחתם. הצעה שנשלחה בכמה דרכים מציגה את כולן.</li>
+   <li><b>וואטסאפ נפתח תמיד</b> — הדפדפן חוסם פתיחת חלון שרצה אחרי המתנה לשרת. לינק חי עבד במקרה, לינק דיגיטלי לא. עכשיו יש נפילה לניווט ישיר, ב-12 מסלולי השליחה באפליקציה.</li>
+   <li><b>ההגדרות הפכו לאקורדיון</b> — תשעה מקטעים היו פרושים בבת אחת. עכשיו כל כותרת נפתחת בלחיצה, אחת בכל רגע, וגוללת אליה. הרבה פחות גלילה.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v14.4 — לינק דיגיטלי לא רשם הצעה</div>
    <ul class="g-ul"><li><b>הסיבה האמיתית</b> — האבחון הראה 178KB מתוך 5,120, כלומר האחסון מעולם לא היה מלא. הבעיה: הפונקציה שיוצרת <b>לינק דיגיטלי</b> רשמה את הלינק במעקב אבל <b>לא קראה לשמירת ההצעה</b>. לינק חי כן קרא — לינק דיגיטלי לא. לכן "כל ההצעות" נשאר ריק.</li>
    <li><b>תוקן</b> — שני המסלולים שומרים עכשיו את ההצעה.</li>
@@ -1727,7 +1770,7 @@ const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');
    L.unshift({t:Date.now(),w:String(where||''),m:String((e&&e.message)||e||'').slice(0,140)});
    if(L.length>30)L.length=30;
    const s=JSON.stringify(L);try{localStorage.setItem('errLog',s);}catch(x){}}catch(x){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','errLog','syncDirty','catSplit136','soundOff'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
 })();
 
 
@@ -2088,6 +2131,42 @@ try{
    Store.set('catalogSig',CATALOG_SIG);
  }
 }catch(e){}
+
+/* v14.5 — איחוד כפילויות שנוצרו בגרסאות קודמות */
+try{
+ if(Store.get('dedup145',0)!==1){
+  const dg=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
+  // לקוחות: אותו טלפון או אותו שם = רשומה אחת
+  const cl=Store.get('clients',[])||[];
+  const outC=[],seenP={},seenN={};
+  cl.forEach(c=>{if(!c)return;const p=dg(c.phone),n=String(c.name||'').trim();
+    const hit=(p&&seenP[p]!=null)?seenP[p]:((n&&seenN[n]!=null)?seenN[n]:null);
+    if(hit!=null){const t=outC[hit];
+      Object.keys(c).forEach(k=>{if(c[k]&&!t[k])t[k]=c[k];});
+      if((c.lastQuoteAt||0)>(t.lastQuoteAt||0)){t.lastQuoteAt=c.lastQuoteAt;t.lastQuoteNo=c.lastQuoteNo;t.lastTotal=c.lastTotal;}
+      return;}
+    const idx=outC.push(c)-1;if(p)seenP[p]=idx;if(n)seenN[n]=idx;});
+  if(outC.length!==cl.length)Store.set('clients',outC);
+  // הצעות: מספר הצעה אחד = רשומה אחת (העדכנית ביותר, עם הסעיפים אם יש)
+  const qs=Store.get('quotes',[])||[];
+  const outQ=[],seenQ={};
+  qs.slice().sort((a,b)=>(b.ts||0)-(a.ts||0)).forEach(q=>{if(!q)return;
+    const key=q.no||q.id;
+    if(seenQ[key]!=null){const t=outQ[seenQ[key]];if(!t.snap&&q.snap)t.snap=q.snap;
+      if(!t.sig&&q.sig)t.sig=q.sig;return;}
+    seenQ[key]=outQ.push(q)-1;});
+  if(outQ.length!==qs.length)Store.set('quotes',outQ);
+  // לינקים: מספר הצעה אחד = כרטיס אחד (העדכני)
+  const sl=Store.get('sentLinks',[])||[];
+  const outL=[],seenL={};
+  sl.slice().sort((a,b)=>(b.ts||0)-(a.ts||0)).forEach(l=>{if(!l)return;
+    const key=l.no||l.id;if(seenL[key])return;seenL[key]=1;outL.push(l);});
+  if(outL.length!==sl.length)Store.set('sentLinks',outL);
+  const removed=(cl.length-outC.length)+(qs.length-outQ.length)+(sl.length-outL.length);
+  if(removed>0)window.__dedup145=removed;
+  Store.set('dedup145',1);
+ }
+}catch(e){try{Store.logErr('dedup145',e);}catch(x){}}
 
 /* ===== v13.6 — פיצול קטגוריות =====
    "עבודות גמר" (121) פוצלה לריצוף / גבס / שפכטל וצבע, ו"חשמל ותקשורת" (92) לשתיים.
@@ -2611,6 +2690,58 @@ const App={
    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+0.12);
   }catch(e){}
  },
+ // window.open נחסם בדפדפני מובייל כשהוא רץ אחרי await (אבד מגע המשתמש).
+ // לינק חי עבד במקרה, לינק דיגיטלי לא. עכשיו יש נפילה לניווט ישיר.
+ // מסך ההגדרות היה רשימה שטוחה של 9 מקטעים — הכל פתוח בבת אחת.
+ // הופך כל כותרת לכפתור שפותח וסוגר את התוכן שמתחתיו.
+ sectionizeSettings(){
+  try{
+   const titles=Array.prototype.slice.call(document.querySelectorAll('.sec-title'));
+   if(!titles.length)return;
+   const st=this.state.setOpen||(this.state.setOpen={});
+   titles.forEach((t,idx)=>{
+    if(t.dataset.acc)return;
+    t.dataset.acc='1';
+    const key='s'+idx;
+    const body=document.createElement('div');
+    body.className='acc-body';
+    let n=t.nextSibling;
+    while(n&&!(n.nodeType===1&&n.classList&&n.classList.contains('sec-title'))){
+      const nx=n.nextSibling;body.appendChild(n);n=nx;
+    }
+    if(t.parentNode)t.parentNode.insertBefore(body,t.nextSibling);
+    t.classList.add('acc-head');
+    const isOpen=!!st[key];
+    body.style.display=isOpen?'':'none';
+    t.classList.toggle('on',isOpen);
+    t.onclick=()=>{
+      const o=this.state.setOpen||{};
+      const willOpen=!o[key];
+      // מקטע אחד פתוח בכל רגע — פחות גלילה
+      Object.keys(o).forEach(k=>o[k]=false);
+      o[key]=willOpen;this.state.setOpen=o;
+      titles.forEach((tt,ii)=>{
+        const bb=tt.nextSibling;
+        if(bb&&bb.classList&&bb.classList.contains('acc-body')){
+          const on=!!o['s'+ii];bb.style.display=on?'':'none';tt.classList.toggle('on',on);
+        }});
+      this.haptic(8);
+      if(willOpen)setTimeout(()=>{try{t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},60);
+    };
+   });
+  }catch(e){}
+ },
+ openWa(phone,msg){
+  const url=waLink(phone,msg);
+  let w=null;
+  try{w=window.open(url,'_blank');}catch(e){}
+  if(!w||w.closed||typeof w.closed==='undefined'){
+    try{const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>{try{if(!document.hidden)location.href=url;}catch(e){}},350);
+    }catch(e){try{location.href=url;}catch(x){}}
+  }
+ },
  haptic(ms){try{if(navigator.vibrate)navigator.vibrate(ms||15);}catch(e){}},
  busy(m){try{let b=document.getElementById('busy-ov');if(!b){b=document.createElement('div');b.id='busy-ov';b.className='busy-ov';b.innerHTML='<div class="busy-box"><div class="busy-spin"></div><div class="busy-txt"></div></div>';document.body.appendChild(b);}b.querySelector('.busy-txt').textContent=m||'רגע…';b.style.display='flex';}catch(e){}},
  idle(){try{const b=document.getElementById('busy-ov');if(b)b.style.display='none';}catch(e){}},
@@ -2785,6 +2916,40 @@ const App={
      ${x.max?`<div style="height:4px;background:var(--bg2);border-radius:4px;margin-top:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col}"></div></div>`:''}
      ${x.note?`<div style="font-size:10.5px;color:var(--muted);margin-top:3px">${esc(x.note)}</div>`:''}
    </div>`;}).join('');
+ },
+ // ההגדרות היו קיר אחד ארוך של 9 מקטעים. כאן הם נהפכים לתפריט מתקפל,
+ // אחד פתוח בכל רגע. לא נוגע בתוכן — רק עוטף כל מקטע במיכל.
+ initSettingsAccordion(){
+  const root=document.querySelector('.modal-box')||document.querySelector('.sheet')||document.body;
+  const titles=Array.prototype.slice.call(root.querySelectorAll('.sec-title'));
+  if(!titles.length)return;
+  titles.forEach((t,idx)=>{
+   if(t.getAttribute('data-acc'))return;
+   t.setAttribute('data-acc',String(idx));
+   const box=document.createElement('div');
+   box.className='acc-body';box.setAttribute('data-accbody',String(idx));
+   let n=t.nextElementSibling;
+   while(n&&!n.classList.contains('sec-title')){const nx=n.nextElementSibling;box.appendChild(n);n=nx;}
+   t.parentNode.insertBefore(box,t.nextSibling);
+   t.classList.add('acc-head');
+  });
+  const st=this.state.accOpen||{};
+  const paint=()=>{
+   titles.forEach((t,i)=>t.classList.toggle('on',st['a'+i]===true));
+   Array.prototype.slice.call(root.querySelectorAll('[data-accbody]'))
+    .forEach(b=>b.classList.toggle('on',st['a'+b.getAttribute('data-accbody')]===true));
+  };
+  titles.forEach((t,idx)=>{
+   t.onclick=()=>{
+    const willOpen=st['a'+idx]!==true;
+    Object.keys(st).forEach(k=>st[k]=false);
+    st['a'+idx]=willOpen;
+    this.state.accOpen=st;
+    paint();this.haptic(10);
+    if(willOpen)setTimeout(()=>{try{t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},80);
+   };
+  });
+  paint();
  },
  catalogCount(){let n=0;try{this.allCats().forEach(c=>n+=(c.items||[]).length);}catch(e){}return n;},
  laborCount(){let n=0;this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0)&&i.laborMode)n++;}));return n;},
@@ -3292,7 +3457,7 @@ const App={
   const nm=(l.client||'').split(' ')[0];
   if(!key){
     const msg='\u05e9\u05dc\u05d5\u05dd'+(nm?' '+nm:'')+' \ud83d\udc4b'+String.fromCharCode(10)+'\u05e8\u05d0\u05d9\u05ea\u05d9 \u05e9\u05d4\u05ea\u05dc\u05d1\u05d8\u05ea \u05e2\u05dc '+items[0]+'.'+String.fromCharCode(10)+'\u05d9\u05e9 \u05dc\u05d9 \u05db\u05de\u05d4 \u05d7\u05dc\u05d5\u05e4\u05d5\u05ea \u2014 \u05e0\u05e9\u05de\u05d7 \u05dc\u05d3\u05d1\u05e8.';
-    window.open(waLink(l.phone,msg),'_blank');return;
+    App.openWa(l.phone,msg);return;
   }
   this.busy('\u05de\u05e0\u05e1\u05d7\u2026');
   const st=Store.get('myStyle','');
@@ -3307,7 +3472,7 @@ const App={
     this.idle();
     t=String(t||'').trim();
     if(!t){this.toast('\u05dc\u05d0 \u05d4\u05ea\u05e7\u05d1\u05dc \u05e0\u05d9\u05e1\u05d5\u05d7');return;}
-    window.open(waLink(l.phone,t),'_blank');
+    App.openWa(l.phone,t);
   }catch(e){this.idle();this.toast('\u05d4\u05e0\u05d9\u05e1\u05d5\u05d7 \u05e0\u05db\u05e9\u05dc');}
  },
  // שחזור: קורא את כל ההצעות מהענן ובונה מחדש את רשימת המעקב.
@@ -3385,11 +3550,28 @@ const App={
        <b style="color:var(--txt)">הצעות חדשות יישמרו כאן אוטומטית.</b><br>
        <button class="mini" id="q-rebuild" style="margin-top:8px;width:100%;padding:9px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px">↻ בנה רשומות מ-${links} הלינקים</button></div>`:'';})()}
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">כל הצעה נשמרת אוטומטית עם הסעיפים — אפשר לפתוח, לתקן ולשלוח מחדש.</div>
-   ${list.length?list.map(q=>`<div class="list-item">
-     <div class="info"><div class="t">${q.client||'ללא שם'} — ${nis(q.grand)}</div><div class="s">${q.no} · ${dt(q.ts)}${q.project?' · '+q.project:''}${q.snap?'':' · (ללא נתונים)'}</div></div>
-     ${q.snap?`<button class="mini" data-loadq="${q.id}">✏️ ערוך</button><button class="mini" data-dupq="${q.id}">📋 עותק</button>`:''}
-     ${(q.sig||(q.snap&&q.snap.clientSig))?`<button class="mini" data-qsig="${q.id}">✍️ חתימה</button>`:''}
-     <button class="del" data-delq="${q.id}">🗑️</button></div>`).join(''):'<div class="empty">אין עדיין הצעות שנשלחו.</div>'}`;
+   ${list.length?list.map(q=>{
+     const K={pdf:['📄','הצעת מחיר PDF'],link:['🔗','לינק הצעה'],live:['⚡','לינק חי'],
+              contract:['📝','הזמנת עבודה'],signed:['✍️','נחתם']};
+     const ks=(q.kinds||[]).filter(k=>K[k]);
+     const tags=ks.length
+       ? ks.map(k=>`<span class="q-kind ${k}">${K[k][0]} ${K[k][1]}</span>`).join('')
+       : `<span class="q-kind none">${q.snap?'טיוטה — טרם נשלחה':'ללא נתונים'}</span>`;
+     return `<div class="q-card">
+       <div class="q-top">
+         <div style="flex:1;min-width:0">
+           <div class="q-name">${esc(q.client)||'ללא שם'}</div>
+           <div class="q-meta">${esc(q.no||'')} · ${dt(q.ts)}${q.project?' · '+esc(q.project):''}</div>
+         </div>
+         <div class="q-amt">${nisR(q.grand)}</div>
+       </div>
+       <div class="q-kinds">${tags}</div>
+       <div class="q-acts">
+         ${q.snap?`<button class="mini pri" data-loadq="${q.id}">✏️ ערוך</button>
+                   <button class="mini" data-dupq="${q.id}">📋 עותק</button>`:''}
+         ${(q.sig||(q.snap&&q.snap.clientSig))?`<button class="mini" data-qsig="${q.id}">✍️ חתימה</button>`:''}
+         <button class="del" data-delq="${q.id}">🗑️</button>
+       </div></div>`;}).join(''):'<div class="empty">אין עדיין הצעות שנשלחו.<br><span style="font-size:12px">הצעה נשמרת כאן ברגע שיוצרים PDF או שולחים לינק.</span></div>'}`;
  },
  aiSuggestModal(){const list=this._aiSuggestions||[];return `<h2>🤖 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">ה-AI מציע סעיפים נלווים. לחיצה מוסיפה אותם כפריט מותאם (תוכל לתמחר אחר כך).</div>
@@ -4178,13 +4360,18 @@ const App={
   const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
+  if(window.__dedup145&&!this._dedupShown){this._dedupShown=true;
+    const n=window.__dedup145;window.__dedup145=null;
+    setTimeout(()=>this.toast('🧹 אוחדו '+n+' רשומות כפולות'),1100);}
   if(window.__catSplit&&!this._catSplitShown){this._catSplitShown=true;
     const s=window.__catSplit;window.__catSplit=null;
     setTimeout(()=>this.toast('📂 המחירון חולק ל-'+s.cats+' קטגוריות · '+s.moved+' סעיפים סודרו מחדש'),900);}
   if(window.__catMerge&&!this._catMergeShown){this._catMergeShown=true;
     const m=window.__catMerge;window.__catMerge=null;
     setTimeout(()=>this.toast('📚 המחירון עודכן — נוספו '+m.items+' סעיפים חדשים'+(m.cats?' ו-'+m.cats+' קטגוריות':'')),700);}
+  this.initSettingsAccordion();
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
+  this.sectionizeSettings();
   const qrb=document.getElementById('q-rebuild');
   if(qrb)qrb.onclick=()=>this.rebuildQuotesFromLinks();
   const sc=document.getElementById('stg-clean');
@@ -4214,7 +4401,7 @@ const App={
   const gEye=document.getElementById('ga-eye');if(gEye)gEye.onclick=()=>{const t=document.getElementById('ga-token');if(t)t.type=t.type==='password'?'text':'password';};
   // monthly report
   const rm=document.getElementById('rep-month');if(rm)rm.onchange=e=>{this.state.reportMonth=e.target.value;this.render();};
-  const rs=document.getElementById('rep-send');if(rs)rs.onclick=()=>{const ym=this.state.reportMonth,d=this.reportData(ym);const txt=`📊 סיכום ${this.monthName(ym)}\nהצעות: ${d.quotes}\nנסגרו: ${d.closed}\nלקוחות חדשים: ${d.newClients}\nהיקף: ${nis(d.volume)}`;window.open(waLink('0545718316',txt),'_blank');};
+  const rs=document.getElementById('rep-send');if(rs)rs.onclick=()=>{const ym=this.state.reportMonth,d=this.reportData(ym);const txt=`📊 סיכום ${this.monthName(ym)}\nהצעות: ${d.quotes}\nנסגרו: ${d.closed}\nלקוחות חדשים: ${d.newClients}\nהיקף: ${nis(d.volume)}`;App.openWa('0545718316',txt);};
 
   const tgt=document.getElementById('tg-terms');if(tgt)tgt.onclick=()=>{this.captureQuote();this.state.showTerms=!this.state.showTerms;this.render();};
   ['white','black'].forEach(k=>{const t=document.getElementById('tg-'+k);if(t)t.onclick=()=>{this.captureQuote();this.state[k+'On']=!this.state[k+'On'];this.render();};});
@@ -4311,7 +4498,7 @@ const App={
   const db=document.getElementById('drill-back');if(db)db.onclick=()=>{this.state.modal='stats';this.render();};
   const rvr=document.getElementById('rev-refresh');if(rvr)rvr.onclick=()=>{this._revData=null;this.toast('מרענן…');this.loadReviews();};
   on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id));this.render();}});
-  on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
+  on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;App.openWa(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id);});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
   // ── סינון בלחיצה על כרטיסי הסיכום ──
   on('[data-trkf]','click',e=>{
@@ -4374,7 +4561,7 @@ const App={
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
    const trc=document.getElementById('trk-recover');if(trc)trc.onclick=()=>this.recoverLinks();
   on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
-  on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
+  on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;App.openWa(l.phone,msg);});
   on('[data-qsig]','click',e=>{const id=e.currentTarget.dataset.qsig;const q=Store.get('quotes',[]).find(x=>x.id===id);if(!q)return;const img=q.sig||(q.snap&&q.snap.clientSig)||'';this._sigView={img:img,client:q.client,no:q.no,at:q.ts,quoteId:id};this.state.modal='sigview';this.render();});
   on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
   on('[data-dupq]','click',e=>this.duplicateQuoteAsNew(e.currentTarget.dataset.dupq));
@@ -4441,7 +4628,7 @@ const App={
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
   on('[data-delclient]','click',e=>{const id=e.currentTarget.dataset.delclient;const cl=Store.get('clients',[]).find(c=>c.id===id);if(!confirm('למחוק את הלקוח'+(cl&&cl.name?' "'+cl.name+'"':'')+'? פעולה זו אינה הפיכה.'))return;Store.set('clients',Store.get('clients',[]).filter(c=>c.id!==id));this.toast('הלקוח נמחק');this.render();});
 
-  on('[data-nudge]','click',e=>{const cl=Store.get('clients',[]).find(c=>c.id===e.currentTarget.dataset.nudge);if(!cl)return;if(!phoneValid(cl.phone)){this.toast('מספר הטלפון של הלקוח חסר או לא תקין');return;}this.haptic(15);const msg='שלום'+(cl.name?' '+cl.name:'')+' 👋\nרק מוודא שההצעה הגיעה — אשמח לשמוע מה דעתך 🙂';window.open(waLink(cl.phone,msg),'_blank');});
+  on('[data-nudge]','click',e=>{const cl=Store.get('clients',[]).find(c=>c.id===e.currentTarget.dataset.nudge);if(!cl)return;if(!phoneValid(cl.phone)){this.toast('מספר הטלפון של הלקוח חסר או לא תקין');return;}this.haptic(15);const msg='שלום'+(cl.name?' '+cl.name:'')+' 👋\nרק מוודא שההצעה הגיעה — אשמח לשמוע מה דעתך 🙂';App.openWa(cl.phone,msg);});
   on('[data-markdone]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.markdone);cl.status='done';cl.doneAt=Date.now();if(cl.reviewSentAt&&!cl.feedbackAt)cl.feedbackAt=Date.now();Store.set('clients',list);this.toast('סומן כבוצע ✓');this.render();});
 
   // photos modal
@@ -4456,7 +4643,7 @@ const App={
     if(!cl.phone){this.toast('\u05d0\u05d9\u05df \u05d8\u05dc\u05e4\u05d5\u05df \u05dc\u05dc\u05e7\u05d5\u05d7 \u05d4\u05d6\u05d4');return;}
     const txt=b.querySelector('.ah-d').textContent;
     this.haptic(20);
-    window.open(waLink(cl.phone,txt),'_blank');
+    App.openWa(cl.phone,txt);
   };});
   const oax=document.getElementById('open-annex');if(oax)oax.onclick=()=>{this.captureQuote();this.saveClient();if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='annex';this.haptic(12);this.render();};
   const axp=document.getElementById('ax-pdf');if(axp)axp.onclick=()=>{
@@ -4762,7 +4949,7 @@ const App={
   const msg='שלום '+(cl.name||'')+' 🙏\nתודה שבחרת ב-יהודה שיפוצים!\nנשמח מאוד למשוב קצר (30 שניות):\n'+link;
   cl.status='sent';cl.reviewAt=Date.now();Store.set('clients',list);
   if(navigator.share){navigator.share({title:'משוב · יהודה שיפוצים',text:msg}).catch(()=>{});}
-  else if(cl.phone){window.open(waLink(cl.phone,msg),'_blank');}
+  else if(cl.phone){this.openWa(cl.phone,msg);}
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.toast('לינק משוב נשלח ✓');this.render();
  },
@@ -4832,7 +5019,7 @@ const App={
   if(!link){this.toast('אין חיבור לענן — נסה שוב');return;}
   const msg='שלום'+(cl.name?' '+cl.name:'')+' 🙏\nתודה שבחרת ב-יהודה שיפוצים!\nנשמח למשוב קצר על העבודה (30 שניות):\n'+link;
   this.toast('לינק משוב נוצר ✓');
-  if(cl.phone)window.open(waLink(cl.phone,msg),'_blank');
+  if(cl.phone)App.openWa(cl.phone,msg);
   else if(navigator.share)navigator.share({text:msg}).catch(()=>{});
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק:',link);}}
   this.render();
@@ -5000,12 +5187,15 @@ const App={
     const link=location.origin+location.pathname+'#L='+id;
     const sent=Store.get('sentLinks',[]);
     sent.unshift({id:id,live:true,client:cl.name,phone:cl.phone||'',ts:Date.now(),total:this.grand(),no:s.quoteNo});
+    // שליחה חוזרת של אותה הצעה מחליפה את הכרטיס במקום להוסיף עוד אחד
+    const _pv=sent.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);
+    if(_pv>0)sent.splice(_pv,1);
     Store.set('sentLinks',sent.slice(0,300));
-    this.recordQuote();
+    this._quoteKind='live';this.recordQuote();
     this.idle();this.haptic(25);
     const msg='\u05e9\u05dc\u05d5\u05dd'+(cl.name?' '+cl.name.split(' ')[0]:'')+' \ud83d\udc4b'+String.fromCharCode(10)+
       '\u05de\u05e6\u05d5\u05e8\u05e3 \u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u2014 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e1\u05de\u05df \u05d5\u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d5\u05dc\u05e8\u05d0\u05d5\u05ea \u05d0\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df:'+String.fromCharCode(10)+link;
-    window.open(waLink(cl.phone,msg),'_blank');
+    App.openWa(cl.phone,msg);
     this.toast('\u05d4\u05dc\u05d9\u05e0\u05e7 \u05d4\u05d7\u05d9 \u05e0\u05e9\u05dc\u05d7 \u2713');
     this.render();
   }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05dc\u05d9\u05e0\u05e7 \u05e0\u05db\u05e9\u05dc\u05d4');}
@@ -5027,9 +5217,10 @@ const App={
   if(id){link=base+'#id='+id;short=true;
     // remember link on the client for view-tracking
     try{const cl=Store.get('clients',[]);const rec=cl.find(x=>x.name===c.name&&c.name);if(rec){rec.proposalId=id;Store.set('clients',cl);}}catch(e){}
-    try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});Store.set('sentLinks',sl.slice(0,200));}catch(e){}
+    try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});const _pv=sl.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);if(_pv>0)sl.splice(_pv,1);
+       Store.set('sentLinks',sl.slice(0,200));}catch(e){}
     // חסר כאן — לינק דיגיטלי יצר רשומת מעקב אבל לא שמר את ההצעה עצמה
-    this.recordQuote();
+    this._quoteKind='link';this.recordQuote();
   }else{
     // fallback: long self-contained link (works offline / if Firestore not set up)
     let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.idle();this.toast('שגיאה');return;}
@@ -5038,8 +5229,8 @@ const App={
   const msg='שלום'+(c.name?' '+c.name:'')+' 👋\nהצעת המחיר שלך מ-יהודה שיפוצים מוכנה לצפייה ואישור:\n'+link;
   this.idle();this.haptic(20);
   if(!short)this.toast('אין חיבור ל-Firebase — נוצר לינק ארוך');else this.toast('לינק קצר נוצר ✓');
-  if(navigator.share){navigator.share({title:'הצעת מחיר · יהודה שיפוצים',text:msg}).catch(()=>{});}
-  else if(c.phone){window.open(waLink(c.phone,msg),'_blank');}
+  if(c.phone){this.openWa(c.phone,msg);}
+  else if(navigator.share){navigator.share({title:'הצעת מחיר · יהודה שיפוצים',text:msg}).catch(()=>{});}
   else{try{navigator.clipboard.writeText(link);this.toast('הלינק הועתק ✓');}catch(e){prompt('העתק את הלינק:',link);}}
  },
  reviewsModal(){const links=Store.get('reviewLinks',[]);const live=this._revData||{};
@@ -5189,7 +5380,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   this.haptic(15);this.busy('מכין מסמך חתום...');
   try{
     const r=await this.makePdfBlob();
-    this.recordQuote();
+    this._quoteKind='signed';this.recordQuote();
     let shared=false;
     if(navigator.canShare){
       try{
@@ -5205,7 +5396,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       if(cc.phone){
         const nm=cc.name?' '+cc.name.split(' ')[0]:'';
         const msg='שלום'+nm+String.fromCharCode(10)+'מצורף המסמך החתום. תודה על האמון!';
-        setTimeout(function(){try{window.open(waLink(cc.phone,msg),'_blank');}catch(e){}},600);
+        setTimeout(function(){try{App.openWa(cc.phone,msg);}catch(e){}},600);
       }
       this.toast('המסמך נשמר - צרף אותו להודעה');
     }else{
@@ -5221,7 +5412,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   this.captureQuote();
   if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
   this.haptic(15);this.busy('מכין PDF…');
-  try{const{pdf,blob,fname}=await this.makePdfBlob();this.recordQuote();
+  try{const{pdf,blob,fname}=await this.makePdfBlob();this._quoteKind='pdf';this.recordQuote();
   let shared=false;
   if(share&&navigator.canShare){try{const file=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'מסמך · יהודה שיפוצים',text:`מ-יהודה שיפוצים · ${nis(this.grand())}`});shared=true;}}catch(e){}}
   if(!shared){pdf.save(fname);this.toast('ה-PDF נוצר ✓');}this.haptic(20);}
@@ -5253,9 +5444,24 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       unit:i.unit||'גלובלי',sub:!!i.sub,perm:!!i.perm,
       laborMode:!!i.laborMode,laborPct:+i.laborPct||0,fullPrice:+i.fullPrice||0});}));}catch(e){}
   const snap={clientSig:this.state.clientSig||'',lines:lines,client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice};
-  qs.unshift({id:uid(),ts:Date.now(),no:this.state.quoteNo,client:this.state.client.name,phone:this.state.client.phone||'',project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap});
+  // אותה הצעה נשמרת מכמה מסלולים (לינק חי · לינק דיגיטלי · PDF · חוזה · חתימה).
+  // בלי איחוד לפי מספר ההצעה נוצרה רשומה חדשה בכל לחיצה.
+  const _no=this.state.quoteNo;
+  const kind=this._quoteKind||'';this._quoteKind=null;
+  const rec={ts:Date.now(),no:_no,client:this.state.client.name,phone:this.state.client.phone||'',
+    project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap};
+  const exIdx=qs.findIndex(q=>q&&q.no&&q.no===_no);
+  let isNew=false;
+  if(exIdx>=0){
+    const kinds=(qs[exIdx].kinds||[]).slice();
+    if(kind&&kinds.indexOf(kind)<0)kinds.push(kind);
+    qs[exIdx]=Object.assign({},qs[exIdx],rec,{kinds:kinds});
+  }else{
+    qs.unshift(Object.assign({id:uid()},rec,{kinds:kind?[kind]:[]}));isNew=true;
+  }
   const okQ=Store.set('quotes',qs.slice(0,200));
-  const okS=Store.set('qseq',Store.get('qseq',0)+1);
+  // המונה מתקדם רק כשנוצרה הצעה חדשה
+  const okS=isNew?Store.set('qseq',Store.get('qseq',0)+1):true;
   if(!okQ||!okS){
     try{Store.logErr('recordQuote','שמירה נכשלה — '+(Store.usage().total)+'KB בשימוש');}catch(e){}
     setTimeout(()=>{try{this.toast('⚠️ ההצעה לא נשמרה — האחסון מלא. הגדרות ← מגבלות ← נקה אחסון');}catch(e){}},400);
@@ -5270,7 +5476,11 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
    const nm=String(c.name||'').trim();
    if(nm){
     const cls=Store.get('clients',[])||[];
-    let rec=cls.find(x=>x&&String(x.name||'').trim()===nm&&(!c.phone||!x.phone||x.phone===c.phone));
+    const _dg=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
+    const _ph=_dg(c.phone);
+    // קודם לפי טלפון (המזהה האמין), אחר כך לפי שם
+    let rec=_ph?cls.find(x=>x&&_dg(x.phone)===_ph):null;
+    if(!rec)rec=cls.find(x=>x&&String(x.name||'').trim()===nm);
     if(!rec){rec={id:uid(),createdAt:Date.now(),status:'q'};cls.unshift(rec);}
     rec.name=nm;
     if(c.phone)rec.phone=c.phone;
