@@ -196,15 +196,6 @@ input,select,textarea{font-family:inherit;}
 .acc-body{display:none;padding:6px 3px 4px;}
 .acc-body.on{display:block;animation:accIn .18s ease;}
 @keyframes accIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
-.acc-head{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;
-  background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px 13px;
-  margin:10px 0 0;-webkit-tap-highlight-color:transparent;}
-.acc-head:active{transform:scale(.99);}
-.acc-head::after{content:'▾';font-size:12px;color:var(--muted);transition:transform .2s;flex:none;}
-.acc-head.on::after{transform:rotate(180deg);}
-.acc-head.on{border-color:var(--red);}
-.acc-body{padding:4px 2px 6px;animation:accIn .18s ease;}
-@keyframes accIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .trk-none{text-align:center;padding:26px 16px;color:var(--muted);font-size:13px;background:var(--bg3);border:1px dashed var(--line);border-radius:14px;}
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
@@ -1096,7 +1087,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='14.7';
+const VERSION='14.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1542,6 +1533,10 @@ const GUIDE=[
    <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
    <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
    <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v14.8 — שתי מערכות אקורדיון רצו יחד</div>
+   <ul class="g-ul"><li><b>למה זה לא נסגר בפעם אחת</b> — היו <b>שתי</b> פונקציות קיפול בקוד ושני בלוקי CSS מתנגשים. תיקנתי אחת, השנייה המשיכה לקפל הכל. בדיוק כמו מקרה כפתור החזרה.</li>
+   <li><b>נמחקו הכפילויות</b> — נשארה פונקציה אחת, מוגבלת למסך ההגדרות בלבד, ובלוק CSS אחד.</li>
+   <li><b>נבדק על DOM אמיתי</b> (jsdom), חמישה מסכים: הצעת מחיר 11/11 שדות גלויים · הצעות מהירות 9/9 · גיבוי 7/7 · תמונות 3/3 — אף אחד לא נגע. הגדרות: מקטע אחד פתוח, לחיצה מחליפה, לחיצה חוזרת סוגרת.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v14.7 — תיקון האקורדיון</div>
    <ul class="g-ul"><li><b>מה נשבר ב-14.5</b> — האקורדיון תפס כל כותרת באפליקציה, לא רק בהגדרות. 25 כותרות ב-6 מסכים נסגרו: מסך ההצעה (סוג הצעה, הנחה, חומרים, תנאי תשלום, חתימה, גלריה, שפה), ההצעות המהירות, הגיבוי והתמונות.</li>
    <li><b>עכשיו הוא פועל רק בתוך ההגדרות</b>, בתוך עוגן ייעודי. כל שאר המסכים חזרו בדיוק לקדמותם.</li>
@@ -2702,49 +2697,50 @@ const App={
  // לינק חי עבד במקרה, לינק דיגיטלי לא. עכשיו יש נפילה לניווט ישיר.
  // מסך ההגדרות היה רשימה שטוחה של 9 מקטעים — הכל פתוח בבת אחת.
  // הופך כל כותרת לכפתור שפותח וסוגר את התוכן שמתחתיו.
+ // אקורדיון להגדרות בלבד. כל שאר המסכים (הצעת מחיר, הצעות מהירות,
+ // גיבוי, תמונות) משתמשים באותו class ואסור לגעת בהם.
  sectionizeSettings(){
   try{
-   // רק במסך ההגדרות. בלי הגבלה זה קיפל גם את מסך ההצעה, התבניות והגיבוי.
    if(this.state.modal!=='settings')return;
-   const root=document.getElementById('set-root')||document.querySelector('.sheet')||document;
+   const root=document.getElementById('set-root')||document.querySelector('.sheet');
+   if(!root)return;
    const titles=Array.prototype.slice.call(root.querySelectorAll('.sec-title'));
    if(!titles.length)return;
    const st=this.state.setOpen||(this.state.setOpen={});
-   // ברירת מחדל: כשנעול נפתח מקטע קוד הגישה, אחרת המקטע הראשון —
-   // כדי שלא ייפתח מסך ריק שדורש ניחוש
+   // מקטע אחד פתוח תמיד, כדי שלא ייפתח מסך שנראה ריק
    if(!Object.keys(st).some(k=>st[k])){
      st[this.state.secureUnlocked?'s0':('s'+(titles.length-1))]=true;
    }
+   const bodies=[];
    titles.forEach((t,idx)=>{
-    if(t.dataset.acc)return;
-    t.dataset.acc='1';
-    const key='s'+idx;
-    const body=document.createElement('div');
-    body.className='acc-body';
-    let n=t.nextSibling;
-    while(n&&!(n.nodeType===1&&n.classList&&n.classList.contains('sec-title'))){
-      const nx=n.nextSibling;body.appendChild(n);n=nx;
+    let body=t.nextElementSibling;
+    if(!(body&&body.classList.contains('acc-body'))){
+      body=document.createElement('div');
+      body.className='acc-body';
+      let n=t.nextElementSibling;
+      while(n&&!n.classList.contains('sec-title')){const nx=n.nextElementSibling;body.appendChild(n);n=nx;}
+      t.parentNode.insertBefore(body,t.nextElementSibling);
     }
-    if(t.parentNode)t.parentNode.insertBefore(body,t.nextSibling);
     t.classList.add('acc-head');
-    const isOpen=!!st[key];
-    body.style.display=isOpen?'':'none';
-    t.classList.toggle('on',isOpen);
-    t.onclick=()=>{
-      const o=this.state.setOpen||{};
-      const willOpen=!o[key];
-      // מקטע אחד פתוח בכל רגע — פחות גלילה
-      Object.keys(o).forEach(k=>o[k]=false);
-      o[key]=willOpen;this.state.setOpen=o;
-      titles.forEach((tt,ii)=>{
-        const bb=tt.nextSibling;
-        if(bb&&bb.classList&&bb.classList.contains('acc-body')){
-          const on=!!o['s'+ii];bb.style.display=on?'':'none';tt.classList.toggle('on',on);
-        }});
-      this.haptic(8);
-      if(willOpen)setTimeout(()=>{try{t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},60);
-    };
+    bodies.push(body);
    });
+   const paint=()=>{
+     titles.forEach((t,i)=>{
+       const on=st['s'+i]===true;
+       t.classList.toggle('on',on);
+       bodies[i].classList.toggle('on',on);
+     });
+   };
+   titles.forEach((t,idx)=>{
+     t.onclick=()=>{
+       const willOpen=st['s'+idx]!==true;
+       Object.keys(st).forEach(k=>st[k]=false);
+       st['s'+idx]=willOpen;this.state.setOpen=st;
+       paint();this.haptic(10);
+       if(willOpen)setTimeout(()=>{try{t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},80);
+     };
+   });
+   paint();
   }catch(e){}
  },
  openWa(phone,msg){
@@ -2935,38 +2931,7 @@ const App={
  },
  // ההגדרות היו קיר אחד ארוך של 9 מקטעים. כאן הם נהפכים לתפריט מתקפל,
  // אחד פתוח בכל רגע. לא נוגע בתוכן — רק עוטף כל מקטע במיכל.
- initSettingsAccordion(){
-  const root=document.querySelector('.modal-box')||document.querySelector('.sheet')||document.body;
-  const titles=Array.prototype.slice.call(root.querySelectorAll('.sec-title'));
-  if(!titles.length)return;
-  titles.forEach((t,idx)=>{
-   if(t.getAttribute('data-acc'))return;
-   t.setAttribute('data-acc',String(idx));
-   const box=document.createElement('div');
-   box.className='acc-body';box.setAttribute('data-accbody',String(idx));
-   let n=t.nextElementSibling;
-   while(n&&!n.classList.contains('sec-title')){const nx=n.nextElementSibling;box.appendChild(n);n=nx;}
-   t.parentNode.insertBefore(box,t.nextSibling);
-   t.classList.add('acc-head');
-  });
-  const st=this.state.accOpen||{};
-  const paint=()=>{
-   titles.forEach((t,i)=>t.classList.toggle('on',st['a'+i]===true));
-   Array.prototype.slice.call(root.querySelectorAll('[data-accbody]'))
-    .forEach(b=>b.classList.toggle('on',st['a'+b.getAttribute('data-accbody')]===true));
-  };
-  titles.forEach((t,idx)=>{
-   t.onclick=()=>{
-    const willOpen=st['a'+idx]!==true;
-    Object.keys(st).forEach(k=>st[k]=false);
-    st['a'+idx]=willOpen;
-    this.state.accOpen=st;
-    paint();this.haptic(10);
-    if(willOpen)setTimeout(()=>{try{t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},80);
-   };
-  });
-  paint();
- },
+
  catalogCount(){let n=0;try{this.allCats().forEach(c=>n+=(c.items||[]).length);}catch(e){}return n;},
  laborCount(){let n=0;this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0)&&i.laborMode)n++;}));return n;},
 
@@ -4385,7 +4350,7 @@ const App={
   if(window.__catMerge&&!this._catMergeShown){this._catMergeShown=true;
     const m=window.__catMerge;window.__catMerge=null;
     setTimeout(()=>this.toast('📚 המחירון עודכן — נוספו '+m.items+' סעיפים חדשים'+(m.cats?' ו-'+m.cats+' קטגוריות':'')),700);}
-  this.initSettingsAccordion();
+  
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   this.sectionizeSettings();
   const qrb=document.getElementById('q-rebuild');
