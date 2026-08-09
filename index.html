@@ -215,6 +215,28 @@ input,select,textarea{font-family:inherit;}
 .px-hint:active{transform:scale(.98);}
 .px-hint.hi{border-color:var(--warn);color:var(--warn);}
 .px-hint.lo{border-color:var(--blue,#4a9eff);color:var(--blue,#4a9eff);}
+.pe-mode{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:20px;
+  padding:6px 13px;font-size:12.5px;font-weight:700;flex:none;-webkit-tap-highlight-color:transparent;}
+.pe-mode.on{background:var(--red);border-color:var(--red);color:#fff;}
+.pe-mode:active{transform:scale(.96);}
+.pe-tip{font-size:11.5px;color:var(--muted);background:var(--bg3);border:1px solid var(--line);
+  border-radius:10px;padding:8px 11px;margin-bottom:12px;line-height:1.5;}
+.pe-row{background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;}
+.pe-name{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);
+  border-radius:9px;padding:9px 10px;font-size:13.5px;font-weight:600;font-family:inherit;}
+.pe-nums{display:flex;gap:6px;margin-top:7px;align-items:flex-end;}
+.pe-f{flex:1;min-width:0;}
+.pe-f>span{display:block;font-size:10px;color:var(--muted);margin-bottom:3px;}
+.pe-f input,.pe-f select{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--txt);
+  border-radius:8px;padding:8px 6px;font-size:13px;text-align:center;font-family:inherit;}
+.pe-del{flex:none;background:var(--bg2);border:1px solid var(--line);border-radius:8px;
+  padding:8px 10px;font-size:14px;opacity:.7;}
+.pe-sum{text-align:left;font-weight:800;font-size:13.5px;margin-top:7px;color:var(--red);
+  direction:ltr;white-space:nowrap;}
+.pe-add{width:100%;background:var(--bg2);border:1px dashed var(--line);color:var(--muted);
+  border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;margin-top:6px;}
+.pe-add.free{border-color:var(--red);color:var(--red);margin-top:12px;padding:11px;}
+.pe-add:active{transform:scale(.99);}
 .pf-row{display:flex;gap:10px;align-items:flex-start;background:var(--bg3);border:1px solid var(--line);
   border-radius:12px;padding:11px 12px;margin-bottom:8px;position:relative;overflow:hidden;}
 .pf-row::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;}
@@ -1117,7 +1139,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='15.6';
+const VERSION='15.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1563,6 +1585,13 @@ const GUIDE=[
    <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
    <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
    <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.7 — ✏️ עריכה בתצוגה מקדימה</div>
+   <ul class="g-ul"><li><b>הבקשה שחיכתה.</b> בתצוגה המקדימה יש עכשיו כפתור ✏️ ערוך. לחיצה הופכת כל שורה לניתנת לעריכה: תיאור חופשי, כמות, יחידה ומחיר.</li>
+   <li><b>כל שינוי מתעדכן מיד גם במחשבון</b> — זו אותה רשומה, לא עותק. הסכומים מתעדכנים בזמן אמת, וההצעה שתישלח זהה למה שאתה רואה.</li>
+   <li><b>+ הוסף סעיף</b> — בתחתית כל קטגוריה, וגם "+ סעיף חופשי משלך". הסעיף נשמר בקטגוריה שלו ו<b>זמין גם להצעות הבאות</b>.</li>
+   <li><b>🗑️ הסרה</b> — מוציאה את הסעיף מההצעה בלבד. הוא נשאר במחירון עם המחיר שלו.</li>
+   <li><b>ברירת המחדל לא השתנתה</b> — התצוגה המקדימה נפתחת בדיוק כמו קודם, לקריאה בלבד. העריכה נפתחת רק בלחיצה.</li>
+   <li><b>הגנות</b> — תיאור ריק וכמות אפס נדחים עם הסבר. הסרה מבקשת אישור. ביטול באמצע הוספה לא משאיר שאריות.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v15.6 — רשת ביטחון לשליחה</div>
    <ul class="g-ul"><li><b>לא נכתב מחדש שום מסלול שליחה.</b> חמשת המסלולים — לינק חי, לינק הצעה, PDF, חוזה ומסמך חתום — נשארו בדיוק כפי שהם. נוספה שורה אחת בסוף כל אחד.</li>
    <li><b>מה השורה עושה</b> — בודקת שההצעה באמת נרשמה ושהלינק באמת נכנס למעקב. אם הכל תקין היא לא עושה כלום. אם משהו חסר — היא משלימה בשקט ורושמת ליומן התקלות מי שכח.</li>
@@ -3562,11 +3591,34 @@ const App={
  },
  previewModal(){const groups=this.chosen();
   if(!groups.length)return `<h2>תצוגה מקדימה <button class="x" data-close>✕</button></h2><div class="empty" style="padding:20px">לא נבחרו סעיפים עדיין.<br>סמן סעיפים ותוכל לראות אותם כאן.</div>`;
-  const rows=groups.map(g=>`<div style="margin-bottom:14px"><div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:6px">${g.cat.emoji||''} ${g.cat.title}</div>${g.lines.map(l=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px"><span style="flex:1">${esc(this.dispName(l))} <span style="color:var(--muted)">×${l.qty}</span></span><b style="white-space:nowrap">${nis((+l.qty||0)*(+l.price||0))}</b></div>`).join('')}</div>`).join('');
+  // מצב עריכה נפתח בלחיצה. ברירת המחדל היא תצוגה בלבד, בדיוק כמו קודם.
+  const ed=!!this.state.prevEdit;
+  const rows=groups.map(g=>`<div style="margin-bottom:14px">
+    <div style="font-weight:800;color:var(--red);font-size:13px;margin-bottom:6px">${g.cat.emoji||''} ${esc(g.cat.title)}</div>
+    ${g.lines.map(l=>{
+      const k=g.cat.id+'|'+l.id;
+      if(!ed)return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13.5px"><span style="flex:1">${esc(this.dispName(l))} <span style="color:var(--muted)">×${l.qty}</span></span><b style="white-space:nowrap">${nis((+l.qty||0)*(+l.price||0))}</b></div>`;
+      return `<div class="pe-row">
+        <input class="pe-name" data-pe="name" data-k="${k}" value="${esc(l.name)}" placeholder="תיאור הסעיף"/>
+        <div class="pe-nums">
+          <div class="pe-f"><span>כמות</span><input type="number" inputmode="decimal" data-pe="qty" data-k="${k}" value="${l.qty}"/></div>
+          <div class="pe-f"><span>יחידה</span><select data-pe="unit" data-k="${k}">${UNITS.map(u=>`<option ${u===l.unit?'selected':''}>${u}</option>`).join('')}</select></div>
+          <div class="pe-f"><span>מחיר ₪</span><input type="number" inputmode="decimal" data-pe="price" data-k="${k}" value="${l.price}"/></div>
+          <button class="pe-del" data-pedel="${k}" title="הסר מההצעה">🗑️</button>
+        </div>
+        <div class="pe-sum">${nis((+l.qty||0)*(+l.price||0))}</div>
+      </div>`;}).join('')}
+    ${ed?`<button class="pe-add" data-peadd="${g.cat.id}">+ הוסף סעיף ל${esc(g.cat.title)}</button>`:''}
+    </div>`).join('');
   const s=this.state;
   return `<h2>👁 תצוגה מקדימה של ההצעה <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">${groups.reduce((n,g)=>n+g.lines.length,0)} סעיפים · בדוק לפני המשך</div>
+   <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px">
+     <span style="font-size:12px;color:var(--muted)">${groups.reduce((n,g)=>n+g.lines.length,0)} סעיפים · בדוק לפני המשך</span>
+     <button class="pe-mode ${ed?'on':''}" id="prev-edit">${ed?'✓ סיים עריכה':'✏️ ערוך'}</button>
+   </div>
+   ${ed?`<div class="pe-tip">שינוי כאן מתעדכן גם במחשבון. סעיף חדש נשמר בקטגוריה שלו וזמין גם להצעות הבאות.</div>`:''}
    ${rows}
+   ${ed?`<button class="pe-add free" data-peadd="custom">+ סעיף חופשי משלך</button>`:''}
    <div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:8px">
      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>סכום ביניים (לפני מע"מ)</span><b style="color:var(--txt)">${nis(this.subtotal())}</b></div>
      ${(+s.discount>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--red);margin-top:6px"><span>הנחה (${s.discount}%)</span><b>- ${nis(this.discountAmt())}</b></div>`:''}
@@ -4706,6 +4758,46 @@ const App={
   
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   this.sectionizeSettings();
+  const pem=document.getElementById('prev-edit');
+  if(pem)pem.onclick=()=>{this.state.prevEdit=!this.state.prevEdit;this.haptic(10);this.render();};
+
+  // עריכה חיה — כותבת ישירות לסעיף במחשבון, כמו כל שינוי אחר
+  on('[data-pe]','change',e=>{
+    const el=e.currentTarget;const f=el.dataset.pe;const[c,i]=(el.dataset.k||'').split('|');
+    const it=this.find(c,i);if(!it)return;
+    if(f==='name'){const v=String(el.value||'').trim();if(!v){this.toast('תיאור לא יכול להיות ריק');this.render();return;}it.name=v;}
+    else if(f==='unit')it.unit=el.value;
+    else{const v=+el.value||0;if(f==='qty'&&v<=0){this.toast('כמות חייבת להיות גדולה מאפס');this.render();return;}it[f]=v;}
+    it.perm=true;
+    this.saveActive(c);this.render();
+  });
+
+  on('[data-pedel]','click',e=>{
+    const[c,i]=(e.currentTarget.dataset.pedel||'').split('|');
+    const it=this.find(c,i);if(!it)return;
+    if(!confirm('להסיר את "'+it.name+'" מההצעה?'))return;
+    it.selected=false;it.qty=0;
+    this.saveActive(c);this.haptic(12);this.toast('הוסר מההצעה');this.render();
+  });
+
+  on('[data-peadd]','click',e=>{
+    const cid=e.currentTarget.dataset.peadd;
+    const nm=prompt('תיאור הסעיף:');
+    if(nm===null)return;
+    const name=String(nm).trim();
+    if(!name){this.toast('לא הוזן תיאור');return;}
+    const pr=prompt('מחיר ליחידה (₪):','0');
+    if(pr===null)return;
+    const qt=prompt('כמות:','1');
+    if(qt===null)return;
+    const item={id:uid(),name:name,price:Math.max(0,+pr||0),unit:'גלובלי',
+      selected:true,qty:Math.max(1,+qt||1),perm:true};
+    if(cid==='custom'){this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;}
+    else{item.sub=true;if(!this.state.subItems[cid])this.state.subItems[cid]=[];
+      this.state.subItems[cid].push(item);Store.set('subItems',this.state.subItems);this.state.open[cid]=true;}
+    this.haptic(15);this.toast('נוסף ✓ — זמין גם להצעות הבאות');this.render();
+  });
+
   const pfF=document.getElementById('pf-fix');
   if(pfF)pfF.onclick=()=>{this.state.modal='quote';this.render();};
   const pfS=document.getElementById('pf-send');
