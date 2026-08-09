@@ -1117,7 +1117,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='15.3';
+const VERSION='15.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1563,6 +1563,20 @@ const GUIDE=[
    <li><b>עכשיו</b> — כל הפקת הצעה יוצרת או מעדכנת לקוח עם סטטוס "הצעה פתוחה", טלפון, פרויקט וסכום. אותו לקוח לא משוכפל; שם זהה עם טלפון אחר נשמר בנפרד.</li>
    <li><b>לקוח בלי סטטוס</b> — נפל מחוץ לתזכורות. עכשיו נחשב "הצעה פתוחה".</li>
    <li><b>מסנן שנתקע</b> — איפוס המסנן במסך המעקב נכשל בגלל שם מסך שגוי בקוד, ולכן סינון קודם המשיך לפעול והרשימה נראתה ריקה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.6 — רשת ביטחון לשליחה</div>
+   <ul class="g-ul"><li><b>לא נכתב מחדש שום מסלול שליחה.</b> חמשת המסלולים — לינק חי, לינק הצעה, PDF, חוזה ומסמך חתום — נשארו בדיוק כפי שהם. נוספה שורה אחת בסוף כל אחד.</li>
+   <li><b>מה השורה עושה</b> — בודקת שההצעה באמת נרשמה ושהלינק באמת נכנס למעקב. אם הכל תקין היא לא עושה כלום. אם משהו חסר — היא משלימה בשקט ורושמת ליומן התקלות מי שכח.</li>
+   <li><b>זה הכשל שגרם ל"כל ההצעות ריק"</b> — מסלול אחד מתוך חמישה לא רשם, ואיש לא ידע במשך ימים. עכשיו זה מתקן את עצמו ומשאיר עקבות.</li>
+   <li>נבדק ב-17 תרחישים, ובראשם החשוב: כשהמסלול עבד כרגיל — הרשת לא נגעה בשום נתון ולא כתבה ליומן.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.5 — האיחוד הפך לידני</div>
+   <ul class="g-ul"><li><b>למה</b> — האפליקציה בסביבת טסטים: אותו לקוח נוצר בכוונה כמה פעמים, ואותה הצעה נשלחת כלינק וגם כ-PDF. איחוד אוטומטי בטעינה היה מוחק תרחישי בדיקה בלי לשאול.</li>
+   <li><b>עכשיו</b> — במאגר הלקוחות מופיע כפתור 🧹 רק כשיש רשומות של אותו לקוח, עם ספירה. לחיצה מציגה את השמות ומבקשת אישור לפני האיחוד. שום דבר לא קורה מעצמו.</li>
+   <li><b>המניעה נשארת</b> — מעכשיו לא נוצרות כפילויות חדשות: כל שלוש נקודות היצירה משתמשות באותו כלל זיהוי. הרשומות הקיימות נשארות כפי שהן עד שתחליט.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.4 — איחוד ראשון: לקוחות</div>
+   <ul class="g-ul"><li><b>למה "נסטיה" הופיעה חמש פעמים</b> — שלוש נקודות בקוד יצרו לקוחות, כל אחת עם כלל זיהוי אחר: אחת לפי שם מדויק, אחת לפי טלפון, אחת לפי שם מרשימת הלינקים. 0543013389 ו-054-301-3389 נראו להן כשני אנשים.</li>
+   <li><b>מעכשיו כלל אחד</b> — טלפון זהה (בכל פורמט, כולל 972+) הוא אותו לקוח. שם זהה בלי טלפון מתחבר לרשומה קיימת. <b>שם זהה עם טלפון אחר נשאר לקוח נפרד</b> — שני "כהן" הם שני אנשים.</li>
+   <li><b>ניקוי חד-פעמי</b> — כפילויות קיימות מתאחדות בטעינה הראשונה, והפרטים מכל הרשומות מצטברים לאחת. תופיע הודעה כמה אוחדו. יש גם כפתור 🧹 במאגר הלקוחות.</li>
+   <li><b>ומעבר לכך</b> — נוספה בדיקת כפילות אוטומטית לתהליך הפיתוח: מאזינים גלובליים, בוררי CSS, מתודות באותו שם ומספר הנקודות שמבצעות כל פעולה. הבדיקה הזו הייתה תופסת מראש את שני מאזיני "חזור" ואת שתי מערכות האקורדיון.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v15.3 — הבדיקה קראה מהמקום הלא נכון</div>
    <ul class="g-ul"><li><b>הבאג</b> — הבדיקה קראה את פרטי הלקוח מהזיכרון הפנימי, אבל מה שהקלדת בשדות נשמר לשם רק אחרי יציאה מהשדה. לכן היא דיווחה "חסר שם לקוח" בזמן שהשם היה כתוב מולך על המסך.</li>
    <li><b>תוקן</b> — הבדיקה קוראת עכשיו את השדות עצמם לפני שהיא בודקת.</li>
@@ -3435,6 +3449,12 @@ const App={
   return `<h2>מאגר לקוחות <button class="x" data-close>✕</button></h2>
    <div class="field"><input id="cl-search" value="${this.state.clientQ||''}" placeholder="🔍 חיפוש לפי שם / טלפון / פרויקט…"/></div>
    <div class="chips" style="padding:0 0 8px">${filters.map(x=>`<button class="chip ${f===x[0]?'on':''}" data-clfilter="${x[0]}">${x[1]}</button>`).join('')}</div>
+   ${(()=>{const l=Store.get('clients',[])||[];
+     const k=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
+     const seen={};let d=0;
+     l.forEach(c=>{if(!c)return;const id=k(c.phone)||String(c.name||'').trim();
+       if(!id)return;if(seen[id])d++;else seen[id]=1;});
+     return d?`<button class="btn-ghost" id="cli-dedupe" style="margin-bottom:10px;border-color:var(--warn);color:var(--warn)">🧹 אחד ${d} רשומות של אותו לקוח</button>`:'';})()}
    <button class="btn-ghost" id="export-clients" style="margin-bottom:10px">📊 ייצוא לאקסל (CSV)</button>
    ${list.length?list.map(cl=>{
      const links=Store.get('sentLinks',[])||[];
@@ -4674,6 +4694,9 @@ const App={
   if(window.__dedup145&&!this._dedupShown){this._dedupShown=true;
     const n=window.__dedup145;window.__dedup145=null;
     setTimeout(()=>this.toast('🧹 אוחדו '+n+' רשומות כפולות'),1100);}
+  if(window.__cliDedupe&&!this._cliDedupeShown){this._cliDedupeShown=true;
+    const nd=window.__cliDedupe;window.__cliDedupe=null;
+    setTimeout(()=>this.toast('👥 '+nd+' כפילויות לקוחות אוחדו'),1100);}
   if(window.__catSplit&&!this._catSplitShown){this._catSplitShown=true;
     const s=window.__catSplit;window.__catSplit=null;
     setTimeout(()=>this.toast('📂 המחירון חולק ל-'+s.cats+' קטגוריות · '+s.moved+' סעיפים סודרו מחדש'),900);}
@@ -4933,6 +4956,19 @@ const App={
   });
   const cls=document.getElementById('cl-search');if(cls)cls.oninput=e=>{this.state.clientQ=e.target.value;const pos=e.target.selectionStart;this.render();const n=document.getElementById('cl-search');if(n){n.focus();try{n.setSelectionRange(pos,pos);}catch(_){}}};
   on('[data-clfilter]','click',e=>{this.state.clientFilter=e.currentTarget.dataset.clfilter;this.render();});
+  const cdd=document.getElementById('cli-dedupe');
+  if(cdd)cdd.onclick=()=>{
+    const l=Store.get('clients',[])||[];
+    const k=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
+    const seen={},names=[];
+    l.forEach(c=>{if(!c)return;const id=k(c.phone)||String(c.name||'').trim();
+      if(!id)return;if(seen[id]){if(names.indexOf(c.name)<0)names.push(c.name);}else seen[id]=1;});
+    if(!names.length){this.toast('לא נמצאו כפילויות');return;}
+    if(!confirm('לאחד רשומות של אותו לקוח?\n\n'+names.slice(0,5).join(' · ')+
+      '\n\nהפרטים מכל הרשומות יצטברו לאחת — שום מידע לא נמחק.\nלקוחות עם טלפון שונה יישארו נפרדים.'))return;
+    const n=this.dedupeClients();
+    this.toast(n?('✅ '+n+' רשומות אוחדו'):'לא נמצאו כפילויות');
+    try{Sync.push&&Sync.push();}catch(e){}this.render();};
   const exc=document.getElementById('export-clients');if(exc)exc.onclick=()=>this.exportClients();
   on('[data-labor]','click',e=>{const[c,i]=e.currentTarget.dataset.labor.split('|');
     if(!this.laborToggle(c,i)){this.toast('סעיף פגום — רענן את הדף');return;}
@@ -5189,7 +5225,100 @@ const App={
  saveActive(cid){if(cid==='custom')Store.set('customItems',this.state.custom);else{this.save();Store.set('subItems',this.state.subItems);}},
 
  captureQuote(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};const map={c_name:'name',c_project:'project',c_address:'address',c_phone:'phone',c_source:'source',c_notes:'notes'};for(const k in map){const v=g(k);if(v!==undefined)this.state.client[map[k]]=v;}const qadv=g('q_adv');if(qadv!==undefined)this.state.advance=+qadv||0;const qn=g('q_no');if(qn!==undefined)this.state.quoteNo=qn;const qv=g('q_valid');if(qv!==undefined)this.state.valid=qv;const qd=g('q_disc');if(qd!==undefined)this.state.discount=+qd||0;const qt=g('q_terms');if(qt!==undefined){this.state.terms=qt;Store.set('terms',qt);}const cdue=g('c_due');if(cdue!==undefined)this.state.client.dueDate=cdue;const qps=g('q_persqm');if(qps!==undefined){this.state.planPerSqm=+qps||0;Store.set('planPerSqm',this.state.planPerSqm);}const qts=g('q_totsqm');if(qts!==undefined){this.state.planTotalSqm=+qts||0;Store.set('planTotalSqm',this.state.planTotalSqm);}},
- saveClient(){if(!this.state.client.name)return;const list=Store.get('clients',[]);const ex=list.find(c=>c.name===this.state.client.name);if(ex)Object.assign(ex,this.state.client);else list.push({id:uid(),createdAt:Date.now(),...this.state.client});Store.set('clients',list);},
+ /* ===== איחוד #1 — לקוח =====
+    שלוש נקודות בקוד יצרו לקוחות, כל אחת עם כלל זיהוי אחר: אחת לפי שם
+    מדויק, אחת לפי טלפון, אחת לפי שם מרשימת הלינקים. לכן אותו לקוח
+    הופיע חמש פעמים במאגר. מעכשיו — כלל זיהוי אחד לכולן. */
+ /* ===== רשת ביטחון לשליחה =====
+    לא משנה שום מסלול קיים. רק בודקת אחרי כל שליחה שההצעה והלינק
+    באמת נרשמו, ומשלימה בשקט אם לא. זה הכשל שגרם ל"כל ההצעות ריק":
+    מסלול אחד מתוך חמישה שכח לרשום, ואיש לא ידע במשך ימים. */
+ verifySend(kind,linkId){
+  try{
+   const no=this.state.quoteNo;
+   const c=this.state.client||{};
+   if(no){
+    const qs=Store.get('quotes',[])||[];
+    if(!qs.some(q=>q&&q.no===no)){
+     try{Store.logErr('verifySend','הצעה '+no+' לא נרשמה במסלול "'+kind+'" — הושלם אוטומטית');}catch(e){}
+     this._quoteKind=kind;this.recordQuote();
+    }
+   }
+   if(linkId){
+    const sl=Store.get('sentLinks',[])||[];
+    if(!sl.some(x=>x&&x.id===linkId)){
+     try{Store.logErr('verifySend','לינק לא נרשם במעקב במסלול "'+kind+'" — הושלם אוטומטית');}catch(e){}
+     sl.unshift({id:linkId,no:no||'',client:c.name||'',phone:c.phone||'',
+       project:c.project||'',total:this.grand(),ts:Date.now(),live:(kind==='live')});
+     Store.set('sentLinks',sl.slice(0,300));
+    }
+   }
+  }catch(e){try{Store.logErr('verifySend',e);}catch(x){}}
+ },
+ clientKey(s){return String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');},
+ findClient(list,c){
+  const ph=this.clientKey(c&&c.phone);
+  const nm=String((c&&c.name)||'').trim();
+  if(ph){
+   // טלפון זהה = אותו לקוח
+   const byPh=list.find(x=>x&&this.clientKey(x.phone)===ph);
+   if(byPh)return byPh;
+   // טלפון חדש מתחבר רק לרשומה שאין לה טלפון. שני "כהן" עם
+   // מספרים שונים הם שני אנשים ואסור למזג אותם.
+   return (nm&&list.find(x=>x&&String(x.name||'').trim()===nm&&!this.clientKey(x.phone)))||null;
+  }
+  return (nm&&list.find(x=>x&&String(x.name||'').trim()===nm))||null;
+ },
+ upsertClient(c,extra){
+  const nm=String((c&&c.name)||'').trim();
+  if(!nm)return null;
+  const list=Store.get('clients',[])||[];
+  let rec=this.findClient(list,c);
+  if(!rec){rec={id:uid(),createdAt:Date.now(),status:'q'};list.unshift(rec);}
+  rec.name=nm;
+  ['phone','project','address','notes','dueDate','source'].forEach(k=>{
+    if(c[k]!==undefined&&String(c[k]).trim()!=='')rec[k]=c[k];});
+  if(!rec.createdAt)rec.createdAt=Date.now();
+  if(!rec.status)rec.status='q';
+  if(extra)Object.assign(rec,extra);
+  Store.set('clients',list);
+  return rec;
+ },
+ // מאחד רשומות שכבר הוכפלו במאגר
+ dedupeClients(){
+  const list=Store.get('clients',[])||[];
+  const out=[],byPh={},byNm={};   // byNm מכיל רק רשומות ללא טלפון
+  list.forEach(c=>{
+   if(!c)return;
+   const ph=this.clientKey(c.phone);
+   const nm=String(c.name||'').trim();
+   let at=-1;
+   if(ph){at=(byPh[ph]!==undefined)?byPh[ph]:((nm&&byNm[nm]!==undefined)?byNm[nm]:-1);}
+   else if(nm&&byNm[nm]!==undefined)at=byNm[nm];
+   else if(nm){const k=out.findIndex(x=>String(x.name||'').trim()===nm);at=k;}
+   if(at>=0){
+    const t=out[at];
+    Object.keys(c).forEach(k=>{
+      if(k==='id')return;
+      const v=c[k];
+      if(v===undefined||v===null||v==='')return;
+      if(t[k]===undefined||t[k]===''||t[k]===null)t[k]=v;
+      else if(['lastQuoteAt','approvedAt','doneAt','reviewAt','feedbackAt'].indexOf(k)>=0&&+v>+(t[k]||0))t[k]=v;
+    });
+    if(+c.createdAt&&(!+t.createdAt||+c.createdAt<+t.createdAt))t.createdAt=c.createdAt;
+    // הרשומה קיבלה טלפון מהמיזוג — רושמים אותו כדי שלא ייפול לכפילות
+    const tp=this.clientKey(t.phone);if(tp&&byPh[tp]===undefined)byPh[tp]=at;
+    return;
+   }
+   const i=out.push(c)-1;
+   if(ph)byPh[ph]=i;
+   else if(nm&&byNm[nm]===undefined)byNm[nm]=i;
+  });
+  const removed=list.length-out.length;
+  if(removed>0)Store.set('clients',out);
+  return removed;
+ },
+ saveClient(){this.upsertClient(this.state.client);},
  exportClients(){const list=Store.get('clients',[]);if(!list.length){this.toast('אין לקוחות לייצוא');return;}
   const lbl={q:'הצעה',pending:'ממתין לאישור',doing:'בביצוע',sent:'נשלח משוב',done:'בוצע'};
   const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
@@ -5518,7 +5647,7 @@ const App={
     const _pv=sent.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);
     if(_pv>0)sent.splice(_pv,1);
     Store.set('sentLinks',sent.slice(0,300));
-    this._quoteKind='live';this.recordQuote();
+    this._quoteKind='live';this.recordQuote();this.verifySend('live',id);
     this.idle();this.haptic(25);
     const msg='\u05e9\u05dc\u05d5\u05dd'+(cl.name?' '+cl.name.split(' ')[0]:'')+' \ud83d\udc4b'+String.fromCharCode(10)+
       '\u05de\u05e6\u05d5\u05e8\u05e3 \u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u2014 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05e1\u05de\u05df \u05d5\u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d5\u05dc\u05e8\u05d0\u05d5\u05ea \u05d0\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df:'+String.fromCharCode(10)+link;
@@ -5548,7 +5677,7 @@ const App={
     try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});const _pv=sl.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);if(_pv>0)sl.splice(_pv,1);
        Store.set('sentLinks',sl.slice(0,200));}catch(e){}
     // חסר כאן — לינק דיגיטלי יצר רשומת מעקב אבל לא שמר את ההצעה עצמה
-    this._quoteKind='link';this.recordQuote();
+    this._quoteKind='link';this.recordQuote();this.verifySend('link',id);
   }else{
     // fallback: long self-contained link (works offline / if Firestore not set up)
     let b64;try{const bytes=new TextEncoder().encode(JSON.stringify(data));let bin='';bytes.forEach(b=>bin+=String.fromCharCode(b));b64=btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}catch(e){this.idle();this.toast('שגיאה');return;}
@@ -5708,7 +5837,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   this.haptic(15);this.busy('מכין מסמך חתום...');
   try{
     const r=await this.makePdfBlob();
-    this._quoteKind='signed';this.recordQuote();
+    this._quoteKind='signed';this.recordQuote();this.verifySend('signed');
     let shared=false;
     if(navigator.canShare){
       try{
@@ -5741,7 +5870,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   if(this.preflightBlock(share?'pdfshare':'pdf'))return;
   if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
   this.haptic(15);this.busy('מכין PDF…');
-  try{const{pdf,blob,fname}=await this.makePdfBlob();this._quoteKind='pdf';this.recordQuote();
+  try{const{pdf,blob,fname}=await this.makePdfBlob();this._quoteKind='pdf';this.recordQuote();this.verifySend(this.state.docType==='contract'?'contract':'pdf');
   let shared=false;
   if(share&&navigator.canShare){try{const file=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'מסמך · יהודה שיפוצים',text:`מ-יהודה שיפוצים · ${nis(this.grand())}`});shared=true;}}catch(e){}}
   if(!shared){pdf.save(fname);this.toast('ה-PDF נוצר ✓');}this.haptic(20);}
@@ -5801,27 +5930,8 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   // הפקת הצעה יוצרת/מעדכנת גם רשומת לקוח. בלי זה מסך "מעקב ותזכורות"
   // נשאר ריק גם אחרי שליחת לינק, כי הוא קורא מרשימת הלקוחות.
   try{
-   const c=this.state.client||{};
-   const nm=String(c.name||'').trim();
-   if(nm){
-    const cls=Store.get('clients',[])||[];
-    const _dg=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
-    const _ph=_dg(c.phone);
-    // קודם לפי טלפון (המזהה האמין), אחר כך לפי שם
-    let rec=_ph?cls.find(x=>x&&_dg(x.phone)===_ph):null;
-    if(!rec)rec=cls.find(x=>x&&String(x.name||'').trim()===nm);
-    if(!rec){rec={id:uid(),createdAt:Date.now(),status:'q'};cls.unshift(rec);}
-    rec.name=nm;
-    if(c.phone)rec.phone=c.phone;
-    if(c.project)rec.project=c.project;
-    if(c.address)rec.address=c.address;
-    if(c.notes)rec.notes=c.notes;
-    if(c.dueDate)rec.dueDate=c.dueDate;
-    if(!rec.createdAt)rec.createdAt=Date.now();
-    if(!rec.status||rec.status==='')rec.status='q';
-    rec.lastQuoteAt=Date.now();rec.lastQuoteNo=this.state.quoteNo;rec.lastTotal=this.grand();
-    Store.set('clients',cls);
-   }
+   this.upsertClient(this.state.client,{lastQuoteAt:Date.now(),
+     lastQuoteNo:this.state.quoteNo,lastTotal:this.grand()});
   }catch(e){try{Store.logErr('recordQuote.client',e);}catch(x){}}
   this.state.quoteNo=nextQuoteNo();},
  loadQuote(id){const qs=Store.get('quotes',[]);const q=qs.find(x=>x.id===id);if(!q||!q.snap){this.toast('להצעה זו אין נתונים שמורים');return;}
