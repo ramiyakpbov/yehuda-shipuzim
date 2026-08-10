@@ -1139,7 +1139,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='15.7';
+const VERSION='15.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1293,7 +1293,10 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">אנדרואיד · Chrome</div>
+   b:`<div class="g-plate"><div class="g-ph">v15.8 — בידוד אחסון</div>
+   <ul class="g-ul"><li><b>מפתחות האחסון קיבלו קידומת <code>ys:</code></b> — שתי האפליקציות (יהודה וארתור) יושבות על אותו דומיין ולכן חלקו את אותו אחסון מקומי. הצעות, לקוחות ומחירון של האחד נכתבו על השני. מעכשיו כל אפליקציה במרחב משלה. הנתונים הקיימים הועברו אוטומטית.</li>
+   <li><b>נבדק</b> — שתי האפליקציות על אותו localStorage: כל אחת רואה רק את ההצעות, הלקוחות, המחירון, קוד הגישה ומפתחות ה-AI שלה. אפס דליפה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">אנדרואיד · Chrome</div>
    <ol class="g-ol"><li>פותחים את הכתובת בכרום</li><li>תפריט שלוש נקודות</li><li><b>הוסף למסך הבית</b></li></ol></div>
    <div class="g-plate"><div class="g-ph">אייפון · Safari בלבד</div>
    <ol class="g-ol"><li>פותחים <b>בספארי</b> — לא בכרום</li><li>כפתור השיתוף בתחתית</li><li>גוללים ובוחרים <b>הוסף למסך הבית</b></li></ol></div>
@@ -1833,9 +1836,16 @@ const SUGGEST_RULES={
 
 
 /* ===== storage ===== */
+/* ===== בידוד אחסון =====
+   שתי האפליקציות יושבות על אותו דומיין (ramiyakpbov.github.io) ולכן
+   חולקות את אותו localStorage. בלי קידומת לכל מפתח, הצעות ולקוחות
+   של יהודה ושל ארתור נכתבים זה על זה. NS מפריד ביניהם לחלוטין. */
+const NS='ys:';
 const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
- return{get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
- set(k,v){try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;Store._lastErr=null;return true;}
+ const K=k=>(String(k).indexOf(NS)===0?k:NS+k);
+ return{ns:NS,raw:K,
+ get(k,d){try{k=K(k);const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d;}catch(e){return d;}},
+ set(k,v){k=K(k);try{const s=JSON.stringify(v);if(ok)localStorage.setItem(k,s);else mem[k]=s;Store._lastErr=null;return true;}
    catch(e){
      Store._lastErr=e;
      // מכסת האחסון נגמרה. סולם פינוי — אחרי כל שלב מנסים לכתוב שוב.
@@ -1844,18 +1854,18 @@ const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');
      const tryWrite=()=>{try{const s2=JSON.stringify(v);if(ok)localStorage.setItem(k,s2);else mem[k]=s2;
        Store._lastErr=null;Store._trimmed=true;return true;}catch(x){return false;}};
      const steps=[
-       ()=>{localStorage.removeItem('ys_autobackup');},                       // גיבוי הצלה — הכי כבד
-       ()=>{localStorage.removeItem('errLog');},
-       ()=>{['trans_ar','trans_en','trans_ru'].forEach(t=>localStorage.removeItem(t));},
-       ()=>{const q=JSON.parse(localStorage.getItem('quotes')||'[]');
-            if(Array.isArray(q)&&q.length)localStorage.setItem('quotes',
+       ()=>{localStorage.removeItem(NS+'ys_autobackup');},                       // גיבוי הצלה — הכי כבד
+       ()=>{localStorage.removeItem(NS+'errLog');},
+       ()=>{['trans_ar','trans_en','trans_ru'].forEach(t=>localStorage.removeItem(NS+t));},
+       ()=>{const q=JSON.parse(localStorage.getItem(NS+'quotes')||'[]');
+            if(Array.isArray(q)&&q.length)localStorage.setItem(NS+'quotes',
               JSON.stringify(q.slice(0,40).map((x,i)=>i<8?x:Object.assign({},x,{snap:null,sig:''}))));},
-       ()=>{const s3=JSON.parse(localStorage.getItem('sentLinks')||'[]');
-            if(Array.isArray(s3)&&s3.length>60)localStorage.setItem('sentLinks',JSON.stringify(s3.slice(0,60)));},
-       ()=>{const r=JSON.parse(localStorage.getItem('reviewLinks')||'[]');
-            if(Array.isArray(r)&&r.length>40)localStorage.setItem('reviewLinks',JSON.stringify(r.slice(0,40)));},
-       ()=>{const q=JSON.parse(localStorage.getItem('quotes')||'[]');
-            if(Array.isArray(q))localStorage.setItem('quotes',JSON.stringify(q.slice(0,15).map(x=>Object.assign({},x,{snap:null,sig:''}))));}
+       ()=>{const s3=JSON.parse(localStorage.getItem(NS+'sentLinks')||'[]');
+            if(Array.isArray(s3)&&s3.length>60)localStorage.setItem(NS+'sentLinks',JSON.stringify(s3.slice(0,60)));},
+       ()=>{const r=JSON.parse(localStorage.getItem(NS+'reviewLinks')||'[]');
+            if(Array.isArray(r)&&r.length>40)localStorage.setItem(NS+'reviewLinks',JSON.stringify(r.slice(0,40)));},
+       ()=>{const q=JSON.parse(localStorage.getItem(NS+'quotes')||'[]');
+            if(Array.isArray(q))localStorage.setItem(NS+'quotes',JSON.stringify(q.slice(0,15).map(x=>Object.assign({},x,{snap:null,sig:''}))));}
      ];
      for(let i=0;i<steps.length;i++){
        try{steps[i]();}catch(x){}
@@ -1865,7 +1875,8 @@ const Store=(()=>{let mem={};const ok=(()=>{try{localStorage.setItem('__t','1');
  // מה תופס מקום — לאבחון מהיר בהגדרות
  usage(){const out=[];let total=0;
    try{for(const k in localStorage){if(!Object.prototype.hasOwnProperty.call(localStorage,k))continue;
-     const n=(localStorage[k]||'').length;total+=n;out.push({k:k,kb:Math.round(n/1024)});}}catch(e){}
+     if(k.indexOf(NS)!==0)continue;
+     const n=(localStorage[k]||'').length;total+=n;out.push({k:k.slice(NS.length),kb:Math.round(n/1024)});}}catch(e){}
    out.sort((a,b)=>b.kb-a.kb);
    return {total:Math.round(total/1024),top:out.slice(0,6)};
  },
@@ -2335,6 +2346,29 @@ try{
    try{Store.set('catalogSig','');}catch(e){}
  }
 }catch(e){try{Store.logErr('catSplit',e);}catch(x){}}
+
+
+/* העברה חד-פעמית: מפתחות ישנים ללא קידומת שייכים לאפליקציה הזו */
+try{
+ if(!localStorage.getItem(NS+'nsMigrated')){
+   let moved=0;
+   const keys=[];
+   for(const k in localStorage){
+     if(!Object.prototype.hasOwnProperty.call(localStorage,k))continue;
+     if(k.indexOf(':')>=0)continue;           // כבר ממורחב
+     if(k==='__t')continue;
+     keys.push(k);
+   }
+   keys.forEach(k=>{
+     try{
+       if(localStorage.getItem(NS+k)===null){localStorage.setItem(NS+k,localStorage.getItem(k));moved++;}
+       localStorage.removeItem(k);
+     }catch(e){}
+   });
+   localStorage.setItem(NS+'nsMigrated','1');
+   if(moved)window.__nsMoved=moved;
+ }
+}catch(e){}
 
 /* v12.3 — תיקון נתונים: סעיפים שנוספו ע"י AI ללא id היו בלתי ניתנים לעריכה */
 try{
@@ -3985,7 +4019,7 @@ const App={
    <div id="voice-log" style="margin-top:12px"></div>`;
  },
  backupModal(){
-  const lastBk=(()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw)return 'עדיין אין גיבוי אוטומטי מקומי';const t=JSON.parse(raw).t;return '✅ גיבוי אוטומטי אחרון: '+new Date(t).toLocaleString('he-IL');}catch(e){return '';}})();
+  const lastBk=(()=>{try{const raw=localStorage.getItem(NS+'ys_autobackup');if(!raw)return 'עדיין אין גיבוי אוטומטי מקומי';const t=JSON.parse(raw).t;return '✅ גיבוי אוטומטי אחרון: '+new Date(t).toLocaleString('he-IL');}catch(e){return '';}})();
   return `<h2>💾 גיבוי ושחזור <button class="x" data-close>✕</button></h2>
    <div style="font-size:12.5px;color:var(--muted);margin-bottom:16px">כל הנתונים שלך — לקוחות, מחירון, הצעות והגדרות — במקום אחד.</div>
    <div class="sec-title">☁️ גיבוי בענן</div>
@@ -4714,7 +4748,7 @@ const App={
   document.querySelectorAll('[data-updateprice]').forEach(btn=>{btn.onclick=()=>{const i=+btn.dataset.updateprice;const it=(this._priceFresh||[])[i];if(!it)return;if(this.applyPriceUpdate(it.name,it.suggest)){btn.textContent='✓ עודכן';btn.style.background='var(--muted)';btn.disabled=true;this.haptic(20);this.toast('המחיר עודכן ונשמר ✓');}else{this.toast('הפריט לא נמצא במחירון (אולי סעיף מותאם)');}};});
   const uap=document.getElementById('update-all-prices');if(uap)uap.onclick=()=>{const arr=this._priceFresh||[];let n=0;arr.forEach(it=>{if(this.applyPriceUpdate(it.name,it.suggest))n++;});this._priceFresh=null;this.state.modal=null;this.haptic(25);this.toast(n>0?('עודכנו '+n+' מחירים ונשמרו ✓'):'לא נמצאו פריטים לעדכון');this.render();};
   const fsk=document.getElementById('fresh-skip');if(fsk)fsk.onclick=()=>{this._priceFresh=null;this.state.modal=null;this.render();};
-  const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem('ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
+  const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem(NS+'ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   const tth=document.getElementById('theme-toggle');if(tth)tth.onclick=()=>{const t=Store.get('theme','dark')==='light'?'dark':'light';Store.set('theme',t);applyTheme();this.render();};
   const gop=document.getElementById('go-production');if(gop)gop.onclick=async()=>{
     const c=prompt('🚀 מעבר לפרודקשן — מחיקה סופית\n\nיימחקו לצמיתות, כולל מהענן:\n• כל הלקוחות\n• כל ההצעות\n• כל לינקי המעקב והמשובים\n• כל התזכורות\n• גיבוי ההצלה המקומי\n\nלא ניתן לשחזר. גם לא מגיבוי.\n\nהמחירון, המחירים וההגדרות יישמרו.\n\nהזן קוד אישור:');
@@ -4728,7 +4762,7 @@ const App={
     this.state.subItems={};Store.set('subItems',{});
     this._trackData=null;
     // אין שחזור: מוחקים גם את גיבוי ההצלה המקומי ואת תמונות הענן
-    try{localStorage.removeItem('ys_autobackup');}catch(e){}
+    try{localStorage.removeItem(NS+'ys_autobackup');}catch(e){}
     try{if(window._db){const s=await window._db.collection('backups').get();
       const dels=[];s.forEach(d=>dels.push(d.ref.delete()));await Promise.all(dels);}}catch(e){try{Store.logErr('wipe',e);}catch(x){}}
     this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
@@ -4739,7 +4773,7 @@ const App={
     this.toast('✅ נמחק לצמיתות · המערכת מוכנה לפרודקשן');
     this.state.modal=null;this.render();
   };
-  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('♻️ איפוס רגיל — הפיך\\n\\nיימחקו ההצעות והלקוחות, ונשמר גיבוי שניתן לשחזר ממנו.\\nלינקי מעקב ומשובים יישארו.\\n\\nלמחיקה סופית שאי אפשר לשחזר — השתמש ב"מעבר לפרודקשן".\\n\\nהזן קוד אישור:');if(c===null)return;if(!this.gateOk(c)){this.gateDenied();return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
+  const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('♻️ איפוס רגיל — הפיך\\n\\nיימחקו ההצעות והלקוחות, ונשמר גיבוי שניתן לשחזר ממנו.\\nלינקי מעקב ומשובים יישארו.\\n\\nלמחיקה סופית שאי אפשר לשחזר — השתמש ב"מעבר לפרודקשן".\\n\\nהזן קוד אישור:');if(c===null)return;if(!this.gateOk(c)){this.gateDenied();return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem(NS+'ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
   const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
@@ -4749,6 +4783,11 @@ const App={
   if(window.__cliDedupe&&!this._cliDedupeShown){this._cliDedupeShown=true;
     const nd=window.__cliDedupe;window.__cliDedupe=null;
     setTimeout(()=>this.toast('👥 '+nd+' כפילויות לקוחות אוחדו'),1100);}
+  if(window.__nsMoved&&!this._nsShown){this._nsShown=true;
+    const nm=window.__nsMoved;window.__nsMoved=null;
+    setTimeout(()=>this.toast('🔐 האחסון הופרד — '+nm+' מפתחות הועברו'),900);}
+  if(window.__nsFresh&&!this._nsShown){this._nsShown=true;window.__nsFresh=null;
+    setTimeout(()=>this.toast('🔐 אחסון נפרד הופעל · מעקב ← ☁️ שחזר מהענן'),900);}
   if(window.__catSplit&&!this._catSplitShown){this._catSplitShown=true;
     const s=window.__catSplit;window.__catSplit=null;
     setTimeout(()=>this.toast('📂 המחירון חולק ל-'+s.cats+' קטגוריות · '+s.moved+' סעיפים סודרו מחדש'),900);}
@@ -4819,8 +4858,8 @@ const App={
   if(sc)sc.onclick=()=>{
     if(!confirm('לפנות מקום?\n\nיימחקו: גיבוי ההצלה המקומי, יומן תקלות, ומטמון התרגומים.\nההצעות, הלקוחות והמחירון לא ייפגעו.'))return;
     const before=Store.usage().total;
-    try{localStorage.removeItem('ys_autobackup');localStorage.removeItem('errLog');
-      ['trans_ar','trans_en','trans_ru'].forEach(t=>localStorage.removeItem(t));}catch(e){}
+    try{localStorage.removeItem(NS+'ys_autobackup');localStorage.removeItem(NS+'errLog');
+      ['trans_ar','trans_en','trans_ru'].forEach(t=>localStorage.removeItem(NS+t));}catch(e){}
     const after=Store.usage().total;
     this.toast('פונו '+Math.max(0,before-after)+' KB');this.render();
   };
@@ -6185,7 +6224,7 @@ applyTheme();
 })();
 
 /* ===== auto-backup on every open (local snapshot, no friction) ===== */
-try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem('ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
+try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem(NS+'ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));}catch(e){}
 /* attempt silent Drive backup only if already authorized this session */
 try{
   // גיבוי מתוזמן לדרייב — אחת לשבוע
