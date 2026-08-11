@@ -237,6 +237,33 @@ input,select,textarea{font-family:inherit;}
   border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;margin-top:6px;}
 .pe-add.free{border-color:var(--red);color:var(--red);margin-top:12px;padding:11px;}
 .pe-add:active{transform:scale(.99);}
+.pi-tip{font-size:12.5px;color:var(--muted);background:var(--bg3);border:1px solid var(--line);
+  border-radius:11px;padding:10px 12px;margin-bottom:12px;line-height:1.6;}
+.pi-tip code{background:var(--bg2);padding:1px 6px;border-radius:5px;font-size:11.5px;}
+.pi-area{width:100%;height:190px;background:var(--bg2);border:1px solid var(--line);color:var(--txt);
+  border-radius:11px;padding:11px;font-size:12.5px;font-family:monospace;direction:ltr;text-align:left;
+  margin-bottom:10px;resize:vertical;}
+.pi-stats{display:flex;gap:7px;margin-bottom:12px;}
+.pi-s{flex:1;background:var(--bg3);border:1px solid var(--line);border-radius:11px;padding:9px 4px;text-align:center;}
+.pi-s b{display:block;font-size:19px;line-height:1.2;}
+.pi-s span{font-size:10.5px;color:var(--muted);}
+.pi-warn{font-size:11.5px;color:var(--warn);background:rgba(245,166,35,.08);
+  border:1px solid rgba(245,166,35,.28);border-radius:10px;padding:8px 11px;margin-bottom:10px;line-height:1.55;}
+.pi-sec{font-size:12.5px;font-weight:800;margin:14px 0 8px;padding-top:10px;border-top:1px solid var(--line);}
+.pi-list{max-height:340px;overflow:auto;}
+.pi-row{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:8px 11px;margin-bottom:6px;
+  position:relative;overflow:hidden;}
+.pi-row::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;}
+.pi-row.up::before{background:var(--ok);} .pi-row.down::before{background:var(--blue);}
+.pi-n{flex:1;min-width:0;font-size:12.5px;font-weight:600;line-height:1.35;}
+.pi-c{display:block;font-size:10px;color:var(--muted);font-weight:500;margin-top:2px;}
+.pi-p{flex:none;display:flex;align-items:center;gap:5px;font-size:12.5px;direction:ltr;white-space:nowrap;}
+.pi-o{color:var(--muted);text-decoration:line-through;font-size:11.5px;}
+.pi-a{color:var(--muted);font-size:10px;}
+.pi-d{font-size:10.5px;font-weight:800;}
+.pi-row.up .pi-d{color:var(--ok);} .pi-row.down .pi-d{color:var(--blue);}
+.pi-more{font-size:11.5px;color:var(--muted);text-align:center;padding:8px;}
 .pf-row{display:flex;gap:10px;align-items:flex-start;background:var(--bg3);border:1px solid var(--line);
   border-radius:12px;padding:11px 12px;margin-bottom:8px;position:relative;overflow:hidden;}
 .pf-row::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;}
@@ -1139,7 +1166,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='15.8';
+const VERSION='15.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1293,7 +1320,13 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v15.8 — בידוד אחסון</div>
+   b:`<div class="g-plate"><div class="g-ph">v15.9 — 📥 עדכון מחירים מרוכז</div>
+   <ul class="g-ul"><li><b>הדבקת רשימת מחירים מ-AI ישירות לאפליקציה.</b> הגדרות ← הגדרות מפתח ← "📥 הדבק רשימת מחירים מ-AI". שורות בפורמט <code>מזהה|מחיר</code>, ואז "בדוק מה משתנה".</li>
+   <li><b>תצוגה מקדימה לפני כל שינוי</b> — כמה זוהו, כמה עלו, כמה ירדו, כמה נשארו. כל שינוי עם המחיר הישן, החדש והאחוז. <b>שינויים מעל 40% מוצגים בנפרד בראש</b>.</li>
+   <li><b>שום מחיר לא משתנה בלי אישור.</b></li>
+   <li><b>עמיד ללכלוך</b> — markdown, פסיקים, ₪, שורות זבל, כפילויות ומזהים לא מוכרים מנוקים או מדולגים. מחיר 0 או שלילי נדחה.</li>
+   <li>סעיף שלא הופיע ברשימה נשאר כפי שהוא.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.8 — בידוד אחסון</div>
    <ul class="g-ul"><li><b>מפתחות האחסון קיבלו קידומת <code>ys:</code></b> — שתי האפליקציות (יהודה וארתור) יושבות על אותו דומיין ולכן חלקו את אותו אחסון מקומי. הצעות, לקוחות ומחירון של האחד נכתבו על השני. מעכשיו כל אפליקציה במרחב משלה. הנתונים הקיימים הועברו אוטומטית.</li>
    <li><b>נבדק</b> — שתי האפליקציות על אותו localStorage: כל אחת רואה רק את ההצעות, הלקוחות, המחירון, קוד הגישה ומפתחות ה-AI שלה. אפס דליפה.</li></ul></div>
    <div class="g-plate"><div class="g-ph">אנדרואיד · Chrome</div>
@@ -2613,6 +2646,83 @@ const App={
    return null;
   }catch(e){return null;}
  },
+ /* ===== ייבוא מחירים מרוכז =====
+    מדביקים את התשובה של ג'מיני בפורמט מזהה|מחיר ומקבלים תצוגה מקדימה
+    של כל שינוי לפני שמשהו נכתב. אף מחיר לא משתנה בלי אישור. */
+ parsePriceImport(txt){
+  const idx={};
+  this.allCats().forEach(c=>(c.items||[]).forEach(it=>{if(it&&it.id)idx[it.id]={it:it,cat:c.title};}));
+  const rows=[],unknown=[];let seen={};
+  String(txt||'').split(/\r?\n/).forEach(line=>{
+   const l=line.trim();
+   if(!l||l.indexOf('|')<0)return;
+   const p=l.split('|');
+   const id=String(p[0]||'').trim();
+   // המינוס נשמר בכוונה — בלעדיו "-50" הופך ל-50 ועובר את בדיקת התקינות
+   const price=Math.round(parseFloat(String(p[1]||'').replace(/[^\d.\-]/g,'')));
+   if(!id||!isFinite(price)||price<=0)return;
+   if(seen[id])return; seen[id]=1;
+   const rec=idx[id];
+   if(!rec){unknown.push(id);return;}
+   const old=+rec.it.price||0;
+   rows.push({id:id,name:rec.it.name,cat:rec.cat,unit:rec.it.unit,
+     old:old,neu:price,diff:price-old,
+     pct:old?Math.round((price-old)/old*100):0});
+  });
+  const changed=rows.filter(r=>r.diff!==0);
+  return {rows:rows,changed:changed,unknown:unknown,
+    total:Object.keys(idx).length,
+    missing:Object.keys(idx).filter(k=>!seen[k]).length,
+    up:changed.filter(r=>r.diff>0).length,
+    down:changed.filter(r=>r.diff<0).length,
+    big:changed.filter(r=>Math.abs(r.pct)>=40).sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct))};
+ },
+
+ priceImportModal(){
+  const r=this._pxImport;
+  if(!r)return `<h2>📥 עדכון מחירים מרוכז <button class="x" data-close>✕</button></h2>
+   <div class="pi-tip">הדבק כאן את התשובה של ג'מיני — שורה לכל סעיף בפורמט <code>מזהה|מחיר</code>.<br>
+     שום מחיר לא ישתנה עד שתראה בדיוק מה משתנה ותאשר.</div>
+   <textarea id="pi-txt" class="pi-area" placeholder="dm1|135&#10;dm2|110&#10;pl1|1600&#10;..."></textarea>
+   <button class="btn-block" id="pi-scan">🔍 בדוק מה משתנה</button>`;
+
+  const row=x=>`<div class="pi-row ${x.diff>0?'up':'down'}">
+    <div class="pi-n">${esc(x.name)}<span class="pi-c">${esc(x.cat)}</span></div>
+    <div class="pi-p"><span class="pi-o">${x.old.toLocaleString()}</span>
+      <span class="pi-a">←</span>
+      <b>${x.neu.toLocaleString()}</b>
+      <span class="pi-d">${x.pct>0?'+':''}${x.pct}%</span></div></div>`;
+  return `<h2>📥 עדכון מחירים מרוכז <button class="x" data-close>✕</button></h2>
+   <div class="pi-stats">
+     <div class="pi-s"><b>${r.rows.length}</b><span>זוהו</span></div>
+     <div class="pi-s"><b style="color:var(--ok)">${r.up}</b><span>עלו</span></div>
+     <div class="pi-s"><b style="color:var(--blue)">${r.down}</b><span>ירדו</span></div>
+     <div class="pi-s"><b style="color:var(--muted)">${r.rows.length-r.changed.length}</b><span>ללא שינוי</span></div>
+   </div>
+   ${r.missing?`<div class="pi-warn">⚠️ ${r.missing} סעיפים לא הופיעו ברשימה — הם יישארו כפי שהם.</div>`:''}
+   ${r.unknown.length?`<div class="pi-warn">⚠️ ${r.unknown.length} מזהים לא מוכרים ידולגו: ${esc(r.unknown.slice(0,6).join(', '))}</div>`:''}
+   ${!r.changed.length?`<div class="empty" style="padding:22px">אף מחיר לא השתנה.<br><span style="font-size:12px">ה-AI החזיר בדיוק את המחירים הקיימים.</span></div>`
+     :`${r.big.length?`<div class="pi-sec">⚠️ שינויים חריגים — מעל 40%</div>${r.big.slice(0,12).map(row).join('')}`:''}
+       <div class="pi-sec">כל השינויים (${r.changed.length})</div>
+       <div class="pi-list">${r.changed.slice(0,120).map(row).join('')}</div>
+       ${r.changed.length>120?`<div class="pi-more">…ועוד ${r.changed.length-120} שינויים</div>`:''}
+       <button class="btn-block" id="pi-apply" style="margin-top:14px">✅ החל ${r.changed.length} שינויים</button>`}
+   <button class="btn-ghost" id="pi-back">↩︎ הדבק רשימה אחרת</button>`;
+ },
+
+ applyPriceImport(){
+  const r=this._pxImport;if(!r||!r.changed.length)return;
+  const byId={};this.allCats().forEach(c=>(c.items||[]).forEach(it=>{if(it&&it.id)byId[it.id]=it;}));
+  let n=0;
+  r.changed.forEach(x=>{const it=byId[x.id];if(!it)return;it.price=x.neu;it.priceAt=Date.now();n++;});
+  this.save();
+  Store.set('subItems',this.state.subItems);
+  Store.set('customItems',this.state.custom);
+  try{Sync.push&&Sync.push();}catch(e){}
+  this._pxImport=null;this.state.modal=null;
+  this.haptic(25);this.toast('✅ '+n+' מחירים עודכנו במחירון');this.render();
+ },
+
  priceFreshModal(){
   const arr=this._priceFresh||[];
   return `<h2>🔔 עדכון מחירון מומלץ <button class="x" data-close>✕</button></h2>
@@ -3344,7 +3454,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
+ modalView(){const m=this.state.modal;const map={priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -3446,6 +3556,9 @@ const App={
        <div style="max-height:150px;overflow:auto;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:8px 10px">${rows}</div>
        <button class="mini" id="err-clear" style="margin-top:6px">נקה יומן</button></div>`;})()}
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="snd-off" ${Store.get('soundOff',0)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>השתק צלילי סימון סעיפים</span></label></div>
+   <div class="field"><label>עדכון מחירים מרוכז</label>
+     <button class="mini" id="open-pximport" style="width:100%;padding:11px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px">📥 הדבק רשימת מחירים מ-AI</button>
+     <div style="font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.5">מזהה|מחיר בכל שורה · תצוגה מקדימה לפני שמשהו משתנה</div></div>
    <div class="field"><label>מגבלות המערכת</label>
      <div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:4px 12px 8px">${this.limitsCard()}</div></div>
    <div class="field"><label>מה תופס מקום</label>
@@ -4837,6 +4950,24 @@ const App={
     this.haptic(15);this.toast('נוסף ✓ — זמין גם להצעות הבאות');this.render();
   });
 
+  const piS=document.getElementById('pi-scan');
+  if(piS)piS.onclick=()=>{
+    const t=document.getElementById('pi-txt');
+    const v=t?t.value:'';
+    if(!String(v).trim()){this.toast('הדבק את הרשימה קודם');return;}
+    const r=this.parsePriceImport(v);
+    if(!r.rows.length){this.toast('לא זוהתה אף שורה בפורמט מזהה|מחיר');return;}
+    this._pxImport=r;this.haptic(12);this.render();
+  };
+  const piB=document.getElementById('pi-back');
+  if(piB)piB.onclick=()=>{this._pxImport=null;this.render();};
+  const piA=document.getElementById('pi-apply');
+  if(piA)piA.onclick=()=>{
+    const r=this._pxImport;
+    if(!confirm('להחיל '+r.changed.length+' שינויי מחיר?\n\n'+
+      r.up+' יעלו · '+r.down+' ירדו\nהשינוי נשמר במחירון ומסתנכרן לכל המכשירים.'))return;
+    this.applyPriceImport();
+  };
   const pfF=document.getElementById('pf-fix');
   if(pfF)pfF.onclick=()=>{this.state.modal='quote';this.render();};
   const pfS=document.getElementById('pf-send');
@@ -4854,6 +4985,8 @@ const App={
   if(pfOpen)pfOpen.onclick=()=>{this.captureQuote();this._preflight=this.preflight();this._pfAction=null;this.state.modal='preflight';this.render();};
   const qrb=document.getElementById('q-rebuild');
   if(qrb)qrb.onclick=()=>this.rebuildQuotesFromLinks();
+  const opi=document.getElementById('open-pximport');
+  if(opi)opi.onclick=()=>{this._pxImport=null;this.state.modal='priceimport';this.render();};
   const sc=document.getElementById('stg-clean');
   if(sc)sc.onclick=()=>{
     if(!confirm('לפנות מקום?\n\nיימחקו: גיבוי ההצלה המקומי, יומן תקלות, ומטמון התרגומים.\nההצעות, הלקוחות והמחירון לא ייפגעו.'))return;
