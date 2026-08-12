@@ -237,6 +237,87 @@ input,select,textarea{font-family:inherit;}
   border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;margin-top:6px;}
 .pe-add.free{border-color:var(--red);color:var(--red);margin-top:12px;padding:11px;}
 .pe-add:active{transform:scale(.99);}
+ /* אדום = פעולה הרסנית ואזהרה בלבד. כותרות וסכומים היו אדומים
+    גם הם, וכשהכל דחוף — כלום לא בולט. */
+.sec-title{color:var(--txt)!important;}
+.cat-sum{color:var(--txt)!important;}
+h2{color:var(--txt)!important;}
+.cc-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap;}
+.cc-meta{font-size:12.5px;color:var(--muted);flex:1;min-width:0;}
+.cc-stats{display:flex;gap:7px;margin:12px 0;}
+.cc-s{flex:1;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:10px 4px;text-align:center;}
+.cc-s b{display:block;font-size:19px;line-height:1.2;}
+.cc-s span{font-size:10.5px;color:var(--muted);}
+.cc-acts{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px;}
+.cc-acts .mini{flex:1 1 auto;min-width:80px;text-align:center;padding:9px 10px;font-size:12.5px;
+  background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;
+  border-radius:10px;font-weight:600;}
+.cc-acts .mini.go{flex:1 1 100%;background:var(--red)!important;border-color:var(--red)!important;
+  color:#fff!important;font-weight:800;}
+.cc-sec{font-size:12.5px;font-weight:800;margin:16px 0 8px;padding-top:11px;border-top:1px solid var(--line);}
+.cc-row{display:flex;align-items:center;justify-content:space-between;gap:9px;
+  background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:6px;font-size:13px;}
+.cc-d{font-size:11px;color:var(--muted);margin-top:2px;}
+.cc-d2{font-size:12px;color:var(--muted);padding:4px 0;}
+.ai-cta-wrap{padding:10px 12px 0;}
+.ai-cta{width:100%;display:flex;align-items:center;gap:11px;text-align:right;
+  background:linear-gradient(135deg,rgba(43,168,224,.16),rgba(43,168,224,.05));
+  border:1px solid rgba(43,168,224,.42);border-radius:14px;padding:12px 13px;color:var(--txt);}
+.ai-cta:active{transform:scale(.99);}
+.ai-cta-i{font-size:22px;flex:none;}
+.ai-cta b{display:block;font-size:14px;}
+.ai-cta small{font-size:11px;color:var(--muted);}
+.ai-cta span:nth-child(2){flex:1;min-width:0;}
+.ai-cta-a{color:var(--muted);font-size:19px;flex:none;}
+.ah-sec{font-weight:800;font-size:12.5px;margin:16px 0 8px;color:var(--muted);}
+.hm-wrap{padding:12px 12px 8px;}
+.hm-resume{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  background:linear-gradient(135deg,var(--red),var(--red-dark));border:none;border-radius:14px;
+  padding:14px;margin-bottom:12px;color:#fff;text-align:right;}
+.hm-resume b{display:block;font-size:14.5px;}
+.hm-resume span{font-size:12px;opacity:.9;}
+.hm-go{font-size:13px;font-weight:800;flex:none;}
+.hm-kpis{display:flex;gap:7px;margin-bottom:14px;}
+.hm-k{flex:1;background:var(--bg3);border:1px solid var(--line);border-radius:13px;padding:11px 4px;text-align:center;}
+.hm-k b{display:block;font-size:22px;line-height:1.15;color:var(--muted);}
+.hm-k span{font-size:10.5px;color:var(--muted);}
+.hm-k.hot{border-color:var(--red);} .hm-k.hot b{color:var(--red);}
+.hm-k.warn{border-color:var(--warn);} .hm-k.warn b{color:var(--warn);}
+.hm-k.ok b{color:var(--ok);}
+.hm-k:active{transform:scale(.97);}
+.hm-sec{font-size:12.5px;font-weight:800;color:var(--muted);margin:0 0 8px;}
+.hm-card{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:12px 13px;
+  margin-bottom:9px;position:relative;overflow:hidden;}
+.hm-card::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--line);}
+.hm-card.hot::before{background:var(--red);} .hm-card.warn::before{background:var(--warn);}
+.hm-top{display:flex;gap:10px;}
+.hm-n{font-weight:800;font-size:15px;}
+.hm-s{font-size:12px;color:var(--muted);margin-top:3px;}
+.hm-acts{display:flex;gap:7px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);}
+.hm-acts .mini{flex:1;text-align:center;padding:9px 8px;font-size:12.5px;
+  background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;
+  border-radius:10px;font-weight:600;}
+.hm-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
+.hm-clean{text-align:center;padding:26px 10px;background:var(--bg3);border:1px solid var(--line);border-radius:14px;}
+.hm-new{width:100%;background:var(--bg2);border:1px dashed var(--line);color:var(--txt);
+  border-radius:14px;padding:15px;font-size:14.5px;font-weight:800;margin:14px 0 12px;}
+.hm-new:active{transform:scale(.99);}
+.hm-quick{display:flex;gap:7px;flex-wrap:wrap;}
+.hm-q{flex:1 1 22%;min-width:76px;background:var(--bg3);border:1px solid var(--line);
+  border-radius:12px;padding:10px 5px;text-align:center;}
+.hm-q b{display:block;font-size:17px;line-height:1.2;}
+.hm-q span{font-size:10.5px;color:var(--muted);}
+.tabbar{position:fixed;inset-inline:0;bottom:0;z-index:60;display:flex;
+  background:var(--bg2);border-top:1px solid var(--line);padding:5px 4px calc(5px + env(safe-area-inset-bottom));}
+.tb{flex:1;background:none;border:none;color:var(--muted);padding:6px 2px;display:flex;
+  flex-direction:column;align-items:center;gap:2px;-webkit-tap-highlight-color:transparent;}
+.tb-i{font-size:19px;line-height:1;position:relative;}
+.tb-l{font-size:10.5px;font-weight:700;}
+.tb.on{color:var(--red);}
+.tb-d{position:absolute;top:-4px;inset-inline-end:-9px;background:var(--red);color:#fff;
+  border-radius:20px;min-width:15px;height:15px;font-size:9.5px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;padding:0 3px;}
+body.has-tabs{padding-bottom:150px;}
 .pi-tip{font-size:12.5px;color:var(--muted);background:var(--bg3);border:1px solid var(--line);
   border-radius:11px;padding:10px 12px;margin-bottom:12px;line-height:1.6;}
 .pi-tip code{background:var(--bg2);padding:1px 6px;border-radius:5px;font-size:11.5px;}
@@ -1166,7 +1247,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='15.9';
+const VERSION='16.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1320,7 +1401,14 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v15.9 — 📥 עדכון מחירים מרוכז</div>
+   b:`<div class="g-plate"><div class="g-ph">v16.0 — עיצוב מחדש</div>
+   <ul class="g-ul"><li><b>🏠 מרכז הבית</b> — האפליקציה נפתחה על המחירון, אבל רוב הזמן השאלה היא "מה קורה עם ההצעות ששלחתי". עכשיו הפתיחה מציגה כמה פג תוקפן, כמה נצפו ולא אושרו, כמה ממתינות — ומתחת רשימת "דורש טיפול" עם חיוג ותזכורת בלחיצה. המחירון עבר מאחורי "➕ הצעה חדשה".</li>
+   <li><b>שלוש לשוניות בתחתית</b> — 🏠 בית · 🧮 הצעה · 📤 מעקב. כל 41 המסכים נשארו, אבל כבר לא כולם צועקים באותה עוצמה.</li>
+   <li><b>✨ כפתור AI אחד</b> — שבע דרכים להכניס סעיפים (קול, צילום, PDF, הקלטה, צילום מסך, הדבקה, לכוד מהיר) היו שבעה כפתורים נפרדים. עכשיו כפתור אחד בולט שפותח בורר מקובץ.</li>
+   <li><b>מסך ההצעה מתקפל</b> — שבעה מקטעים (הנחה, חומרים, תנאי תשלום, חתימה, גלריה, שפה) היו פרושים בבת אחת. נפתחים בלחיצה. השדות היומיומיים נשארו גלויים.</li>
+   <li><b>פחות אדום</b> — 98 מופעים של אדום הפכו אותו לחסר משמעות. כותרות וסכומים עברו ללבן. אדום נשמר לאזהרות ולפעולות הרסניות.</li>
+   <li><b>👤 כרטיס לקוח מלא</b> — המידע היה מפוזר בארבעה מסכים. עכשיו במקום אחד: הצעות, סכום מצטבר, מה הוא הוריד מההצעות, וכל הפעולות. נכנסים ממאגר הלקוחות.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v15.9 — 📥 עדכון מחירים מרוכז</div>
    <ul class="g-ul"><li><b>הדבקת רשימת מחירים מ-AI ישירות לאפליקציה.</b> הגדרות ← הגדרות מפתח ← "📥 הדבק רשימת מחירים מ-AI". שורות בפורמט <code>מזהה|מחיר</code>, ואז "בדוק מה משתנה".</li>
    <li><b>תצוגה מקדימה לפני כל שינוי</b> — כמה זוהו, כמה עלו, כמה ירדו, כמה נשארו. כל שינוי עם המחיר הישן, החדש והאחוז. <b>שינויים מעל 40% מוצגים בנפרד בראש</b>.</li>
    <li><b>שום מחיר לא משתנה בלי אישור.</b></li>
@@ -2649,6 +2737,145 @@ const App={
  /* ===== ייבוא מחירים מרוכז =====
     מדביקים את התשובה של ג'מיני בפורמט מזהה|מחיר ומקבלים תצוגה מקדימה
     של כל שינוי לפני שמשהו נכתב. אף מחיר לא משתנה בלי אישור. */
+ /* ===== מרכז הבית =====
+    האפליקציה נפתחה על המחירון — כלי לבניית הצעה. אבל רוב הזמן
+    השאלה היא "מה קורה עם ההצעות ששלחתי", לא "איזה סעיף להוסיף".
+    כאן זה הופך למסך פתיחה שמראה מצב, והמחירון עובר מאחורי כפתור. */
+ /* המידע על לקוח היה מפוזר בארבעה מסכים: לקוחות, מעקב, הצעות, תמונות.
+    כאן הוא במקום אחד — היסטוריה, מה הוא הוריד, וכל הפעולות. */
+ clientCardModal(){
+  const id=this._ccId;
+  const cl=(Store.get('clients',[])||[]).find(x=>x&&x.id===id);
+  if(!cl)return `<h2>לקוח <button class="x" data-close>✕</button></h2><div class="empty">הלקוח לא נמצא</div>`;
+  const nm=String(cl.name||'').trim();
+  const key=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
+  const ph=key(cl.phone);
+  const links=(Store.get('sentLinks',[])||[]).filter(l=>l&&(key(l.phone)===ph||String(l.client||'').trim()===nm));
+  const quotes=(Store.get('quotes',[])||[]).filter(q=>q&&String(q.client||'').trim()===nm);
+  const td=this._trackData||{};
+  const dropped={},total=quotes.reduce((a,q)=>a+(+q.grand||0),0);
+  links.forEach(l=>{const d=td[l.id]||{};(d.events||[]).forEach(e=>{
+    if(e&&e.a==='off'&&e.n)dropped[String(e.n).trim()]=(dropped[String(e.n).trim()]||0)+1;});});
+  const dropList=Object.keys(dropped).sort((a,b)=>dropped[b]-dropped[a]).slice(0,4);
+  const st=this.dealStage(links[0],td[(links[0]||{}).id]||{},cl);
+  const phd=String(cl.phone||'').replace(/[^0-9+]/g,'');
+  const dt=t=>new Date(t).toLocaleDateString('he-IL');
+  return `<h2>${esc(nm)} <button class="x" data-close>✕</button></h2>
+   <div class="cc-head">
+     <span class="cl-pill" style="background:${st.cur.c}">${st.cur.i} ${st.cur.n}</span>
+     <div class="cc-meta">${[cl.phone?esc(cl.phone):'',cl.project?esc(cl.project):'',cl.address?esc(cl.address):''].filter(Boolean).join(' · ')||'ללא פרטים'}</div>
+   </div>
+   ${cl.notes?`<div class="cl-note">📝 ${esc(cl.notes)}</div>`:''}
+   <div class="cc-stats">
+     <div class="cc-s"><b>${quotes.length}</b><span>הצעות</span></div>
+     <div class="cc-s"><b>${links.length}</b><span>נשלחו</span></div>
+     <div class="cc-s"><b style="font-size:15px">${total?nisR(total):'—'}</b><span>סה"כ</span></div>
+   </div>
+   <div class="cc-acts">
+     <button class="mini go" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>↩︎ טען לתוך הצעה חדשה</button>
+     ${phd?`<button class="mini" onclick="location.href='tel:${phd}'">📞 חיוג</button>`:''}
+     <button class="mini" data-review="${esc(cl.id)}">📩 משוב</button>
+     <button class="mini" data-photos="${esc(cl.id)}">📷 תמונות</button>
+   </div>
+   ${quotes.length?`<div class="cc-sec">ההצעות שלו</div>
+     ${quotes.slice(0,6).map(q=>`<div class="cc-row">
+       <div style="flex:1;min-width:0"><b>${esc(q.no||'—')}</b>
+         <div class="cc-d">${dt(q.ts)}${q.kinds&&q.kinds.length?' · '+esc(q.kinds.join(' · ')):''}</div></div>
+       <b style="white-space:nowrap;direction:ltr">${nisR(+q.grand||0)}</b></div>`).join('')}`:''}
+   ${dropList.length?`<div class="cc-sec">📉 מה הוא הוריד מההצעות</div>
+     ${dropList.map(n=>`<div class="cc-d2">${esc(n)}${dropped[n]>1?' — '+dropped[n]+' פעמים':''}</div>`).join('')}`:''}
+   ${!quotes.length&&!links.length?`<div class="empty" style="padding:20px">עוד לא נשלחה לו הצעה</div>`:''}`;
+ },
+
+ homeState(){
+  const now=Date.now();
+  const links=Store.get('sentLinks',[])||[];
+  const clients=Store.get('clients',[])||[];
+  const td=this._trackData||{};
+  let waiting=0,viewed=0,approved=0,expired=0,liveOpen=0;
+  const hot=[];
+  links.slice(0,80).forEach(l=>{
+   if(!l||!l.id)return;
+   const d=td[l.id]||{};
+   const age=Math.floor((now-(l.ts||now))/864e5);
+   if(d.approvedAt){approved++;return;}
+   if(age>14){expired++;hot.push({l:l,age:age,kind:'expired'});return;}
+   if(d.openedAt||d.views){viewed++;hot.push({l:l,age:age,kind:'viewed'});return;}
+   waiting++;
+   if(age>=5)hot.push({l:l,age:age,kind:'stale'});
+  });
+  Object.keys(td).forEach(k=>{const d=td[k];if(d&&d.live&&(d.views||d.openedAt))liveOpen++;});
+  const order=({expired:0,viewed:1,stale:2});
+  hot.sort((a,b)=>(order[a.kind]-order[b.kind])||(b.age-a.age));
+  const openQ=this.chosen().reduce((a,g)=>a+g.lines.length,0);
+  return {waiting:waiting,viewed:viewed,approved:approved,expired:expired,
+    hot:hot.slice(0,4),openQuote:openQ,openTotal:this.grand(),
+    clients:clients.length,links:links.length};
+ },
+
+ homeView(){
+  const st=this.homeState();
+  const rem=this.reminders().length;
+  const card=(x)=>{
+   const d=(this._trackData||{})[x.l.id]||{};
+   const lbl=x.kind==='expired'?'⏰ פג תוקף':(x.kind==='viewed'?'👁 נצפתה ולא אושרה':'🕐 ממתינה');
+   const cls=x.kind==='expired'?'hot':(x.kind==='viewed'?'warn':'');
+   const age=x.age===0?'היום':(x.age===1?'אתמול':'לפני '+x.age+' ימים');
+   const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
+   return `<div class="hm-card ${cls}">
+     <div class="hm-top">
+       <div style="flex:1;min-width:0">
+         <div class="hm-n">${esc(x.l.client||'—')}</div>
+         <div class="hm-s">${lbl} · ${age}${x.l.total?' · '+nisR(x.l.total):''}</div>
+       </div>
+     </div>
+     <div class="hm-acts">
+       ${ph?`<button class="mini" onclick="location.href='tel:${ph}'">📞 חיוג</button>`:''}
+       ${x.l.phone?`<button class="mini pri" data-trknudge="${esc(x.l.id)}">📲 תזכורת</button>`:''}
+       <button class="mini" data-gotab="track">מעקב ←</button>
+     </div></div>`;};
+
+  return `<div class="hm-wrap">
+    ${st.openQuote?`<button class="hm-resume" data-gotab="build">
+       <div><b>הצעה פתוחה</b><span>${st.openQuote} סעיפים · ${nisR(st.openTotal)}</span></div>
+       <span class="hm-go">המשך ←</span></button>`:''}
+
+    <div class="hm-kpis">
+      <button class="hm-k ${st.expired?'hot':''}" data-gotab="track"><b>${st.expired}</b><span>פג תוקפן</span></button>
+      <button class="hm-k ${st.viewed?'warn':''}" data-gotab="track"><b>${st.viewed}</b><span>נצפו</span></button>
+      <button class="hm-k" data-gotab="track"><b>${st.waiting}</b><span>ממתינות</span></button>
+      <button class="hm-k ok" data-gotab="track"><b>${st.approved}</b><span>אושרו</span></button>
+    </div>
+
+    ${st.hot.length?`<div class="hm-sec">דורש טיפול</div>${st.hot.map(card).join('')}`
+      :`<div class="hm-clean"><div style="font-size:38px;line-height:1">👌</div>
+         <div style="font-weight:800;margin-top:8px">אין מה שדורש טיפול</div>
+         <div style="font-size:12px;color:var(--muted);margin-top:5px">${st.links?'כל ההצעות במעקב':'עוד לא נשלחו הצעות'}</div></div>`}
+
+    <button class="hm-new" data-gotab="build">➕ הצעה חדשה</button>
+
+    <div class="hm-quick">
+      <button class="hm-q" data-modal="clients"><b>${st.clients}</b><span>👥 לקוחות</span></button>
+      <button class="hm-q" data-modal="reminders"><b>${rem}</b><span>🔔 תזכורות</span></button>
+      <button class="hm-q" data-modal="stats"><span>📊 דוחות</span></button>
+      <button class="hm-q" data-modal="photos"><span>📷 תמונות</span></button>
+    </div>
+  </div>`;
+ },
+
+ tabBar(){
+  const t=this.state.tab||'home';
+  const st=this.homeState();
+  const badge=st.expired+st.viewed;
+  const T=(id,ic,lbl,n)=>`<button class="tb ${t===id?'on':''}" data-gotab="${id}">
+    <span class="tb-i">${ic}${n?`<span class="tb-d">${n}</span>`:''}</span><span class="tb-l">${lbl}</span></button>`;
+  return `<div class="tabbar">
+    ${T('home','🏠','בית',badge)}
+    ${T('build','🧮','הצעה',st.openQuote)}
+    ${T('track','📤','מעקב',0)}
+  </div>`;
+ },
+
  parsePriceImport(txt){
   const idx={};
   this.allCats().forEach(c=>(c.items||[]).forEach(it=>{if(it&&it.id)idx[it.id]={it:it,cat:c.title};}));
@@ -2964,6 +3191,37 @@ const App={
  // הופך כל כותרת לכפתור שפותח וסוגר את התוכן שמתחתיו.
  // אקורדיון להגדרות בלבד. כל שאר המסכים (הצעת מחיר, הצעות מהירות,
  // גיבוי, תמונות) משתמשים באותו class ואסור לגעת בהם.
+ /* מקפל את המקטעים המשניים במסך ההצעה. ארבעת השדות שבשימוש
+    יומיומי — לקוח, פרויקט, תוקף, שליחה — נשארים פתוחים תמיד. */
+ sectionizeQuote(){
+  try{
+   if(this.state.modal!=='quote')return;
+   const root=document.querySelector('.sheet');
+   if(!root)return;
+   const titles=Array.prototype.slice.call(root.querySelectorAll('.sec-title'));
+   if(!titles.length)return;
+   const st=this.state.qOpen||(this.state.qOpen={});
+   const bodies=[];
+   titles.forEach((t,idx)=>{
+    let body=t.nextElementSibling;
+    if(!(body&&body.classList.contains('acc-body'))){
+      body=document.createElement('div');body.className='acc-body';
+      let n=t.nextElementSibling;
+      while(n&&!n.classList.contains('sec-title')){const nx=n.nextElementSibling;body.appendChild(n);n=nx;}
+      t.parentNode.insertBefore(body,t.nextElementSibling);
+    }
+    t.classList.add('acc-head');
+    bodies.push(body);
+   });
+   const paint=()=>titles.forEach((t,i)=>{
+     const on=st['q'+i]===true;
+     t.classList.toggle('on',on);bodies[i].classList.toggle('on',on);});
+   titles.forEach((t,idx)=>{
+     t.onclick=()=>{st['q'+idx]=!st['q'+idx];this.state.qOpen=st;paint();this.haptic(8);};
+   });
+   paint();
+  }catch(e){}
+ },
  sectionizeSettings(){
   try{
    if(this.state.modal!=='settings')return;
@@ -3044,7 +3302,40 @@ const App={
    .replace(/\s+/g,' ').trim();},
  searchWords(q){const n=this.normTxt(q);return n?n.split(' ').filter(Boolean):[];},
 
- view(){const s=this.state,q=s.search.trim();
+ view(){
+  const tab=this.state.tab||'home';
+  if(tab!=='build')return this.shellView(tab);
+  return this.buildView();
+ },
+
+ // מעטפת ללשוניות בית ומעקב: כותרת + תוכן + שורת הלשוניות
+ shellView(tab){
+  const rem=this.reminders().length;
+  return `<div class="topbar"><div class="brand"><div class="lg"><img src="${LOGO_APP}" alt="לוגו" style="width:100%;height:auto;display:block"/></div>
+      <div><div class="name">יהודה שיפוצים</div><div class="sub">${tab==='track'?'מעקב אחרי הצעות':'מרכז הבית'}</div></div>
+      <div class="spacer"></div>
+      <button class="icon-btn" data-modal="reminders">🔔${rem?`<span class="dot">${rem}</span>`:''}</button>
+      <button class="icon-btn" data-modal="clients">👥</button>
+      <button class="icon-btn" data-modal="menu">⚙️</button></div></div>
+  ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
+  ${tab==='track'?this.trackShell():this.homeView()}
+  ${this.tabBar()}
+  ${this.state.modal?this.modalView():''}`;
+ },
+
+ // לשונית המעקב פותחת את מסך המעקב הקיים במקום לשכפל אותו
+ trackShell(){
+  if(!this.state.modal)setTimeout(()=>{
+    if((this.state.tab||'home')==='track'&&!this.state.modal){this.state.modal='tracking';this.render();}
+  },40);
+  return `<div class="hm-wrap"><div class="hm-clean">
+    <div style="font-size:34px;line-height:1">📤</div>
+    <div style="font-weight:800;margin-top:8px">מעקב הצעות</div>
+    <button class="hm-new" style="margin-top:14px" data-modal="tracking">פתח מסך מעקב</button>
+  </div></div>`;
+ },
+
+ buildView(){const s=this.state,q=s.search.trim();
   const W=this.searchWords(q);
   const onlySel=!!s.onlySel;
   // סדר קבוע לפי המחירון עצמו. קודם מיינו לפי דגל hot, שהשתנה בין מכשירים
@@ -3082,14 +3373,18 @@ const App={
       <button class="mic" id="mic">🎤</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.summaryBanner()}
+  <div class="ai-cta-wrap"><button class="ai-cta" data-modal="aihub">
+     <span class="ai-cta-i">✨</span>
+     <span><b>תן ל-AI לבנות את ההצעה</b><small>קול · תמונה · טקסט · קובץ</small></span>
+     <span class="ai-cta-a">‹</span></button></div>
   <div class="chips">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
-      // מופיע רק כשיש סעיפים בהצעה — אחרת הוא סתם מבלבל
       if(!n&&!onlySel)return '';
-      return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג את כל המחירון':'👁 רק ה-'+n+' שבחרתי'}</button>`;})()}
+      return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג הכל':'👁 רק ה-'+n+' שבחרתי'}</button>`;})()}
     <button class="chip" id="chip-cats">📂 קטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
-    <button class="chip" id="chip-reset">🔄 איפוס הצעה</button>
+    ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
+      return n?`<button class="chip" id="chip-reset">🔄 איפוס</button>`:'';})()}
     ${(()=>{const n=this.laborCount();const tot=this.chosen().reduce((k,g)=>k+g.lines.length,0);
       return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}</div>
   <div class="wrap">${(()=>{
@@ -3103,6 +3398,7 @@ const App={
   <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
       <div class="b">${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small></div></div>
     <button class="btn-primary" data-modal="preview">📄 הצעת מחיר</button></div>
+  ${this.tabBar()}
   ${s.modal?this.modalView():''}`;
  },
 
@@ -3454,7 +3750,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
+ modalView(){const m=this.state.modal;const map={clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -3647,6 +3943,7 @@ const App={
        </div>
        ${cl.notes?`<div class="cl-note">📝 ${esc(cl.notes)}</div>`:''}
        <div class="cl-acts">
+         <button class="mini" data-cccard="${esc(cl.id)}" style="flex:1 1 100%;background:var(--bg2)!important;border:1px solid var(--line)!important;color:var(--txt)!important">👤 כרטיס לקוח מלא</button>
          <button class="mini go" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>↩︎ טען לתוך הצעה חדשה</button>
          ${cl.phone?`<button class="mini" onclick="location.href='tel:${esc(cl.phone).replace(/[^0-9+]/g,'')}'">📞 חיוג</button>`:''}
          <button class="mini" data-cquotes="${esc(cl.name)}">📤 הצעות</button>
@@ -4174,8 +4471,8 @@ const App={
      <div class="ah-txt"><div class="ah-t">${title}${badge?`<span class="ah-badge">${badge}</span>`:''}</div><div class="ah-d">${desc}</div></div>
      <div class="ah-arrow">‹</div></button>`;
   return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">בחר סוג הצעה ואיך ליצור אותה — ה-AI יסדר הכל לסעיפים מקצועיים, מוכן ל-PDF בפורמט שלך.</div>
-   <div style="font-weight:800;font-size:12.5px;margin-bottom:8px">1️⃣ סוג ההצעה:</div>
+   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">ספר לי מה צריך לעשות — בקול, בתמונה או בטקסט — ואני אסדר לסעיפים עם מחירים.</div>
+   <div class="ah-sec">סוג ההצעה</div>
    <div class="qtype-row">
      <button class="qtype-btn ${qt==='calc'?'on':''}" data-qtype="calc">
        <div class="qt-ic">🧮</div><div class="qt-t">הצעת מחשבון</div><div class="qt-d">עם מחירים · סה"כ + מע"מ</div>
@@ -4186,17 +4483,16 @@ const App={
        ${qt==='plan'?'<div class="qt-v">✓</div>':''}
      </button>
    </div>
-   <div style="font-weight:800;font-size:12.5px;margin:16px 0 8px">2️⃣ איך ליצור:</div>
+   <div class="ah-sec">מאיפה הסעיפים</div>
    <div class="aihub-grid">
-     ${card('v2q','🎤','הכתבה קולית','דבר בקול וה-AI ימיר להצעה','')}
-     ${card('v2q','📋','הדבקת טקסט','הדבק הצעה מבולגנת מוואטסאפ','')}
-     ${card('aiphoto','📷','צילום פתקית','צלם פתק בכתב יד וה-AI יקרא','')}
-     ${card('aipdf','📄','העלאת קובץ','טען PDF/תמונה של כתב כמויות','')}
-     ${card('aiaudio','🎧','הקלטה קולית','העלה הקלטה מוואטסאפ — ה-AI יאזין ויבנה','חדש')}
-     ${card('washot','📱','צילום מסך וואטסאפ','הלקוח כתב בקשות בהודעה','חדש')}
-     ${card('oneshot','⚡','לכוד מהיר','משפט אחד ← לקוח + הצעה + תזכורת','חדש')}
+     ${card('v2q','🎤','לדבר או להדביק','הכתבה בקול · הדבקת טקסט מוואטסאפ','')}
+     ${card('aiphoto','📷','לצלם','פתק בכתב יד · כתב כמויות','')}
+     ${card('washot','📱','צילום מסך','הודעת וואטסאפ מהלקוח','')}
+     ${card('aipdf','📄','קובץ','PDF או תמונה','')}
+     ${card('aiaudio','🎧','הקלטה','קובץ קול מוואטסאפ','')}
+     ${card('oneshot','⚡','משפט אחד','לקוח + הצעה + תזכורת בבת אחת','')}
    </div>
-   <div style="font-weight:800;font-size:12.5px;margin:16px 0 8px">3️⃣ כלי כתיבה חכמים:</div>
+   <div class="ah-sec">כלי כתיבה</div>
    <div class="aihub-grid">
      ${card('gemini','🤖','ניסוח וכתיבה','הודעות ללקוח · תיאורי עבודה · טיפים','')}
      ${card('mystyle','✍️','הסגנון שלי','למד את ה-AI לכתוב כמוך','חדש')}
@@ -4910,6 +5206,7 @@ const App={
   
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   this.sectionizeSettings();
+  this.sectionizeQuote();
   const pem=document.getElementById('prev-edit');
   if(pem)pem.onclick=()=>{this.state.prevEdit=!this.state.prevEdit;this.haptic(10);this.render();};
 
@@ -4968,6 +5265,19 @@ const App={
       r.up+' יעלו · '+r.down+' ירדו\nהשינוי נשמר במחירון ומסתנכרן לכל המכשירים.'))return;
     this.applyPriceImport();
   };
+  on('[data-cccard]','click',e=>{
+    e.stopPropagation();
+    this._ccId=e.currentTarget.dataset.cccard;
+    if(!this._trackData)this.loadTracking();
+    this.state.modal='clientcard';this.haptic(10);this.render();
+  });
+  on('[data-gotab]','click',e=>{
+    const t=e.currentTarget.dataset.gotab;
+    if(!t)return;
+    this.state.tab=t;this.state.modal=null;this.haptic(8);
+    try{window.scrollTo(0,0);}catch(x){}
+    this.render();
+  });
   const pfF=document.getElementById('pf-fix');
   if(pfF)pfF.onclick=()=>{this.state.modal='quote';this.render();};
   const pfS=document.getElementById('pf-send');
@@ -6275,7 +6585,8 @@ window.addEventListener('popstate',()=>{
     App.state.modal=prev||null;
     if(App._navStack.length||prev){try{history.pushState({ysm:1},'');}catch(e){}}
     else App._pushedModal=false;
-    App.render();return;
+    try{document.body.classList.add('has-tabs');}catch(e){}
+  App.render();return;
   }
 
   // 2. מודל פתוח — הכניסה שנצרכה היא של המודל עצמו.
