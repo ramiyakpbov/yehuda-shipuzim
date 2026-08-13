@@ -313,6 +313,7 @@ h2{color:var(--txt)!important;}
 .hm-q{flex:1 1 22%;min-width:76px;background:var(--bg3);border:1px solid var(--line);
   border-radius:12px;padding:10px 5px;text-align:center;}
 .hm-q b{display:block;font-size:17px;line-height:1.2;}
+.hm-q.hot{border-color:var(--red);} .hm-q.hot b{color:var(--red);}
 .hm-q span{font-size:10.5px;color:var(--muted);}
 /* סרגל הסל — יושב מעל פס הסכום, מתחת לו הלשוניות */
 .cart{position:fixed;inset-inline:0;z-index:56;
@@ -389,6 +390,44 @@ body.cart-on{padding-bottom:calc(196px + env(safe-area-inset-bottom));}
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 6px 22px -14px rgba(43,168,224,.6);}
 .chip{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);}
 .chip.on{background:var(--red);border-color:var(--red);}
+.ins-sec{font-size:12.5px;font-weight:800;margin:18px 0 9px;padding-top:12px;border-top:1px solid var(--line);}
+.ins{display:flex;gap:10px;align-items:flex-start;
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.085);border-radius:12px;padding:11px 12px;margin-bottom:8px;
+  position:relative;overflow:hidden;
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 4px 14px -10px rgba(0,0,0,.7);}
+.ins::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;background:var(--line);}
+.ins.ok::before{background:var(--ok);} .ins.warn::before{background:var(--warn);}
+.ins-i{font-size:17px;flex:none;line-height:1.3;}
+.ins b{display:block;font-size:13px;line-height:1.4;}
+.ins small{display:block;font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.ins span:nth-child(2){flex:1;min-width:0;}
+.fu-stats{display:flex;gap:7px;margin-bottom:12px;}
+.fu-k{flex:1;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.085);border-radius:13px;padding:11px 4px;text-align:center;}
+.fu-k b{display:block;font-size:22px;line-height:1.15;color:var(--muted);}
+.fu-k span{font-size:10.5px;color:var(--muted);}
+.fu-k.hot{border-color:var(--red);} .fu-k.hot b{color:var(--red);}
+.fu-tip{font-size:11.5px;color:var(--muted);background:var(--bg3);border:1px solid var(--line);
+  border-radius:11px;padding:9px 11px;margin-bottom:12px;line-height:1.6;}
+.fu-row{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.085);border-radius:14px;padding:12px 13px;margin-bottom:9px;
+  position:relative;overflow:hidden;
+  box-shadow:0 1px 0 rgba(255,255,255,.05) inset,0 4px 16px -10px rgba(0,0,0,.75);}
+.fu-row::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--line);}
+.fu-row.now::before{background:var(--red);}
+.fu-row.soon::before{background:var(--warn);}
+.fu-row.done{opacity:.5;}
+.fu-row.done::before{background:var(--ok);}
+.fu-n{font-weight:800;font-size:15px;}
+.fu-eye{font-size:10.5px;color:var(--ok);font-weight:600;}
+.fu-s{font-size:12px;color:var(--muted);margin-top:3px;}
+.fu-acts{display:flex;gap:7px;margin-top:10px;padding-top:9px;border-top:1px solid var(--line);}
+.fu-acts .mini{flex:1;text-align:center;padding:9px 6px;font-size:12px;
+  background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;
+  border-radius:10px;font-weight:600;}
+.fu-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
+.fu-sec{font-size:12.5px;font-weight:800;margin:16px 0 8px;padding-top:11px;border-top:1px solid var(--line);}
 .bh{position:fixed;inset-inline:0;z-index:57;
   bottom:calc(58px + 66px + env(safe-area-inset-bottom));
   background:rgba(245,166,35,.14);border:none;border-top:1px solid rgba(245,166,35,.3);
@@ -1336,7 +1375,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='16.5';
+const VERSION='16.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1490,7 +1529,18 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v16.5 — נעילה, זכוכית, ורגע המכירה</div>
+   b:`<div class="g-plate"><div class="g-ph">v16.7 — 💡 מה עובד ומה לא</div>
+   <ul class="g-ul"><li><b>הדוח החודשי הראה 8 מספרים ולא ענה על השאלה החשובה</b> — מה כדאי לעשות אחרת. כל הנתונים כבר נאספו: סכומים, אישורים, צפיות, הורדות, מסלולי שליחה ויומן המעקב. עכשיו הם הופכים לתובנות.</li>
+   <li><b>מה נבדק</b> — האם הצעות גדולות נסגרות פחות (ואז שווה לפצל לשלבים) · האם לקוח שפותח את הלינק החי סוגר יותר · האם מעקב טלפוני משנה · איזה מסלול שליחה סוגר הכי טוב · איזה סעיף מוסר הכי הרבה וכמה הוא עלה · האם פתיחה מהירה מנבאת סגירה.</li>
+   <li><b>רק תובנות מובהקות</b> — הבדל של פחות מ-20-25% לא מוצג, כדי שלא יהיה רעש. הצעה שנשלחה בשלושת השבועות האחרונים לא נספרת כי היא עדיין פתוחה.</li>
+   <li>נדרשות לפחות 4 הצעות שהוכרעו. עד אז מוצג כמה חסרות.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v16.6 — 📅 מתי לחזור ללקוח</div>
+   <ul class="g-ul"><li><b>הפער הגדול ביותר שנשאר.</b> התזכורות הציגו את כל ההצעות הפתוחות באותה ערימה — בלי סדר, בלי תאריך יעד, ובלי לדעת למי כבר התקשרת. בפועל אי אפשר לדעת למי לחזור היום.</li>
+   <li><b>קצב מעקב אוטומטי</b> — כל לקוח מקבל תאריך יעד: יום אחרי השליחה, אחר כך 3 ימים, שבוע, שבועיים, חודש. הרשימה מסודרת לפי מה שבוער — קודם מי שבאיחור הכי גדול.</li>
+   <li><b>📞 חייגתי · 📲 שלח תזכורת · ✓ סגור</b> — כל לחיצה מזיזה את היעד לשלב הבא בקצב. אתה תמיד יודע כמה פעמים כבר ניסית ומתי.</li>
+   <li><b>במרכז הבית</b> — הכפתור "📅 לחזור היום" מציג את המספר, ונצבע אדום כשיש מי לחזור אליו.</li>
+   <li>הצעות שאושרו יורדות מהרשימה. הצעה שנצפתה מסומנת 👁. אותו לקוח משתי הצעות מופיע פעם אחת. היומן מסתנכרן בין המכשירים.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v16.5 — נעילה, זכוכית, ורגע המכירה</div>
    <ul class="g-ul"><li><b>🔐 "ביטול" פתח את ה-AI בכל זאת</b> — היו שני מאזינים על אותו כפתור: השער ששואל קוד, והמאזין הכללי שפותח מסכים. שניהם רצו, ולכן הביטול לא עצר כלום. השער עבר לתוך המאזין הכללי. נבדק: ביטול · קוד ריק · קוד שגוי — אף אחד לא נכנס.</li>
    <li><b>🪟 מראה זכוכית</b> — הלשוניות, פס הסכום, הסל, הכותרות והחלונות שקופים עם טשטוש רקע. התוכן נראה מבעדם. הכרטיסים קיבלו קו אור עליון ועומק, במקום מלבנים אטומים.</li>
    <li><b>🔥 "קורא את ההצעה עכשיו"</b> — כשלקוח פותח את הלינק החי בשעה וחצי האחרונות, ההצעה קופצת לראש "דורש טיפול" בירוק, עם הזמן המדויק והכפתור <b>📞 התקשר עכשיו</b>. זה הרגע החם ביותר למכירה — והאפליקציה ידעה עליו אבל לא אמרה.</li>
@@ -2140,7 +2190,7 @@ try{
    L.unshift({t:Date.now(),w:String(where||''),m:String((e&&e.message)||e||'').slice(0,140)});
    if(L.length>30)L.length=30;
    const s=JSON.stringify(L);try{localStorage.setItem('errLog',s);}catch(x){}}catch(x){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
 })();
 
 
@@ -2294,7 +2344,7 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -2911,6 +2961,184 @@ const App={
    ${!quotes.length&&!links.length?`<div class="empty" style="padding:20px">עוד לא נשלחה לו הצעה</div>`:''}`;
  },
 
+ /* ===== מתי לחזור ללקוח =====
+    התזכורות הציגו את כל ההצעות הפתוחות באותה ערימה — בלי סדר,
+    בלי לדעת למי כבר התקשרת ומתי כדאי לנסות שוב. כאן כל לקוח
+    מקבל תאריך יעד, והרשימה מסודרת לפי מה שבוער היום. */
+ /* ===== מה עובד ומה לא =====
+    כל הנתונים כבר נאספים — סכומים, אישורים, צפיות, הורדות, סוגי שליחה.
+    הדוח החודשי הראה 8 מספרים אבל לא ענה על השאלה החשובה:
+    מה כדאי לעשות אחרת. כאן זה הופך לתובנות. */
+ insights(){
+  const now=Date.now(),DAY=864e5;
+  const links=Store.get('sentLinks',[])||[];
+  const quotes=Store.get('quotes',[])||[];
+  const td=this._trackData||{};
+  const out=[];
+  const R=(ic,t,d,lvl)=>out.push({ic:ic,t:t,d:d||'',lvl:lvl||''});
+
+  const done=[];   // הצעות שהוכרעו
+  links.slice(0,120).forEach(l=>{
+   if(!l||!l.id)return;
+   const d=td[l.id]||{};
+   const age=Math.floor((now-(+l.ts||now))/DAY);
+   const won=!!d.approvedAt;
+   if(!won&&age<21)return;      // עדיין פתוחה — לא נספרת
+   done.push({l:l,won:won,total:+l.total||0,viewed:!!(d.openedAt||d.views),
+     kind:(quotes.find(q=>q&&q.no===l.no)||{}).kinds||[]});
+  });
+
+  if(done.length<4){
+    R('📊','עוד מעט תובנות','צריך לפחות 4 הצעות שהוכרעו. יש '+done.length+'.');
+    return out;
+  }
+
+  const won=done.filter(x=>x.won);
+  const rate=Math.round(won.length/done.length*100);
+  R(rate>=40?'🎯':'📉','אחוז סגירה '+rate+'%',
+    won.length+' מתוך '+done.length+' הצעות'+(rate>=40?' — טוב':''), rate>=40?'ok':'warn');
+
+  // האם סכום גבוה פוגע בסגירה
+  const sorted=done.slice().sort((a,b)=>a.total-b.total);
+  const mid=sorted[Math.floor(sorted.length/2)].total;
+  const lo=done.filter(x=>x.total<=mid),hi=done.filter(x=>x.total>mid);
+  if(lo.length>=2&&hi.length>=2){
+    const rl=Math.round(lo.filter(x=>x.won).length/lo.length*100);
+    const rh=Math.round(hi.filter(x=>x.won).length/hi.length*100);
+    if(rl-rh>=25)R('💰','הצעות גדולות נסגרות פחות',
+      'עד '+nisR(mid)+': '+rl+'% · מעל: '+rh+'%. שווה לפצל לשלבים.','warn');
+    else if(rh-rl>=25)R('💪','דווקא הצעות גדולות נסגרות',
+      'מעל '+nisR(mid)+': '+rh+'% · מתחת: '+rl+'%.','ok');
+  }
+
+  // צפייה בלינק החי מול סגירה
+  const v=done.filter(x=>x.viewed),nv=done.filter(x=>!x.viewed);
+  if(v.length>=2&&nv.length>=2){
+    const rv=Math.round(v.filter(x=>x.won).length/v.length*100);
+    const rn=Math.round(nv.filter(x=>x.won).length/nv.length*100);
+    if(rv-rn>=20)R('👁','לקוח שפותח את הלינק — סוגר',
+      'נצפו: '+rv+'% · לא נצפו: '+rn+'%. שווה לוודא שהלינק נפתח.','ok');
+  }
+
+  // מהירות תגובה
+  const openedFast=done.filter(x=>{const d=td[x.l.id]||{};
+    return d.openedAt&&(d.openedAt-(+x.l.ts||0))<2*DAY;});
+  if(openedFast.length>=3){
+    const rf=Math.round(openedFast.filter(x=>x.won).length/openedFast.length*100);
+    if(rf>=Math.max(50,rate+15))R('⚡','נפתח ביומיים הראשונים → '+rf+'%',
+      'לקוח שפותח מהר הוא לקוח רציני.','ok');
+  }
+
+  // איזה מסלול שליחה סוגר
+  const byKind={};
+  done.forEach(x=>(x.kind.length?x.kind:['—']).forEach(k=>{
+    byKind[k]=byKind[k]||{n:0,w:0};byKind[k].n++;if(x.won)byKind[k].w++;}));
+  const kinds=Object.keys(byKind).filter(k=>k!=='—'&&byKind[k].n>=3)
+    .map(k=>({k:k,r:Math.round(byKind[k].w/byKind[k].n*100),n:byKind[k].n}))
+    .sort((a,b)=>b.r-a.r);
+  if(kinds.length>=2&&kinds[0].r-kinds[kinds.length-1].r>=20)
+    R('📤','"'+kinds[0].k+'" סוגר הכי טוב',
+      kinds.map(x=>x.k+' '+x.r+'%').join(' · '),'ok');
+
+  // סעיפים שמורידים
+  try{
+   const ds=this.dropStats();
+   if(ds&&ds.rows.length&&ds.rows[0].pct>=40)
+     R('📉','"'+ds.rows[0].name+'" מוסר ב-'+ds.rows[0].pct+'% מההצעות',
+       'עלה '+nisR(ds.lostSum)+' סה"כ. שווה לגלם במחיר או להסביר טוב יותר.','warn');
+  }catch(e){}
+
+  // כמה מעקב באמת נעשה
+  const log=Store.get('followLog',{})||{};
+  const tried=done.filter(x=>(log[x.l.id]||{}).n>0);
+  if(tried.length>=2&&done.length-tried.length>=2){
+    const rt=Math.round(tried.filter(x=>x.won).length/tried.length*100);
+    const rnt=Math.round(done.filter(x=>!(log[x.l.id]||{}).n).filter(x=>x.won).length/(done.length-tried.length)*100);
+    if(rt-rnt>=20)R('📞','מעקב מכפיל סגירות',
+      'עם מעקב: '+rt+'% · בלי: '+rnt+'%.','ok');
+  }
+
+  return out;
+ },
+
+ FOLLOW:[1,3,7,14,30],   // ימים מהשליחה — קצב מעקב מקובל
+
+ followState(){
+  const now=Date.now(),DAY=864e5;
+  const links=Store.get('sentLinks',[])||[];
+  const td=this._trackData||{};
+  const log=Store.get('followLog',{})||{};
+  const rows=[];
+  const seen={};
+  links.slice(0,120).forEach(l=>{
+   if(!l||!l.id)return;
+   const d=td[l.id]||{};
+   if(d.approvedAt)return;
+   const key=String(l.phone||l.client||l.id).replace(/[^0-9\u0590-\u05FF]/g,'');
+   if(seen[key])return; seen[key]=1;
+   const sent=+l.ts||now;
+   const age=Math.floor((now-sent)/DAY);
+   const rec=log[l.id]||{};
+   const tries=+rec.n||0;
+   const lastTry=+rec.at||0;
+   // תאריך היעד הבא לפי מספר הניסיונות שכבר נעשו
+   const step=this.FOLLOW[Math.min(tries,this.FOLLOW.length-1)];
+   const base=lastTry||sent;
+   const due=base+step*DAY;
+   const overdue=Math.floor((now-due)/DAY);
+   const viewed=!!(d.openedAt||d.views);
+   rows.push({l:l,age:age,tries:tries,lastTry:lastTry,due:due,overdue:overdue,
+     viewed:viewed,done:!!rec.done,
+     state: rec.done?'done' : (overdue>=0?'now' : (overdue>=-1?'soon':'later'))});
+  });
+  const rank={now:0,soon:1,later:2,done:3};
+  rows.sort((a,b)=>(rank[a.state]-rank[b.state])||(b.overdue-a.overdue));
+  return {rows:rows,
+    now:rows.filter(r=>r.state==='now').length,
+    soon:rows.filter(r=>r.state==='soon').length,
+    done:rows.filter(r=>r.done).length};
+ },
+
+ followTouch(id,done){
+  const log=Store.get('followLog',{})||{};
+  const r=log[id]||{n:0};
+  if(done){r.done=true;}
+  else{r.n=(+r.n||0)+1;r.at=Date.now();r.done=false;}
+  log[id]=r;Store.set('followLog',log);
+  try{Sync.push&&Sync.push();}catch(e){}
+ },
+
+ followModal(){
+  const s=this.followState();
+  const dt=t=>new Date(t).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});
+  const row=r=>{
+   const ph=String(r.l.phone||'').replace(/[^0-9+]/g,'');
+   const when=r.state==='now'?(r.overdue===0?'היום':(r.overdue===1?'איחור יום':'איחור '+r.overdue+' ימים')):
+     (r.state==='soon'?'מחר':(r.done?'סומן כטופל':'ב-'+dt(r.due)));
+   return `<div class="fu-row ${r.state}">
+     <div class="fu-top">
+       <div style="flex:1;min-width:0">
+         <div class="fu-n">${esc(r.l.client||'—')}${r.viewed?' <span class="fu-eye">👁 נצפתה</span>':''}</div>
+         <div class="fu-s">${when} · נשלח לפני ${r.age===0?'היום':r.age+' ימים'}${r.tries?' · '+r.tries+' ניסיונות':''}${r.l.total?' · '+nisR(r.l.total):''}</div>
+       </div>
+     </div>
+     ${r.done?'':`<div class="fu-acts">
+       ${ph?`<button class="mini" data-fudial="${esc(r.l.id)}|${ph}">📞 חייגתי</button>`:''}
+       ${r.l.phone?`<button class="mini pri" data-funudge="${esc(r.l.id)}">📲 שלח תזכורת</button>`:''}
+       <button class="mini" data-fudone="${esc(r.l.id)}">✓ סגור</button>
+     </div>`}</div>`;};
+  const open=s.rows.filter(r=>!r.done);
+  return `<h2>📅 מתי לחזור ללקוח <button class="x" data-close>✕</button></h2>
+   <div class="fu-stats">
+     <div class="fu-k ${s.now?'hot':''}"><b>${s.now}</b><span>היום</span></div>
+     <div class="fu-k"><b>${s.soon}</b><span>מחר</span></div>
+     <div class="fu-k"><b>${open.length-s.now-s.soon}</b><span>בהמשך</span></div>
+   </div>
+   <div class="fu-tip">כל לקוח מקבל תאריך יעד לפי כמה פעמים כבר ניסית: יום · 3 · שבוע · שבועיים · חודש. לחיצה על "חייגתי" מזיזה את היעד קדימה.</div>
+   ${open.length?open.map(row).join(''):`<div class="empty" style="padding:24px">אין למי לחזור כרגע 👌</div>`}
+   ${s.done?`<div class="fu-sec">סומנו כטופלו (${s.done})</div>${s.rows.filter(r=>r.done).slice(0,5).map(row).join('')}`:''}`;
+ },
+
  homeState(){
   const now=Date.now();
   const links=Store.get('sentLinks',[])||[];
@@ -2987,7 +3215,8 @@ const App={
 
     <div class="hm-quick">
       <button class="hm-q" data-modal="clients"><b>${st.clients}</b><span>👥 לקוחות</span></button>
-      <button class="hm-q" data-modal="reminders"><b>${rem}</b><span>🔔 תזכורות</span></button>
+      ${(()=>{let n=0;try{n=this.followState().now;}catch(e){}
+        return `<button class="hm-q ${n?'hot':''}" data-modal="follow"><b>${n}</b><span>📅 לחזור היום</span></button>`;})()}
       <button class="hm-q" data-modal="stats"><span>📊 דוחות</span></button>
       <button class="hm-q" data-modal="photos"><span>📷 תמונות</span></button>
     </div>
@@ -3965,7 +4194,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
+ modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -5292,7 +5521,12 @@ const App={
    <div class="stat" style="margin-top:10px">${card(d.feedbacks,'פידבקים שהתקבלו',1,'feedbacks')}${card(d.reviews,'בקשות משוב שנשלחו',1,'reviews')}</div>
    <div class="stat" style="margin-top:10px">${card(d.newClients,'לקוחות חדשים',1,'newClients')}${card(d.conv+'%','אחוז סגירה',1)}</div>
    <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף כספי (הצעות)',1)}${card(nis(d.avg),'הצעה ממוצעת',1)}</div>
-   ${(()=>{return '';})()}
+   ${(()=>{let ins=[];try{ins=this.insights();}catch(e){}
+     if(!ins.length)return '';
+     return `<div class="ins-sec">💡 מה עובד ומה לא</div>
+       ${ins.map(x=>`<div class="ins ${x.lvl}">
+         <span class="ins-i">${x.ic}</span>
+         <span><b>${esc(x.t)}</b>${x.d?`<small>${esc(x.d)}</small>`:''}</span></div>`).join('')}`;})()}
    <button class="btn-ghost" id="rep-send">📲 שלח לי את הסיכום בוואטסאפ</button>
    <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.6">הנתונים נצברים מרגע השדרוג. "נסגר"=סטטוס בוצע, "פידבק"=לקוח שהגיב אחרי בקשת משוב.</div>`;
  },
@@ -5499,6 +5733,26 @@ const App={
     this._ccId=e.currentTarget.dataset.cccard;
     if(!this._trackData)this.loadTracking();
     this.state.modal='clientcard';this.haptic(10);this.render();
+  });
+  on('[data-fudial]','click',e=>{
+    const[id,ph]=(e.currentTarget.dataset.fudial||'').split('|');
+    this.followTouch(id,false);this.haptic(12);
+    try{location.href='tel:'+ph;}catch(x){}
+    setTimeout(()=>this.render(),400);
+  });
+  on('[data-funudge]','click',e=>{
+    const id=e.currentTarget.dataset.funudge;
+    this.followTouch(id,false);
+    const b=document.querySelector('[data-trknudge="'+id+'"]');
+    if(b){b.click();}
+    else{const l=(Store.get('sentLinks',[])||[]).find(x=>x&&x.id===id);
+      if(l&&l.phone){const nm=String(l.client||'').split(' ')[0];
+        App.openWa(l.phone,'שלום'+(nm?' '+nm:'')+', רציתי לבדוק אם הספקת לעבור על הצעת המחיר ששלחתי. אשמח לענות על כל שאלה.');}}
+    this.haptic(12);setTimeout(()=>this.render(),300);
+  });
+  on('[data-fudone]','click',e=>{
+    const id=e.currentTarget.dataset.fudone;
+    this.followTouch(id,true);this.haptic(15);this.toast('סומן כטופל');this.render();
   });
   const ct=document.getElementById('cart-toggle');
   if(ct)ct.onclick=()=>{this.state.cartOpen=!this.state.cartOpen;this.haptic(8);this.render();};
