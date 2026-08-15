@@ -1508,7 +1508,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='17.3';
+const VERSION='17.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1662,7 +1662,11 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v17.3 — רצועת התחתית</div>
+   b:`<div class="g-plate"><div class="g-ph">v17.4 — כפילות והתחברות בין מסכים</div>
+   <ul class="g-ul"><li><b>הצעה אחת הופיעה פעמיים.</b> אחרי כל שמירה הוקצה מספר הצעה חדש — ולכן תזכורת על אותה הצעה קיבלה מספר אחר ונרשמה כהצעה נפרדת. המספר מתקדם עכשיו רק כשמתחילים הצעה חדשה. נוסף גם איחוד גיבוי: אותו לקוח, אותו סכום, באותו יום — זו אותה הצעה.</li>
+   <li><b>📷 תמונות ממרכז הבית פתח את המסך הלא נכון</b> — מסך שמציג תמונות של לקוח שכבר נבחר, בלי דרך לבחור אותו. עכשיו נפתחת גלריית הפרויקטים עם בורר הלקוחות.</li>
+   <li><b>ארבעה מסכים היו מנותקים</b> — לוח פרויקטים, משובים, מרכז ההודעות והסגנון שלי היו קיימים בקוד בלי שום כפתור שמוביל אליהם. נוספה שורת קיצורים שנייה במרכז הבית.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v17.3 — רצועת התחתית</div>
    <ul class="g-ul"><li><b>הסל כיסה את "הצעת מחיר".</b> שלוש הרצועות בתחתית — סל, פס סכום ולשוניות — מוקמו לפי חישוב ידני בפיקסלים. כשפס הסכום גדל לשתי שורות בגלל הרמז, הסל נחת עליו והסתיר את כפתור השליחה.</li>
    <li><b>תוקן מהשורש</b> — שלוש הרצועות נערמות עכשיו בשכבה אחת שמסתדרת לבד, בלי חישובי פיקסלים. הגובה נמדד בפועל אחרי כל רינדור, כך שהתוכן לעולם לא נחתך מאחוריהן.</li>
    <li><b>📋 הצעות אחרונות במרכז הבית</b> — ארבע ההצעות האחרונות עם שם הלקוח, מספר הסעיפים, הסכום והתאריך. לחיצה משכפלת אותה כבסיס להצעה חדשה. "הכל ›" פותח את הרשימה המלאה.</li></ul></div>
@@ -3470,7 +3474,14 @@ const App={
       ${(()=>{let n=0;try{n=this.followState().now;}catch(e){}
         return `<button class="hm-q ${n?'hot':''}" data-modal="follow"><b>${n}</b><span>📅 לחזור היום</span></button>`;})()}
       <button class="hm-q" data-modal="stats"><span>📊 דוחות</span></button>
-      <button class="hm-q" data-modal="photos"><span>📷 תמונות</span></button>
+      <button class="hm-q" data-modal="gallery"><span>📷 תמונות</span></button>
+    </div>
+    <div class="hm-quick" style="margin-top:7px">
+      ${(()=>{const r=(Store.get('reviewLinks',[])||[]).length;
+        return `<button class="hm-q" data-modal="reviews"><b>${r||''}</b><span>⭐ משובים</span></button>`;})()}
+      <button class="hm-q" data-modal="calendar"><span>📅 לוח</span></button>
+      <button class="hm-q" data-modal="wacenter"><span>💬 הודעות</span></button>
+      <button class="hm-q" data-modal="mystyle"><span>✍️ סגנון</span></button>
     </div>
   </div>`;
  },
@@ -7377,7 +7388,16 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   const kind=this._quoteKind||'';this._quoteKind=null;
   const rec={ts:Date.now(),no:_no,client:this.state.client.name,phone:this.state.client.phone||'',
     project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap};
-  const exIdx=qs.findIndex(q=>q&&q.no&&q.no===_no);
+  // איחוד לפי מספר ההצעה. כגיבוי — אותו לקוח, אותו סכום, באותו יום:
+  // כמעט תמיד זו אותה הצעה שנשלחה שוב ולא הצעה חדשה.
+  const nm=String(this.state.client.name||'').trim();
+  const g=this.grand();
+  const DAY=864e5;
+  let exIdx=qs.findIndex(q=>q&&q.no&&q.no===_no);
+  if(exIdx<0&&nm&&g>0){
+    exIdx=qs.findIndex(q=>q&&String(q.client||'').trim()===nm&&
+      Math.abs((+q.grand||0)-g)<1&&(Date.now()-(+q.ts||0))<DAY);
+  }
   let isNew=false;
   if(exIdx>=0){
     const kinds=(qs[exIdx].kinds||[]).slice();
@@ -7402,7 +7422,10 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
    this.upsertClient(this.state.client,{lastQuoteAt:Date.now(),
      lastQuoteNo:this.state.quoteNo,lastTotal:this.grand()});
   }catch(e){try{Store.logErr('recordQuote.client',e);}catch(x){}}
-  this.state.quoteNo=nextQuoteNo();},
+  // המספר לא מתקדם כאן. קודם הוא הוקצה מחדש אחרי כל שמירה, ולכן
+  // שליחה שנייה של אותה הצעה — למשל תזכורת — קיבלה מספר חדש
+  // ונרשמה כהצעה נפרדת. המספר מתקדם רק כשמתחילים הצעה חדשה.
+  return true;},
  loadQuote(id){const qs=Store.get('quotes',[]);const q=qs.find(x=>x.id===id);if(!q||!q.snap){this.toast('להצעה זו אין נתונים שמורים');return;}
   const d=q.snap;
   if(Array.isArray(d.lines)){
