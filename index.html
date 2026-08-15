@@ -312,8 +312,9 @@ h2{color:var(--txt)!important;}
 .hm-quick{display:flex;gap:7px;flex-wrap:wrap;}
 .hm-q{flex:1 1 22%;min-width:76px;background:var(--bg3);border:1px solid var(--line);
   border-radius:12px;padding:10px 5px;text-align:center;}
-.hm-q b{display:block;font-size:17px;line-height:1.2;}
-.hm-q.hot{border-color:var(--red);} .hm-q.hot b{color:var(--red);}
+.hm-q b{display:block;font-size:19px;line-height:1.2;color:var(--txt);font-weight:800;}
+.hm-q span{font-size:10.5px;color:var(--muted);}
+.hm-q.hot{border-color:var(--red)!important;} .hm-q.hot b{color:var(--red);}
 .hm-q span{font-size:10.5px;color:var(--muted);}
 /* סרגל הסל — יושב מעל פס הסכום, מתחת לו הלשוניות */
 .cart{position:fixed;inset-inline:0;z-index:56;
@@ -351,44 +352,51 @@ body.cart-on{padding-bottom:calc(196px + env(safe-area-inset-bottom));}
 .bs-card b{display:block;font-size:14px;}
 .bs-card small{font-size:11.5px;color:var(--muted);}
 .bs-card span:nth-child(2){flex:1;min-width:0;}
-.bs-cats{display:flex;flex-wrap:wrap;gap:7px;}
-.bs-cat{flex:1 1 46%;background:var(--bg3);border:1px solid var(--line);border-radius:12px;
-  padding:11px 9px;color:var(--txt);font-size:12.5px;font-weight:700;text-align:right;
-  display:flex;align-items:center;gap:7px;}
-.bs-cat span{font-size:16px;}
 /* ===== מראה זכוכית =====
    משטחים שצפים מעל התוכן — לשוניות, פס סכום, סל, כרטיסים —
    מקבלים שקיפות עם טשטוש רקע, מסגרת עדינה מלמעלה ועומק.
    התוכן נראה מבעדם וזה נותן תחושת שכבות במקום מלבנים אטומים. */
 @supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
-  .tabbar{background:rgba(23,23,27,.72);-webkit-backdrop-filter:blur(22px) saturate(180%);
-    backdrop-filter:blur(22px) saturate(180%);border-top:1px solid rgba(255,255,255,.09);}
-  .bottombar{background:rgba(20,20,23,.74);-webkit-backdrop-filter:blur(22px) saturate(180%);
-    backdrop-filter:blur(22px) saturate(180%);border-top:1px solid rgba(255,255,255,.09);}
-  .cart-bar{background:rgba(33,33,39,.78);-webkit-backdrop-filter:blur(18px) saturate(170%);
-    backdrop-filter:blur(18px) saturate(170%);border-top:1px solid rgba(255,255,255,.08);}
-  .cart-body{background:rgba(23,23,27,.9);-webkit-backdrop-filter:blur(24px);
-    backdrop-filter:blur(24px);}
-  .chips{background:rgba(13,13,15,.8);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
-  .searchwrap{background:rgba(23,23,27,.85);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
-  .sheet{background:rgba(23,23,27,.94);-webkit-backdrop-filter:blur(26px) saturate(160%);
-    backdrop-filter:blur(26px) saturate(160%);}
-  .overlay{background:rgba(6,6,8,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);}
+  /* זכוכית צלולה: שקיפות גבוהה וטשטוש חזק — התוכן נראה מבעד */
+  .tabbar{background:rgba(23,23,27,.44);-webkit-backdrop-filter:blur(30px) saturate(200%);
+    backdrop-filter:blur(30px) saturate(200%);border-top:1px solid rgba(255,255,255,.13);}
+  .bottombar{background:rgba(20,20,23,.46);-webkit-backdrop-filter:blur(30px) saturate(200%);
+    backdrop-filter:blur(30px) saturate(200%);border-top:1px solid rgba(255,255,255,.13);}
+  .cart-bar{background:rgba(33,33,39,.5);-webkit-backdrop-filter:blur(26px) saturate(190%);
+    backdrop-filter:blur(26px) saturate(190%);border-top:1px solid rgba(255,255,255,.12);}
+  .cart-body{background:rgba(23,23,27,.66);-webkit-backdrop-filter:blur(30px) saturate(180%);
+    backdrop-filter:blur(30px) saturate(180%);}
+  .chips{background:rgba(13,13,15,.52);-webkit-backdrop-filter:blur(24px) saturate(180%);
+    backdrop-filter:blur(24px) saturate(180%);}
+  .searchwrap{background:rgba(23,23,27,.5);-webkit-backdrop-filter:blur(24px) saturate(180%);
+    backdrop-filter:blur(24px) saturate(180%);}
+  .sheet{background:rgba(23,23,27,.8);-webkit-backdrop-filter:blur(34px) saturate(190%);
+    backdrop-filter:blur(34px) saturate(190%);border:1px solid rgba(255,255,255,.11);}
+  .overlay{background:rgba(6,6,8,.5);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
+  .topbar{background:rgba(13,13,15,.5);-webkit-backdrop-filter:blur(26px) saturate(190%);
+    backdrop-filter:blur(26px) saturate(190%);}
 }
 /* כרטיסים: משטח מרומם עם קו אור עליון */
-.hm-card,.hm-k,.hm-q,.bs-card,.cc-s,.pi-s,.pf-row,.trk-card,.cl-card,.rm-card{
-  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
-  border:1px solid rgba(255,255,255,.085);
-  box-shadow:0 1px 0 rgba(255,255,255,.05) inset, 0 4px 16px -10px rgba(0,0,0,.75);}
+.hm-card,.hm-k,.hm-q,.bs-card,.cc-s,.pi-s,.pf-row,.trk-card,.cl-card,.rm-card,.fu-row,.fu-k,.ins{
+  background:linear-gradient(160deg,rgba(255,255,255,.085),rgba(255,255,255,.025));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 1px 0 rgba(255,255,255,.1) inset,
+             0 -1px 0 rgba(0,0,0,.2) inset,
+             0 8px 24px -14px rgba(0,0,0,.85);}
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .hm-card,.hm-k,.hm-q,.bs-card,.cc-s,.pi-s,.pf-row,.cl-card,.rm-card,.fu-row,.fu-k,.ins,.cat-card{
+    -webkit-backdrop-filter:blur(14px) saturate(150%);backdrop-filter:blur(14px) saturate(150%);}
+}
 .hm-card::after,.bs-card::after{content:'';position:absolute;inset:0;border-radius:inherit;
   pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 42%);}
 .bs-card{position:relative;overflow:hidden;}
-.cat-card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 1px 0 rgba(255,255,255,.045) inset, 0 6px 18px -12px rgba(0,0,0,.8);}
+.cat-card{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.11);
+  box-shadow:0 1px 0 rgba(255,255,255,.09) inset, 0 8px 22px -14px rgba(0,0,0,.85);}
 .ai-cta{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 6px 22px -14px rgba(43,168,224,.6);}
-.chip{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.09);}
+.chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);
+  box-shadow:0 1px 0 rgba(255,255,255,.08) inset;}
 .chip.on{background:var(--red);border-color:var(--red);}
 .ins-sec{font-size:12.5px;font-weight:800;margin:18px 0 9px;padding-top:12px;border-top:1px solid var(--line);}
 .ins{display:flex;gap:10px;align-items:flex-start;
@@ -1342,6 +1350,47 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .dl-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
 .dl-acts .del{flex:0 0 auto;padding:9px 12px;background:var(--bg2)!important;
   border:1px solid var(--line)!important;border-radius:10px;opacity:.6;font-size:15px;}
+
+/* ===== זכוכית צלולה + מספרים גלויים =====
+   נכתב בסוף גיליון הסגנון בכוונה: כללי הזכוכית שנוספו קודם
+   דרסו את צבע המספרים בכרטיסים, והם נעלמו לגמרי. */
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .hm-card,.hm-k,.hm-q,.bs-card,.cc-s,.pi-s,.pf-row,.cl-card,.rm-card,.fu-row,.fu-k,.ins,.cat-card{
+    background:linear-gradient(160deg,rgba(255,255,255,.11),rgba(255,255,255,.035))!important;
+    border:1px solid rgba(255,255,255,.16)!important;
+    -webkit-backdrop-filter:blur(20px) saturate(180%)!important;
+    backdrop-filter:blur(20px) saturate(180%)!important;
+    box-shadow:0 1px 0 rgba(255,255,255,.2) inset,
+               0 -1px 0 rgba(0,0,0,.25) inset,
+               0 10px 30px -16px rgba(0,0,0,.9)!important;}
+  .tabbar{background:rgba(23,23,27,.6)!important;
+    -webkit-backdrop-filter:blur(30px) saturate(200%)!important;
+    backdrop-filter:blur(30px) saturate(200%)!important;
+    border-top:1px solid rgba(255,255,255,.14)!important;}
+  .bottombar{background:rgba(20,20,23,.62)!important;
+    -webkit-backdrop-filter:blur(30px) saturate(200%)!important;
+    backdrop-filter:blur(30px) saturate(200%)!important;
+    border-top:1px solid rgba(255,255,255,.14)!important;}
+  .cart-bar{background:rgba(33,33,39,.66)!important;
+    -webkit-backdrop-filter:blur(26px) saturate(190%)!important;
+    backdrop-filter:blur(26px) saturate(190%)!important;}
+  .sheet{background:rgba(23,23,27,.88)!important;
+    -webkit-backdrop-filter:blur(34px) saturate(180%)!important;
+    backdrop-filter:blur(34px) saturate(180%)!important;
+    border:1px solid rgba(255,255,255,.1);}
+  .chips{background:rgba(13,13,15,.7)!important;
+    -webkit-backdrop-filter:blur(20px)!important;backdrop-filter:blur(20px)!important;}
+}
+/* המספרים — חייבים לבוא אחרי כללי הזכוכית */
+.hm-q>b,.cc-s>b,.pi-s>b,.fu-k>b,.hm-k>b{
+  display:block!important;font-size:20px!important;line-height:1.2!important;
+  font-weight:900!important;color:#ffffff!important;opacity:1!important;
+  text-shadow:0 1px 4px rgba(0,0,0,.7);}
+.hm-q.hot>b,.fu-k.hot>b,.hm-k.hot>b{color:var(--red)!important;}
+.hm-k.warn>b{color:var(--warn)!important;}
+.hm-k.ok>b{color:var(--ok)!important;}
+.hm-q>span,.cc-s>span,.pi-s>span,.fu-k>span,.hm-k>span{
+  font-size:10.5px!important;color:rgba(255,255,255,.66)!important;font-weight:600!important;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -1375,7 +1424,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='16.7';
+const VERSION='16.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1529,7 +1578,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v16.7 — 💡 מה עובד ומה לא</div>
+   b:`<div class="g-plate"><div class="g-ph">v16.8 — זכוכית, כפילויות ומספרים</div>
+   <ul class="g-ul"><li><b>המספרים בכרטיסים נעלמו</b> — כלל הזכוכית נוסף אחרי הגדרת המספרים ודרס להם את הצבע. עכשיו המספרים מוגדרים אחרי הכל, בלבן בולט עם צל, ומספר "לחזור היום" באדום.</li>
+   <li><b>🪟 זכוכית צלולה</b> — שקיפות גבוהה יותר, טשטוש חזק (20-34px), וקו אור עליון בולט. הלשוניות ופס הסכום ב-60% שקיפות — התוכן נראה מבעדם ממש.</li>
+   <li><b>כפתור AI כפול</b> — הופיע גם למעלה וגם ב"איך להתחיל". מסך הפתיחה מציג עכשיו רק את מה שאינו חוזר: שכפול ההצעה האחרונה והתבניות.</li>
+   <li><b>📂 קטגוריות כפולות</b> — נוצרו כשמבנה ישן והמבנה החדש התערבבו בסנכרון. עכשיו הן מתאחדות אוטומטית בכל טעינה, לפי מזהה, וכל הסעיפים משני העותקים נשמרים בלי כפילות.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v16.7 — 💡 מה עובד ומה לא</div>
    <ul class="g-ul"><li><b>הדוח החודשי הראה 8 מספרים ולא ענה על השאלה החשובה</b> — מה כדאי לעשות אחרת. כל הנתונים כבר נאספו: סכומים, אישורים, צפיות, הורדות, מסלולי שליחה ויומן המעקב. עכשיו הם הופכים לתובנות.</li>
    <li><b>מה נבדק</b> — האם הצעות גדולות נסגרות פחות (ואז שווה לפצל לשלבים) · האם לקוח שפותח את הלינק החי סוגר יותר · האם מעקב טלפוני משנה · איזה מסלול שליחה סוגר הכי טוב · איזה סעיף מוסר הכי הרבה וכמה הוא עלה · האם פתיחה מהירה מנבאת סגירה.</li>
    <li><b>רק תובנות מובהקות</b> — הבדל של פחות מ-20-25% לא מוצג, כדי שלא יהיה רעש. הצעה שנשלחה בשלושת השבועות האחרונים לא נספרת כי היא עדיין פתוחה.</li>
@@ -2504,6 +2558,25 @@ const CAT_IDS=(()=>{const o={};try{const T=AI.catTitles;Object.keys(T).forEach(k
 /* ===== v13.3 — קוד גישה =====
    הקוד לא מופיע יותר בקוד המקור. נשמר כטביעה חד-כיוונית בלבד.
    מי שפותח את הקובץ רואה מחרוזת חסרת משמעות במקום ספרות. */
+/* איחוד קטגוריות שהוכפלו — רץ בכל טעינה, זול ובטוח */
+try{
+  const _c=Store.get('catalog',null);
+  if(Array.isArray(_c)){
+    const seen={},keep=[];let dup=0;
+    _c.forEach(c=>{
+      if(!c||!c.id)return;
+      if(seen[c.id]!==undefined){
+        const t=keep[seen[c.id]];
+        const have={};(t.items||[]).forEach(i=>{if(i&&i.id)have[i.id]=1;});
+        (c.items||[]).forEach(i=>{if(i&&i.id&&!have[i.id]){t.items.push(i);have[i.id]=1;}});
+        dup++;return;
+      }
+      seen[c.id]=keep.push(c)-1;
+    });
+    if(dup){Store.set('catalog',keep);window.__catDup=dup;}
+  }
+}catch(e){}
+
 /* v14.9 — "התקנה בלבד" משנה נוסח בלבד.
    גרסאות קודמות הקטינו את המחיר לפי אחוז עבודה ושמרו את המקורי ב-fullPrice.
    מחזירים את המחיר המקורי ומשאירים את הסימון עצמו. */
@@ -3233,21 +3306,16 @@ const App={
   const qs=(Store.get('quotes',[])||[]).filter(q=>q&&q.snap&&q.snap.lines&&q.snap.lines.length);
   const last=qs[0];
   const tpl=(Store.get('userTemplates',[])||[]).length;
-  const hotCats=this.allCats().filter(c=>c.hot).slice(0,4);
+  // כפתור ה-AI והקטגוריות כבר מוצגים מעל — כאן רק מה שאינו חוזר
+  if(!last&&!tpl)return '';
   return `<div class="bs-wrap">
-    <div class="bs-h">איך להתחיל?</div>
+    <div class="bs-h">התחלה מהירה</div>
     ${last?`<button class="bs-card" data-qload="${esc(last.id)}">
       <span class="bs-i">↩︎</span>
       <span><b>שכפל את ההצעה האחרונה</b><small>${esc(last.client||'—')} · ${last.snap.lines.length} סעיפים · ${nisR(+last.grand||0)}</small></span></button>`:''}
-    <button class="bs-card ai" data-modal="aihub">
-      <span class="bs-i">✨</span>
-      <span><b>תן ל-AI לבנות</b><small>דבר, צלם או הדבק — ואני אסדר לסעיפים</small></span></button>
     ${tpl?`<button class="bs-card" data-modal="templates">
       <span class="bs-i">⚡</span>
       <span><b>הצעה מוכנה</b><small>${tpl} תבניות שמורות</small></span></button>`:''}
-    ${hotCats.length?`<div class="bs-h" style="margin-top:16px">או פתח קטגוריה</div>
-      <div class="bs-cats">${hotCats.map(c=>`<button class="bs-cat" data-opencat="${esc(c.id)}">
-        <span>${esc(c.emoji||'')}</span>${esc(c.title)}</button>`).join('')}</div>`:''}
   </div>`;
  },
 
@@ -5660,6 +5728,9 @@ const App={
     setTimeout(()=>this.toast('🔐 האחסון הופרד — '+nm+' מפתחות הועברו'),900);}
   if(window.__nsFresh&&!this._nsShown){this._nsShown=true;window.__nsFresh=null;
     setTimeout(()=>this.toast('🔐 אחסון נפרד הופעל · מעקב ← ☁️ שחזר מהענן'),900);}
+  if(window.__catDup&&!this._catDupShown){this._catDupShown=true;
+    const nd=window.__catDup;window.__catDup=null;
+    setTimeout(()=>this.toast('📂 '+nd+' קטגוריות כפולות אוחדו'),1000);}
   if(window.__catSplit&&!this._catSplitShown){this._catSplitShown=true;
     const s=window.__catSplit;window.__catSplit=null;
     setTimeout(()=>this.toast('📂 המחירון חולק ל-'+s.cats+' קטגוריות · '+s.moved+' סעיפים סודרו מחדש'),900);}
@@ -6381,6 +6452,26 @@ const App={
     הפיצול ל-12. הסעיפים כולם שם — רק מסודרים אחרת. הפונקציה
     מחזירה כל סעיף לקטגוריה הנכונה לפי המזהה שלו, בלי לאבד
     סעיפים שהוספת ובלי לגעת במחירים. */
+ /* קטגוריה שמופיעה פעמיים ברשימה — נוצר כשמבנה ישן והמבנה החדש
+    התערבבו בסנכרון. מאחד לפי מזהה, שומר את כל הסעיפים. */
+ mergeDupCats(){
+  const cur=this.state.catalog||[];
+  const byId={},out=[];let merged=0;
+  cur.forEach(c=>{
+   if(!c||!c.id)return;
+   if(byId[c.id]){
+     const t=byId[c.id];
+     const have={};(t.items||[]).forEach(it=>{if(it&&it.id)have[it.id]=1;});
+     (c.items||[]).forEach(it=>{if(it&&it.id&&!have[it.id]){t.items.push(it);have[it.id]=1;}});
+     merged++;return;
+   }
+   byId[c.id]=c;out.push(c);
+  });
+  if(!merged)return 0;
+  this.state.catalog=out;Store.set('catalog',out);
+  return merged;
+ },
+
  catStructState(){
   const cur=this.state.catalog||[];
   const curIds=cur.map(c=>c.id);
