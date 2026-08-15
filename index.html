@@ -128,7 +128,6 @@ input,select,textarea{font-family:inherit;}
 .bb-hint:active{transform:scale(.99);}
 .bottombar{position:fixed;bottom:0;left:0;right:0;z-index:55;flex-wrap:wrap;background:#141417;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
 /* שורת הלשוניות יושבת בתחתית, ולכן פס הסכום עולה מעליה במקום להיחבא */
-body.has-tabs .bottombar{bottom:calc(58px + env(safe-area-inset-bottom));padding-bottom:10px;}
 .trk-alert{background:rgba(237,28,36,.12);border:1px solid rgba(237,28,36,.45);border-radius:10px;padding:12px;margin-bottom:12px;}
 .trk-alert .ta-h{font-size:12.5px;font-weight:800;color:var(--red);margin-bottom:8px;}
 .trk-alert .ta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--txt);padding:5px 0;}
@@ -344,6 +343,16 @@ h2{color:var(--txt)!important;}
   border-radius:10px;font-weight:600;}
 .hm-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
 .hm-clean{text-align:center;padding:26px 10px;background:var(--bg3);border:1px solid var(--line);border-radius:14px;}
+.hm-all{float:left;background:none;border:none;color:var(--muted);font-size:var(--fs-xs);font-weight:700;padding:0;}
+.hq{display:flex;align-items:center;gap:10px;
+  background:linear-gradient(160deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1);border-radius:var(--r-m);padding:11px 12px;margin-bottom:8px;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+.hq:active{transform:scale(.99);}
+.hq-n{font-weight:800;font-size:var(--fs-m);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hq-s{font-size:var(--fs-xs);color:var(--muted);margin-top:3px;}
+.hq-t{flex:none;text-align:left;font-weight:800;font-size:var(--fs-s);direction:ltr;white-space:nowrap;}
+.hq-t span{display:block;font-size:9.5px;color:var(--muted);font-weight:600;direction:rtl;margin-top:2px;}
 .hm-new{width:100%;background:var(--bg2);border:1px dashed var(--line);color:var(--txt);
   border-radius:14px;padding:15px;font-size:14px;font-weight:800;margin:14px 0 12px;}
 .hm-new:active{transform:scale(.99);}
@@ -374,7 +383,6 @@ h2{color:var(--txt)!important;}
 .cart-more{font-size:11px;color:var(--muted);text-align:center;padding:7px;}
 .cart-prev{width:100%;margin-top:8px;background:var(--bg3);border:1px solid var(--line);
   color:var(--txt);border-radius:10px;padding:10px;font-size:12.5px;font-weight:700;}
-body.has-tabs .bottombar{bottom:calc(58px + env(safe-area-inset-bottom));padding-bottom:10px;}
 body.cart-on{padding-bottom:calc(196px + env(safe-area-inset-bottom));}
 
 /* מסך פתיחה לבניית הצעה */
@@ -1450,6 +1458,23 @@ button{font-family:inherit;}
 
 /* טקסט ארוך לא שובר פריסה */
 .hm-n,.fu-n,.cc-row b,.cart-nm,.pi-n{overflow-wrap:anywhere;}
+
+/* ===== רצועת התחתית =====
+   הסל, פס הסכום והלשוניות מוקמו קודם בחישוב ידני של פיקסלים —
+   וכשפס הסכום גדל לשתי שורות, הסל נחת עליו וכיסה את כפתור השליחה.
+   כאן שלושתם נערמים בשכבה אחת שמסתדרת לבד. */
+.dockwrap{position:fixed!important;inset-inline:0!important;bottom:0!important;
+  z-index:60!important;display:flex!important;flex-direction:column!important;
+  pointer-events:none!important;}
+.dockwrap>*{pointer-events:auto!important;}
+.dockwrap .cart{position:relative!important;inset:auto!important;bottom:auto!important;
+  z-index:auto!important;order:1!important;}
+.dockwrap .bottombar{position:relative!important;inset:auto!important;bottom:auto!important;
+  left:auto!important;right:auto!important;z-index:auto!important;order:2!important;}
+.dockwrap .tabbar{position:relative!important;inset:auto!important;bottom:auto!important;
+  z-index:auto!important;order:3!important;}
+body.has-tabs{padding-bottom:var(--dock-h,170px)!important;}
+body.cart-on{padding-bottom:var(--dock-h,170px)!important;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -1483,7 +1508,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='17.2';
+const VERSION='17.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1637,7 +1662,11 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v17.2 — הרמז חסם את השליחה</div>
+   b:`<div class="g-plate"><div class="g-ph">v17.3 — רצועת התחתית</div>
+   <ul class="g-ul"><li><b>הסל כיסה את "הצעת מחיר".</b> שלוש הרצועות בתחתית — סל, פס סכום ולשוניות — מוקמו לפי חישוב ידני בפיקסלים. כשפס הסכום גדל לשתי שורות בגלל הרמז, הסל נחת עליו והסתיר את כפתור השליחה.</li>
+   <li><b>תוקן מהשורש</b> — שלוש הרצועות נערמות עכשיו בשכבה אחת שמסתדרת לבד, בלי חישובי פיקסלים. הגובה נמדד בפועל אחרי כל רינדור, כך שהתוכן לעולם לא נחתך מאחוריהן.</li>
+   <li><b>📋 הצעות אחרונות במרכז הבית</b> — ארבע ההצעות האחרונות עם שם הלקוח, מספר הסעיפים, הסכום והתאריך. לחיצה משכפלת אותה כבסיס להצעה חדשה. "הכל ›" פותח את הרשימה המלאה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v17.2 — הרמז חסם את השליחה</div>
    <ul class="g-ul"><li><b>"חסר: שם לקוח" הופיע שלוש פעמים וכיסה את כפתור "הצעת מחיר".</b> השורה נבנתה כרצועה צפה בתחתית המסך, באותו מקום שבו יושבים הסל ופס הסכום — והיא ישבה מעליהם. לכן לא הייתה דרך להגיע לתצוגה המקדימה.</li>
    <li><b>תוקן</b> — הרמז עבר להיות שורה אחת בתוך פס הסכום, מתחת לכפתור. הוא לא מכסה כלום, ולחיצה עליו פותחת ישר להשלמה.</li>
    <li><b>קטגוריות כפולות</b> — "שלד" ו"פיתוח" הופיעו פעמיים. נוספה הגנה בנקודת התצוגה עצמה: גם אם כפילות שרדה באחסון או הגיעה מסנכרון, היא לא תוצג פעמיים, והסעיפים משני העותקים מתאחדים.</li></ul></div>
@@ -3421,6 +3450,20 @@ const App={
          <div style="font-size:12px;color:var(--muted);margin-top:5px">${st.links?'כל ההצעות במעקב':'עוד לא נשלחו הצעות'}</div></div>`}
 
     <button class="hm-new" data-gotab="build">➕ הצעה חדשה</button>
+    ${(()=>{
+      const qs=(Store.get('quotes',[])||[]).filter(q=>q&&q.snap&&q.snap.lines&&q.snap.lines.length).slice(0,4);
+      if(!qs.length)return '';
+      const dt=t=>{const d=Math.floor((Date.now()-(+t||0))/864e5);
+        return d===0?'היום':(d===1?'אתמול':'לפני '+d+' ימים');};
+      return `<div class="hm-sec" style="margin-top:16px">הצעות אחרונות
+        <button class="hm-all" data-modal="sentquotes">הכל ›</button></div>
+        ${qs.map(q=>`<div class="hq" data-qload="${esc(q.id)}">
+          <div style="flex:1;min-width:0">
+            <div class="hq-n">${esc(q.client||'—')}</div>
+            <div class="hq-s">${esc(q.no||'')} · ${q.snap.lines.length} סעיפים · ${dt(q.ts)}</div>
+          </div>
+          <div class="hq-t">${nisR(+q.grand||0)}<span>שכפל ›</span></div>
+        </div>`).join('')}`;})()}
 
     <div class="hm-quick">
       <button class="hm-q" data-modal="clients"><b>${st.clients}</b><span>👥 לקוחות</span></button>
@@ -3501,6 +3544,14 @@ const App={
   </div>`;
  },
 
+ // גובה רצועת התחתית נמדד בפועל, כדי שהתוכן לא ייחתך
+ measureDock(){
+  try{
+   const d=document.querySelector('.dockwrap');
+   const px=d?Math.ceil(d.getBoundingClientRect().height)+10:150;
+   document.documentElement.style.setProperty('--dock-h',px+'px');
+  }catch(e){}
+ },
  tabBar(){
   const t=this.state.tab||'home';
   const st=this.homeState();
@@ -3926,6 +3977,7 @@ const App={
   const isOpen=!!this.state.modal;
   if(isOpen&&!this._pushedModal){try{history.pushState({ysm:1},'');}catch(e){}this._pushedModal=true;}
   else if(!isOpen&&this._pushedModal){this._pushedModal=false;this._ignorePop=true;try{history.back();}catch(e){}}
+  try{this.measureDock();}catch(e){}
  },
 
  itemMatch(name,catTitle,words){
@@ -4064,13 +4116,12 @@ const App={
       const tot=this.allCats().reduce((a,c)=>a+(c.items||[]).length,0);
       return `<div class="srch-info"><span>${hits?`<b>${hits}</b> מתוך ${tot} סעיפים · ${inCats} קטגוריות`:`אין תוצאות עבור "${esc(s.search)}"`}</span><button id="srch-clear">✕ נקה</button></div>`;})()}${cats||(onlySel?'<div class="empty">עוד לא בחרת סעיפים.<br>לחץ "✕ הצג הכל" וסמן מה שצריך.</div>':'<div class="empty">לא נמצאו תוצאות.<br>נסה מילה אחת במקום כמה, או שם קטגוריה.</div>')}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${esc(x.cid)}|${esc(x.iid)}">+ ${esc(x.name)}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
-  <div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
+  <div class="dockwrap"><div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
       <div class="b">${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small></div></div>
     <button class="btn-primary" data-modal="preview">📄 הצעת מחיר</button>
     ${(()=>{const m=this.missingParts();
       return m.length?`<button class="bb-hint" data-modal="quote">⚠️ ${esc(m.join(' · '))} — השלם</button>`:'';})()}</div>
-  ${this.cartStrip()}
-  ${this.tabBar()}
+  ${this.cartStrip()}${this.tabBar()}</div>
   ${s.modal?this.modalView():''}`;
  },
 
