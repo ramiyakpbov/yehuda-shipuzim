@@ -494,6 +494,11 @@ body.cart-on .trk-shell{padding:10px 12px 4px;}
   border-radius:18px;min-width:15px;height:15px;font-size:10px;font-weight:800;
   display:flex;align-items:center;justify-content:center;padding:0 3px;}
 body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
+.toast-undo{display:flex;align-items:center;gap:12px;}
+.tu-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
+  color:#fff;border-radius:var(--r-xs);padding:5px 12px;font-size:var(--fs-xs);
+  font-weight:800;flex:none;font-family:inherit;}
+.tu-btn:active{transform:scale(.95);}
 .pi-tip{font-size:12.5px;color:var(--muted);background:var(--bg3);border:1px solid var(--line);
   border-radius:10px;padding:10px 12px;margin-bottom:12px;line-height:1.6;}
 .pi-tip code{background:var(--bg2);padding:1px 6px;border-radius:5px;font-size:11px;}
@@ -1508,7 +1513,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='17.6';
+const VERSION='17.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1662,7 +1667,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v17.6 — מסך ההצעה נקי</div>
+   b:`<div class="g-plate"><div class="g-ph">v17.7 — ליטוש</div>
+   <ul class="g-ul"><li><b>נתונים ישנים אחרי מחיקה.</b> ארבעה עשר מקומות באפליקציה קוראים ממטמון — מרכז הבית, התובנות, מעקב החזרות, זיכרון המחירים וכרטיס הלקוח — ורק מקום אחד ניקה אותו. מחיקת לינק או הצעה השאירה את המסכים האלה עם מספרים שכבר לא נכונים.</li>
+   <li><b>נקודת ביטול אחת</b> — כל שינוי בנתונים (שליחה, מחיקה, שמירת הצעה, עדכון מחירון) מנקה בדיוק את מה שהושפע. חובר בשש נקודות הכתיבה.</li>
+   <li><b>↩︎ ביטול פעולה</b> — הסרה מהסל ומחיקת סעיף מותאם היו מיידיות ובלתי הפיכות. עכשיו מופיעה הודעה עם כפתור "בטל" למשך שש שניות. הסעיף חוזר עם הכמות והמיקום המקוריים.</li>
+   <li><b>מיפוי מלא</b> — נבדקו כל 43 המסכים: לכל אחד יש כניסה, לכל אחד יש פונקציה. אין מסך מנותק ואין הפניה שבורה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v17.6 — מסך ההצעה נקי</div>
    <ul class="g-ul"><li><b>"שכפל את ההצעה האחרונה" הוסר ממסך ההצעה.</b> בגרסה הקודמת הסרתי משם את הקטגוריות הכפולות אבל השארתי אותו — והוא מופיע ממילא במרכז הבית תחת "הצעות אחרונות".</li>
    <li><b>מסך ההצעה מציג עכשיו רק את המחירון</b> — חיפוש, כלי מנהל, שני צ'יפים, הסעיפים שלך, ו-12 הקטגוריות. שום דבר שכבר קיים במסך אחר.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v17.5 — מסך ההצעה נוקה</div>
@@ -3389,6 +3399,18 @@ const App={
    ${s.done?`<div class="fu-sec">סומנו כטופלו (${s.done})</div>${s.rows.filter(r=>r.done).slice(0,5).map(row).join('')}`:''}`;
  },
 
+ /* ===== ביטול מטמונים =====
+    14 מקומות קוראים מהמטמונים (_trackData למעקב, _us לשימוש,
+    _px למחירים) ורק אחד ניקה אותם. מחיקת לינק או הצעה השאירה
+    את מרכז הבית, התובנות ומעקב החזרות עם נתונים ישנים. */
+ invalidate(what){
+  const all=!what;
+  if(all||what==='links'){this._trackData=null;this._trkLoading=false;}
+  if(all||what==='quotes'){this._usSig=null;this._us=null;this._pxSig=null;this._px=null;}
+  if(all||what==='catalog'){this._usSig=null;this._us=null;}
+  this._preflight=null;
+ },
+
  homeState(){
   const now=Date.now();
   const links=Store.get('sentLinks',[])||[];
@@ -3629,6 +3651,7 @@ const App={
   const byId={};this.allCats().forEach(c=>(c.items||[]).forEach(it=>{if(it&&it.id)byId[it.id]=it;}));
   let n=0;
   r.changed.forEach(x=>{const it=byId[x.id];if(!it)return;it.price=x.neu;it.priceAt=Date.now();n++;});
+  this.invalidate('catalog');
   this.save();
   Store.set('subItems',this.state.subItems);
   Store.set('customItems',this.state.custom);
@@ -3830,6 +3853,21 @@ const App={
    if(!c||c.approvedAt)return false;
    const st=c.status||'q';   // סטטוס חסר נחשב "הצעה פתוחה" במקום להיעלם
    return st==='q'||st==='sent'||st==='pending';});},
+ /* הודעה עם ביטול — מהיר יותר מאישור מראש וגם בטוח יותר.
+    הפעולה מתבצעת מיד, ויש 6 שניות להחזיר. */
+ toastUndo(msg,undo){
+  try{document.querySelectorAll('.toast-undo').forEach(t=>t.remove());}catch(e){}
+  const t=document.createElement('div');
+  t.className='toast toast-undo';
+  const s=document.createElement('span');s.textContent=msg;
+  const b=document.createElement('button');b.textContent='בטל';b.className='tu-btn';
+  let done=false;
+  b.onclick=()=>{if(done)return;done=true;try{undo();}catch(e){}
+    t.remove();this.haptic(12);this.toast('הפעולה בוטלה');};
+  t.appendChild(s);t.appendChild(b);
+  document.body.appendChild(t);
+  setTimeout(()=>{try{t.remove();}catch(e){}},6000);
+ },
  toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2400);},
  async checkUpdate(){this.busy('בודק עדכונים…');this.haptic(15);
   try{
@@ -5891,7 +5929,19 @@ const App={
     else{this.state.custom.push(item);Store.set('customItems',this.state.custom);this.state.open['custom']=true;}
     this.state.modal=null;this.state.addTarget=null;this.toast('נשמר ✓');this.render();};
   on('[data-delcustom]','click',e=>{if(!confirm('למחוק פריט זה?'))return;this.state.custom=this.state.custom.filter(x=>x.id!==e.currentTarget.dataset.delcustom);Store.set('customItems',this.state.custom);this.render();});
-  on('[data-delsub]','click',e=>{const[cid,iid]=e.currentTarget.dataset.delsub.split('|');if(this.state.subItems[cid])this.state.subItems[cid]=this.state.subItems[cid].filter(x=>x.id!==iid);Store.set('subItems',this.state.subItems);this.render();});
+  on('[data-delsub]','click',e=>{
+    const[cid,iid]=e.currentTarget.dataset.delsub.split('|');
+    const arr=this.state.subItems[cid]||[];
+    const idx=arr.findIndex(x=>x&&x.id===iid);
+    if(idx<0)return;
+    const removed=arr[idx];
+    this.state.subItems[cid]=arr.filter(x=>x.id!==iid);
+    Store.set('subItems',this.state.subItems);this.invalidate('catalog');this.render();
+    this.toastUndo('נמחק: '+(removed.name||'סעיף'),()=>{
+      const a=this.state.subItems[cid]||(this.state.subItems[cid]=[]);
+      a.splice(Math.min(idx,a.length),0,removed);
+      Store.set('subItems',this.state.subItems);this.invalidate('catalog');this.render();});
+  });
 
   const vt=document.getElementById('vat-toggle');if(vt)vt.onclick=()=>{this.state.vatOn=!this.state.vatOn;Store.set('vatOn',this.state.vatOn);this.render();};
   const vp=document.getElementById('vat-pct');if(vp)vp.oninput=e=>{this.state.vatPct=+e.target.value||0;Store.set('vatPct',this.state.vatPct);};
@@ -6061,7 +6111,11 @@ const App={
     e.stopPropagation();
     const[c,i]=(e.currentTarget.dataset.cartdel||'').split('|');
     const it=this.find(c,i);if(!it)return;
+    const q=+it.qty||0,nm=it.name;
     it.selected=false;it.qty=0;this.saveActive(c);this.haptic(10);this.render();
+    this.toastUndo('הוסר: '+nm,()=>{
+      const x=this.find(c,i);if(!x)return;
+      x.selected=true;x.qty=q||1;this.saveActive(c);this.render();});
   });
 
   on('[data-opencat]','click',e=>{
@@ -6301,7 +6355,7 @@ const App={
   on('[data-lvmsg]','click',e=>this.liveDraftMsg(e.currentTarget.dataset.lvmsg));
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
    const trc=document.getElementById('trk-recover');if(trc)trc.onclick=()=>this.recoverLinks();
-  on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.render();}});
+  on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.invalidate('links');this.render();}});
   on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
   on('[data-qsig]','click',e=>{const id=e.currentTarget.dataset.qsig;const q=Store.get('quotes',[]).find(x=>x.id===id);if(!q)return;const img=q.sig||(q.snap&&q.snap.clientSig)||'';this._sigView={img:img,client:q.client,no:q.no,at:q.ts,quoteId:id};this.state.modal='sigview';this.render();});
   on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
@@ -6743,6 +6797,7 @@ const App={
   out.forEach(c=>c.items.forEach(it=>{if(home[it.id]&&home[it.id]!==c.id)moved++;}));
   this.state.catalog=out;
   if(!Store.set('catalog',out)){this.toast('⚠️ השמירה נכשלה');return 0;}
+  this.invalidate('catalog');
   try{Sync.push&&Sync.push();}catch(e){}
   const total=out.reduce((a,c)=>a+c.items.length,0);
   this.haptic(20);
@@ -7112,7 +7167,7 @@ const App={
     // שליחה חוזרת של אותה הצעה מחליפה את הכרטיס במקום להוסיף עוד אחד
     const _pv=sent.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);
     if(_pv>0)sent.splice(_pv,1);
-    Store.set('sentLinks',sent.slice(0,300));
+    Store.set('sentLinks',sent.slice(0,300));this.invalidate('links');
     this._quoteKind='live';this.recordQuote();this.verifySend('live',id);
     this.idle();this.haptic(25);
     const msg='\u05e9\u05dc\u05d5\u05dd'+(cl.name?' '+cl.name.split(' ')[0]:'')+' \ud83d\udc4b'+String.fromCharCode(10)+
@@ -7141,7 +7196,7 @@ const App={
     // remember link on the client for view-tracking
     try{const cl=Store.get('clients',[]);const rec=cl.find(x=>x.name===c.name&&c.name);if(rec){rec.proposalId=id;Store.set('clients',cl);}}catch(e){}
     try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});const _pv=sl.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);if(_pv>0)sl.splice(_pv,1);
-       Store.set('sentLinks',sl.slice(0,200));}catch(e){}
+       Store.set('sentLinks',sl.slice(0,200));this.invalidate('links');}catch(e){}
     // חסר כאן — לינק דיגיטלי יצר רשומת מעקב אבל לא שמר את ההצעה עצמה
     this._quoteKind='link';this.recordQuote();this.verifySend('link',id);
   }else{
@@ -7392,6 +7447,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   }else{
     qs.unshift(Object.assign({id:uid()},rec,{kinds:kind?[kind]:[]}));isNew=true;
   }
+  this.invalidate('quotes');
   const okQ=Store.set('quotes',qs.slice(0,200));
   // המונה מתקדם רק כשנוצרה הצעה חדשה
   const okS=isNew?Store.set('qseq',Store.get('qseq',0)+1):true;
