@@ -494,6 +494,15 @@ body.cart-on .trk-shell{padding:10px 12px 4px;}
   border-radius:18px;min-width:15px;height:15px;font-size:10px;font-weight:800;
   display:flex;align-items:center;justify-content:center;padding:0 3px;}
 body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
+.qs-search{display:flex;align-items:center;gap:8px;background:var(--bg2);
+  border:1px solid var(--line);border-radius:var(--r-m);padding:9px 12px;margin-bottom:9px;}
+.qs-search>span{flex:none;opacity:.6;}
+.qs-search input{flex:1;min-width:0;background:none;border:none;color:var(--txt);
+  font-size:var(--fs-s);font-family:inherit;padding:0;}
+.qs-x{flex:none;background:none;border:none;color:var(--muted);font-size:var(--fs-m);padding:0 4px;}
+.qs-chips{display:flex;gap:6px;margin-bottom:9px;flex-wrap:wrap;}
+.qs-chips .chip{padding:6px 12px;font-size:var(--fs-xs);}
+.qs-res{font-size:var(--fs-xs);color:var(--muted);margin-bottom:10px;font-weight:700;}
 .toast-undo{display:flex;align-items:center;gap:12px;}
 .tu-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
   color:#fff;border-radius:var(--r-xs);padding:5px 12px;font-size:var(--fs-xs);
@@ -1513,7 +1522,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='17.7';
+const VERSION='17.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1667,7 +1676,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v17.7 — ליטוש</div>
+   b:`<div class="g-plate"><div class="g-ph">v17.8 — חיפוש בהצעות</div>
+   <ul class="g-ul"><li><b>🔍 חיפוש בכל ההצעות</b> — לפי שם לקוח, מספר הצעה, פרויקט, טלפון, <b>וגם לפי שם סעיף</b>. "כמה לקחתי על הריסת קיר" מחזיר את כל ההצעות שכללו אותו. כמה מילים מצטרפות יחד.</li>
+   <li><b>סינון לפי סכום</b> — עד 10K · 10K–50K · מעל 50K, עם סכום מצטבר של המסוננים. אפשר לשלב עם החיפוש.</li>
+   <li><b>מספר ההצעה נקבע ברגע השליחה</b> — קודם הוא הוקצה מראש, ולכן שתי הצעות שנבנו לפני שנשלחו קיבלו אותו מספר, ומספר שהוקצה ולא נשלח נשרף. עכשיו הוא נלקח מהמונה בדיוק כשההצעה נשמרת.</li>
+   <li>שורת החיפוש מופיעה מארבע הצעות ומעלה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v17.7 — ליטוש</div>
    <ul class="g-ul"><li><b>נתונים ישנים אחרי מחיקה.</b> ארבעה עשר מקומות באפליקציה קוראים ממטמון — מרכז הבית, התובנות, מעקב החזרות, זיכרון המחירים וכרטיס הלקוח — ורק מקום אחד ניקה אותו. מחיקת לינק או הצעה השאירה את המסכים האלה עם מספרים שכבר לא נכונים.</li>
    <li><b>נקודת ביטול אחת</b> — כל שינוי בנתונים (שליחה, מחיקה, שמירת הצעה, עדכון מחירון) מנקה בדיוק את מה שהושפע. חובר בשש נקודות הכתיבה.</li>
    <li><b>↩︎ ביטול פעולה</b> — הסרה מהסל ומחיקת סעיף מותאם היו מיידיות ובלתי הפיכות. עכשיו מופיעה הודעה עם כפתור "בטל" למשך שש שניות. הסעיף חוזר עם הכמות והמיקום המקוריים.</li>
@@ -5137,8 +5151,27 @@ const App={
   if(this.state.modal==='tracking'||(this.state.tab||'home')==='track')this.render();
  },
  sentQuotesModal(){return `<h2>📤 הצעות שנשלחו <button class="x" data-close>✕</button></h2>${this.sentQuotesBody()}`;},
+ /* חיפוש וסינון בהצעות. עם עשרות הצעות לא הייתה דרך למצוא
+    הצעה ישנה חוץ מגלילה — לא לפי שם, לא לפי סעיף ולא לפי סכום. */
  sentQuotesBody(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
-  const list=f?all.filter(q=>(q.client||'')===f):all;
+  const q0=String(this.state.qSearch||'').trim().toLowerCase();
+  const rng=this.state.qRange||'';
+  let list=f?all.filter(q=>(q.client||'')===f):all;
+  if(q0){
+    const words=q0.split(/\s+/).filter(Boolean);
+    list=list.filter(q=>{
+      if(!q)return false;
+      const hay=[q.client,q.no,q.project,q.phone,
+        ...((q.snap&&q.snap.lines)||[]).map(l=>l&&l.name)]
+        .filter(Boolean).join(' ').toLowerCase();
+      return words.every(w=>hay.indexOf(w)>=0);
+    });
+  }
+  if(rng){
+    const R={s:[0,10000],m:[10000,50000],l:[50000,Infinity]}[rng];
+    if(R)list=list.filter(q=>{const g=+q.grand||0;return g>=R[0]&&g<R[1];});
+  }
+  const totalShown=list.reduce((a,q)=>a+(+q.grand||0),0);
   const dt=ts=>new Date(ts).toLocaleDateString('he-IL')+' '+new Date(ts).toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
   return `${f?`<div style="font-size:13px;font-weight:800;margin-bottom:8px">מסונן: ${f}</div><button class="btn-ghost" data-qfilter="" style="margin-bottom:10px">↩️ הצג את כל ההצעות</button>`:''}
    ${(()=>{const links=(Store.get('sentLinks',[])||[]).length;
@@ -5147,7 +5180,16 @@ const App={
        עד גרסה 14.1 שמירת הצעה נכשלה בשקט כי כל הצעה הכילה עותק של המחירון והאחסון התמלא.<br>
        <b style="color:var(--txt)">הצעות חדשות יישמרו כאן אוטומטית.</b><br>
        <button class="mini" id="q-rebuild" style="margin-top:8px;width:100%;padding:9px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px">↻ בנה רשומות מ-${links} הלינקים</button></div>`:'';})()}
-   <div style="font-size:12px;color:var(--muted);margin-bottom:12px">כל הצעה נשמרת אוטומטית עם הסעיפים — אפשר לפתוח, לתקן ולשלוח מחדש.</div>
+   ${all.length>=4?`
+   <div class="qs-search"><span>🔍</span>
+     <input id="q-search" value="${esc(this.state.qSearch||'')}" placeholder="שם לקוח · מספר · סעיף · טלפון"/>
+     ${q0?`<button class="qs-x" id="q-search-x">✕</button>`:''}</div>
+   <div class="qs-chips">
+     ${[['','הכל'],['s','עד 10K'],['m','10K–50K'],['l','מעל 50K']].map(([v,t])=>
+       `<button class="chip ${rng===v?'on':''}" data-qrange="${v}">${t}</button>`).join('')}
+   </div>
+   ${(q0||rng)?`<div class="qs-res">${list.length} מתוך ${all.length}${list.length?' · '+nisR(totalShown):''}</div>`:''}`:''}
+   <div style="font-size:var(--fs-xs);color:var(--muted);margin-bottom:12px">כל הצעה נשמרת אוטומטית עם הסעיפים — אפשר לפתוח, לתקן ולשלוח מחדש.</div>
    ${list.length?list.map(q=>{
      const K={pdf:['📄','הצעת מחיר PDF'],link:['🔗','לינק הצעה'],live:['⚡','לינק חי'],
               contract:['📝','הזמנת עבודה'],signed:['✍️','נחתם']};
@@ -5169,7 +5211,8 @@ const App={
                    <button class="mini" data-dupq="${q.id}">📋 עותק</button>`:''}
          ${(q.sig||(q.snap&&q.snap.clientSig))?`<button class="mini" data-qsig="${q.id}">✍️ חתימה</button>`:''}
          <button class="del" data-delq="${q.id}">🗑️</button>
-       </div></div>`;}).join(''):'<div class="empty">אין עדיין הצעות שנשלחו.<br><span style="font-size:12px">הצעה נשמרת כאן ברגע שיוצרים PDF או שולחים לינק.</span></div>'}`;
+       </div></div>`;}).join(''):((q0||rng)?`<div class="empty">לא נמצאה הצעה מתאימה.<br><span style="font-size:var(--fs-xs)">נסה מילה אחרת או הסר את הסינון.</span></div>`
+     :'<div class="empty">אין עדיין הצעות שנשלחו.<br><span style="font-size:var(--fs-xs)">הצעה נשמרת כאן ברגע שיוצרים PDF או שולחים לינק.</span></div>')}`;
  },
  aiSuggestModal(){const list=this._aiSuggestions||[];return `<h2>🤖 סעיפים שאולי חסרים <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">ה-AI מציע סעיפים נלווים. לחיצה מוסיפה אותם כפריט מותאם (תוכל לתמחר אחר כך).</div>
@@ -6158,6 +6201,22 @@ const App={
   };
   const pfOpen=document.getElementById('pf-open');
   if(pfOpen)pfOpen.onclick=()=>{this.captureQuote();this._preflight=this.preflight();this._pfAction=null;this.state.modal='preflight';this.render();};
+  const qsr=document.getElementById('q-search');
+  if(qsr){
+    qsr.oninput=()=>{
+      clearTimeout(this._qsT);
+      const v=qsr.value;
+      this._qsT=setTimeout(()=>{this.state.qSearch=v;this.render();
+        const el=document.getElementById('q-search');
+        if(el){el.focus();try{el.setSelectionRange(v.length,v.length);}catch(e){}}},220);
+    };
+  }
+  const qsx=document.getElementById('q-search-x');
+  if(qsx)qsx.onclick=()=>{this.state.qSearch='';this.render();};
+  on('[data-qrange]','click',e=>{
+    const v=e.currentTarget.dataset.qrange||'';
+    this.state.qRange=(this.state.qRange===v)?'':v;this.haptic(8);this.render();
+  });
   const qrb=document.getElementById('q-rebuild');
   if(qrb)qrb.onclick=()=>this.rebuildQuotesFromLinks();
   const fcs=document.getElementById('fix-catstruct');
@@ -7425,7 +7484,11 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   const snap={clientSig:this.state.clientSig||'',lines:lines,client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice};
   // אותה הצעה נשמרת מכמה מסלולים (לינק חי · לינק דיגיטלי · PDF · חוזה · חתימה).
   // בלי איחוד לפי מספר ההצעה נוצרה רשומה חדשה בכל לחיצה.
-  const _no=this.state.quoteNo;
+  // המספר נקבע כאן, מהמונה שבאחסון — לא מערך שהוקצה מראש.
+  // קודם הוא נקבע מראש, ולכן שתי הצעות שנבנו לפני שליחה קיבלו
+  // אותו מספר, ומספר שהוקצה ולא נשלח נשרף.
+  const _no=this.state.quoteNo||nextQuoteNo();
+  if(!this.state.quoteNo)this.state.quoteNo=_no;
   const kind=this._quoteKind||'';this._quoteKind=null;
   const rec={ts:Date.now(),no:_no,client:this.state.client.name,phone:this.state.client.phone||'',
     project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap};
