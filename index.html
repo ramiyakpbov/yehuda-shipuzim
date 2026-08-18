@@ -1552,7 +1552,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='18.0';
+const VERSION='18.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1706,7 +1706,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v18.0 — יומן פרויקטים</div>
+   b:`<div class="g-plate"><div class="g-ph">v18.1 — תיקונים</div>
+   <ul class="g-ul"><li><b>הרשימה הסתירה הצעות תקינות.</b> הסינון שהוספתי הסתיר כל רשומה בלי סעיפים שמורים — אבל הצעה יכולה להיות תקינה לגמרי גם בלי הסעיפים, אם יש לה סכום. עכשיו מוסתרת רק רשומה שאין לה גם סעיפים וגם סכום.</li>
+   <li><b>מרכז הבית — שמונה קיצורים בשתי שורות</b> — לקוחות · לחזור היום · תמונות · דוחות · <b>יומן פרויקטים</b> · הודעות · משובים · עוד. תמונות ודוחות נשארו יחד, וליומן יש כפתור משלו עם מונה פרויקטים פעילים.</li>
+   <li><b>תאריך בפורמט ישראלי</b> — יום/חודש/שנה, לדוגמה 01/09/2026. מקבל גם נקודות ומקפים, וגם בלי אפסים מובילים.</li>
+   <li>התפריט ⚙️ מכיל עכשיו רק את מה שאין לו מקום בבית: כלי מנהל · הסגנון שלי · הצעות מהירות · מדריך · הגדרות.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v18.0 — יומן פרויקטים</div>
    <ul class="g-ul"><li><b>"הסעיפים שלך" הוסר.</b> הצגת סעיפים בודדים מחוץ להקשר של הקטגוריה לא סייעה לבנייה.</li>
    <li><b>📊 דוחות חזר למרכז הבית</b> — שם מקומו. הגלריה עברה לתפריט.</li>
    <li><b>למה "כל ההצעות" הראה עשרות רשומות</b> — רשומות מלפני v14.1 נשמרו בלי הסעיפים, מסומנות "ללא נתונים". אי אפשר לפתוח או לשכפל אותן. הן מוסתרות עכשיו, עם כפתור להצגה למי שרוצה.</li>
@@ -3561,7 +3566,18 @@ const App={
       <button class="hm-q" data-modal="clients"><b>${st.clients}</b><span>👥 לקוחות</span></button>
       ${(()=>{let n=0;try{n=this.followState().now;}catch(e){}
         return `<button class="hm-q ${n?'hot':''}" data-modal="follow"><b>${n}</b><span>📅 לחזור היום</span></button>`;})()}
+      <button class="hm-q" data-modal="gallery"><span>📷 תמונות</span></button>
       <button class="hm-q" data-modal="stats"><span>📊 דוחות</span></button>
+    </div>
+    <div class="hm-quick" style="margin-top:7px">
+      ${(()=>{let n=0;try{
+        const cls=Store.get('clients',[])||[];
+        const now=new Date();now.setHours(0,0,0,0);
+        n=cls.filter(c=>c&&c.dueDate&&c.status!=='done'&&new Date(c.dueDate)>=now).length;
+      }catch(e){}
+      return `<button class="hm-q" data-modal="calendar"><b>${n||''}</b><span>📅 יומן פרויקטים</span></button>`;})()}
+      <button class="hm-q" data-modal="wacenter"><span>💬 הודעות</span></button>
+      <button class="hm-q" data-modal="reviews"><span>⭐ משובים</span></button>
       <button class="hm-q" data-modal="menu"><span>⚙️ עוד</span></button>
     </div>
   </div>`;
@@ -5194,10 +5210,13 @@ const App={
   const rng=this.state.qRange||'';
   // רשומות מלפני v14.1 נשמרו בלי הסעיפים ואי אפשר לפתוח או לשכפל
   // אותן. הן הציגו "ללא נתונים" ומילאו את הרשימה בלי שום ערך.
-  const empty=all.filter(q=>q&&!q.snap);
+  // רק רשומה שאין לה גם סעיפים וגם סכום היא באמת חסרת ערך.
+  // הסינון הקודם הסתיר כל רשומה בלי snap — כולל הצעות תקינות.
+  const isEmpty=q=>!q||(!(q.snap&&q.snap.lines&&q.snap.lines.length)&&!(+q.grand>0));
+  const empty=all.filter(isEmpty);
   const showEmpty=!!this.state.qShowEmpty;
   let list=f?all.filter(q=>(q.client||'')===f):all;
-  if(!showEmpty)list=list.filter(q=>q&&q.snap);
+  if(!showEmpty&&empty.length)list=list.filter(q=>!isEmpty(q));
   if(q0){
     const words=q0.split(/\s+/).filter(Boolean);
     list=list.filter(q=>{
@@ -5316,15 +5335,6 @@ const App={
      <div class="ah-txt"><div class="ah-t">${title}${locked?' <span style="font-size:12px">🔒</span>':''}</div><div class="ah-d">${desc}</div></div>
      <div class="ah-arrow">‹</div></button>`;
   return `<h2>⚙️ תפריט ראשי <button class="x" data-close>✕</button></h2>
-   <div class="mn-sec">עבודה שוטפת</div>
-   <div class="aihub-grid">
-     ${item('gallery','📷','גלריית פרויקטים','תמונות לפני/אחרי לכל לקוח',false)}
-     ${(()=>{const n=(Store.get('reminders',[])||[]).length||0;
-       return item('calendar','📅','יומן פרויקטים','תאריכי יעד ומשימות'+(n?' · '+n+' פעילים':''),false);})()}
-     ${item('wacenter','💬','מרכז הודעות','נוסחים מוכנים · נפתח בוואטסאפ',false)}
-     ${(()=>{const r=(Store.get('reviewLinks',[])||[]).length;
-       return item('reviews','⭐','משובים',r?r+' בקשות משוב נשלחו':'בקשת ביקורת מלקוח',false);})()}
-   </div>
    <div class="mn-sec">כלים</div>
    <div class="aihub-grid">
      ${item('aihub','🔐','כלי מנהל','הזנת סעיפים מקובץ, צילום או הקלטה',true)}
@@ -5503,7 +5513,7 @@ const App={
       <div class="cal-top">
         <div style="flex:1;min-width:0">
           <div class="cal-n">${esc(c.name)}</div>
-          <div class="cal-s">🗓️ ${esc(c.dueDate)} · ${when}${c.project?' · '+esc(c.project):''}</div>
+          <div class="cal-s">🗓️ ${esc(String(c.dueDate).split('-').reverse().join('/'))} · ${when}${c.project?' · '+esc(c.project):''}</div>
         </div>
         <span class="status ${c.status||'q'}">${lbl[c.status||'q']}</span>
       </div>
@@ -6324,16 +6334,26 @@ const App={
     const id=e.currentTarget.dataset.calDate;
     const cls=Store.get('clients',[])||[];
     const c=cls.find(x=>x&&x.id===id);if(!c)return;
-    const cur=c.dueDate||'';
-    const v=prompt('תאריך התחלה לפרויקט של '+(c.name||'')+'\n\nפורמט: YYYY-MM-DD',cur);
+    // פורמט ישראלי — יום/חודש/שנה. מקבל גם נקודות ומקפים.
+    const toIL=s=>{const m=String(s||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      return m?(m[3]+'/'+m[2]+'/'+m[1]):'';};
+    const cur=toIL(c.dueDate);
+    const v=prompt('תאריך התחלה לפרויקט של '+(c.name||'')+'\n\nיום/חודש/שנה · לדוגמה 01/09/2026',cur||'');
     if(v===null)return;
-    const s=String(v).trim();
-    if(s&&!/^\d{4}-\d{2}-\d{2}$/.test(s)){this.toast('פורמט לא תקין — YYYY-MM-DD');return;}
-    c.dueDate=s;
+    let s=String(v).trim().replace(/[.\-]/g,'/');
+    if(!s){c.dueDate='';}
+    else{
+      const m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if(!m){this.toast('פורמט לא תקין — יום/חודש/שנה');return;}
+      const dd=m[1].padStart(2,'0'),mm=m[2].padStart(2,'0');
+      if(+mm<1||+mm>12||+dd<1||+dd>31){this.toast('תאריך לא קיים');return;}
+      s=m[3]+'-'+mm+'-'+dd;
+      c.dueDate=s;
+    }
     if(s&&(!c.status||c.status==='q'||c.status==='sent'))c.status='doing';
     Store.set('clients',cls);
     try{Sync.push&&Sync.push();}catch(x){}
-    this.haptic(14);this.toast(s?('נקבע ל-'+s):'התאריך הוסר');this.render();
+    this.haptic(14);this.toast(c.dueDate?('נקבע ל-'+toIL(c.dueDate)):'התאריך הוסר');this.render();
   });
   const qte=document.getElementById('q-toggle-empty');
   if(qte)qte.onclick=()=>{this.state.qShowEmpty=!this.state.qShowEmpty;this.haptic(8);this.render();};
