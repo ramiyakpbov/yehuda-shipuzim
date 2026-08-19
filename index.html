@@ -1552,7 +1552,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='18.1';
+const VERSION='18.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1706,7 +1706,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v18.1 — תיקונים</div>
+   b:`<div class="g-plate"><div class="g-ph">v18.2 — סנכרון המספרים</div>
+   <ul class="g-ul"><li><b>כל מסך ספר אחרת.</b> הדוח הראה 9 הצעות ו-0% סגירה, המעקב הראה 3 נשלחו ו-33% אושרו, ומרכז הבית הראה 3 ממתינות. אותם נתונים, ארבעה מספרים.</li>
+   <li><b>למה</b> — הדוח ספר גם רשומות ריקות מלפני v14.1 · מרכז הבית ספר כל שליחה בנפרד, כך שהצעה שנשלחה שלוש פעמים נספרה שלוש · אחוז הסגירה נמדד מול מה שהופק במקום מול מה שנשלח.</li>
+   <li><b>מקור אמת אחד</b> — חמישה מסכים (דוח, מרכז בית, תובנות, זיכרון מחירים, למידת שימוש) נשענים עכשיו על אותה ספירה: הצעה עם סעיפים או סכום נספרת פעם אחת, לפי מספר ההצעה.</li>
+   <li><b>הדוח הורחב</b> — הצעות שהופקו · נשלחו ללקוח · אושרו · אחוז סגירה · היקף ההצעות · <b>מתוכו אושר</b> · הצעה ממוצעת · לקוחות חדשים · בקשות ומשובים. ההיקף שאושר מציג את הסכום הסופי אחרי מה שהלקוח הוריד.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v18.1 — תיקונים</div>
    <ul class="g-ul"><li><b>הרשימה הסתירה הצעות תקינות.</b> הסינון שהוספתי הסתיר כל רשומה בלי סעיפים שמורים — אבל הצעה יכולה להיות תקינה לגמרי גם בלי הסעיפים, אם יש לה סכום. עכשיו מוסתרת רק רשומה שאין לה גם סעיפים וגם סכום.</li>
    <li><b>מרכז הבית — שמונה קיצורים בשתי שורות</b> — לקוחות · לחזור היום · תמונות · דוחות · <b>יומן פרויקטים</b> · הודעות · משובים · עוד. תמונות ודוחות נשארו יחד, וליומן יש כפתור משלו עם מונה פרויקטים פעילים.</li>
    <li><b>תאריך בפורמט ישראלי</b> — יום/חודש/שנה, לדוגמה 01/09/2026. מקבל גם נקודות ומקפים, וגם בלי אפסים מובילים.</li>
@@ -3254,7 +3259,7 @@ const App={
  /* ===== מה אתה באמת משתמש בו =====
     נלמד מההצעות שכבר שלחת, במקום מדגל "חם" שלא סומן מעולם. */
  usageStats(){
-  const qs=Store.get('quotes',[])||[];
+  const qs=this.realQuotes();
   const sig=qs.length+':'+((qs[0]&&qs[0].ts)||0);
   if(this._usSig===sig&&this._us)return this._us;
   const home={};this.allCats().forEach(c=>(c.items||[]).forEach(it=>{if(it&&it.id)home[it.id]=c.id;}));
@@ -3294,7 +3299,7 @@ const App={
  insights(){
   const now=Date.now(),DAY=864e5;
   const links=Store.get('sentLinks',[])||[];
-  const quotes=Store.get('quotes',[])||[];
+  const quotes=this.realQuotes();
   const td=this._trackData||{};
   const out=[];
   const R=(ic,t,d,lvl)=>out.push({ic:ic,t:t,d:d||'',lvl:lvl||''});
@@ -3465,6 +3470,40 @@ const App={
     14 מקומות קוראים מהמטמונים (_trackData למעקב, _us לשימוש,
     _px למחירים) ורק אחד ניקה אותם. מחיקת לינק או הצעה השאירה
     את מרכז הבית, התובנות ומעקב החזרות עם נתונים ישנים. */
+ /* ===== מקור אמת אחד =====
+    חמישה מסכים ספרו הצעות בדרכים שונות: הדוח כלל רשומות ריקות
+    (9 במקום 3), מרכז הבית ספר לינקים, המעקב ספר לינקים חיים בלבד,
+    ו"כל ההצעות" ספר רשומות. כל אחד הראה מספר אחר לאותו נתון. */
+ realQuotes(){
+  // הצעה אמיתית: יש לה סעיפים או סכום. רשומה בלי שניהם היא שריד.
+  return (Store.get('quotes',[])||[]).filter(q=>
+    q&&((q.snap&&q.snap.lines&&q.snap.lines.length)||+q.grand>0));
+ },
+ // סיכום אחד שכל המסכים נשענים עליו
+ quoteTotals(){
+  const qs=this.realQuotes();
+  const links=Store.get('sentLinks',[])||[];
+  const td=this._trackData||{};
+  const byNo={};qs.forEach(q=>{if(q.no)byNo[q.no]=q;});
+  let approved=0,viewed=0,waiting=0,approvedSum=0,sum=0;
+  const seen={};
+  qs.forEach(q=>{sum+=+q.grand||0;});
+  links.forEach(l=>{
+    if(!l||!l.id)return;
+    if(seen[l.no||l.id])return; seen[l.no||l.id]=1;
+    const d=td[l.id]||{};
+    if(d.approvedAt){approved++;approvedSum+=+l.total||0;}
+    else if(d.openedAt||d.views)viewed++;
+    else waiting++;
+  });
+  const sent=Object.keys(seen).length;
+  return {quotes:qs.length,sum:sum,sent:sent,
+    approved:approved,viewed:viewed,waiting:waiting,
+    approvedSum:approvedSum,
+    conv:sent?Math.round(approved/sent*100):0,
+    avg:qs.length?sum/qs.length:0};
+ },
+
  invalidate(what){
   const all=!what;
   if(all||what==='links'){this._trackData=null;this._trkLoading=false;}
@@ -4308,7 +4347,7 @@ const App={
  },
 
  priceIndex(){
-  const qs=Store.get('quotes',[])||[];
+  const qs=this.realQuotes();
   const sig=qs.length+':'+((qs[0]&&qs[0].ts)||0);
   if(this._pxSig===sig&&this._px)return this._px;
   const idx={};
@@ -5996,20 +6035,40 @@ const App={
 
  monthName(ym){const[y,m]=ym.split('-');const names=['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];return names[(+m)-1]+' '+y;},
  reportData(ym){const[y,m]=ym.split('-').map(Number);const inM=ts=>{if(!ts)return false;const d=new Date(ts);return d.getFullYear()===y&&d.getMonth()===m-1;};
-  const qs=Store.get('quotes',[]).filter(q=>inM(q.ts));const clients=Store.get('clients',[]);
-  const closed=clients.filter(c=>inM(c.doneAt));const feedbacks=clients.filter(c=>inM(c.feedbackAt));
-  const reviews=clients.filter(c=>inM(c.reviewSentAt));const newC=clients.filter(c=>inM(c.createdAt));
-  const sum=qs.reduce((s,q)=>s+(q.grand||0),0);const conv=qs.length?Math.round(closed.length/qs.length*100):0;
-  return{quotes:qs.length,sum,closed:closed.length,feedbacks:feedbacks.length,reviews:reviews.length,newClients:newC.length,conv,avg:qs.length?sum/qs.length:0};},
+  // רק הצעות אמיתיות — קודם נספרו גם רשומות ריקות והמספר תפח
+  const qs=this.realQuotes().filter(q=>inM(q.ts));
+  const clients=Store.get('clients',[])||[];
+  const links=(Store.get('sentLinks',[])||[]).filter(l=>l&&inM(l.ts));
+  const td=this._trackData||{};
+  // "נסגר" = הצעה שאושרה בלינק, או לקוח שסומן כבוצע
+  let approved=0,approvedSum=0;
+  const seenNo={};
+  links.forEach(l=>{
+    const k=l.no||l.id;if(seenNo[k])return;seenNo[k]=1;
+    const d=td[l.id]||{};
+    if(d.approvedAt){approved++;approvedSum+=+l.total||0;}
+  });
+  const doneC=clients.filter(c=>inM(c.doneAt)).length;
+  const closed=Math.max(approved,doneC);
+  const sent=Object.keys(seenNo).length;
+  const feedbacks=clients.filter(c=>inM(c.feedbackAt)).length;
+  const reviews=clients.filter(c=>inM(c.reviewSentAt)).length;
+  const newC=clients.filter(c=>inM(c.createdAt)).length;
+  const sum=qs.reduce((s,q)=>s+(+q.grand||0),0);
+  // אחוז סגירה נמדד מול מה שנשלח, לא מול מה שהופק
+  const conv=sent?Math.round(closed/sent*100):0;
+  return{quotes:qs.length,sum,sent,closed,approvedSum,
+    feedbacks,reviews,newClients:newC,conv,avg:qs.length?sum/qs.length:0};},
  statsModal(){const ym=this.state.reportMonth;const d=this.reportData(ym);
   const card=(n,l,red,key)=>`<div class="statcard${key?' clickable':''}"${key?` data-drill="${key}"`:''}><div class="n" style="${red?'':'color:var(--white)'};font-size:${String(n).length>6?'18px':'26px'}">${n}</div><div class="l">${l}${key?' ›':''}</div></div>`;
   return `<h2>דו"ח חודשי 📊 <button class="x" data-close>✕</button></h2>
    <div class="field"><label>בחר חודש</label><input id="rep-month" type="month" value="${ym}"/></div>
    <div style="text-align:center;font-weight:800;font-size:15px;margin:2px 0 12px;color:var(--red)">${this.monthName(ym)}</div>
-   <div class="stat">${card(d.quotes,'הצעות שהופקו',1,'quotes')}${card(d.closed,'פרויקטים שנסגרו',1,'closed')}</div>
-   <div class="stat" style="margin-top:10px">${card(d.feedbacks,'פידבקים שהתקבלו',1,'feedbacks')}${card(d.reviews,'בקשות משוב שנשלחו',1,'reviews')}</div>
-   <div class="stat" style="margin-top:10px">${card(d.newClients,'לקוחות חדשים',1,'newClients')}${card(d.conv+'%','אחוז סגירה',1)}</div>
-   <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף כספי (הצעות)',1)}${card(nis(d.avg),'הצעה ממוצעת',1)}</div>
+   <div class="stat">${card(d.quotes,'הצעות שהופקו',1,'quotes')}${card(d.sent,'נשלחו ללקוח',1)}</div>
+   <div class="stat" style="margin-top:10px">${card(d.closed,'אושרו',1,'closed')}${card(d.conv+'%','אחוז סגירה',1)}</div>
+   <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף ההצעות',1)}${card(nis(d.approvedSum),'מתוכו אושר',1)}</div>
+   <div class="stat" style="margin-top:10px">${card(nis(d.avg),'הצעה ממוצעת',1)}${card(d.newClients,'לקוחות חדשים',1,'newClients')}</div>
+   <div class="stat" style="margin-top:10px">${card(d.reviews,'בקשות משוב',1,'reviews')}${card(d.feedbacks,'משובים שהתקבלו',1,'feedbacks')}</div>
    ${(()=>{let ins=[];try{ins=this.insights();}catch(e){}
      if(!ins.length)return '';
      return `<div class="ins-sec">💡 מה עובד ומה לא</div>
@@ -6017,7 +6076,9 @@ const App={
          <span class="ins-i">${x.ic}</span>
          <span><b>${esc(x.t)}</b>${x.d?`<small>${esc(x.d)}</small>`:''}</span></div>`).join('')}`;})()}
    <button class="btn-ghost" id="rep-send">📲 שלח לי את הסיכום בוואטסאפ</button>
-   <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;line-height:1.6">הנתונים נצברים מרגע השדרוג. "נסגר"=סטטוס בוצע, "פידבק"=לקוח שהגיב אחרי בקשת משוב.</div>`;
+   <div style="font-size:var(--fs-xxs);color:var(--muted);margin-top:8px;text-align:center;line-height:1.6">
+     "הצעות שהופקו" — נשמרו במערכת. "נשלחו" — יצאו ללקוח בפועל.<br>
+     אחוז הסגירה נמדד מתוך מה שנשלח, לא מתוך מה שהופק.</div>`;
  },
 
  bind(){const $=s=>document.querySelectorAll(s);const on=(sel,ev,fn)=>$(sel).forEach(e=>e.addEventListener(ev,fn));
