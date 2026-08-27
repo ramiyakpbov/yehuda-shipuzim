@@ -1552,7 +1552,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='18.2';
+const VERSION='18.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1706,7 +1706,10 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v18.2 — סנכרון המספרים</div>
+   b:`<div class="g-plate"><div class="g-ph">v18.3 — מספר קבלן</div>
+   <ul class="g-ul"><li><b>מספר קבלן 134094 נוסף בכל מקום שבו מופיעים פרטי העסק</b> — הצעת המחיר ב-PDF (תיבת "קבלן מבצע") · הנספח המשפטי · הלינק החי שהלקוח מקבל · דף המשוב · כרטיס העסק בהגדרות.</li>
+   <li>הניסוח הוא "ח.פ 311834998 · קבלן 134094" — בלי המילה "רשום", בהתאם לכלל הקבוע.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v18.2 — סנכרון המספרים</div>
    <ul class="g-ul"><li><b>כל מסך ספר אחרת.</b> הדוח הראה 9 הצעות ו-0% סגירה, המעקב הראה 3 נשלחו ו-33% אושרו, ומרכז הבית הראה 3 ממתינות. אותם נתונים, ארבעה מספרים.</li>
    <li><b>למה</b> — הדוח ספר גם רשומות ריקות מלפני v14.1 · מרכז הבית ספר כל שליחה בנפרד, כך שהצעה שנשלחה שלוש פעמים נספרה שלוש · אחוז הסגירה נמדד מול מה שהופק במקום מול מה שנשלח.</li>
    <li><b>מקור אמת אחד</b> — חמישה מסכים (דוח, מרכז בית, תובנות, זיכרון מחירים, למידת שימוש) נשענים עכשיו על אותה ספירה: הצעה עם סעיפים או סכום נספרת פעם אחת, לפי מספר ההצעה.</li>
@@ -4778,7 +4781,7 @@ const App={
    <div class="sec-title" style="margin-top:16px">🔐 הגדרות מפתח</div>
    ${unlocked?gaBlock:lockCard}
    <div style="margin-top:16px;text-align:center">${logoBlock(true,.8)}</div>
-   <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · 054-5718316<br>yehuda-shipuzim.netlify.app</div></div>`;
+   <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · קבלן 134094<br>054-5718316<br>yehuda-shipuzim.netlify.app</div></div>`;
  },
 
 
@@ -5909,7 +5912,7 @@ const App={
    </div>
 
    <div class="lx-parties">
-     <div><b>\u05d4\u05e7\u05d1\u05dc\u05df:</b> \u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998 \u00b7 054-5718316</div>
+     <div><b>\u05d4\u05e7\u05d1\u05dc\u05df:</b> \u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998 \u00b7 \u05e7\u05d1\u05dc\u05df 134094 \u00b7 054-5718316</div>
      <div><b>\u05d4\u05de\u05d6\u05de\u05d9\u05df:</b> ${esc(cl.name)||'________'} ${cl.phone?'\u00b7 '+cl.phone:''}</div>
      <div><b>\u05de\u05d5\u05e9\u05d0 \u05d4\u05e2\u05d1\u05d5\u05d3\u05d4:</b> ${cl.project||cats}</div>
      <div><b>\u05db\u05ea\u05d5\u05d1\u05ea \u05d4\u05d0\u05ea\u05e8:</b> ${esc(cl.address)||'________'}</div>
@@ -7224,7 +7227,7 @@ const App={
      <div class="p-meta-l"><b>${L.no}:</b> ${s.quoteNo}<br><b>${L.date}:</b> ${s.date}<br><b>${L.valid}:</b> ${s.valid}</div>
    </div>
    <div class="p-parties">
-     <div class="p-party"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="l">ח.פ 311834998<br>054-5718316<br>yuda090581@gmail.com</div></div>
+     <div class="p-party"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="l">ח.פ 311834998 · קבלן 134094<br>054-5718316<br>yuda090581@gmail.com</div></div>
      <div class="p-party"><div class="h">${L.to}</div><div class="n">${esc(c.name)||'—'}</div><div class="l">${c.project||''}<br>${c.address||''}${c.phone?'<br>'+c.phone:''}</div></div></div>
    <table class="p-items"><thead><tr><th style="width:30px">#</th><th class="desc">${L.desc}</th><th style="width:55px">${L.qty}</th><th style="width:60px">${L.unit}</th>${plan?'':`<th style="width:85px">${L.price}</th><th style="width:95px">${L.total}</th>`}</tr></thead><tbody>${rows}</tbody></table>
    ${plan?`<div class="p-summary"><div class="p-sumbox" style="width:100%;max-width:100%">
@@ -7335,7 +7338,7 @@ const App={
      '</div>'+
      '<button class="lv-ok" id="lv-approve">\u2705 \u05d0\u05e0\u05d9 \u05de\u05d0\u05e9\u05e8 \u05d0\u05ea \u05d4\u05d4\u05e6\u05e2\u05d4</button>'+
      '<a class="lv-call" href="tel:0545718316">\ud83d\udcde \u05d9\u05e9 \u05dc\u05d9 \u05e9\u05d0\u05dc\u05d4 \u2014 054-571-8316</a>'+
-     '<div class="lv-foot">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998<br>yehuda-shipuzim.netlify.app</div>'+
+     '<div class="lv-foot">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998 \u00b7 \u05e7\u05d1\u05dc\u05df 134094<br>yehuda-shipuzim.netlify.app</div>'+
      '</div>';
   }
   return '<div class="lv-wrap">'+
@@ -7355,7 +7358,7 @@ const App={
      '<div class="lv-note" id="lv-note"></div></div>'+
    '<button class="lv-ok" id="lv-approve">\u2705 \u05d0\u05e0\u05d9 \u05de\u05d0\u05e9\u05e8 \u05d0\u05ea \u05d4\u05d4\u05e6\u05e2\u05d4</button>'+
    '<a class="lv-call" href="tel:0545718316">\ud83d\udcde \u05d9\u05e9 \u05dc\u05d9 \u05e9\u05d0\u05dc\u05d4 \u2014 054-571-8316</a>'+
-   '<div class="lv-foot">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998<br>yehuda-shipuzim.netlify.app</div>'+
+   '<div class="lv-foot">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u00b7 \u05d7.\u05e4 311834998 \u00b7 \u05e7\u05d1\u05dc\u05df 134094<br>yehuda-shipuzim.netlify.app</div>'+
    '</div>';
  },
  async translateQuote(){
@@ -7540,7 +7543,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       <div class="pv2-meta"><b>מס׳ הצעה:</b> ${esc(data.no)||''}<br>${data.dt?`<b>תאריך:</b> ${esc(data.dt)}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${esc(data.vd)}`:''}</div>
     </div>
     <div class="pv2-parties">
-      <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">ח.פ 311834998<br>054-5718316<br>yuda090581@gmail.com</div></div>
+      <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">ח.פ 311834998 · קבלן 134094<br>054-5718316<br>yuda090581@gmail.com</div></div>
       <div class="pp"><div class="h">לכבוד</div><div class="n">${esc(data.cn)||'[שם הלקוח]'}</div><div class="s">${[data.pr,data.ad,data.ph].filter(Boolean).map(esc).join('<br>')}</div></div>
     </div>
     <table class="pv2-tbl"><thead><tr><th class="num">#</th><th class="desc">תיאור העבודה</th><th>כמות</th><th>יחידה</th>${plan?'':'<th>מחיר ליח׳</th><th>סה"כ</th>'}</tr></thead><tbody>${tbody}</tbody></table>
