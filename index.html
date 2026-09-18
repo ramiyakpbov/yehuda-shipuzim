@@ -52,7 +52,7 @@ input,select,textarea{font-family:inherit;}
 #slider-fill{position:absolute;top:0;right:0;height:100%;width:60px;background:linear-gradient(90deg,var(--redDeep),var(--red));border-radius:24px;}
 #slider-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:800;font-size:16px;letter-spacing:.5px;animation:shimmer 2s infinite;}
 @keyframes shimmer{50%{color:#fff;}}
-#slider-knob{position:absolute;top:4px;right:4px;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.5);touch-action:none;cursor:pointer;animation:knob-pulse 1.6s ease-in-out infinite;}
+#slider-knob{position:absolute;top:4px;inset-inline-start:4px;width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.5);touch-action:none;cursor:pointer;animation:knob-pulse 1.6s ease-in-out infinite;}
 @keyframes knob-pulse{0%,100%{box-shadow:0 4px 14px rgba(0,0,0,.5),0 0 0 0 rgba(237,28,36,.5);}50%{box-shadow:0 4px 14px rgba(0,0,0,.5),0 0 0 8px rgba(237,28,36,0);}}
 
 .topbar{position:sticky;top:0;z-index:50;background:linear-gradient(180deg,#141417,#0d0d0f);border-bottom:1px solid var(--line);padding:12px 14px 10px;}
@@ -62,11 +62,11 @@ input,select,textarea{font-family:inherit;}
 .brand .sub{font-size:11px;color:var(--muted);margin-top:1px;}
 .brand .spacer{flex:1;}
 .icon-btn{background:var(--bg3);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;font-size:16px;display:flex;align-items:center;justify-content:center;position:relative;}
-.dot{position:absolute;top:-3px;left:-3px;background:var(--red);color:#fff;font-size:10px;font-weight:800;border-radius:18px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+.dot{position:absolute;top:-3px;inset-inline-end:-3px;background:var(--red);color:#fff;font-size:10px;font-weight:800;border-radius:18px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
 .searchwrap{position:relative;display:flex;gap:8px;}
 .searchwrap input{flex:1;padding:12px 42px 12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg3);color:var(--txt);font-size:14px;outline:none;}
 .searchwrap input:focus{border-color:var(--red);}
-.searchwrap .mag{position:absolute;right:14px;top:24px;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none;}
+.searchwrap .mag{position:absolute;inset-inline-start:14px;top:24px;transform:translateY(-50%);color:var(--muted);font-size:16px;pointer-events:none;}
 .mic{width:46px;border-radius:14px;border:1px solid var(--line);background:var(--bg3);color:var(--txt);font-size:16px;flex:none;}
 .voice-big{background:var(--red);color:#fff;border:none;border-radius:18px;padding:18px 28px;font-size:16px;font-weight:800;box-shadow:0 8px 22px rgba(237,28,36,.35);cursor:pointer;}
 .voice-big.on{animation:pulse 1s infinite;}
@@ -150,7 +150,7 @@ input,select,textarea{font-family:inherit;}
 .trk-stats4 .trk-box{cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .trk-stats4 .trk-box:active{transform:scale(.96);}
 .trk-box.on{border-color:var(--red);background:rgba(237,28,36,.10);box-shadow:0 0 0 1px rgba(237,28,36,.35) inset;}
-.trk-box.on::after{content:'✕';position:absolute;top:3px;left:6px;font-size:10px;color:var(--red);opacity:.85;}
+.trk-box.on::after{content:'✕';position:absolute;top:3px;inset-inline-end:6px;font-size:10px;color:var(--red);opacity:.85;}
 .trk-box .n{font-size:20px;font-weight:900;color:var(--txt);line-height:1.1;}
 .trk-box .l{font-size:10px;color:var(--muted);margin-top:3px;}
 .trk-search{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:10px;}
@@ -497,6 +497,27 @@ body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
 .mn-sec{font-size:var(--fs-xs);font-weight:800;color:rgba(255,255,255,.5);
   margin:16px 0 8px;letter-spacing:.3px;}
 .mn-sec:first-of-type{margin-top:4px;}
+.offb{position:sticky;top:0;z-index:70;
+  background:linear-gradient(180deg,rgba(245,166,35,.24),rgba(245,166,35,.14));
+  color:var(--warn);font-size:var(--fs-xs);font-weight:800;
+  padding:9px 13px;text-align:center;line-height:1.5;
+  box-shadow:inset 0 -1px 0 rgba(245,166,35,.32);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
+.offb span{display:block;font-weight:600;opacity:.85;
+  font-size:var(--fs-xxs);margin-top:2px;}
+body.offline [data-modal="aihub"]{opacity:.55;}
+.es{text-align:center;padding:30px 16px;
+  background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(255,255,255,.012));
+  border-radius:var(--r-m);
+  box-shadow:0 0 0 1px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.08);}
+.es-i{font-size:var(--fs-3xl);line-height:1;opacity:.85;}
+.es-t{font-weight:800;font-size:var(--fs-l);margin-top:12px;text-wrap:balance;}
+.es-s{font-size:var(--fs-s);color:var(--muted);margin-top:7px;line-height:1.65;text-wrap:pretty;}
+.es-b{margin-top:16px;background:var(--red);border:none;color:#fff;
+  border-radius:var(--r-s);padding:11px 20px;font-size:var(--fs-s);
+  font-weight:800;font-family:inherit;
+  transition:transform .16s cubic-bezier(.2,0,0,1);}
+.es-b:active{transform:scale(.96);}
 .qs-search{display:flex;align-items:center;gap:8px;background:var(--bg2);
   border:1px solid var(--line);border-radius:var(--r-m);padding:9px 12px;margin-bottom:9px;}
 .qs-search>span{flex:none;opacity:.6;}
@@ -618,8 +639,8 @@ body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
 .toggle{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;margin-bottom:12px;}
 .switch{width:50px;height:28px;border-radius:18px;background:#3a3a44;position:relative;border:none;transition:.2s;flex:none;}
 .switch.on{background:var(--red);}
-.switch .knob{position:absolute;top:3px;right:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;}
-.switch.on .knob{right:25px;}
+.switch .knob{position:absolute;top:3px;inset-inline-start:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;}
+.switch.on .knob{inset-inline-start:25px;}
 .matgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .matchk{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12.5px;}
 .matchk .box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12.5px;color:#fff;flex:none;}
@@ -637,7 +658,7 @@ body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
 .qt-ic{font-size:26px;margin-bottom:6px;}
 .qt-t{font-weight:800;font-size:14px;color:var(--txt);}
 .qt-d{font-size:10px;color:var(--muted);margin-top:3px;}
-.qt-v{position:absolute;top:8px;left:8px;background:var(--red);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;}
+.qt-v{position:absolute;top:8px;inset-inline-end:8px;background:var(--red);color:#fff;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:800;}
 .aihub-card{display:flex;align-items:center;gap:12px;width:100%;background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:right;transition:border-color .15s,transform .1s;}
 .aihub-card:active{transform:scale(.98);}
 .aihub-card:hover{border-color:var(--red);}
@@ -688,7 +709,7 @@ body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
 .photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
 .photos .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);}
 .photos .ph img{width:100%;height:100%;object-fit:cover;}
-.photos .ph .del{position:absolute;top:3px;left:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
+.photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:11px 18px;border-radius:10px;font-size:12.5px;z-index:600;border:1px solid var(--line);box-shadow:0 8px 30px rgba(0,0,0,.5);max-width:88%;text-align:center;}
 .busy-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
 .busy-box{background:var(--bg2,#1a1a1e);border:1px solid var(--line);border-radius:14px;padding:22px 28px;display:flex;flex-direction:column;align-items:center;gap:12px;box-shadow:0 10px 40px rgba(0,0,0,.6);}
@@ -697,7 +718,7 @@ body.has-tabs{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
 .sync-err-banner{background:var(--red);color:#fff;font-size:12.5px;font-weight:600;padding:8px 12px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;}
 .sync-err-banner button{background:#fff;color:var(--red);border:none;border-radius:8px;padding:4px 12px;font-weight:800;font-size:12.5px;cursor:pointer;}
 @keyframes busy-rot{to{transform:rotate(360deg);}}
-.install-fab{position:fixed;bottom:104px;left:14px;z-index:70;background:var(--red);color:#fff;border:none;border-radius:24px;padding:12px 18px;font-weight:800;font-size:14px;display:none;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(237,28,36,.45);animation:up .3s ease;}
+.install-fab{position:fixed;bottom:104px;inset-inline-end:14px;z-index:70;background:var(--red);color:#fff;border:none;border-radius:24px;padding:12px 18px;font-weight:800;font-size:14px;display:none;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(237,28,36,.45);animation:up .3s ease;}
 
 #pdf-stage{position:fixed;left:-10000px;top:0;}
 .page{width:794px;background:#fff;color:#2b2b2b;font-family:'Heebo',sans-serif;padding:40px 46px;direction:rtl;}
@@ -1180,7 +1201,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .sum-h{font-weight:800;font-size:14px;color:var(--txt);margin-bottom:7px;}
 .sum-b{font-size:12.5px;color:var(--muted);line-height:1.85;}
 .sum-b b{color:var(--txt);}
-.sum-x{position:absolute;top:9px;left:9px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px 7px;border-radius:8px;}
+.sum-x{position:absolute;top:9px;inset-inline-end:9px;background:transparent;border:none;color:var(--muted);font-size:14px;cursor:pointer;padding:4px 7px;border-radius:8px;}
 .sum-x:active{background:var(--bg2);}
 
 /* ═══════════════ מדריך שימוש v10.5 ═══════════════ */
@@ -1192,7 +1213,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--red)!imp
 .g-path{display:inline-flex;background:var(--bg);border:1px solid var(--line);color:var(--muted);padding:7px 12px;border-radius:8px;font-size:12.5px;margin-bottom:14px;}
 .g-ul{list-style:none;margin:10px 0 14px;}
 .g-ul li{padding:5px 0;padding-right:17px;position:relative;color:var(--muted);}
-.g-ul li::before{content:'';position:absolute;right:2px;top:14px;width:5px;height:5px;background:var(--red);border-radius:50%;}
+.g-ul li::before{content:'';position:absolute;inset-inline-start:2px;top:14px;width:5px;height:5px;background:var(--red);border-radius:50%;}
 .g-ul2{list-style:none;margin:6px 0;font-size:14px;}
 .g-ul2 li{padding:3px 0;color:var(--muted);}
 .g-ul2 li::before{content:'\2014  ';color:var(--red);}
@@ -1611,9 +1632,9 @@ img,.ph-thumb,.gal-img,.lg img,.coll img{
 .chip::after,.qs-chips .chip::after,.mini::after,.tu-btn::after,
 .trk-sort::after,.hm-all::after,.qs-x::after{
   content:'';position:absolute;inset:50% 0 auto 0;
-  transform:translateY(-50%);height:40px;min-height:100%;
+  transform:translateY(-50%);height:44px;min-height:100%;
   pointer-events:auto;}
-.icon-btn,.cart-x,.x{min-width:40px;min-height:40px;}
+.icon-btn,.cart-x,.x{min-width:44px;min-height:44px;}
 
 /* #7 · אייקונים שמתחלפים לפי מצב — הצלבה במקום החלפה פתאומית.
    הערכים מהסקיל: scale 0.25→1 · opacity 0→1 · blur 4px→0 */
@@ -1668,7 +1689,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='18.6';
+const VERSION='18.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -1822,7 +1843,15 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v18.6 — ליטוש מלא</div>
+   b:`<div class="g-plate"><div class="g-ph">v18.8 — נגיעה ו-RTL</div>
+   <ul class="g-ul"><li><b>אזור נגיעה 44 פיקסלים</b> — התקן למגע במובייל הוא 44, לא 40. כל הצ'יפים, הכפתורים הקטנים וכפתורי האייקון הורחבו. המראה לא השתנה — רק האזור שמגיב ללחיצה.</li>
+   <li><b>מיקום שמתהפך נכון</b> — 13 אלמנטים היו ממוקמים בצד קשיח (ימין/שמאל) במקום בצורה שמתהפכת לפי כיוון הכתיבה: זכוכית המגדלת בחיפוש, ידית המתג, נקודת ההתראה, כפתורי המחיקה והתווית של סוג ההצעה. באפליקציה עברית שמכילה 12 איים של טקסט לועזי — מחירים, מספרי טלפון ומספרי הצעה — זה מה שגורם לאלמנט לקפוץ לצד הלא נכון.</li>
+   <li>נבדקו כל 30 המופעים. 24 היו תקינים מלכתחילה (מרוכזים או מלא-רוחב), 13 תוקנו, ואחד נשאר בכוונה — הוא מסתיר את במת ה-PDF מחוץ למסך.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v18.7 — מה לעשות עכשיו</div>
+   <ul class="g-ul"><li><b>מסכים ריקים מציעים צעד הבא.</b> 27 מסכים הודיעו "אין כלום" ואף אחד לא אמר מה לעשות. עכשיו כל מסך ריק מקבל אייקון, הסבר קצר וכפתור: מאגר לקוחות ריק → "בנה הצעה ראשונה" · אין לינקים → "בנה הצעה" · אין משובים → "פתח מאגר לקוחות".</li>
+   <li><b>📡 זיהוי ניתוק מהרשת</b> — האפליקציה לא ידעה שאין חיבור, ולחיצה על שליחה ברכב בלי קליטה החזירה שגיאה טכנית בלי הסבר. עכשיו מופיע באנר בראש המסך: "אין חיבור · הכל נשמר במכשיר · שליחה ו-AI ימתינו לרשת".</li>
+   <li><b>הודעה כשהחיבור חוזר</b> — "📶 החיבור חזר", והמסך מתרענן אוטומטית.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v18.6 — ליטוש מלא</div>
    <ul class="g-ul"><li><b>צללים במקום גבולות</b> — 16 כרטיסים השתמשו בגבול לבן שקוף כדי לייצר עומק. גבול נראה קשה ולא מסתגל לרקע שמתחתיו. הוחלפו בצל בארבע שכבות. הגבולות שנשארו הם רק אלה שמסמנים מבנה או מצב: מפרידים, שורות ומיקוד.</li>
    <li><b>אזור נגיעה 40 פיקסלים</b> — הצ'יפים והכפתורים הקטנים הגיעו ל-22 עד 36 פיקסלים בלבד. האזור הורחב דרך שכבה בלתי נראית, בלי לשנות כלום במראה.</li>
    <li><b>לחיצה בקנה מידה 0.96</b> — אחיד בכל הכפתורים. שלושה כפתורים היו ב-0.975 והתגובה שלהם הרגישה חלשה יותר.</li>
@@ -3638,6 +3667,30 @@ const App={
     avg:qs.length?sum/qs.length:0};
  },
 
+ /* ===== מצב ריק עם צעד הבא =====
+    27 מסכים הודיעו "אין כלום" ואף אחד לא אמר מה לעשות.
+    כאן כל מסך ריק מקבל אייקון, כותרת, הסבר וכפתור פעולה. */
+ /* ===== מצב רשת =====
+    האפליקציה לא ידעה שאין חיבור. לחיצה על "שלח לינק" ברכב בלי
+    קליטה החזירה שגיאה טכנית בלי הסבר מה קרה ומה לעשות. */
+ isOffline(){try{return navigator.onLine===false;}catch(e){return false;}},
+
+ offlineBanner(){
+  if(!this.isOffline())return '';
+  return '<div class="offb">📡 אין חיבור לאינטרנט'+
+    '<span>הכל נשמר במכשיר · שליחה ו-AI ימתינו לרשת</span></div>';
+ },
+
+ emptyState(ic,title,sub,action){
+  const a=action||null;
+  return '<div class="es">'+
+    '<div class="es-i">'+ic+'</div>'+
+    '<div class="es-t">'+title+'</div>'+
+    (sub?'<div class="es-s">'+sub+'</div>':'')+
+    (a?'<button class="es-b" '+a.attr+'>'+a.label+'</button>':'')+
+  '</div>';
+ },
+
  invalidate(what){
   const all=!what;
   if(all||what==='links'){this._trackData=null;this._trkLoading=false;}
@@ -4284,6 +4337,7 @@ const App={
       <button class="icon-btn" data-modal="clients">👥</button>
       <button class="icon-btn" data-modal="menu">⚙️</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
+  ${this.offlineBanner()}
   ${tab==='track'?this.trackShell():this.homeView()}
   ${this.tabBar()}
   ${this.state.modal?this.modalView():''}`;
@@ -4966,7 +5020,7 @@ const App={
          <button class="mini" data-review="${cl.id}">📩 משוב</button>
          <button class="mini" data-photos="${cl.id}">📷 תמונות</button>
          <button class="del" data-delclient="${cl.id}">🗑️</button>
-       </div></div>`;}).join(''):'<div class="empty">לא נמצאו לקוחות.<br><span style="font-size:12px">לקוח נוצר אוטומטית כשמפיקים לו הצעה.</span></div>'}`;
+       </div></div>`;}).join(''):this.emptyState('👥','אין עדיין לקוחות','לקוח נוצר אוטומטית ברגע שמפיקים לו הצעת מחיר.',{attr:"data-gotab=\"build\"",label:'➕ בנה הצעה ראשונה'})}`;
  },
  // #35: לוח קנבן — ניהול ויזואלי של לקוחות לפי שלב
  kanbanModal(){const clients=Store.get('clients',[]);
@@ -5095,7 +5149,7 @@ const App={
   return `<h2>🗄️ גיבויי ענן <button class="x" data-close>✕</button></h2>
    <div style="font-size:12px;color:var(--muted);margin-bottom:12px">גיבוי אוטומטי נשמר בענן פעם ביום (נשמרים 30 הימים האחרונים). אפשר לשחזר את כל הנתונים לכל תאריך.</div>
    <button class="btn-ghost" id="snap-now" style="margin-bottom:10px">💾 צור גיבוי ענן עכשיו</button>
-   ${list===null?'<div class="empty">טוען…</div>':(list.length?list.map(s=>`<div class="list-item"><div class="info"><div class="t">${s.id}</div><div class="s">${s.at?new Date(s.at).toLocaleString('he-IL'):''}</div></div><button class="mini" data-snaprestore="${s.id}">↩️ שחזר</button></div>`).join(''):'<div class="empty">אין עדיין גיבויי ענן.<br>גיבוי ראשון ייווצר אוטומטית.</div>')}`;
+   ${list===null?'<div class="empty">טוען…</div>':(list.length?list.map(s=>`<div class="list-item"><div class="info"><div class="t">${s.id}</div><div class="s">${s.at?new Date(s.at).toLocaleString('he-IL'):''}</div></div><button class="mini" data-snaprestore="${s.id}">↩️ שחזר</button></div>`).join(''):this.emptyState('☁️','אין עדיין גיבויי ענן','גיבוי ראשון ייווצר אוטומטית אחרי ההצעה הבאה.',null))}`;
  },
  async loadSnaps(){this._snaps=await Sync.listSnapshots();if(this.state.modal==='snaps')this.render();},
  drillModal(){const k=this._drill||'quotes';const ym=this.state.reportMonth;
@@ -5252,7 +5306,7 @@ const App={
          ${(d.approvedAt&&l.phone)?`<button class="mini" data-review="${cl.id||''}">📩 בקש משוב</button>`:''}
          <button class="del" data-trkdel="${l.id}">🗑️</button>
        </div>
-       </div>`;}).join(''):(sent?`<div class="trk-none">אין תוצאות ${q?`עבור "${esc(q)}"`:`בקטגוריה "${FL[f]}"`}<br><button class="mini" id="trk-clearall" style="margin-top:10px">↺ נקה סינון</button></div>`:'<div class="empty">עדיין לא נשלחו לינקים.<br>צור הצעה ← "🔗 צור לינק הצעה".</div>')}`;
+       </div>`;}).join(''):(sent?`<div class="trk-none">אין תוצאות ${q?`עבור "${esc(q)}"`:`בקטגוריה "${FL[f]}"`}<br><button class="mini" id="trk-clearall" style="margin-top:10px">↺ נקה סינון</button></div>`:this.emptyState('🔗','עדיין לא נשלחו לינקים','לינק חי מתעד מה הלקוח פתח, מה הוריד ומתי אישר.',{attr:"data-gotab=\"build\"",label:'➕ בנה הצעה'}))}`;
  },
  liveActivity(id){
   const d=(this._trackData||{})[id];
@@ -6153,7 +6207,7 @@ const App={
    ${list.length?list.map(cl=>`<button class="aihub-card" data-galclient="${cl.id}">
      <div class="ah-icon">📸</div>
      <div class="ah-txt"><div class="ah-t" style="font-size:14px">${esc(cl.name)||'—'}</div><div class="ah-d">${cl.project||'ללא פרויקט'}${cl.phone?' · '+cl.phone:''}</div></div>
-     <div class="ah-arrow">‹</div></button>`).join(''):'<div class="empty">אין לקוחות עדיין</div>'}`;
+     <div class="ah-arrow">‹</div></button>`).join(''):this.emptyState('📷','אין לקוחות עדיין','תמונות לפני/אחרי נשמרות לכל לקוח בנפרד.',{attr:"data-gotab=\"build\"",label:'➕ בנה הצעה ראשונה'})}`;
  },
  photosModal(){const cl=Store.get('clients',[]).find(c=>c.id===this.state.photoClient)||{};
   return `<h2>תמונות — ${esc(cl.name)||''} <button class="x" data-close>✕</button></h2>
@@ -7629,7 +7683,7 @@ const App={
          <div class="s">${d.doneAt?('התקבל '+ago(d.doneAt)):('נשלח '+ago(l.ts)+' · ממתין לתשובה')}</div></div>
        ${(!d.doneAt&&l.phone)?`<button class="mini" data-revnudge="${l.id}">📲 תזכורת</button>`:''}
        <button class="del" data-revdel="${l.id}">🗑️</button>
-       ${d.text?`<div class="trk-comment">💬 ${esc(d.text)}</div>`:''}</div>`;}).join(''):'<div class="empty">עדיין לא נשלחו בקשות משוב.<br>סיים פרויקט ← 👥 לקוחות ← 📩 משוב</div>'}`;
+       ${d.text?`<div class="trk-comment">💬 ${esc(d.text)}</div>`:''}</div>`;}).join(''):this.emptyState('⭐','עדיין לא נשלחו בקשות משוב','אחרי שפרויקט מסתיים אפשר לבקש מהלקוח ביקורת.',{attr:"data-modal=\"clients\"",label:'👥 פתח מאגר לקוחות'})}`;
  },
  async loadReviews(){const links=Store.get('reviewLinks',[]);if(!links.length||!window._db)return;const out={};
   try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null};}}catch(e){}}));}catch(e){}
@@ -8216,7 +8270,18 @@ document.addEventListener('DOMContentLoaded',()=>{
    Store.set('mig_dueDate_692',true);
  }}catch(e){}
  App.render();
- try{setTimeout(()=>{try{Sync.snapshotDaily();}catch(e){}},4000);Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
+ try{setTimeout(()=>{try{Sync.snapshotDaily();}catch(e){}},4000);Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);// מצב הרשת משפיע על מה שאפשר לעשות — מרעננים בכל שינוי
+try{
+  const netPaint=()=>{try{
+    document.body.classList.toggle('offline',navigator.onLine===false);
+  }catch(e){}};
+  window.addEventListener('online',function(){
+    netPaint();try{App.toast('📶 החיבור חזר');App.render();}catch(e){}});
+  window.addEventListener('offline',function(){
+    netPaint();try{App.toast('📡 אין חיבור — הכל נשמר במכשיר');App.render();}catch(e){}});
+  netPaint();
+}catch(e){}
+App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards) + tap fallback
  const sp=document.getElementById('splash');
  const track=document.getElementById('slider-track'), knob=document.getElementById('slider-knob'), fill=document.getElementById('slider-fill');
