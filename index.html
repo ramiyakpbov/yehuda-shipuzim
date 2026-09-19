@@ -1863,6 +1863,69 @@ img,.ph-thumb,.gal-img,.lg img,.coll img{
   background:var(--red-btn)!important;}
 .btn-block{background:linear-gradient(135deg,#e8202a,var(--red-btn))!important;}
 .tb-d,.badge,.cnt{background:var(--red-btn)!important;}
+
+/* ═══════════════════════════════════════════════════════
+   v19.1 · תיקון הצ'יפ הפעיל + זכוכית אדומה
+   ═══════════════════════════════════════════════════════ */
+
+/* ── הצ'יפ הנבחר הופיע לבן וריק ──
+   שלושה כללים הגדירו לו רקע אדום, והאחרון בהם לא הגדיר color.
+   הטקסט נשאר אפור (--muted) על רקע אדום, וה-::after הלבן
+   בגובה 2px נמתח על כל הכפתור וכיסה אותו. */
+.chip.on,.chip.on:hover{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;}
+.chip.on::after{
+  height:2px!important;top:auto!important;bottom:0!important;
+  inset-inline:0!important;background:rgba(255,255,255,.75)!important;
+  border-radius:0!important;}
+
+/* ── כל משטח אדום כזכוכית ──
+   במקום מילוי אטום: שכבה שקופה עם טשטוש רקע, מסגרת אדומה
+   וזוהר רך. התוכן שמאחור נראה מבעד. */
+@supports (backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px)){
+  .btn-primary,.btn-block,.hm-new,.es-b,
+  .fu-acts .mini.pri,.hm-acts .mini.pri,
+  .cc-acts .mini.go,.cl-acts .mini.go,.chip.on{
+    background:linear-gradient(150deg,
+      rgba(237,28,36,.42), rgba(237,28,36,.26))!important;
+    -webkit-backdrop-filter:blur(18px) saturate(180%)!important;
+    backdrop-filter:blur(18px) saturate(180%)!important;
+    box-shadow:
+      0 0 0 1px rgba(237,28,36,.55),
+      inset 0 1px 0 rgba(255,255,255,.28),
+      inset 0 -1px 0 rgba(0,0,0,.18),
+      0 6px 20px -8px rgba(237,28,36,.45)!important;
+    color:#fff!important;
+    -webkit-text-fill-color:#fff!important;
+    text-shadow:0 1px 3px rgba(0,0,0,.45);}
+
+  .btn-primary:active,.btn-block:active,.hm-new:active,.es-b:active{
+    background:linear-gradient(150deg,
+      rgba(237,28,36,.52), rgba(237,28,36,.34))!important;}
+
+  /* הכרטיס הדחוף וכפתור ההמשך — אותה שפה */
+  .hm-resume{
+    background:linear-gradient(150deg,
+      rgba(237,28,36,.38), rgba(237,28,36,.22))!important;
+    -webkit-backdrop-filter:blur(18px) saturate(180%)!important;
+    backdrop-filter:blur(18px) saturate(180%)!important;
+    box-shadow:
+      0 0 0 1px rgba(237,28,36,.5),
+      inset 0 1px 0 rgba(255,255,255,.24),
+      0 6px 20px -8px rgba(237,28,36,.4)!important;}
+
+  /* מוני התראה נשארים קריאים — קטנים מדי לטשטוש */
+  .tb-d,.badge,.cnt,.dot{
+    background:var(--red-btn)!important;
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    text-shadow:none!important;}
+}
+
+/* בדפדפן בלי טשטוש — מילוי אטום, קריא תמיד */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .chip.on{background:var(--red-btn)!important;color:#fff!important;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -1896,7 +1959,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.0';
+const VERSION='19.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2050,7 +2113,13 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.0 — 20 שיפורי עיצוב</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.1 — זכוכית אדומה</div>
+   <ul class="g-ul"><li><b>השפה הנבחרת הופיעה כמלבן לבן ריק.</b> שלושה כללים נפרדים הגדירו לצ'יפ הפעיל רקע אדום, והאחרון שבהם לא הגדיר צבע טקסט — הכיתוב נשאר אפור על אדום. בנוסף, פס ההדגשה הלבן שאמור להיות בגובה 2 פיקסלים נמתח על כל הכפתור וכיסה אותו.</li>
+   <li><b>כל המשטחים האדומים הפכו לזכוכית</b> — במקום מילוי אטום: שכבה שקופה עם טשטוש רקע חזק, מסגרת אדומה דקה, קו אור עליון וזוהר רך מתחת. התוכן שמאחור נראה מבעד לכפתור.</li>
+   <li><b>הקריאות עלתה, לא ירדה</b> — נמדד: טקסט לבן על הזכוכית האדומה נותן 13.79 מול 5.16 במילוי האטום, כי הזכוכית מעמיקה את האדום על הרקע הכהה. נוסף גם צל טקסט עדין.</li>
+   <li><b>מוני התראה נשארו אטומים</b> — הם קטנים מכדי שטשטוש ישרת אותם, ושם הקריאות חשובה יותר מהמראה.</li>
+   <li>בדפדפן שלא תומך בטשטוש מוצג מילוי אטום רגיל.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.0 — 20 שיפורי עיצוב</div>
    <ul class="g-ul"><li><b>היררכיית משקל</b> — 80% מהטקסט היה מודגש (111 מופעים של משקל 800), וכשהכל בולט כלום לא בולט. ששת המשקלים צומצמו לשלושה: 400 לגוף, 600 למשני, 800 לראשי.</li>
    <li><b>קונטרסט</b> — נמדד: טקסט לבן על הכפתור האדום נתן 4.38 מול 4.5 הנדרש בתקן. האדום נשאר צבע המותג בכל מקום, ורק רקע של כפתור עם טקסט לבן הוכהה מעט — 5.16, באותו גוון.</li>
    <li><b>טוקנים</b> — 52 צבעים קשיחים הוחלפו במשתנים. 17 ערכי שקיפות שרירותיים צומצמו לארבע מדרגות, 60 הגדרות צל לשלוש, ושש עקומות תנועה לשתיים.</li>
