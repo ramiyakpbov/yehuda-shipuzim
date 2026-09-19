@@ -2056,6 +2056,40 @@ body::before{
   body::before{animation:none!important;}
   .prog>i{animation:none!important;width:var(--w,0%)!important;}
 }
+
+/* ═══════════════════════════════════════════════════════
+   v19.3 · ביצועים (performance)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── אנימציה רק על transform · opacity · filter ──
+   width ו-margin מחייבים את הדפדפן לחשב פריסה מחדש בכל פריים.
+   פס ההתקדמות עובר ל-scaleX, שרץ על כרטיס המסך. */
+.prog>i{width:100%!important;transform-origin:left center;
+  transform:scaleX(0);animation:progFill2 .8s cubic-bezier(.2,0,0,1) forwards!important;}
+@keyframes progFill2{to{transform:scaleX(var(--p,0));}}
+
+/* ── אנימציה אינסופית נעצרת כשלא רואים אותה ──
+   22 לולאות רצו גם כשהאפליקציה ברקע או כשהאלמנט מחוץ למסך.
+   כל אחת מהן מעירה את המעבד 60 פעם בשנייה בחינם. */
+.topbar,.tabbar,.bottombar,.cart,.sheet,.hm-card,.fu-row,.cal-row,
+#splash,.aihub-card,.ai-cta,.btn-block,.hm-resume{
+  content-visibility:auto;}
+
+body.bg-idle *,
+body.bg-idle *::before,
+body.bg-idle *::after{
+  animation-play-state:paused!important;}
+
+/* ── שכבת GPU רק בזמן תנועה ──
+   will-change קבוע שומר שכבה בזיכרון גם במנוחה. */
+.swipe-host.dragging>.swipe-fg{will-change:transform;}
+.swipe-host>.swipe-fg{will-change:auto;}
+.confetti i{will-change:transform,opacity;}
+
+/* ── מסגרת קונית נעצרת כשהכרטיס לא נראה ── */
+@media (prefers-reduced-motion:no-preference){
+  .hm-card.live::after{animation-play-state:running;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2089,7 +2123,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.2';
+const VERSION='19.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2243,7 +2277,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.2 — תנועה שרואים</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.3 — חיבור וביצועים</div>
+   <ul class="g-ul"><li><b>שני עיצובים הוגדרו ולא חוברו.</b> הצלבת האייקונים וההחלקה למחיקה היו קיימים בגיליון הסגנון בלי שום קוד שמפעיל אותם. עכשיו החץ בסל מתחלף בהצלבה רכה, וגרירת כרטיס שמאלה חושפת מחיקה — יחד עם הביטול הקיים, החלקה בטעות ניתנת להחזרה תוך שש שניות.</li>
+   <li><b>22 אנימציות רצו גם כשאף אחד לא ראה אותן</b> — גם כשהאפליקציה ברקע. כל לולאה כזו מעירה את המעבד שישים פעם בשנייה בחינם. עכשיו כולן נעצרות ברגע שעוברים לאפליקציה אחרת וחוזרות כשחוזרים.</li>
+   <li><b>פס ההתקדמות עבר ל-scaleX</b> — הנפשת רוחב מחייבת את הדפדפן לחשב מחדש את הפריסה בכל פריים. שינוי קנה מידה רץ על כרטיס המסך.</li>
+   <li><b>content-visibility</b> — אזורים שמחוץ למסך לא מצוירים עד שגוללים אליהם.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.2 — תנועה שרואים</div>
    <ul class="g-ul"><li><b>🎊 חגיגה כשלקוח מאשר</b> — קונפטי נופל על המסך והודעה "הצעה אושרה". זה הרגע הכי טוב ביום, ועד עכשיו הוא נראה כמו כל שינוי סטטוס אחר. מופיע רק על אישור חדש, לא על היסטוריה שנטענת.</li>
    <li><b>💧 אדווה מנקודת המגע</b> — גל עדין יוצא מהמקום המדויק שנגעת בו, לא ממרכז הכפתור. הפרט הזה מבדיל אפליקציה שנבנתה לטלפון מאתר שהוקטן.</li>
    <li><b>🔢 מספרים שמטפסים</b> — המונים במרכז הבית עולים מאפס לערכם תוך חצי שנייה, בהאטה בסוף. מספר שקופץ פשוט לא נקלט.</li>
@@ -4335,7 +4374,7 @@ const App={
       <span class="cart-n">${lines.length}</span>
       <span class="cart-t">${open?'הסתר':'מה בחרתי'}</span>
       <span class="cart-sum">${nisR(lines.reduce((a,x)=>a+(+x.l.price||0)*(+x.l.qty||0),0))}</span>
-      <span class="cart-c">${open?'⌄':'⌃'}</span>
+      <span class="cart-c ico-swap"><span class="${open?'on':'off'}">⌄</span><span class="${open?'off':'on'}">⌃</span></span>
     </button>
     ${open?`<div class="cart-body">${recent.map(x=>`<div class="cart-row">
         <button class="cart-x" data-cartdel="${x.cat.id}|${x.l.id}" title="הסר">✕</button>
@@ -6936,6 +6975,11 @@ const App={
   this.sectionizeSettings();
   this.sectionizeQuote();
   this.runCounters();
+  // פס ההתקדמות מונפש ב-scaleX — הערך מוזן כמשתנה
+  try{document.querySelectorAll('.prog>i').forEach(i=>{
+    const w=(i.style.getPropertyValue('--w')||'').trim();
+    if(w)i.style.setProperty('--p',(parseFloat(w)/100)||0);
+  });}catch(e){}
   const pem=document.getElementById('prev-edit');
   if(pem)pem.onclick=()=>{this.state.prevEdit=!this.state.prevEdit;this.haptic(10);this.render();};
 
@@ -7029,6 +7073,62 @@ const App={
   });
   const ct=document.getElementById('cart-toggle');
   if(ct)ct.onclick=()=>{this.state.cartOpen=!this.state.cartOpen;this.haptic(8);this.render();};
+
+  /* ═══ 9 · החלקה למחיקה ═══
+     גרירה שמאלה חושפת מחיקה. עובד יחד עם הביטול שכבר קיים,
+     ולכן החלקה בטעות ניתנת להחזרה תוך שש שניות. */
+  (()=>{
+   try{
+    let sx=0,sy=0,el=null,fg=null,w=0,lock=null;
+    const HOST='.cart-row,.hm-card,.fu-row';
+    const reset=()=>{if(fg)fg.style.transform='';el&&el.classList.remove('dragging');el=fg=null;lock=null;};
+    document.querySelectorAll(HOST).forEach(n=>{
+      if(n.querySelector(':scope > .swipe-fg'))return;
+      const del=n.querySelector('[data-cartdel],[data-trkdel]');
+      if(!del)return;
+      n.classList.add('swipe-host');
+      const bg=document.createElement('div');
+      bg.className='swipe-bg';bg.textContent='🗑 הסר';
+      const fgw=document.createElement('div');
+      fgw.className='swipe-fg';
+      while(n.firstChild)fgw.appendChild(n.firstChild);
+      n.appendChild(bg);n.appendChild(fgw);
+      n._delBtn=del;
+    });
+    document.querySelectorAll('.swipe-host').forEach(n=>{
+      n.addEventListener('pointerdown',ev=>{
+        if(ev.target.closest('button,input,select,a'))return;
+        el=n;fg=n.querySelector('.swipe-fg');
+        sx=ev.clientX;sy=ev.clientY;w=n.getBoundingClientRect().width;lock=null;
+      },{passive:true});
+      n.addEventListener('pointermove',ev=>{
+        if(el!==n||!fg)return;
+        const dx=ev.clientX-sx,dy=ev.clientY-sy;
+        if(lock===null){
+          if(Math.abs(dx)<6&&Math.abs(dy)<6)return;
+          lock=Math.abs(dx)>Math.abs(dy)*1.4?'x':'y';
+          if(lock==='x')n.classList.add('dragging');
+        }
+        if(lock!=='x')return;
+        const m=Math.max(-w*0.5,Math.min(0,dx));
+        fg.style.transform='translateX('+m+'px)';
+      },{passive:true});
+      const end=ev=>{
+        if(el!==n||!fg){reset();return;}
+        const dx=(ev.clientX||sx)-sx;
+        n.classList.remove('dragging');
+        if(lock==='x'&&dx<-w*0.32){
+          fg.style.transform='translateX(-'+w+'px)';
+          const b=n._delBtn;
+          setTimeout(()=>{try{b&&b.click();}catch(x){}},170);
+        }else if(fg){fg.style.transform='';}
+        el=fg=null;lock=null;
+      };
+      n.addEventListener('pointerup',end,{passive:true});
+      n.addEventListener('pointercancel',()=>reset(),{passive:true});
+    });
+   }catch(e){}
+  })();
 
   on('[data-cartdel]','click',e=>{
     e.stopPropagation();
@@ -8808,6 +8908,12 @@ try{
   window.addEventListener('offline',function(){
     netPaint();try{App.toast('📡 אין חיבור — הכל נשמר במכשיר');App.render();}catch(e){}});
   netPaint();
+}catch(e){}
+// אנימציות אינסופיות נעצרות כשהאפליקציה ברקע — חיסכון בסוללה
+try{
+  document.addEventListener('visibilitychange',function(){
+    document.body.classList.toggle('bg-idle',document.hidden);
+  });
 }catch(e){}
 App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards) + tap fallback
