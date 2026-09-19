@@ -1926,6 +1926,136 @@ img,.ph-thumb,.gal-img,.lg img,.coll img{
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .chip.on{background:var(--red-btn)!important;color:#fff!important;}
 }
+
+/* ═══════════════════════════════════════════════════════
+   v19.2 · תנועה שרואים
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1 · קונפטי ── */
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden;}
+.confetti i{position:absolute;top:-24px;left:var(--x);border-radius:2px;opacity:0;
+  animation:confFall var(--d) cubic-bezier(.3,.7,.4,1) var(--dl) forwards;}
+@keyframes confFall{
+  0%{opacity:0;transform:translate3d(0,-20px,0) rotate(0);}
+  8%{opacity:1;}
+  100%{opacity:0;transform:translate3d(var(--sx),88vh,0) rotate(var(--r));}}
+
+/* ── 2 · אדווה מנקודת המגע ──
+   הגל יוצא מהמקום שנגעת בו, לא ממרכז הכפתור. */
+.btn-primary,.btn-block,.hm-new,.es-b,.mini,.chip,.hm-q,.hm-k,
+.qp,.bs-cat,.hm-card,.fu-row,.cal-row,.hq,.cat-card{
+  position:relative;overflow:hidden;}
+.rip{position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255,.42),rgba(255,255,255,0) 68%);
+  transform:translate(-50%,-50%) scale(0);
+  animation:rip .52s cubic-bezier(.2,0,0,1) forwards;}
+@keyframes rip{to{transform:translate(-50%,-50%) scale(1);opacity:0;}}
+
+/* ── 7 · הכפתור נושם כשהוא מוכן ──
+   פעימה אחת ברגע שיש מה לשלוח — לא לולאה אינסופית. */
+.btn-primary.ready{animation:readyPulse .9s cubic-bezier(.2,0,0,1) 1;}
+@keyframes readyPulse{
+  0%{box-shadow:0 0 0 0 rgba(237,28,36,.5);}
+  70%{box-shadow:0 0 0 14px rgba(237,28,36,0);}
+  100%{box-shadow:0 0 0 0 rgba(237,28,36,0);}}
+
+@media (prefers-reduced-motion:reduce){
+  .confetti,.rip{display:none!important;}
+  .btn-primary.ready{animation:none!important;}
+}
+
+/* ── 4 · שורות שנכנסות בגלים ──
+   פתיחת קטגוריה היא אירוע, לא לחיצה חוזרת — כאן stagger מותר.
+   הפרש 26ms, עד 14 שורות, ואז הכל מיד כדי שלא יהיה המתנה. */
+.cat-body .item{animation:rowIn .34s cubic-bezier(.2,0,0,1) backwards;}
+.cat-body .item:nth-child(1){animation-delay:.00s}
+.cat-body .item:nth-child(2){animation-delay:.026s}
+.cat-body .item:nth-child(3){animation-delay:.052s}
+.cat-body .item:nth-child(4){animation-delay:.078s}
+.cat-body .item:nth-child(5){animation-delay:.104s}
+.cat-body .item:nth-child(6){animation-delay:.13s}
+.cat-body .item:nth-child(7){animation-delay:.156s}
+.cat-body .item:nth-child(8){animation-delay:.182s}
+.cat-body .item:nth-child(9){animation-delay:.208s}
+.cat-body .item:nth-child(10){animation-delay:.234s}
+.cat-body .item:nth-child(n+11){animation-delay:.26s}
+@keyframes rowIn{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+
+/* כרטיסי מרכז הבית נכנסים באותו קצב */
+.hm-card{animation:rowIn .34s cubic-bezier(.2,0,0,1) backwards;}
+.hm-card:nth-child(1){animation-delay:.02s}
+.hm-card:nth-child(2){animation-delay:.06s}
+.hm-card:nth-child(3){animation-delay:.10s}
+.hm-card:nth-child(n+4){animation-delay:.14s}
+
+/* ── 5 · מסגרת נעה על הדחוף ──
+   @property הופך זווית לערך שאפשר להנפיש — אין בקוד עד עכשיו. */
+@property --ang{syntax:'<angle>';initial-value:0deg;inherits:false;}
+.hm-card.live{position:relative;}
+.hm-card.live::after{
+  content:'';position:absolute;inset:-1px;border-radius:inherit;
+  padding:1.5px;pointer-events:none;
+  background:conic-gradient(from var(--ang),
+    transparent 0deg, rgba(46,194,107,.95) 60deg,
+    transparent 130deg, transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  animation:angSpin 2.6s linear infinite;}
+@keyframes angSpin{to{--ang:360deg;}}
+
+/* ── 6 · פס התקדמות שמתמלא ── */
+.prog{height:5px;border-radius:20px;background:rgba(255,255,255,.08);
+  overflow:hidden;margin-top:8px;}
+.prog>i{display:block;height:100%;border-radius:20px;
+  background:linear-gradient(90deg,var(--red),#ff6b70);
+  width:0;animation:progFill .8s cubic-bezier(.2,0,0,1) forwards;}
+@keyframes progFill{to{width:var(--w,0%);}}
+.prog.ok>i{background:linear-gradient(90deg,var(--ok),#5fe19a);}
+
+/* ── 8 · הכותרת מתכווצת בגלילה ──
+   רצה על ה-GPU, בלי JavaScript ובלי מאזין scroll. */
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .topbar{animation:barShrink linear both;
+      animation-timeline:scroll();animation-range:0 120px;}
+    @keyframes barShrink{
+      to{padding-top:6px;padding-bottom:6px;}}
+    .topbar .sub{animation:subFade linear both;
+      animation-timeline:scroll();animation-range:0 90px;}
+    @keyframes subFade{to{opacity:0;max-height:0;margin:0;}}
+  }
+}
+
+/* ── 9 · החלקה למחיקה ── */
+.swipe-host{position:relative;overflow:hidden;}
+.swipe-host .swipe-bg{position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:flex-start;padding-inline-start:20px;
+  background:linear-gradient(90deg,rgba(237,28,36,.9),rgba(237,28,36,.55));
+  color:#fff;font-weight:800;font-size:var(--fs-s);border-radius:inherit;}
+.swipe-host>.swipe-fg{position:relative;z-index:1;
+  transition:transform .2s cubic-bezier(.2,0,0,1);will-change:transform;}
+.swipe-host.dragging>.swipe-fg{transition:none;}
+
+/* ── 10 · הרקע נושם ──
+   שתי הילות כהות מאוד שזזות לאט. כמעט לא מורגש —
+   אבל המסך מפסיק להיראות כמו נייר שטוח. */
+body::before{
+  content:'';position:fixed;inset:-25%;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(38% 30% at 22% 18%, rgba(237,28,36,.055), transparent 62%),
+    radial-gradient(34% 28% at 80% 76%, rgba(43,168,224,.05), transparent 62%);
+  animation:bgDrift 26s ease-in-out infinite alternate;}
+@keyframes bgDrift{
+  0%{transform:translate3d(0,0,0) scale(1);}
+  100%{transform:translate3d(2.5%,-2%,0) scale(1.08);}}
+
+@media (prefers-reduced-motion:reduce){
+  .cat-body .item,.hm-card{animation:none!important;}
+  .hm-card.live::after{animation:none!important;
+    background:conic-gradient(rgba(46,194,107,.6),rgba(46,194,107,.6))!important;}
+  body::before{animation:none!important;}
+  .prog>i{animation:none!important;width:var(--w,0%)!important;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -1959,7 +2089,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.1';
+const VERSION='19.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2113,7 +2243,18 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.1 — זכוכית אדומה</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.2 — תנועה שרואים</div>
+   <ul class="g-ul"><li><b>🎊 חגיגה כשלקוח מאשר</b> — קונפטי נופל על המסך והודעה "הצעה אושרה". זה הרגע הכי טוב ביום, ועד עכשיו הוא נראה כמו כל שינוי סטטוס אחר. מופיע רק על אישור חדש, לא על היסטוריה שנטענת.</li>
+   <li><b>💧 אדווה מנקודת המגע</b> — גל עדין יוצא מהמקום המדויק שנגעת בו, לא ממרכז הכפתור. הפרט הזה מבדיל אפליקציה שנבנתה לטלפון מאתר שהוקטן.</li>
+   <li><b>🔢 מספרים שמטפסים</b> — המונים במרכז הבית עולים מאפס לערכם תוך חצי שנייה, בהאטה בסוף. מספר שקופץ פשוט לא נקלט.</li>
+   <li><b>✨ שורות שנכנסות בגלים</b> — פתיחת קטגוריה מכניסה את הסעיפים בהפרש של 26 אלפיות זה מזה. אותו קצב בכרטיסי "דורש טיפול".</li>
+   <li><b>🌈 מסגרת נעה על הדחוף</b> — הצעה שהלקוח קורא ברגע זה מקבלת מסגרת ירוקה שמסתובבת סביב הכרטיס.</li>
+   <li><b>📊 פס אחוז סגירה</b> — מתמלא בדוח החודשי, ירוק מעל 40%.</li>
+   <li><b>🎯 הכפתור נושם כשהוא מוכן</b> — פעימה אחת ברגע שנבחר הסעיף הראשון.</li>
+   <li><b>🌊 כותרת שמתכווצת בגלילה</b> — רצה על כרטיס המסך בלי JavaScript.</li>
+   <li><b>🌌 רקע שנושם</b> — שתי הילות כהות מאוד שזזות לאט. כמעט לא מורגש, אבל המסך מפסיק להיראות שטוח.</li>
+   <li>כל התנועות מכבדות את הגדרת "תנועה מופחתת" במערכת ההפעלה ונכבות לגמרי כשהיא פעילה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.1 — זכוכית אדומה</div>
    <ul class="g-ul"><li><b>השפה הנבחרת הופיעה כמלבן לבן ריק.</b> שלושה כללים נפרדים הגדירו לצ'יפ הפעיל רקע אדום, והאחרון שבהם לא הגדיר צבע טקסט — הכיתוב נשאר אפור על אדום. בנוסף, פס ההדגשה הלבן שאמור להיות בגובה 2 פיקסלים נמתח על כל הכפתור וכיסה אותו.</li>
    <li><b>כל המשטחים האדומים הפכו לזכוכית</b> — במקום מילוי אטום: שכבה שקופה עם טשטוש רקע חזק, מסגרת אדומה דקה, קו אור עליון וזוהר רך מתחת. התוכן שמאחור נראה מבעד לכפתור.</li>
    <li><b>הקריאות עלתה, לא ירדה</b> — נמדד: טקסט לבן על הזכוכית האדומה נותן 13.79 מול 5.16 במילוי האטום, כי הזכוכית מעמיקה את האדום על הרקע הכהה. נוסף גם צל טקסט עדין.</li>
@@ -3984,6 +4125,62 @@ const App={
   '</div>';
  },
 
+ /* ═══ 1 · חגיגה כשלקוח מאשר ═══
+    אישור הצעה הוא הרגע הכי טוב ביום. עד עכשיו הוא נראה
+    כמו כל שינוי סטטוס אחר. */
+ celebrate(){
+  try{
+   if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+   const wrap=document.createElement('div');
+   wrap.className='confetti';
+   const cols=['#ed1c24','#2ec26b','#f5a623','#ffffff','#2ba8e0'];
+   for(let i=0;i<34;i++){
+     const p=document.createElement('i');
+     p.style.cssText='--x:'+(Math.random()*100).toFixed(1)+'%;'+
+       '--d:'+(0.9+Math.random()*0.9).toFixed(2)+'s;'+
+       '--dl:'+(Math.random()*0.35).toFixed(2)+'s;'+
+       '--r:'+Math.round(Math.random()*720-360)+'deg;'+
+       '--sx:'+(Math.random()*120-60).toFixed(0)+'px;'+
+       'background:'+cols[i%cols.length]+';'+
+       'width:'+(5+Math.random()*5).toFixed(0)+'px;'+
+       'height:'+(8+Math.random()*7).toFixed(0)+'px;';
+     wrap.appendChild(p);
+   }
+   document.body.appendChild(wrap);
+   setTimeout(()=>{try{wrap.remove();}catch(e){}},2600);
+   this.haptic(30);
+  }catch(e){}
+ },
+
+ /* ═══ 3 · מספר שמטפס ═══
+    סכום שקופץ מ-0 ל-24,821 לא נקלט. טיפוס של 500ms כן. */
+ countUp(el,to,dur){
+  try{
+   if(!el)return;
+   if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches){
+     el.textContent=to.toLocaleString('en-US');return;}
+   const from=0,t0=performance.now(),D=dur||520;
+   const suffix=el.dataset.suffix||'';
+   const step=now=>{
+     const p=Math.min(1,(now-t0)/D);
+     const e=1-Math.pow(1-p,3);            // ease-out cubic
+     el.textContent=Math.round(from+(to-from)*e).toLocaleString('en-US')+suffix;
+     if(p<1)requestAnimationFrame(step);
+   };
+   requestAnimationFrame(step);
+  }catch(e){}
+ },
+
+ runCounters(){
+  try{
+   document.querySelectorAll('[data-count]').forEach(el=>{
+     if(el.dataset.counted)return;
+     el.dataset.counted='1';
+     this.countUp(el,+el.dataset.count||0);
+   });
+  }catch(e){}
+ },
+
  invalidate(what){
   const all=!what;
   if(all||what==='links'){this._trackData=null;this._trkLoading=false;}
@@ -4053,10 +4250,10 @@ const App={
        <span class="hm-go">המשך ←</span></button>`:''}
 
     <div class="hm-kpis">
-      <button class="hm-k ${st.expired?'hot':''}" data-gotab="track"><b>${st.expired}</b><span>פג תוקפן</span></button>
-      <button class="hm-k ${st.viewed?'warn':''}" data-gotab="track"><b>${st.viewed}</b><span>נצפו</span></button>
-      <button class="hm-k" data-gotab="track"><b>${st.waiting}</b><span>ממתינות</span></button>
-      <button class="hm-k ok" data-gotab="track"><b>${st.approved}</b><span>אושרו</span></button>
+      <button class="hm-k ${st.expired?'hot':''}" data-gotab="track"><b data-count="${st.expired}">0</b><span>פג תוקפן</span></button>
+      <button class="hm-k ${st.viewed?'warn':''}" data-gotab="track"><b data-count="${st.viewed}">0</b><span>נצפו</span></button>
+      <button class="hm-k" data-gotab="track"><b data-count="${st.waiting}">0</b><span>ממתינות</span></button>
+      <button class="hm-k ok" data-gotab="track"><b data-count="${st.approved}">0</b><span>אושרו</span></button>
     </div>
 
     ${st.hot.length?`<div class="hm-sec">דורש טיפול <span style="float:left;font-weight:600;color:var(--muted)">${st.hot.length}</span></div>${st.hot.map(card).join('')}`
@@ -4739,7 +4936,9 @@ const App={
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${esc(x.cid)}|${esc(x.iid)}">+ ${esc(x.name)}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
   <div class="dockwrap"><div class="bottombar"><div class="tot"><div class="a">${this.chosen().reduce((n,g)=>n+g.lines.length,0)} פריטים · לפני מע"מ</div>
       <div class="b">${nis(this.afterDiscount())} <small>(כולל מע"מ ${nis(this.grand())})</small></div></div>
-    <button class="btn-primary" data-modal="preview">📄 הצעת מחיר</button>
+    <button class="btn-primary${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
+      const was=this._hadLines;this._hadLines=n>0;
+      return (n>0&&!was)?' ready':'';})()}" data-modal="preview">📄 הצעת מחיר</button>
     ${(()=>{const m=this.missingParts();
       return m.length?`<button class="bb-hint" data-modal="quote">⚠️ ${esc(m.join(' · '))} — השלם</button>`:'';})()}</div>
   ${this.cartStrip()}${this.tabBar()}</div>
@@ -5720,6 +5919,25 @@ const App={
     links.forEach(l=>{const d=out[l.id];if(d&&d.approvedAt&&l.client){const cl=clients.find(c=>c.name===l.client);if(cl&&cl.status!=='done'){cl.status='done';cl.approvedAt=d.approvedAt;changed=true;}}});
     if(changed){Store.set('clients',clients);try{Sync.push&&Sync.push();}catch(e){}}
   }catch(e){}
+  // אישור חדש שהתגלה בטעינה — הרגע הכי טוב ביום
+  try{
+    const seen=Store.get('celebrated',[])||[];
+    const fresh=[];
+    Object.keys(this._trackData||{}).forEach(k=>{
+      const d=this._trackData[k]||{};
+      if(d.approvedAt&&seen.indexOf(k)<0)fresh.push(k);
+    });
+    if(fresh.length){
+      Store.set('celebrated',seen.concat(fresh).slice(-200));
+      // רק אם זה אישור טרי, לא היסטוריה שנטענה לראשונה
+      if(seen.length){
+        setTimeout(()=>{try{
+          this.celebrate();
+          this.toast('🎉 הצעה אושרה!');
+        }catch(e){}},400);
+      }
+    }
+  }catch(e){}
   if(this.state.modal==='tracking'||(this.state.tab||'home')==='track')this.render();
  },
  sentQuotesModal(){return `<h2>📤 הצעות שנשלחו <button class="x" data-close>✕</button></h2>${this.sentQuotesBody()}`;},
@@ -6547,6 +6765,7 @@ const App={
    <div style="text-align:center;font-weight:800;font-size:15px;margin:2px 0 12px;color:var(--red)">${this.monthName(ym)}</div>
    <div class="stat">${card(d.quotes,'הצעות שהופקו',1,'quotes')}${card(d.sent,'נשלחו ללקוח',1)}</div>
    <div class="stat" style="margin-top:10px">${card(d.closed,'אושרו',1,'closed')}${card(d.conv+'%','אחוז סגירה',1)}</div>
+   <div class="prog ${d.conv>=40?'ok':''}" style="margin:6px 2px 0"><i style="--w:${Math.min(100,d.conv)}%"></i></div>
    <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף ההצעות',1)}${card(nis(d.approvedSum),'מתוכו אושר',1)}</div>
    <div class="stat" style="margin-top:10px">${card(nis(d.avg),'הצעה ממוצעת',1)}${card(d.newClients,'לקוחות חדשים',1,'newClients')}</div>
    <div class="stat" style="margin-top:10px">${card(d.reviews,'בקשות משוב',1,'reviews')}${card(d.feedbacks,'משובים שהתקבלו',1,'feedbacks')}</div>
@@ -6716,6 +6935,7 @@ const App={
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
   this.sectionizeSettings();
   this.sectionizeQuote();
+  this.runCounters();
   const pem=document.getElementById('prev-edit');
   if(pem)pem.onclick=()=>{this.state.prevEdit=!this.state.prevEdit;this.haptic(10);this.render();};
 
@@ -6837,6 +7057,21 @@ const App={
     try{this.loadQuote(id);}catch(x){this.toast('לא ניתן לטעון');}
   });
 
+  // האדווה יוצאת מנקודת המגע המדויקת
+  on('.btn-primary,.btn-block,.hm-new,.es-b,.mini,.chip,.hm-q,.hm-k,.qp,.bs-cat,.cat-card','pointerdown',e=>{
+    try{
+      if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+      const el=e.currentTarget,r=el.getBoundingClientRect();
+      const d=Math.max(r.width,r.height)*2.1;
+      const s=document.createElement('span');
+      s.className='rip';
+      s.style.width=s.style.height=d+'px';
+      s.style.left=((e.clientX||r.left+r.width/2)-r.left)+'px';
+      s.style.top=((e.clientY||r.top+r.height/2)-r.top)+'px';
+      el.appendChild(s);
+      setTimeout(()=>{try{s.remove();}catch(x){}},560);
+    }catch(x){}
+  });
   on('[data-gotab]','click',e=>{
     const t=e.currentTarget.dataset.gotab;
     if(!t)return;
