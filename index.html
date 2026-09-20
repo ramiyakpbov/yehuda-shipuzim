@@ -2090,6 +2090,148 @@ body.bg-idle *::after{
 @media (prefers-reduced-motion:no-preference){
   .hm-card.live::after{animation-play-state:running;}
 }
+
+/* ═══ נקודת "לא אומת" ═══
+   סימן שקט בפינה. לא אזהרה, לא משימה — רק תזכורת שהמחיר
+   הזה עדיין לא עבר דרך יהודה. נעלם ברגע שהוא נערך. */
+.item.unverified::before{
+  content:'';position:absolute;top:10px;inset-inline-end:10px;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--warn);opacity:.5;pointer-events:none;
+  box-shadow:0 0 0 3px rgba(245,166,35,.1);}
+.item.unverified .price-in{
+  border-color:rgba(245,166,35,.28)!important;}
+
+/* מונה שקט בראש הקטגוריה */
+.cat-unver{font-size:var(--fs-xxs);color:var(--warn);opacity:.7;
+  font-weight:600;margin-inline-start:5px;}
+
+/* ═══════════════════════════════════════════════════════
+   v19.5 · וריאציית העל
+   הסקיל דורש ריסון — אבל ריסון אינו מונוטוניות.
+   צבע שנושא מידע מותר; צבע שהוא קישוט אסור.
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1 · זהות צבע ל-12 הקטגוריות ──
+   לא קישוט: יהודה מזהה קטגוריה לפי מקום בצבע לפני שהוא קורא
+   את השם. הגוון עדין — קו צד וזוהר בפינה, לא מילוי. */
+:root{
+  --c-demo:#ff6b4a;   --c-plumb:#36a9e1;  --c-floor:#8e9aaf;
+  --c-drywall:#c9b8a8; --c-paint:#f5a623; --c-elec:#ffd23f;
+  --c-comm:#9b7ede;   --c-finish:#ff8fab; --c-alum:#5bc0be;
+  --c-plan:#7fb069;   --c-struct:#e07a5f; --c-outdoor:#6bbf59;
+}
+.cat{position:relative;overflow:hidden;}
+.cat::before{
+  content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;
+  background:var(--cc,var(--line));opacity:.85;}
+.cat::after{
+  content:'';position:absolute;inset-inline-start:-40px;top:-40px;
+  width:140px;height:140px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,var(--cc,transparent),transparent 68%);
+  opacity:.07;}
+.cat[data-cid="demo"]{--cc:var(--c-demo)}
+.cat[data-cid="plumb"]{--cc:var(--c-plumb)}
+.cat[data-cid="floor"]{--cc:var(--c-floor)}
+.cat[data-cid="drywall"]{--cc:var(--c-drywall)}
+.cat[data-cid="paint"]{--cc:var(--c-paint)}
+.cat[data-cid="elec"]{--cc:var(--c-elec)}
+.cat[data-cid="comm"]{--cc:var(--c-comm)}
+.cat[data-cid="finish"]{--cc:var(--c-finish)}
+.cat[data-cid="alum"]{--cc:var(--c-alum)}
+.cat[data-cid="plan"]{--cc:var(--c-plan)}
+.cat[data-cid="struct"]{--cc:var(--c-struct)}
+.cat[data-cid="outdoor"]{--cc:var(--c-outdoor)}
+.cat.open::before{width:4px;opacity:1;}
+
+/* ── 2 · מספרי גיבור ──
+   הכסף הוא המוצר. 20px הפכו אותו לעוד שורה.
+   מספר גדול, דק, עם מרווח אותיות שלילי — כמו בלוח מחוונים. */
+.hm-k>b,.fu-k>b{
+  font-size:30px!important;
+  font-weight:700!important;
+  letter-spacing:-1.2px;
+  line-height:1!important;
+  margin-bottom:5px;}
+.cart-sum{font-size:var(--fs-l)!important;letter-spacing:-.5px;}
+.tot .b{font-size:24px!important;letter-spacing:-.8px;}
+.hq-t{font-size:var(--fs-m)!important;letter-spacing:-.4px;}
+.cc-s>b{font-size:23px!important;letter-spacing:-.7px;}
+
+/* ── 3 · שלוש מדרגות עומק אמיתיות ──
+   עד עכשיו כל משטח היה באותה הרמה, והמסך נקרא כמישור אחד. */
+.hm-kpis .hm-k{
+  background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.012))!important;}
+.hm-card,.fu-row,.cal-row{
+  background:linear-gradient(165deg,rgba(255,255,255,.085),rgba(255,255,255,.022))!important;}
+.hm-card.hot,.fu-row.now{
+  background:linear-gradient(165deg,rgba(237,28,36,.13),rgba(237,28,36,.035))!important;}
+.hm-card.live{
+  background:linear-gradient(165deg,rgba(46,194,107,.13),rgba(46,194,107,.035))!important;}
+.hm-card.warn,.fu-row.soon,.cal-row.soon{
+  background:linear-gradient(165deg,rgba(245,166,35,.11),rgba(245,166,35,.03))!important;}
+
+/* ── 4 · ה-KPI מקבלים זהות משלהם ──
+   ארבעה מספרים באותו אפור לא נקראים כארבעה מצבים שונים. */
+.hm-k{position:relative;overflow:hidden;}
+.hm-k::after{
+  content:'';position:absolute;inset-inline:0;bottom:0;height:2px;
+  background:var(--kc,transparent);opacity:.7;}
+.hm-kpis .hm-k:nth-child(1){--kc:var(--red)}
+.hm-kpis .hm-k:nth-child(2){--kc:var(--warn)}
+.hm-kpis .hm-k:nth-child(3){--kc:var(--muted)}
+.hm-kpis .hm-k:nth-child(4){--kc:var(--ok)}
+.hm-k.hot{background:linear-gradient(165deg,rgba(237,28,36,.16),rgba(237,28,36,.04))!important;}
+.hm-k.warn{background:linear-gradient(165deg,rgba(245,166,35,.14),rgba(245,166,35,.035))!important;}
+.hm-k.ok{background:linear-gradient(165deg,rgba(46,194,107,.14),rgba(46,194,107,.035))!important;}
+
+/* ── 5 · מרקם עדין ──
+   משטח חלק לגמרי נראה דיגיטלי ושטוח. גרעין של 3% נותן לו חומר.
+   מיושם על המשטחים הגדולים בלבד, לא על כל כרטיס. */
+.sheet::before,.topbar::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");}
+.sheet>*{position:relative;z-index:1;}
+.topbar{position:relative;}
+
+/* ── 6 · הכותרת מקבלת נוכחות ── */
+.topbar{
+  background:linear-gradient(180deg,rgba(28,28,34,.92),rgba(13,13,15,.78))!important;
+  box-shadow:0 1px 0 rgba(255,255,255,.06),0 10px 30px -18px rgba(0,0,0,.9)!important;}
+.topbar .name{letter-spacing:-.4px;}
+
+/* ── 7 · הכרטיס הדחוף בולט באמת ──
+   קודם הוא נבדל רק בקו צד של 4 פיקסלים. */
+.hm-card.hot,.hm-card.live{
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.1),
+    0 2px 6px rgba(0,0,0,.35),
+    0 16px 36px -14px rgba(0,0,0,.7)!important;}
+
+/* ── 8 · שורת סעיף נבחר מקבלת חיווי חם ── */
+.item.sel{
+  background:linear-gradient(165deg,rgba(46,194,107,.075),rgba(46,194,107,.018))!important;
+  box-shadow:0 0 0 1px rgba(46,194,107,.28),inset 0 1px 0 rgba(255,255,255,.1)!important;}
+
+/* ── 9 · הפרדה בין מחיר לשאר ──
+   הסכום הוא המידע החשוב בשורה; שייראה ככה. */
+.cat-sum,.hq-t,.cart-row b,.cc-row b{
+  background:linear-gradient(180deg,#fff,#c9c9d2);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;}
+.cat .cat-sum{-webkit-text-fill-color:initial;background:none;}
+
+/* ── 10 · פס עליון לכל מסך ── */
+.sheet>h2{position:relative;}
+.sheet>h2::after{
+  content:'';position:absolute;inset-inline:0;bottom:-10px;height:2px;
+  background:linear-gradient(90deg,var(--red),transparent 65%);
+  opacity:.5;border-radius:2px;}
+
+@media (prefers-reduced-motion:reduce){
+  .cat-card::after{display:none;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2123,7 +2265,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.3';
+const VERSION='19.5';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2277,7 +2419,19 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.3 — חיבור וביצועים</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.5 — זהות ויזואלית</div>
+   <ul class="g-ul"><li><b>ל-12 הקטגוריות יש עכשיו צבע משלהן</b> — הריסה כתום־אדום, אינסטלציה תכלת, חשמל צהוב, גבס בז׳, נגרות טורקיז. הצבע מופיע כקו צד וזוהר עדין בפינה, לא כמילוי. זה אינו קישוט: העין מזהה קטגוריה לפי מקום בצבע לפני שהיא קוראת את השם.</li>
+   <li><b>המספרים הפכו לגיבורים</b> — הסכומים והמונים היו בגודל של עוד שורת טקסט. עכשיו הם גדולים, דקים ועם מרווח אותיות הדוק, כמו בלוח מחוונים. הכסף הוא המוצר, וכך הוא נראה.</li>
+   <li><b>שלוש מדרגות עומק במקום מישור אחד</b> — הכל היה באותה רמת הרמה והמסך נקרא שטוח. עכשיו כרטיס רגיל, כרטיס דחוף וכרטיס חי נבדלים ברקע ובצל, לא רק בקו צד דק.</li>
+   <li><b>ארבעת המונים במרכז הבית קיבלו זהות</b> — פס תחתון בצבע המצב: אדום לפג תוקף, כתום לנצפו, ירוק לאושרו. ארבעה מספרים באותו אפור לא נקראו כארבעה מצבים שונים.</li>
+   <li><b>מרקם עדין</b> — שכבת גרעין של שלושה אחוזים על החלונות והכותרת. משטח חלק לחלוטין נראה דיגיטלי; הגרעין נותן לו חומר.</li>
+   <li><b>סעיף נבחר מסומן בירוק</b> · <b>הסכומים בגרדיאנט מתכתי</b> · <b>קו הדגשה תחת כל כותרת מסך</b>.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.4 — מחיר שאומת</div>
+   <ul class="g-ul"><li><b>147 המחירים החמים היו נקודת פתיחה שנקבעה בהערכה</b>, לא מחיר שיהודה אישר — ולא הייתה דרך להבחין בין סעיף שהוא כבר תמחר לבין כזה שמעולם לא נגע בו.</li>
+   <li><b>נקודה כתומה קטנה</b> מופיעה בפינת סעיף שהמחיר שלו עדיין לא נערך. היא נעלמת ברגע שנוגעים בו. אין רשימה, אין אזהרה, ואין משימה שצריך לסיים — רק סימן שקט שמצטבר לתמונה תוך כדי עבודה רגילה.</li>
+   <li><b>שינוי חוזר מזוהה</b> — שינוי מחיר בהצעה אחת נשאר נקודתי, כמו שצריך. אבל אם אותו סעיף שונה פעמיים לאותו כיוון בתוך שלושה חודשים, האפליקציה שואלת אם לעדכן את המחירון באופן קבוע. שינוי של פחות מארבעה אחוזים לא נספר.</li>
+   <li>יומן השינויים מסתנכרן בין המכשירים.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.3 — חיבור וביצועים</div>
    <ul class="g-ul"><li><b>שני עיצובים הוגדרו ולא חוברו.</b> הצלבת האייקונים וההחלקה למחיקה היו קיימים בגיליון הסגנון בלי שום קוד שמפעיל אותם. עכשיו החץ בסל מתחלף בהצלבה רכה, וגרירת כרטיס שמאלה חושפת מחיקה — יחד עם הביטול הקיים, החלקה בטעות ניתנת להחזרה תוך שש שניות.</li>
    <li><b>22 אנימציות רצו גם כשאף אחד לא ראה אותן</b> — גם כשהאפליקציה ברקע. כל לולאה כזו מעירה את המעבד שישים פעם בשנייה בחינם. עכשיו כולן נעצרות ברגע שעוברים לאפליקציה אחרת וחוזרות כשחוזרים.</li>
    <li><b>פס ההתקדמות עבר ל-scaleX</b> — הנפשת רוחב מחייבת את הדפדפן לחשב מחדש את הפריסה בכל פריים. שינוי קנה מידה רץ על כרטיס המסך.</li>
@@ -3229,7 +3383,7 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+const SYNC_KEYS=['catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -3599,7 +3753,17 @@ const App={
    clientSig:null,modal:null,photoClient:null,includeGallery:Store.get('includeGallery',false),planMode:Store.get('planMode',false),planPerSqm:Store.get('planPerSqm',''),planTotalSqm:Store.get('planTotalSqm',''),
  },
  save(){Store.set('catalog',this.state.catalog);},
- setField(cid,iid,field,val){const it=this.find(cid,iid);if(!it)return;it[field]=val;if(field==='price'&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(cid);},
+ setField(cid,iid,field,val){const it=this.find(cid,iid);if(!it)return;
+  // עריכת מחיר = אימות. מרגע זה הסעיף כבר לא "ניחוש".
+  if(field==='price'){
+    const oldP=+it.price||0;
+    if(oldP!==+val){
+      it.priceAt=Date.now();
+      this.noteManualPrice(cid,iid,oldP,+val);
+      this.invalidate('catalog');
+    }
+  }
+  it[field]=val;if(field==='price'&&(+it.qty>0)&&!it.selected)it.selected=true;this.saveActive(cid);},
  allCats(){
   const sub=this.state.subItems||{};
   // הגנה אחרונה מפני קטגוריה כפולה: גם אם היא שרדה באחסון או הגיעה
@@ -4217,6 +4381,65 @@ const App={
      el.dataset.counted='1';
      this.countUp(el,+el.dataset.count||0);
    });
+  }catch(e){}
+ },
+
+ /* ═══ מחיר שאומת ═══
+    147 המחירים החמים הם נקודת פתיחה שנקבעה בהערכה, לא מחיר
+    שיהודה אישר. אין דרך להבחין בין סעיף שהוא כבר תמחר לבין
+    כזה שמעולם לא נגע בו.
+    הפתרון: נקודה כתומה שקטה, שנעלמת ברגע שהמחיר נערך.
+    בלי רשימה, בלי אזהרה, בלי משימה שצריך לסיים. */
+ isVerified(it){
+  try{
+   if(!it)return true;
+   if(it.priceAt)return true;                 // נערך או יובא
+   if(it.custom||it.userAdded)return true;    // סעיף שהוא הוסיף
+   if(!it.hot)return true;                    // רק החמים מסומנים
+   return false;
+  }catch(e){return true;}
+ },
+
+ verifyDot(it){
+  return this.isVerified(it)?'':'<span class="unver" title="המחיר עדיין לא אומת"></span>';
+ },
+
+ /* ═══ שינוי חוזר לאותו כיוון ═══
+    10% מהמקרים המחיר משתנה ידנית. שינוי נקודתי נשאר נקודתי —
+    אבל אם אותו סעיף שונה פעמיים לאותו כיוון, זה כבר לא חריג
+    אלא המחיר האמיתי. */
+ noteManualPrice(cid,iid,oldP,newP){
+  try{
+   if(!(oldP>0)||!(newP>0))return;
+   const diff=(newP-oldP)/oldP;
+   if(Math.abs(diff)<0.04)return;              // שינוי זניח
+   const dir=diff>0?'up':'down';
+   const log=Store.get('priceDrift',{})||{};
+   const k=cid+'|'+iid;
+   const rec=log[k];
+   const now=Date.now();
+   if(rec&&rec.dir===dir&&(now-rec.at)<90*864e5){
+     // פעם שנייה לאותו כיוון — שואלים
+     delete log[k];Store.set('priceDrift',log);
+     const it=this.find(cid,iid);
+     const nm=it?it.name:'הסעיף';
+     setTimeout(()=>{
+       try{
+        if(confirm('שינית את המחיר של "'+nm+'" פעמיים לאותו כיוון.\n\n'+
+           'המחיר במחירון: '+nis(rec.base)+'\n'+
+           'המחיר החדש: '+nis(newP)+'\n\n'+
+           'לעדכן את המחירון באופן קבוע?')){
+          const x=this.find(cid,iid);
+          if(x){x.basePrice=newP;x.priceAt=now;
+            this.saveActive(cid);this.invalidate('catalog');
+            this.haptic(18);this.toast('✅ המחירון עודכן');this.render();}
+        }
+       }catch(e){}
+     },700);
+     return;
+   }
+   log[k]={dir:dir,at:now,base:oldP};
+   Store.set('priceDrift',log);
   }catch(e){}
  },
 
@@ -4930,7 +5153,7 @@ const App={
     items=items.slice().sort((a,b)=>((b.selected&&+b.qty>0)?2:0)-((a.selected&&+a.qty>0)?2:0)||((b.hot?1:0)-(a.hot?1:0)));
     if(!items.length&&(!c.custom||onlySel||W.length))return '';
     const open=s.open[c.id]||!!q||onlySel;const t=this.catTotal(c);
-    return `<div class="cat ${open?'open':''}"><div class="cat-head" data-cat="${c.id}">
+    return `<div data-cid="${c.id}" class="cat ${open?'open':''}"><div class="cat-head" data-cat="${c.id}">
       <span class="cat-emoji">${esc(c.emoji)}</span><span class="cat-title">${esc(c.title)}</span>
       ${c.hot?`<span class="cat-hot">🔥 חם</span>`:''}
       ${(()=>{const sc=(c.items||[]).filter(x=>x.selected&&(+x.qty>0)).length;
@@ -5330,7 +5553,7 @@ const App={
  laborCount(){let n=0;this.allCats().forEach(c=>c.items.forEach(i=>{if(i.selected&&(+i.qty>0)&&i.laborMode)n++;}));return n;},
 
  itemView(cid,i,custom){const total=(+i.qty||0)*(+i.price||0);
-  return `<div class="item ${i.selected?'sel':''}" data-iid="${i.id}"><div class="item-top">
+  return `<div class="item ${i.selected?'sel':''}${this.isVerified(i)?'':' unverified'}" data-iid="${i.id}"><div class="item-top">
       <div class="chk ${i.selected?'on':''}" data-sel="${cid}|${i.id}">${i.selected?'✓':''}</div>
       <div class="item-name">${esc(i.name)}<div class="item-range">${i.laborMode?`<span class="lb-note">⚙️ התקנה בלבד — החומר על הלקוח</span>`:(i.range||'')}</div></div>
       ${custom?`<button class="del-custom" data-delcustom="${i.id}">🗑️</button>`:(i.sub?`<button class="del-custom" data-delsub="${cid}|${i.id}">🗑️</button>`:'')}</div>
