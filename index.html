@@ -2232,6 +2232,179 @@ body.bg-idle *::after{
 @media (prefers-reduced-motion:reduce){
   .cat-card::after{display:none;}
 }
+
+/* ═══════════════════════════════════════════════════════
+   v19.6 · עומק, סקאלה ותנועה
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1 · פאנל הגיבור ──
+   קונטרסט סקאלה: דבר אחד גדול שהעין נוחתת עליו ראשון,
+   ורק אחריו הפרטים. בלי זה כל האלמנטים מתחרים באותה עוצמה. */
+.hero{position:relative;overflow:hidden;border-radius:22px;
+  padding:22px 20px 20px;margin-bottom:16px;
+  background:linear-gradient(165deg,#1b1b22,#121216);
+  box-shadow:0 0 0 1px rgba(255,255,255,.09),
+             0 2px 8px rgba(0,0,0,.4),
+             0 24px 48px -20px rgba(0,0,0,.85),
+             inset 0 1px 0 rgba(255,255,255,.14);}
+
+/* רשת גרדיאנטים — לא צבע שטוח אלא הילות שנושמות */
+.hero-mesh{position:absolute;inset:-35%;pointer-events:none;
+  background:
+    radial-gradient(30% 34% at 18% 22%, rgba(237,28,36,.30), transparent 64%),
+    radial-gradient(28% 30% at 82% 30%, rgba(155,126,222,.20), transparent 62%),
+    radial-gradient(34% 32% at 60% 86%, rgba(43,168,224,.18), transparent 64%);
+  filter:blur(22px);
+  animation:meshDrift 22s ease-in-out infinite alternate;}
+@keyframes meshDrift{
+  0%{transform:translate3d(0,0,0) scale(1) rotate(0deg);}
+  100%{transform:translate3d(-4%,3%,0) scale(1.16) rotate(7deg);}}
+.hero-in{position:relative;z-index:1;}
+.hero-greet{font-size:var(--fs-xs);color:rgba(255,255,255,.55);font-weight:600;}
+.hero-lbl{font-size:var(--fs-xxs);color:rgba(255,255,255,.42);
+  font-weight:600;letter-spacing:.6px;margin-top:12px;}
+
+/* המספר — טיפוגרפיה שנושמת עם רוחב המסך */
+.hero-num{display:flex;align-items:baseline;gap:5px;margin-top:2px;
+  font-size:clamp(38px,12.5vw,58px);font-weight:700;
+  letter-spacing:-2.4px;line-height:1;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(175deg,#fff 30%,#a8a8b8);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 3px 14px rgba(255,255,255,.14));}
+.hero-num i{font-style:normal;font-size:.44em;letter-spacing:0;
+  -webkit-text-fill-color:rgba(255,255,255,.5);font-weight:600;}
+
+.hero-row{display:flex;gap:7px;margin-top:15px;flex-wrap:wrap;}
+.hero-pill{font-size:var(--fs-xxs);font-weight:600;
+  padding:6px 12px;border-radius:20px;
+  background:rgba(255,255,255,.075);color:rgba(255,255,255,.72);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.hero-pill.ok{background:rgba(46,194,107,.15);color:#7ee0a5;
+  box-shadow:inset 0 0 0 1px rgba(46,194,107,.32);}
+.hero-pill.hot{background:rgba(237,28,36,.16);color:#ff8a8f;
+  box-shadow:inset 0 0 0 1px rgba(237,28,36,.35);}
+
+/* ── 2 · בנטו — סוף לרוחב אחיד ──
+   ארבעה מונים בגודל זהה נקראים כטבלה. אחד גדול ושלושה
+   קטנים נקראים כהיררכיה. */
+.hm-kpis{display:grid!important;
+  grid-template-columns:1.35fr 1fr 1fr!important;
+  grid-template-rows:auto auto;gap:7px!important;}
+.hm-kpis .hm-k:nth-child(1){grid-column:1;grid-row:1/3;
+  display:flex;flex-direction:column;justify-content:center;}
+.hm-kpis .hm-k:nth-child(1)>b{font-size:42px!important;letter-spacing:-2px;}
+.hm-kpis .hm-k:nth-child(2){grid-column:2;grid-row:1;}
+.hm-kpis .hm-k:nth-child(3){grid-column:3;grid-row:1;}
+.hm-kpis .hm-k:nth-child(4){grid-column:2/4;grid-row:2;
+  display:flex;align-items:center;justify-content:center;gap:8px;}
+.hm-kpis .hm-k:nth-child(4)>b{font-size:22px!important;margin:0!important;}
+
+/* ── 3 · הזוהר מסביב לכרטיס החי ──
+   אורורה: שלוש הילות שמסתובבות בקצבים שונים. */
+.hm-card.live{position:relative;}
+.hm-card.live::before{
+  content:'';position:absolute;inset:-2px;border-radius:inherit;z-index:-1;
+  background:conic-gradient(from 0deg,
+    rgba(46,194,107,0), rgba(46,194,107,.55) 25%,
+    rgba(127,224,165,.3) 42%, rgba(46,194,107,0) 60%);
+  filter:blur(9px);opacity:.75;
+  animation:auroraSpin 3.4s linear infinite;}
+@keyframes auroraSpin{to{transform:rotate(360deg);}}
+
+/* ── 4 · כניסת כרטיס עם עומק ──
+   לא רק שקיפות: הכרטיס מגיע מלמטה וקצת מאחור. */
+.hm-card{animation:cardRise .42s cubic-bezier(.2,0,0,1) backwards!important;}
+@keyframes cardRise{
+  from{opacity:0;transform:translateY(14px) scale(.975);filter:blur(2px);}
+  to{opacity:1;transform:none;filter:none;}}
+
+/* ── 5 · שורת הפעולות נחשפת ──
+   הכפתורים נכנסים אחרי הכרטיס, לא איתו. */
+.hm-acts .mini{animation:actIn .3s cubic-bezier(.2,0,0,1) backwards;}
+.hm-acts .mini:nth-child(1){animation-delay:.14s}
+.hm-acts .mini:nth-child(2){animation-delay:.19s}
+.hm-acts .mini:nth-child(3){animation-delay:.24s}
+@keyframes actIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:none;}}
+
+/* ── 6 · כותרת מסך עם משקל ── */
+.sheet>h2{font-size:var(--fs-xl)!important;letter-spacing:-.6px;}
+
+/* ── 7 · קטגוריה פתוחה מקבלת נוכחות ── */
+.cat.open{
+  box-shadow:0 0 0 1px var(--cc,rgba(255,255,255,.14)),
+             0 16px 34px -16px rgba(0,0,0,.8)!important;}
+.cat.open .cat-t{color:var(--cc,var(--txt));}
+
+/* ── 8 · מעבר צבע בגלילת המסך ──
+   הרקע מתחלף לאט בין שני גוונים כהים לאורך הדף. */
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+      background:linear-gradient(180deg,rgba(237,28,36,.05),rgba(43,168,224,.05));
+      opacity:0;animation:scrollTint linear both;
+      animation-timeline:scroll();animation-range:0 100%;}
+    @keyframes scrollTint{from{opacity:0}to{opacity:1}}
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hero-mesh,.hm-card.live::before{animation:none!important;}
+  .hm-card,.hm-acts .mini{animation:none!important;}
+}
+
+/* ── 9 · הסכום מגיב לשינוי ──
+   ירוק כשעולה, כחול כשיורד. חצי שנייה, ונעלם. */
+.tot .b.sum-up{animation:sumUp .5s cubic-bezier(.2,0,0,1);}
+.tot .b.sum-down{animation:sumDown .5s cubic-bezier(.2,0,0,1);}
+@keyframes sumUp{
+  0%{transform:translateY(5px) scale(.96);filter:brightness(1.7) saturate(1.5);}
+  40%{transform:translateY(-2px) scale(1.04);}
+  100%{transform:none;filter:none;}}
+@keyframes sumDown{
+  0%{transform:translateY(-5px) scale(.96);opacity:.55;}
+  100%{transform:none;opacity:1;}}
+
+/* ── 10 · סעיף נבחר — הבזק מהמקום שנלחץ ── */
+.item.sel .chk.on{animation:chkPop .38s cubic-bezier(.34,1.56,.64,1);}
+@keyframes chkPop{
+  0%{transform:scale(.6);}
+  55%{transform:scale(1.22);}
+  100%{transform:scale(1);}}
+
+/* ── 11 · הלשונית הפעילה — נקודה שזזה ── */
+.tabbar{position:relative;}
+.tb.on::before{
+  content:'';position:absolute;top:2px;inset-inline:22%;height:2.5px;
+  border-radius:20px;background:var(--red);
+  box-shadow:0 0 10px rgba(237,28,36,.75);
+  animation:tabIn .34s cubic-bezier(.2,0,0,1);}
+@keyframes tabIn{from{transform:scaleX(0);opacity:0;}to{transform:none;opacity:1;}}
+
+/* ── 12 · כפתור ראשי — ברק שעובר ──
+   פעם אחת בכניסה, לא בלולאה. */
+.btn-primary{position:relative;overflow:hidden;}
+.btn-primary::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,
+    rgba(255,255,255,.28) 50%,transparent 62%);
+  transform:translateX(-120%);
+  animation:sheen 1.1s cubic-bezier(.2,0,0,1) .35s;}
+@keyframes sheen{to{transform:translateX(120%);}}
+
+/* ── 13 · קלט במיקוד — הילה רכה ── */
+input:focus,textarea:focus,select:focus{
+  box-shadow:0 0 0 3px rgba(237,28,36,.16),
+             inset 0 1px 0 rgba(255,255,255,.06)!important;
+  border-color:rgba(237,28,36,.45)!important;}
+
+@media (prefers-reduced-motion:reduce){
+  .tot .b.sum-up,.tot .b.sum-down,.item.sel .chk.on,
+  .tb.on::before,.btn-primary::after{animation:none!important;}
+  .btn-primary::after{display:none;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2265,7 +2438,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.5';
+const VERSION='19.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2419,7 +2592,15 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.5 — זהות ויזואלית</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.6 — פאנל הגיבור</div>
+   <ul class="g-ul"><li><b>למה המסך נראה שטוח</b> — כל האלמנטים היו באותו גודל ובאותה עוצמה, ולעין לא היה מקום לנחות עליו ראשון. חסר היה קונטרסט של סקאלה: דבר אחד גדול שמוביל, והשאר תומכים.</li>
+   <li><b>פאנל פותח למרכז הבית</b> — סכום ההצעות שממתינות לתשובה, במספר ענק שמתאים את עצמו לרוחב המסך, על רשת גרדיאנטים שזזה לאט. מתחתיו שתי תוויות: כמה כבר נסגר וכמה דורש טיפול.</li>
+   <li><b>ארבעת המונים בפריסה אסימטרית</b> — במקום ארבעה ריבועים זהים שנקראים כטבלה, אחד גדול ושלושה קטנים סביבו.</li>
+   <li><b>זוהר נע סביב ההצעה שנקראת עכשיו</b> — הילה ירוקה שמסתובבת סביב הכרטיס.</li>
+   <li><b>כרטיסים נכנסים עם עומק</b> — לא רק שקיפות: הם עולים מלמטה, מתקרבים וחדים מטשטוש קל. הכפתורים נחשפים אחריהם.</li>
+   <li><b>הסכום מגיב כשהוא משתנה</b> — קופץ וזוהר כשעולה, שוקע כשיורד. עד עכשיו הוא פשוט הוחלף ויהודה לא ראה שהפעולה עבדה.</li>
+   <li><b>ועוד</b> — ברק שעובר על הכפתור הראשי בכניסה · סימון סעיף שקופץ · נקודה שנכנסת מתחת ללשונית הפעילה · הילה רכה סביב שדה במיקוד.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.5 — זהות ויזואלית</div>
    <ul class="g-ul"><li><b>ל-12 הקטגוריות יש עכשיו צבע משלהן</b> — הריסה כתום־אדום, אינסטלציה תכלת, חשמל צהוב, גבס בז׳, נגרות טורקיז. הצבע מופיע כקו צד וזוהר עדין בפינה, לא כמילוי. זה אינו קישוט: העין מזהה קטגוריה לפי מקום בצבע לפני שהיא קוראת את השם.</li>
    <li><b>המספרים הפכו לגיבורים</b> — הסכומים והמונים היו בגודל של עוד שורת טקסט. עכשיו הם גדולים, דקים ועם מרווח אותיות הדוק, כמו בלוח מחוונים. הכסף הוא המוצר, וכך הוא נראה.</li>
    <li><b>שלוש מדרגות עומק במקום מישור אחד</b> — הכל היה באותה רמת הרמה והמסך נקרא שטוח. עכשיו כרטיס רגיל, כרטיס דחוף וכרטיס חי נבדלים ברקע ובצל, לא רק בקו צד דק.</li>
@@ -4374,6 +4555,25 @@ const App={
   }catch(e){}
  },
 
+ /* ═══ הסכום מגיב לשינוי ═══
+    עד עכשיו הוא פשוט הוחלף. מספר שמשתנה בלי חיווי לא נקלט,
+    ויהודה לא רואה שהפעולה שלו עבדה. */
+ pulseSum(){
+  try{
+   const el=document.querySelector('.tot .b');
+   if(!el)return;
+   const v=el.textContent;
+   if(this._lastSum===undefined){this._lastSum=v;return;}
+   if(this._lastSum===v)return;
+   const up=(parseFloat(String(v).replace(/[^\d.]/g,''))||0) >
+            (parseFloat(String(this._lastSum).replace(/[^\d.]/g,''))||0);
+   this._lastSum=v;
+   el.classList.remove('sum-up','sum-down');
+   void el.offsetWidth;
+   el.classList.add(up?'sum-up':'sum-down');
+  }catch(e){}
+ },
+
  runCounters(){
   try{
    document.querySelectorAll('[data-count]').forEach(el=>{
@@ -4506,7 +4706,40 @@ const App={
        <button class="mini" data-gotab="track">מעקב ←</button>
      </div></div>`;};
 
+  // ─── פאנל הגיבור ───
+  // כל המסך היה רשימת מלבנים באותו גודל. בלי קונטרסט של סקאלה
+  // העין לא יודעת איפה להתחיל. כאן יש דבר אחד גדול בראש.
+  const pipeline=(()=>{try{
+    const td=this._trackData||{};const seen={};let s=0;
+    (Store.get('sentLinks',[])||[]).forEach(l=>{
+      if(!l||!l.id)return;const k=l.no||l.id;if(seen[k])return;seen[k]=1;
+      const d=td[l.id]||{};if(d.approvedAt)return;
+      s+=+l.total||0;});
+    return s;}catch(e){return 0;}})();
+  const won=(()=>{try{
+    const td=this._trackData||{};const seen={};let s=0;
+    (Store.get('sentLinks',[])||[]).forEach(l=>{
+      if(!l||!l.id)return;const k=l.no||l.id;if(seen[k])return;seen[k]=1;
+      const d=td[l.id]||{};if(d.approvedAt)s+=+l.total||0;});
+    return s;}catch(e){return 0;}})();
+  const greet=(()=>{const hr=new Date().getHours();
+    return hr<11?'בוקר טוב':(hr<16?'צהריים טובים':(hr<19?'אחר צהריים טובים':'ערב טוב'));})();
+
   return `<div class="hm-wrap">
+    <div class="hero">
+      <div class="hero-mesh"></div>
+      <div class="hero-in">
+        <div class="hero-greet">${greet}</div>
+        <div class="hero-lbl">בצנרת · ממתין לתשובה</div>
+        <div class="hero-num"><span data-count="${Math.round(pipeline)}">0</span><i>₪</i></div>
+        <div class="hero-row">
+          <span class="hero-pill ok">✓ נסגר ${nisR(won)}</span>
+          ${st.hot.length?`<span class="hero-pill hot">${st.hot.length} דורש טיפול</span>`:
+            `<span class="hero-pill">הכל במעקב</span>`}
+        </div>
+      </div>
+    </div>
+
     ${st.openQuote?`<button class="hm-resume" data-gotab="build">
        <div><b>הצעה פתוחה</b><span>${st.openQuote} סעיפים · ${nisR(st.openTotal)}</span></div>
        <span class="hm-go">המשך ←</span></button>`:''}
@@ -7198,6 +7431,7 @@ const App={
   this.sectionizeSettings();
   this.sectionizeQuote();
   this.runCounters();
+  this.pulseSum();
   // פס ההתקדמות מונפש ב-scaleX — הערך מוזן כמשתנה
   try{document.querySelectorAll('.prog>i').forEach(i=>{
     const w=(i.style.getPropertyValue('--w')||'').trim();
