@@ -485,7 +485,7 @@ body.cart-on{padding-bottom:calc(196px + env(safe-area-inset-bottom));}
 body.cart-on .trk-shell{padding:10px 12px 4px;}
 .tabbar{position:fixed;inset-inline:0;bottom:0;z-index:60;display:flex;
   background:var(--bg2);border-top:1px solid var(--line);padding:5px 4px calc(5px + env(safe-area-inset-bottom));}
-.tb{flex:1;background:none;border:none;color:var(--muted);padding:6px 2px;display:flex;
+.tb{position:relative;flex:1;background:none;border:none;color:var(--muted);padding:6px 2px;display:flex;
   flex-direction:column;align-items:center;gap:2px;-webkit-tap-highlight-color:transparent;}
 .tb-i{font-size:20px;line-height:1;position:relative;}
 .tb-l{font-size:10px;font-weight:600;}
@@ -2071,9 +2071,11 @@ body::before{
 /* ── אנימציה אינסופית נעצרת כשלא רואים אותה ──
    22 לולאות רצו גם כשהאפליקציה ברקע או כשהאלמנט מחוץ למסך.
    כל אחת מהן מעירה את המעבד 60 פעם בשנייה בחינם. */
-.topbar,.tabbar,.bottombar,.cart,.sheet,.hm-card,.fu-row,.cal-row,
-#splash,.aihub-card,.ai-cta,.btn-block,.hm-resume{
-  content-visibility:auto;}
+/* content-visibility הוסר מאלמנטים קבועים ודביקים: הוא מקריס
+   את הגובה שלהם עד שהדפדפן מצייר אותם, והמסך קופץ בגלילה.
+   נשאר רק על כרטיסים ברשימה, שם הוא בטוח ומועיל. */
+.cat,.item,.hq,.ins,.pi-row{
+  content-visibility:auto;contain-intrinsic-size:auto 90px;}
 
 body.bg-idle *,
 body.bg-idle *::before,
@@ -2249,7 +2251,7 @@ body.bg-idle *::after{
              inset 0 1px 0 rgba(255,255,255,.14);}
 
 /* רשת גרדיאנטים — לא צבע שטוח אלא הילות שנושמות */
-.hero-mesh{position:absolute;inset:-35%;pointer-events:none;
+.hero-mesh{position:absolute;inset:-30%;pointer-events:none;will-change:transform;
   background:
     radial-gradient(30% 34% at 18% 22%, rgba(237,28,36,.30), transparent 64%),
     radial-gradient(28% 30% at 82% 30%, rgba(155,126,222,.20), transparent 62%),
@@ -2340,15 +2342,8 @@ body.bg-idle *::after{
 
 /* ── 8 · מעבר צבע בגלילת המסך ──
    הרקע מתחלף לאט בין שני גוונים כהים לאורך הדף. */
-@supports (animation-timeline:scroll()){
-  @media (prefers-reduced-motion:no-preference){
-    body::after{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
-      background:linear-gradient(180deg,rgba(237,28,36,.05),rgba(43,168,224,.05));
-      opacity:0;animation:scrollTint linear both;
-      animation-timeline:scroll();animation-range:0 100%;}
-    @keyframes scrollTint{from{opacity:0}to{opacity:1}}
-  }
-}
+/* שכבת גוון הגלילה הוסרה — שכבה קבועה שהתנגשה בפריסה */
+
 
 @media (prefers-reduced-motion:reduce){
   .hero-mesh,.hm-card.live::before{animation:none!important;}
@@ -2405,6 +2400,115 @@ input:focus,textarea:focus,select:focus{
   .tb.on::before,.btn-primary::after{animation:none!important;}
   .btn-primary::after{display:none;}
 }
+
+/* ═══════════════════════════════════════════════════════
+   v19.7 · נוחות משתמש
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1 · חזרה לראש ──
+   מופיע רק אחרי גלילה של מסך שלם, בפינה שלא חוסמת כלום. */
+.to-top{position:fixed;z-index:58;
+  bottom:calc(var(--dock-h,170px) + 12px);inset-inline-start:14px;
+  width:42px;height:42px;border-radius:50%;border:none;
+  background:rgba(33,33,39,.82);color:var(--txt);
+  font-size:17px;font-weight:800;line-height:1;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  box-shadow:0 0 0 1px rgba(255,255,255,.12),0 8px 22px -8px rgba(0,0,0,.8);
+  opacity:0;transform:translateY(10px) scale(.9);pointer-events:none;
+  transition:opacity .22s var(--ease),transform .22s var(--ease);}
+.to-top.show{opacity:1;transform:none;pointer-events:auto;}
+.to-top:active{transform:scale(.9);}
+
+/* ── 5 · שדה קלט גדול יותר לאצבע ──
+   שדות המחיר והכמות היו 36px. אצבע צריכה 44. */
+.price-in,.qty-in{min-height:44px!important;font-size:var(--fs-m)!important;
+  text-align:center;font-variant-numeric:tabular-nums;}
+
+/* ── 6 · המקלדת לא מכסה את השדה ── */
+input,textarea,select{scroll-margin-block:120px;}
+
+/* ── 7 · שורה ארוכה לא נחתכת באמצע מילה ── */
+.hm-n,.fu-n,.cal-n,.hq-n,.cart-nm,.cc-row b,.item .nm{
+  overflow-wrap:anywhere;hyphens:auto;}
+
+/* ── 8 · אזור בטוח בתחתית ──
+   בטלפונים עם סרגל מחוות התוכן נחתך. */
+.hm-wrap,.trk-shell,.bs-wrap{padding-bottom:calc(8px + env(safe-area-inset-bottom));}
+
+/* ── 9 · גלילה חלקה עם עצירה ── */
+.qp-row,.qs-chips,.chips,.bs-cats{
+  scroll-snap-type:x proximity;scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;}
+.qp,.chip,.bs-cat{scroll-snap-align:start;}
+
+/* ── 10 · כפתור בטעינה ── */
+button.busy{position:relative;color:transparent!important;pointer-events:none;}
+button.busy::after{
+  content:'';position:absolute;inset:0;margin:auto;
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.28);border-top-color:#fff;
+  animation:btnSpin .6s linear infinite;}
+@keyframes btnSpin{to{transform:rotate(360deg);}}
+
+/* ── 11 · שדה עם שגיאה ── */
+.err-fld{box-shadow:0 0 0 2px rgba(237,28,36,.4)!important;
+  animation:shakeX .4s cubic-bezier(.36,.07,.19,.97);}
+@keyframes shakeX{
+  10%,90%{transform:translateX(-1px)}
+  20%,80%{transform:translateX(2px)}
+  30%,50%,70%{transform:translateX(-4px)}
+  40%,60%{transform:translateX(4px)}}
+
+/* ── 12 · טקסט שנחתך מקבל רמז ── */
+.hm-n,.fu-n,.hq-n,.cal-n{
+  mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 22px),transparent);}
+.hm-n:not(:hover){mask-image:none;-webkit-mask-image:none;}
+
+/* ── 13 · כרטיס שנלחץ שוקע, לא רק מתכווץ ── */
+.hm-card:active,.fu-row:active,.cal-row:active,.hq:active,.cat:active{
+  box-shadow:0 0 0 1px rgba(255,255,255,.07),
+             0 1px 2px rgba(0,0,0,.4)!important;}
+
+/* ── 14 · כותרת דביקה בתוך חלון ארוך ── */
+.sheet>h2{position:sticky;top:0;z-index:5;
+  background:linear-gradient(180deg,rgba(23,23,27,.97),rgba(23,23,27,.88));
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  margin:-14px -14px 14px;padding:14px;}
+
+/* ── 15 · תוצאת חיפוש מודגשת ── */
+mark,.hl{background:rgba(245,166,35,.3);color:var(--txt);
+  border-radius:3px;padding:0 2px;}
+
+/* ── 16 · מספר גדול מדי לא שובר פריסה ── */
+.hero-num,.hm-k>b,.fu-k>b,.cc-s>b{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── 17 · מרווח גדול יותר בין שורות רשימה ארוכה ── */
+.cat-body .item{margin-bottom:10px;}
+.cat-body .item:last-child{margin-bottom:0;}
+
+/* ── 18 · שורת פעולות לא נדחסת ── */
+.hm-acts,.fu-acts,.cc-acts,.cal-acts{flex-wrap:wrap;}
+.hm-acts .mini,.fu-acts .mini{min-width:78px;}
+
+/* ── 19 · אינדיקציה שיש עוד תוכן מימין ── */
+.qp-row,.qs-chips{position:relative;}
+.qp-wrap::after,.qs-chips::after{
+  content:'';position:absolute;inset-inline-end:0;top:0;bottom:8px;width:26px;
+  background:linear-gradient(to left,var(--bg),transparent);
+  pointer-events:none;}
+.qp-wrap{position:relative;}
+
+/* ── 20 · פידבק מיידי על החלפת לשונית ── */
+.tb{transition:color .16s var(--ease),transform .16s var(--ease);}
+.tb:active{transform:scale(.92);}
+.tb.on .tb-i{transform:translateY(-1px) scale(1.06);
+  transition:transform .24s var(--ease);}
+
+@media (prefers-reduced-motion:reduce){
+  .to-top,.err-fld,button.busy::after,.tb.on .tb-i{animation:none!important;transition:none!important;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2438,7 +2542,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.6';
+const VERSION='19.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2592,7 +2696,15 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.6 — פאנל הגיבור</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.7 — תיקונים ונוחות</div>
+   <ul class="g-ul"><li><b>מסך הבית קפץ בגלילה ולא התאים למסגרת</b> — שלוש סיבות: אופטימיזציה שהקריסה את גובה הכותרת ושורת הלשוניות עד שהדפדפן צייר אותן, שכבת גוון קבועה שהתנגשה בפריסה, וקו ההדגשה של הלשונית שנמתח על כל השורה במקום מתחת לאייקון. שלושתם תוקנו.</li>
+   <li><b>⌃ חזרה לראש</b> — ברשימת 644 סעיפים לא הייתה דרך לחזור למעלה. כפתור מופיע אחרי גלילה של מסך שלם.</li>
+   <li><b>זמן בעברית טבעית</b> — "לפני 1 ימים" הפך ל"אתמול", ואחריו שלשום, לפני שבוע, לפני חודש, לפני יותר משנה.</li>
+   <li><b>סכומים גדולים בקיצור</b> — "~186 אלף ₪" במקום "186,420 ₪" בפאנל הפותח, שם המספר המדויק פחות חשוב מהסדר גודל.</li>
+   <li><b>שדות מחיר וכמות גדלו ל-44 פיקסלים</b> — היו 36, קטן לאצבע. הטקסט ממורכז ובספרות בעלות רוחב אחיד.</li>
+   <li><b>המקלדת לא מכסה את השדה</b> — הדף גולל מספיק כדי שהשדה יישאר גלוי.</li>
+   <li><b>ועוד</b> — שדה שנכשל בבדיקה מקבל סימון ורעד קצר · כפתור בטעינה מציג סמן מסתובב · כותרת החלון נשארת גלויה בגלילה · גלילה אופקית נעצרת על פריט שלם · רמז ויזואלי שיש עוד תוכן מימין · שורת פעולות שלא נדחסת · אזור בטוח בתחתית לטלפונים עם סרגל מחוות.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.6 — פאנל הגיבור</div>
    <ul class="g-ul"><li><b>למה המסך נראה שטוח</b> — כל האלמנטים היו באותו גודל ובאותה עוצמה, ולעין לא היה מקום לנחות עליו ראשון. חסר היה קונטרסט של סקאלה: דבר אחד גדול שמוביל, והשאר תומכים.</li>
    <li><b>פאנל פותח למרכז הבית</b> — סכום ההצעות שממתינות לתשובה, במספר ענק שמתאים את עצמו לרוחב המסך, על רשת גרדיאנטים שזזה לאט. מתחתיו שתי תוויות: כמה כבר נסגר וכמה דורש טיפול.</li>
    <li><b>ארבעת המונים בפריסה אסימטרית</b> — במקום ארבעה ריבועים זהים שנקראים כטבלה, אחד גדול ושלושה קטנים סביבו.</li>
@@ -4558,6 +4670,42 @@ const App={
  /* ═══ הסכום מגיב לשינוי ═══
     עד עכשיו הוא פשוט הוחלף. מספר שמשתנה בלי חיווי לא נקלט,
     ויהודה לא רואה שהפעולה שלו עבדה. */
+ /* ═══ 1 · חזרה לראש הדף ═══
+    ברשימת 644 סעיפים אין דרך לחזור למעלה חוץ מגלילה ארוכה. */
+ scrollTopBtn(){
+  return '<button class="to-top" id="to-top" aria-label="חזרה לראש">⌃</button>';
+ },
+
+ /* ═══ 2 · חיפוש שמנקה את עצמו ═══ */
+ /* ═══ 3 · זמן יחסי בעברית טבעית ═══
+    "לפני 1 ימים" נקרא כמו תרגום מכונה. */
+ relTime(ts){
+  try{
+   const d=Math.floor((Date.now()-(+ts||0))/864e5);
+   if(d<0)return 'בעתיד';
+   if(d===0)return 'היום';
+   if(d===1)return 'אתמול';
+   if(d===2)return 'שלשום';
+   if(d<7)return 'לפני '+d+' ימים';
+   if(d<14)return 'לפני שבוע';
+   if(d<31)return 'לפני '+Math.floor(d/7)+' שבועות';
+   if(d<62)return 'לפני חודש';
+   if(d<365)return 'לפני '+Math.floor(d/30)+' חודשים';
+   return 'לפני יותר משנה';
+  }catch(e){return '';}
+ },
+
+ /* ═══ 4 · סכום בעברית מדוברת ═══
+    "24,821 ₪" מדויק, אבל "כ-25 אלף" נתפס מיד. */
+ niceSum(n){
+  try{
+   n=Math.round(+n||0);
+   if(n>=1000000)return '~'+(n/1000000).toFixed(1).replace('.0','')+' מיליון ₪';
+   if(n>=10000)return '~'+Math.round(n/1000)+' אלף ₪';
+   return n.toLocaleString('en-US')+' ₪';
+  }catch(e){return '';}
+ },
+
  pulseSum(){
   try{
    const el=document.querySelector('.tot .b');
@@ -4691,7 +4839,7 @@ const App={
    const lbl=x.kind==='live'?('🔥 קורא את ההצעה '+(x.mins<2?'עכשיו':('לפני '+x.mins+' דק׳'))):
      (x.kind==='expired'?'⏰ פג תוקף':(x.kind==='viewed'?'👁 נצפתה ולא אושרה':'🕐 ממתינה'));
    const cls=x.kind==='live'?'live':(x.kind==='expired'?'hot':(x.kind==='viewed'?'warn':''));
-   const age=x.age===0?'היום':(x.age===1?'אתמול':'לפני '+x.age+' ימים');
+   const age=this.relTime(+x.l.ts||Date.now());
    const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
    return `<div class="hm-card ${cls}">
      <div class="hm-top">
@@ -4733,7 +4881,7 @@ const App={
         <div class="hero-lbl">בצנרת · ממתין לתשובה</div>
         <div class="hero-num"><span data-count="${Math.round(pipeline)}">0</span><i>₪</i></div>
         <div class="hero-row">
-          <span class="hero-pill ok">✓ נסגר ${nisR(won)}</span>
+          <span class="hero-pill ok">✓ נסגר ${won>=10000?this.niceSum(won):nisR(won)}</span>
           ${st.hot.length?`<span class="hero-pill hot">${st.hot.length} דורש טיפול</span>`:
             `<span class="hero-pill">הכל במעקב</span>`}
         </div>
@@ -4760,8 +4908,7 @@ const App={
     ${(()=>{
       const qs=(Store.get('quotes',[])||[]).filter(q=>q&&q.snap&&q.snap.lines&&q.snap.lines.length).slice(0,4);
       if(!qs.length)return '';
-      const dt=t=>{const d=Math.floor((Date.now()-(+t||0))/864e5);
-        return d===0?'היום':(d===1?'אתמול':'לפני '+d+' ימים');};
+      const dt=t=>this.relTime(t);
       const total=(Store.get('quotes',[])||[]).length;
       return `<div class="hm-sec" style="margin-top:16px">הצעות אחרונות
         <button class="hm-all" data-modal="sentquotes">${total>qs.length?'כל ה-'+total+' ‹':'הכל ‹'}</button></div>
@@ -5436,6 +5583,7 @@ const App={
       return (n>0&&!was)?' ready':'';})()}" data-modal="preview">📄 הצעת מחיר</button>
     ${(()=>{const m=this.missingParts();
       return m.length?`<button class="bb-hint" data-modal="quote">⚠️ ${esc(m.join(' · '))} — השלם</button>`:'';})()}</div>
+  ${this.scrollTopBtn()}
   ${this.cartStrip()}${this.tabBar()}</div>
   ${s.modal?this.modalView():''}`;
  },
@@ -7528,6 +7676,18 @@ const App={
     this.saveActive(c);this.haptic(12);
     this.toast('נוסף: '+it.name);this.render();
   });
+  // כפתור החזרה לראש — מופיע רק אחרי גלילה של מסך שלם
+  (()=>{
+   const b=document.getElementById('to-top');
+   if(!b)return;
+   b.onclick=()=>{try{window.scrollTo({top:0,behavior:'smooth'});}catch(e){window.scrollTo(0,0);}
+     this.haptic(8);};
+   const upd=()=>{try{b.classList.toggle('show',window.scrollY>window.innerHeight*0.9);}catch(e){}};
+   if(this._topScroll)window.removeEventListener('scroll',this._topScroll);
+   this._topScroll=upd;
+   window.addEventListener('scroll',upd,{passive:true});
+   upd();
+  })();
   const ct=document.getElementById('cart-toggle');
   if(ct)ct.onclick=()=>{this.state.cartOpen=!this.state.cartOpen;this.haptic(8);this.render();};
 
@@ -7638,6 +7798,16 @@ const App={
   });
   try{document.body.classList.toggle('cart-on',
     !!this.chosen().reduce((a,g)=>a+g.lines.length,0)&&(this.state.tab||'home')==='build');}catch(e){}
+  // שדה שנכשל בבדיקה מקבל סימון ורטט קצר
+  try{
+   document.querySelectorAll('.err-fld').forEach(x=>x.classList.remove('err-fld'));
+   (this._preflightBad||[]).forEach(sel=>{
+     const el=document.querySelector(sel);
+     if(el){el.classList.add('err-fld');
+       setTimeout(()=>{try{el.classList.remove('err-fld');}catch(e){}},1400);}
+   });
+   this._preflightBad=null;
+  }catch(e){}
   const pfF=document.getElementById('pf-fix');
   if(pfF)pfF.onclick=()=>{this.state.modal='quote';this.render();};
   const pfS=document.getElementById('pf-send');
