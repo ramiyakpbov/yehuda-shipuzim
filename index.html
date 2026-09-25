@@ -2370,7 +2370,6 @@ body.bg-idle *::after{
   100%{transform:scale(1);}}
 
 /* ── 11 · הלשונית הפעילה — נקודה שזזה ── */
-.tabbar{position:relative;}
 .tb.on::before{
   content:'';position:absolute;top:2px;inset-inline:22%;height:2.5px;
   border-radius:20px;background:var(--red);
@@ -2509,6 +2508,296 @@ mark,.hl{background:rgba(245,166,35,.3);color:var(--txt);
 @media (prefers-reduced-motion:reduce){
   .to-top,.err-fld,button.busy::after,.tb.on .tb-i{animation:none!important;transition:none!important;}
 }
+
+/* ═══════════════════════════════════════════════════════
+   v19.8 · כפתורי הבית + 20 תוספות
+   ═══════════════════════════════════════════════════════ */
+
+/* ── 1 · הקו מעל הלשונית היה עבה וארוך מדי ──
+   עבר לתחתית, קצר יותר, ונשען על נקודה במקום פס. */
+.tb.on::before{
+  top:auto!important;bottom:1px!important;
+  inset-inline:38%!important;height:3px!important;
+  box-shadow:0 0 12px rgba(237,28,36,.9),0 0 3px rgba(237,28,36,1)!important;}
+
+/* ── 2 · כפתורי הבית: שמונה מלבנים אפורים זהים ──
+   כל אחד מקבל אייקון בעיגול צבעוני ורקע בגוון משלו.
+   הצבע סמנטי: אדום לדחוף, ירוק ללקוחות, כחול לנתונים. */
+.hm-quick{display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;gap:8px!important;}
+.hm-q{
+  position:relative;overflow:hidden;
+  display:flex!important;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;
+  min-height:76px;padding:11px 5px!important;
+  border-radius:16px!important;
+  background:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.018))!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),
+             inset 0 1px 0 rgba(255,255,255,.12),
+             0 4px 14px -8px rgba(0,0,0,.7)!important;}
+
+/* הילת הצבע בפינה */
+.hm-q::after{
+  content:'';position:absolute;top:-24px;inset-inline-start:-24px;
+  width:80px;height:80px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,var(--qc,transparent),transparent 70%);
+  opacity:.28;}
+.q-cli{--qc:#5bc0be} .q-fol{--qc:#ed1c24} .q-gal{--qc:#9b7ede}
+.q-sta{--qc:#36a9e1} .q-cal{--qc:#f5a623} .q-wa{--qc:#2ec26b}
+.q-rev{--qc:#ffd23f} .q-mor{--qc:#8e9aaf}
+
+.q-ic{font-size:19px!important;line-height:1;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.5));}
+.hm-q>b{font-size:19px!important;line-height:1!important;
+  letter-spacing:-.6px;margin:2px 0 0!important;}
+.q-t{font-size:10px!important;color:rgba(255,255,255,.6)!important;
+  font-weight:600!important;line-height:1.2;}
+.hm-q.hot{
+  background:linear-gradient(165deg,rgba(237,28,36,.17),rgba(237,28,36,.04))!important;
+  box-shadow:0 0 0 1px rgba(237,28,36,.4),
+             inset 0 1px 0 rgba(255,255,255,.14),
+             0 4px 16px -8px rgba(237,28,36,.5)!important;}
+.hm-q.hot::after{opacity:.5;}
+
+/* ── 3 · הרווח המת מתחת ללשוניות ── */
+body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
+.hm-wrap{padding-bottom:6px!important;}
+
+/* ── 4 · רשת המונים מיושרת ── */
+.hm-kpis .hm-k{min-height:64px;}
+.hm-kpis .hm-k:nth-child(1){min-height:auto;}
+
+/* ── 5 · כרטיס "אין מה שדורש טיפול" שטוח מדי ── */
+.hm-clean{
+  background:linear-gradient(165deg,rgba(46,194,107,.07),rgba(255,255,255,.015))!important;
+  box-shadow:0 0 0 1px rgba(46,194,107,.2),
+             inset 0 1px 0 rgba(255,255,255,.1)!important;
+  border-radius:18px!important;}
+
+/* ── 6 · כפתור "הצעה חדשה" — נוכחות ── */
+.hm-new{
+  border:none!important;border-radius:16px!important;
+  background:linear-gradient(150deg,rgba(237,28,36,.2),rgba(237,28,36,.08))!important;
+  box-shadow:0 0 0 1px rgba(237,28,36,.4),
+             inset 0 1px 0 rgba(255,255,255,.2),
+             0 8px 24px -10px rgba(237,28,36,.5)!important;
+  color:#fff!important;}
+
+/* ── 7 · כותרת מקטע עם קו מלווה ── */
+.hm-sec{display:flex;align-items:center;gap:9px;}
+.hm-sec::after{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.1),transparent);}
+
+/* ── 8 · כרטיס ההיסטוריה — חץ שזז ── */
+.hq-t span{transition:transform .2s var(--ease);display:inline-block;}
+.hq:active .hq-t span{transform:translateX(-3px);}
+
+/* ── 9 · הפרדה בין שתי שורות הכפתורים ── */
+.hm-quick+.hm-quick{margin-top:8px!important;}
+
+/* ── 10 · פס עליון דק לכל מסך ── */
+.hm-wrap::before{content:'';display:block;height:1px;margin-bottom:12px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);}
+
+/* ── 11 · הלשוניות — האייקון גדל במעבר ── */
+.tb-i{transition:transform .26s var(--ease),filter .26s var(--ease);}
+.tb.on .tb-i{filter:drop-shadow(0 2px 8px rgba(237,28,36,.5));}
+
+/* ── 12 · פאנל הגיבור — קו הפרדה פנימי ── */
+.hero-row{padding-top:13px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);}
+
+/* ── 13 · הכרטיס הפתוח — זוהר תואם ── */
+.hm-resume{border-radius:16px!important;}
+
+/* ── 14 · רשימת הצעות — הפרדה עדינה ── */
+.hq{border-radius:14px!important;}
+.hq+.hq{margin-top:8px;}
+
+/* ── 15 · כפתורי הפעולה בכרטיס — צבע לפי תפקיד ── */
+.hm-acts .mini.pri{
+  background:linear-gradient(150deg,rgba(237,28,36,.35),rgba(237,28,36,.2))!important;
+  box-shadow:inset 0 0 0 1px rgba(237,28,36,.5),
+             inset 0 1px 0 rgba(255,255,255,.2)!important;}
+
+/* ── 16 · אייקון הכותרת — משקל ── */
+.icon-btn{border-radius:13px!important;
+  background:linear-gradient(165deg,rgba(255,255,255,.08),rgba(255,255,255,.02))!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.09),
+             inset 0 1px 0 rgba(255,255,255,.12)!important;}
+.icon-btn:active{transform:scale(.92);}
+
+/* ── 17 · הלוגו — הילה עדינה ── */
+.lg{filter:drop-shadow(0 3px 10px rgba(237,28,36,.25));}
+
+/* ── 18 · שם העסק — משקל ומרווח ── */
+.topbar .name{font-size:var(--fs-l)!important;letter-spacing:-.5px;}
+.topbar .sub{font-size:var(--fs-xxs)!important;opacity:.6;}
+
+/* ── 19 · המונה על הפעמון ── */
+.icon-btn .dot{
+  box-shadow:0 0 0 2px rgba(13,13,15,.9),0 0 10px rgba(237,28,36,.7);
+  font-weight:800;}
+
+/* ── 20 · כפתור שנלחץ — הבזק פנימי ── */
+.hm-q:active::after{opacity:.55;transition:opacity .1s;}
+
+@media (max-width:360px){
+  .hm-quick{grid-template-columns:repeat(4,1fr)!important;gap:6px!important;}
+  .hm-q{min-height:68px;padding:9px 3px!important;}
+  .q-t{font-size:9px!important;}
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   v19.8 · עיצוב שרואים
+   בלוק אחרון בגיליון. הבוררים ספציפיים מספיק כדי לנצח את
+   כללי הזכוכית הכלליים שדרסו את צבעי הקיצורים עד עכשיו.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 1 · קיצורים: אייקון בריבוע צבעוני, כמו אפליקציות בטלפון ── */
+.hm-wrap .hm-quick .hm-q .q-ic{
+  display:flex;align-items:center;justify-content:center;
+  width:40px;height:40px;border-radius:12px;margin:0 auto 7px;
+  font-size:20px;
+  background:linear-gradient(145deg,
+    hsl(var(--qh,210) 70% 55% / .38),hsl(var(--qh,210) 70% 40% / .22));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),
+             0 4px 12px -4px hsl(var(--qh,210) 70% 50% / .55);}
+
+/* ── 2 · כל קיצור בגוון משלו ── */
+.hm-wrap .hm-quick .hm-q{
+  background:linear-gradient(165deg,
+    hsl(var(--qh,210) 60% 50% / .14),rgba(255,255,255,.025))!important;
+  box-shadow:0 0 0 1px hsl(var(--qh,210) 60% 60% / .22),
+             inset 0 1px 0 rgba(255,255,255,.1)!important;}
+.q-cli{--qh:178} .q-fol{--qh:28}  .q-gal{--qh:200} .q-sta{--qh:265}
+.q-cal{--qh:0}   .q-wa{--qh:142}  .q-rev{--qh:45}  .q-more{--qh:220}
+.hm-wrap .hm-quick .hm-q>b{color:hsl(var(--qh,210) 80% 72%)!important;
+  font-size:24px!important;}
+.hm-wrap .hm-quick .hm-q .q-t{color:rgba(255,255,255,.78)!important;font-weight:600!important;}
+
+/* ── 3-4 · אווטר ── */
+.av{flex:none;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;font-weight:800;color:#fff;letter-spacing:-.5px;
+  background:linear-gradient(145deg,hsl(var(--h) 65% 55%),hsl(calc(var(--h) + 25) 60% 38%));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 12px -4px hsl(var(--h) 65% 45% / .7);
+  text-shadow:0 1px 2px rgba(0,0,0,.35);}
+.hm-top{display:flex;align-items:center;gap:12px;}
+.hq{display:flex!important;align-items:center;gap:12px;}
+
+/* ── 5 · שורת הלשוניות כאי צף ── */
+.dockwrap .tabbar{
+  margin:0 12px calc(10px + env(safe-area-inset-bottom))!important;
+  border-radius:24px!important;padding:6px!important;
+  background:rgba(28,28,34,.78)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(200%)!important;
+  backdrop-filter:blur(28px) saturate(200%)!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.1),
+             0 16px 40px -12px rgba(0,0,0,.9),
+             inset 0 1px 0 rgba(255,255,255,.12)!important;
+  border-top:none!important;}
+
+/* ── 6 · הלשונית הפעילה ממולאת ── */
+.tb{border-radius:18px;}
+.tb.on{background:linear-gradient(160deg,rgba(237,28,36,.32),rgba(237,28,36,.16));
+  box-shadow:inset 0 0 0 1px rgba(237,28,36,.4);color:#fff!important;}
+.tb.on::before{display:none!important;}
+.tb.on .tb-l{color:#fff!important;}
+
+/* ── 7 · מצב ריק קומפקטי — לא קופסה ענקית ── */
+.hm-wrap .hm-clean{
+  display:flex;align-items:center;gap:12px;text-align:right;
+  padding:14px 16px!important;
+  background:linear-gradient(165deg,rgba(46,194,107,.1),rgba(46,194,107,.02))!important;
+  box-shadow:0 0 0 1px rgba(46,194,107,.22)!important;}
+.hm-wrap .hm-clean>div:first-child{font-size:28px!important;flex:none;}
+.hm-wrap .hm-clean>div:nth-child(2){margin-top:0!important;font-size:var(--fs-m)!important;}
+.hm-wrap .hm-clean>div:nth-child(3){margin-top:2px!important;}
+
+/* ── 8 · כותרת מקטע עם נקודה וקו ── */
+.hm-sec{display:flex!important;align-items:center;gap:8px;
+  font-size:var(--fs-m)!important;color:#fff!important;}
+.hm-sec::before{content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--red);box-shadow:0 0 10px var(--red);flex:none;}
+.hm-sec::after{content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(255,255,255,.14),transparent);}
+
+/* ── 9 · עמודות בפאנל ── */
+.spark{display:flex;align-items:flex-end;gap:5px;height:38px;margin-top:14px;}
+.spark i{flex:1;border-radius:5px 5px 2px 2px;height:var(--hh);
+  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.12));
+  transform-origin:bottom;transform:scaleY(0);
+  animation:barUp .6s cubic-bezier(.2,0,0,1) var(--dl) forwards;}
+.spark i:last-child{background:linear-gradient(180deg,#ff5a60,var(--red));
+  box-shadow:0 0 12px rgba(237,28,36,.6);}
+@keyframes barUp{to{transform:scaleY(1);}}
+
+/* ── 10 · אייקון לכל מונה ── */
+.hm-kpis .hm-k>span::before{margin-inline-end:4px;}
+.hm-kpis .hm-k:nth-child(1)>span::before{content:'⏰';}
+.hm-kpis .hm-k:nth-child(2)>span::before{content:'👁';}
+.hm-kpis .hm-k:nth-child(3)>span::before{content:'🕐';}
+.hm-kpis .hm-k:nth-child(4)>span::before{content:'✓';color:var(--ok);font-weight:800;}
+
+/* ── 11 · הצעה חדשה עם פלוס בעיגול ── */
+.hm-new{display:flex!important;align-items:center;justify-content:center;gap:12px;
+  padding:17px!important;font-size:var(--fs-l)!important;}
+.hm-new::before{content:'+';display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:50%;flex:none;
+  font-size:22px;font-weight:400;line-height:1;
+  background:rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);}
+
+/* ── 12 · ₪ קטן ועמום ליד מספר ── */
+.hq-t,.cart-sum,.tot .b{font-feature-settings:"tnum";}
+
+/* ── 13 · כרטיס הצעה אחרונה עם פס ── */
+.hq{position:relative;overflow:hidden;padding-inline-start:14px!important;}
+.hq::before{content:'';position:absolute;inset-inline-start:0;top:14%;bottom:14%;
+  width:3px;border-radius:3px;background:linear-gradient(180deg,var(--red),rgba(237,28,36,.2));}
+
+/* ── 14 · כפתורי הכותרת עם הילה צבעונית ── */
+.topbar .icon-btn{
+  background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03))!important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.12),inset 0 1px 0 rgba(255,255,255,.15)!important;
+  border-radius:14px!important;}
+
+/* ── 15 · לוגו זוהר ── */
+.topbar .lg{filter:drop-shadow(0 0 14px rgba(237,28,36,.45));}
+
+/* ── 16 · תג ספירה על קיצור חם ── */
+.hm-q.hot .q-ic{animation:icPing 1.8s cubic-bezier(.2,0,0,1) infinite;}
+@keyframes icPing{
+  0%{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 0 hsl(var(--qh) 80% 55% / .6);}
+  70%{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 9px hsl(var(--qh) 80% 55% / 0);}
+  100%{box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 0 0 hsl(var(--qh) 80% 55% / 0);}}
+
+/* ── 17 · מפריד גרדיאנט בין אזורים ── */
+.hm-quick:first-of-type{margin-top:18px;padding-top:18px;position:relative;}
+.hm-quick:first-of-type::before{content:'';position:absolute;top:0;inset-inline:15%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);}
+
+/* ── 18 · הקיצורים נכנסים בגל ── */
+.hm-quick .hm-q{animation:qIn .44s cubic-bezier(.2,0,0,1) backwards;}
+.hm-quick .hm-q:nth-child(1){animation-delay:.05s}
+.hm-quick .hm-q:nth-child(2){animation-delay:.10s}
+.hm-quick .hm-q:nth-child(3){animation-delay:.15s}
+.hm-quick .hm-q:nth-child(4){animation-delay:.20s}
+@keyframes qIn{from{opacity:0;transform:translateY(12px) scale(.94);}to{opacity:1;transform:none;}}
+
+/* ── 19 · לחיצה על קיצור — הבזק בצבע שלו ── */
+.hm-wrap .hm-quick .hm-q:active{
+  background:linear-gradient(165deg,hsl(var(--qh,210) 70% 50% / .35),hsl(var(--qh,210) 70% 40% / .12))!important;}
+
+/* ── 20 · צל צבעוני לכפתור הראשי ── */
+.hm-new,.btn-primary{
+  box-shadow:0 0 0 1px rgba(237,28,36,.55),
+             0 10px 30px -8px rgba(237,28,36,.6),
+             inset 0 1px 0 rgba(255,255,255,.28)!important;}
+
+@media (prefers-reduced-motion:reduce){
+  .spark i,.hm-quick .hm-q,.hm-q.hot .q-ic{animation:none!important;}
+  .spark i{transform:none;}
+}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2542,7 +2831,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.7';
+const VERSION='19.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -2696,7 +2985,15 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.7 — תיקונים ונוחות</div>
+   b:`<div class="g-plate"><div class="g-ph">v19.8 — עיצוב שרואים</div>
+   <ul class="g-ul"><li><b>שורת הלשוניות צפה באמצע המסך</b> — כלל שהוספתי כדי למקם את הקו מתחת ללשונית הפעילה דרס את המיקום הקבוע של השורה כולה. בנוסף, בבית ובמעקב השורה לא הייתה בתוך אותה עגינה כמו במסך ההצעה. שניהם תוקנו.</li>
+   <li><b>למה לא ראית את השיפורים הקודמים</b> — צבעי הקיצורים היו מוגדרים, אבל כללי הזכוכית הכלליים דרסו אותם, ומה שנשאר היה זוהר קטנטן בפינה. חלק מהשיפורים היו גם בלתי נראים מטבעם. הפעם — רק דברים שקופצים לעין.</li>
+   <li><b>קיצורים כמו אפליקציות בטלפון</b> — כל אייקון בריבוע צבעוני משלו, וכל כפתור בגוון שלו: לקוחות טורקיז, לחזור היום כתום, תמונות תכלת, דוחות סגול, הודעות ירוק, משובים זהב.</li>
+   <li><b>אווטר לכל לקוח</b> — עיגול צבעוני עם ראשי תיבות. הצבע נגזר מהשם, אז אותו לקוח תמיד באותו צבע.</li>
+   <li><b>שורת לשוניות כאי צף</b> — מעוגלת, מרוחקת מהשוליים, והלשונית הפעילה ממולאת באדום.</li>
+   <li><b>עמודות בפאנל הפותח</b> — שבע ההצעות האחרונות כגרף קטן. רואים מגמה בלי להיכנס לדוח.</li>
+   <li><b>ועוד</b> — "אין מה שדורש טיפול" הצטמצם משטח ענק לשורה ירוקה · כותרות מקטע עם נקודה אדומה זוהרת · אייקון לכל מונה · פלוס בעיגול על "הצעה חדשה" · לוגו זוהר · קיצור שדורש טיפול פועם · הקיצורים נכנסים בגל · לחיצה מאירה את הקיצור בצבע שלו.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.7 — תיקונים ונוחות</div>
    <ul class="g-ul"><li><b>מסך הבית קפץ בגלילה ולא התאים למסגרת</b> — שלוש סיבות: אופטימיזציה שהקריסה את גובה הכותרת ושורת הלשוניות עד שהדפדפן צייר אותן, שכבת גוון קבועה שהתנגשה בפריסה, וקו ההדגשה של הלשונית שנמתח על כל השורה במקום מתחת לאייקון. שלושתם תוקנו.</li>
    <li><b>⌃ חזרה לראש</b> — ברשימת 644 סעיפים לא הייתה דרך לחזור למעלה. כפתור מופיע אחרי גלילה של מסך שלם.</li>
    <li><b>זמן בעברית טבעית</b> — "לפני 1 ימים" הפך ל"אתמול", ואחריו שלשום, לפני שבוע, לפני חודש, לפני יותר משנה.</li>
@@ -4706,6 +5003,36 @@ const App={
   }catch(e){return '';}
  },
 
+ /* ═══ 3-4 · אווטר עם ראשי תיבות ═══
+    שם לקוח בטקסט בלבד לא נקלט בהצצה. עיגול צבעוני עם ראשי
+    תיבות — הצבע קבוע לכל שם, אז אותו לקוח תמיד באותו צבע. */
+ avatar(name,size){
+  try{
+   const n=String(name||'?').trim();
+   const parts=n.split(/\s+/).filter(Boolean);
+   const ini=parts.length>1?(parts[0][0]+parts[1][0]):(n.slice(0,2));
+   let hs=0;for(let i=0;i<n.length;i++)hs=(hs*31+n.charCodeAt(i))>>>0;
+   const hue=hs%360;
+   const s=size||38;
+   return '<span class="av" style="--h:'+hue+';width:'+s+'px;height:'+s+'px;font-size:'+
+     Math.round(s*0.38)+'px">'+esc(ini)+'</span>';
+  }catch(e){return '';}
+ },
+
+ /* ═══ 9 · גרף קטן בפאנל ═══
+    שבע ההצעות האחרונות כעמודות — רואים מגמה בלי להיכנס לדוח. */
+ sparkBars(){
+  try{
+   const qs=this.realQuotes().slice(0,7).reverse();
+   if(qs.length<2)return '';
+   const mx=Math.max.apply(null,qs.map(q=>+q.grand||0))||1;
+   return '<div class="spark">'+qs.map((q,i)=>{
+     const hh=Math.max(10,Math.round((+q.grand||0)/mx*100));
+     return '<i style="--hh:'+hh+'%;--dl:'+(i*0.05).toFixed(2)+'s"></i>';
+   }).join('')+'</div>';
+  }catch(e){return '';}
+ },
+
  pulseSum(){
   try{
    const el=document.querySelector('.tot .b');
@@ -4843,6 +5170,7 @@ const App={
    const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
    return `<div class="hm-card ${cls}">
      <div class="hm-top">
+       ${this.avatar(x.l.client,42)}
        <div style="flex:1;min-width:0">
          <div class="hm-n">${esc(x.l.client||'—')}</div>
          <div class="hm-s">${lbl} · ${age}${x.l.total?' · '+nisR(x.l.total):''}</div>
@@ -4880,6 +5208,7 @@ const App={
         <div class="hero-greet">${greet}</div>
         <div class="hero-lbl">בצנרת · ממתין לתשובה</div>
         <div class="hero-num"><span data-count="${Math.round(pipeline)}">0</span><i>₪</i></div>
+        ${this.sparkBars()}
         <div class="hero-row">
           <span class="hero-pill ok">✓ נסגר ${won>=10000?this.niceSum(won):nisR(won)}</span>
           ${st.hot.length?`<span class="hero-pill hot">${st.hot.length} דורש טיפול</span>`:
@@ -4913,6 +5242,7 @@ const App={
       return `<div class="hm-sec" style="margin-top:16px">הצעות אחרונות
         <button class="hm-all" data-modal="sentquotes">${total>qs.length?'כל ה-'+total+' ‹':'הכל ‹'}</button></div>
         ${qs.map(q=>`<div class="hq" data-qload="${esc(q.id)}">
+          ${this.avatar(q.client,40)}
           <div style="flex:1;min-width:0">
             <div class="hq-n">${esc(q.client||'—')}</div>
             <div class="hq-s">${esc(q.no||'')} · ${q.snap.lines.length} סעיפים · ${dt(q.ts)}</div>
@@ -4921,22 +5251,30 @@ const App={
         </div>`).join('')}`;})()}
 
     <div class="hm-quick">
-      <button class="hm-q" data-modal="clients"><b>${st.clients}</b><span>👥 לקוחות</span></button>
+      <button class="hm-q q-cli" data-modal="clients">
+        <span class="q-ic">👥</span><b data-count="${st.clients}">0</b><span class="q-t">לקוחות</span></button>
       ${(()=>{let n=0;try{n=this.followState().now;}catch(e){}
-        return `<button class="hm-q ${n?'hot':''}" data-modal="follow"><b>${n}</b><span>📅 לחזור היום</span></button>`;})()}
-      <button class="hm-q" data-modal="gallery"><span>📷 תמונות</span></button>
-      <button class="hm-q" data-modal="stats"><span>📊 דוחות</span></button>
+        return `<button class="hm-q q-fol ${n?'hot':''}" data-modal="follow">
+        <span class="q-ic">📅</span><b data-count="${n}">0</b><span class="q-t">לחזור היום</span></button>`;})()}
+      <button class="hm-q q-gal" data-modal="gallery">
+        <span class="q-ic">📷</span><span class="q-t">תמונות</span></button>
+      <button class="hm-q q-sta" data-modal="stats">
+        <span class="q-ic">📊</span><span class="q-t">דוחות</span></button>
     </div>
-    <div class="hm-quick" style="margin-top:7px">
+    <div class="hm-quick" style="margin-top:8px">
       ${(()=>{let n=0;try{
         const cls=Store.get('clients',[])||[];
         const now=new Date();now.setHours(0,0,0,0);
         n=cls.filter(c=>c&&c.dueDate&&c.status!=='done'&&new Date(c.dueDate)>=now).length;
       }catch(e){}
-      return `<button class="hm-q" data-modal="calendar"><b>${n||''}</b><span>📅 יומן פרויקטים</span></button>`;})()}
-      <button class="hm-q" data-modal="wacenter"><span>💬 הודעות</span></button>
-      <button class="hm-q" data-modal="reviews"><span>⭐ משובים</span></button>
-      <button class="hm-q" data-modal="menu"><span>⚙️ עוד</span></button>
+      return `<button class="hm-q q-cal" data-modal="calendar">
+        <span class="q-ic">🗓️</span>${n?`<b data-count="${n}">0</b>`:''}<span class="q-t">יומן</span></button>`;})()}
+      <button class="hm-q q-wa" data-modal="wacenter">
+        <span class="q-ic">💬</span><span class="q-t">הודעות</span></button>
+      <button class="hm-q q-rev" data-modal="reviews">
+        <span class="q-ic">⭐</span><span class="q-t">משובים</span></button>
+      <button class="hm-q q-mor" data-modal="menu">
+        <span class="q-ic">⚙️</span><span class="q-t">עוד</span></button>
     </div>
   </div>`;
  },
@@ -5471,7 +5809,7 @@ const App={
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.offlineBanner()}
   ${tab==='track'?this.trackShell():this.homeView()}
-  ${this.tabBar()}
+  <div class="dockwrap">${this.tabBar()}</div>
   ${this.state.modal?this.modalView():''}`;
  },
 
