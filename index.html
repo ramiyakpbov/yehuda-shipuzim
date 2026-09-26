@@ -77,6 +77,8 @@ input,select,textarea{font-family:inherit;}
 /* החיפוש נשאר בהישג יד גם בגלילה עמוקה — 644 סעיפים */
 .searchwrap{position:sticky;top:0;z-index:41;background:var(--bg2);}
 .chip{white-space:nowrap;flex:none;color:var(--muted);border-radius:18px;padding:8px 14px;font-size:12.5px;line-height:1.25;-webkit-tap-highlight-color:transparent;}
+.chip.chip-danger{color:#ff8a8f;box-shadow:0 0 0 1px rgba(237,28,36,.38)!important;}
+.chip.chip-danger:active{background:rgba(237,28,36,.18)!important;}
 
 
 .wrap{padding:8px 12px 150px;}
@@ -84,7 +86,8 @@ input,select,textarea{font-family:inherit;}
 .cat-head{display:flex;align-items:center;gap:11px;padding:16px 18px;user-select:none;background:linear-gradient(90deg,rgba(237,28,36,.10),transparent);}
 .cat-emoji{font-size:20px;width:auto;height:auto;background:none;display:inline-flex;align-items:center;justify-content:center;flex:none;}
 .cat-title{font-weight:800;font-size:16px;flex:1;}
-.cat-hot{font-size:10px;background:var(--red);color:#fff;border-radius:18px;padding:3px 8px;font-weight:800;margin-inline-end:4px;}
+.cat-hot{font-size:13px;line-height:1;margin-inline-start:6px;opacity:.85;
+  background:none;padding:0;border-radius:0;flex:none;}
 .cat-sum{font-weight:800;font-size:14px;white-space:nowrap;padding:4px 10px;border-radius:10px;}
 .cat-chev{color:var(--muted);font-size:14px;margin-inline-start:4px;}
 .cat.open .cat-chev{transform:rotate(90deg);}
@@ -132,8 +135,8 @@ input,select,textarea{font-family:inherit;}
 .trk-alert .ta-h{font-size:12.5px;font-weight:800;color:var(--red);margin-bottom:8px;}
 .trk-alert .ta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--txt);padding:5px 0;}
 .trk-comment{flex-basis:100%;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--txt);margin-top:8px;line-height:1.5;}
-.statcard.clickable{cursor:pointer;border-color:rgba(237,28,36,.4);}
-.statcard.clickable:active{background:var(--red);}
+.statcard.clickable{cursor:pointer;border-color:rgba(255,255,255,.16);}
+.statcard.clickable:active{background:rgba(255,255,255,.08);}
 .lb-chip{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:18px;padding:4px 10px;font-size:10px;font-family:inherit;-webkit-tap-highlight-color:transparent;}
 .lb-chip:active{transform:scale(.95);}
 .lb-chip.on{background:rgba(255,176,32,.14);border-color:var(--warn);color:var(--warn);}
@@ -299,17 +302,15 @@ h2{color:var(--txt)!important;}
 
 .qp b{display:block;font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .qp span{display:block;font-size:10px;margin-top:3px;}
-.ai-cta-wrap{padding:10px 12px 0;}
-.ai-cta{width:100%;display:flex;align-items:center;gap:11px;text-align:right;
-  background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
-  border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:11px 13px;color:var(--muted);}
-.ai-cta b{color:var(--txt);}
 
-.ai-cta-i{font-size:20px;flex:none;}
-.ai-cta b{display:block;font-size:14px;}
-.ai-cta small{font-size:11px;color:var(--muted);}
-.ai-cta span:nth-child(2){flex:1;min-width:0;}
-.ai-cta-a{color:var(--muted);font-size:20px;flex:none;}
+
+
+
+
+
+
+
+
 .ah-sec{font-weight:800;font-size:12.5px;margin:16px 0 8px;color:var(--muted);}
 
 .hm-resume{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
@@ -436,8 +437,7 @@ h2{color:var(--txt)!important;}
 .cat-card{background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
   border:1px solid rgba(255,255,255,.11);
   }
-.ai-cta{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
-  }
+
 .chip{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.13);
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset;}
 .chip.on{border-color:var(--red);}
@@ -712,7 +712,13 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .btn-ghost{width:100%;background:var(--bg3);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:13px;font-weight:600;font-size:14px;margin-top:8px;}
 .stat{display:flex;gap:10px;}
 .statcard{flex:1;background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;}
-.statcard .n{font-size:26px;font-weight:800;color:var(--red);}
+.statcard .n{font-size:26px;font-weight:800;color:var(--txt);}
+.statcard.t-ok .n{color:#5fe19a;}
+.statcard.t-blue .n{color:#7cc4ff;}
+.statcard.t-gold .n{color:#f5c451;}
+.statcard.t-ok{box-shadow:inset 0 -2px 0 rgba(46,194,107,.55);}
+.statcard.t-blue{box-shadow:inset 0 -2px 0 rgba(43,168,224,.5);}
+.statcard.t-gold{box-shadow:inset 0 -2px 0 rgba(245,196,81,.5);}
 .statcard .l{font-size:12.5px;color:var(--muted);margin-top:4px;}
 .sig-canvas{width:100%;height:170px;background:#fff;border-radius:10px;touch-action:none;border:1px solid var(--line);}
 .photos{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;}
@@ -1646,7 +1652,7 @@ img,.ph-thumb,.gal-img,.lg img,.coll img{
 /* #2 · יישור אופטי — חץ וסמל אינם סימטריים, מרכוז גאומטרי נראה מוסט */
 .cart-c{transform:translateY(-1px);}
 .hm-all,.hq-t span{transform:translateY(.5px);}
-.ai-cta-a{transform:translateX(1px);}
+
 
 /* #14 · מאפיינים מפורשים בכל מעבר. #15 · will-change רק על transform. */
 
@@ -2976,7 +2982,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='20.7';
+const VERSION='20.8';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3130,7 +3136,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v20.7 — הבית נכנס תמיד במסך אחד</div>
+   b:`<div class="g-plate"><div class="g-ph">v20.8 — מסך ההצעה והדוח</div>
+   <ul class="g-ul"><li><b>"כלי מנהל" הפך לכפתור קטן</b> — הכרטיס הגדול תפס את המקום הכי יקר במסך, בראש המחירון, לכלי שמשמש לעיתים רחוקות. עכשיו הוא כפתור בשורת הכפתורים, עם אותו קוד גישה, והמחירון עולה למעלה.</li>
+   <li><b>"איפוס" עבר לסוף השורה ומסומן באדום</b> — קודם הוא נראה בדיוק כמו כפתורי הסינון שלידו. חלון האישור לפני המחיקה נשאר.</li>
+   <li><b>תג "חם" על קטגוריה הפך לאייקון 🔥 קטן</b> — שמונה מתוך שתים-עשרה קטגוריות מסומנות, והגלולה האדומה על כל אחת מהן יצרה רעש. הסימון עצמו נשאר, וגם לחיצה ארוכה על קטגוריה עדיין מסמנת אותה או מבטלת.</li>
+   <li><b>הדוח החודשי כבר לא אדום</b> — כל עשרת המספרים היו באדום, וזה נראה כמו רשימת תקלות. עכשיו הצבע לפי משמעות: לבן לנתונים, כחול לפעילות, ירוק להצלחה (אושרו, מתוכו אושר, סגירה מעל 40%), וזהב למשובים.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v20.7 — הבית נכנס תמיד במסך אחד</div>
    <ul class="g-ul"><li><b>כשהיו שני לקוחות דחופים והצעה פתוחה, הבית נגלל</b> — השורה השנייה של הקיצורים נחתכה מאחורי הלשוניות. והבעיה הייתה רחבה יותר: מספר הכרטיסים הדחופים לא היה מוגבל, וגם "הצעות אחרונות" הציג עד ארבע.</li>
    <li><b>כרטיס דחוף קומפקטי</b> — חיוג ותזכורת עברו לאייקונים בשורת השם, ולחיצה על הכרטיס עצמו פותחת את המעקב. הכרטיס ירד מכ-100 לכ-58 פיקסלים.</li>
    <li><b>שתי שורות משתנות בסך הכל</b> — עד שני דחופים, וההצעות האחרונות ממלאות את מה שנשאר. כשיש יותר משניים דחופים מופיע "עוד N ›" בכותרת.</li>
@@ -6085,7 +6096,7 @@ const App={
     const open=s.open[c.id]||!!q||onlySel;const t=this.catTotal(c);
     return `<div data-cid="${c.id}" class="cat ${open?'open':''}"><div class="cat-head" data-cat="${c.id}">
       <span class="cat-emoji">${esc(c.emoji)}</span><span class="cat-title">${esc(c.title)}</span>
-      ${c.hot?`<span class="cat-hot">🔥 חם</span>`:''}
+      ${c.hot?`<span class="cat-hot" title="קטגוריה חמה · לחיצה ארוכה לשינוי">🔥</span>`:''}
       ${(()=>{const sc=(c.items||[]).filter(x=>x.selected&&(+x.qty>0)).length;
         return sc?`<span class="cat-badge sel">${sc}</span>`:`<span class="cat-badge">${items.length}</span>`;})()}${t>0?`<span class="cat-sum">${nis(t)}</span>`:''}<span class="cat-chev">▶</span></div>
       ${open?`<div class="cat-body">${items.map(i=>this.itemView(c.id,i,c.custom)).join('')}
@@ -6104,20 +6115,19 @@ const App={
       <button class="mic" id="mic">🎤</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.summaryBanner()}
-  <div class="ai-cta-wrap"><button class="ai-cta" data-modal="aihub">
-     <span class="ai-cta-i">🔐</span>
-     <span><b>כלי מנהל</b><small>הזנת סעיפים מקובץ, צילום או הקלטה${this._aiUnlocked?' · פתוח':''}</small></span>
-     <span class="ai-cta-a">‹</span></button></div>
   <div class="chips">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       if(!n&&!onlySel)return '';
       return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג הכל':'👁 רק ה-'+n+' שבחרתי'}</button>`;})()}
     <button class="chip" id="chip-cats">📂 קטגוריות</button>
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
-    ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
-      return n?`<button class="chip" id="chip-reset">🔄 איפוס</button>`:'';})()}
     ${(()=>{const n=this.laborCount();const tot=this.chosen().reduce((k,g)=>k+g.lines.length,0);
-      return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}</div>
+      return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}
+    <button class="chip" data-modal="aihub">${this._aiUnlocked?'🔓':'🔐'} כלי מנהל</button>
+    ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
+      /* איפוס — אחרון בשורה ומסומן כפעולה מוחקת, כדי שלא ייראה
+         כמו עוד כפתור סינון. חלון האישור נשאר. */
+      return n?`<button class="chip chip-danger" id="chip-reset">🔄 איפוס</button>`:'';})()}</div>
   <div class="wrap">${(()=>{
       if(onlySel){const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
         return `<div class="srch-info"><span>מציג <b>${n}</b> סעיפים שבחרת</span><button id="srch-clear">✕ הצג הכל</button></div>`;}
@@ -7957,16 +7967,18 @@ const App={
   return{quotes:qs.length,sum,sent,closed,approvedSum,
     feedbacks,reviews,newClients:newC,conv,avg:qs.length?sum/qs.length:0};},
  statsModal(){const ym=this.state.reportMonth;const d=this.reportData(ym);
-  const card=(n,l,red,key)=>`<div class="statcard${key?' clickable':''}"${key?` data-drill="${key}"`:''}><div class="n" style="${red?'':'color:var(--white)'};font-size:${String(n).length>6?'18px':'26px'}">${n}</div><div class="l">${l}${key?' ‹':''}</div></div>`;
+  // צבע לפי משמעות: לבן לנתון, כחול לפעילות, ירוק להצלחה, זהב למשוב.
+  // קודם כל עשרת הכרטיסים היו אדומים — ואדום אצלנו מסמן אזהרה.
+  const card=(n,l,tone,key)=>`<div class="statcard${key?' clickable':''}${tone?' t-'+tone:''}"${key?` data-drill="${key}"`:''}><div class="n" style="font-size:${String(n).length>6?'18px':'26px'}">${n}</div><div class="l">${l}${key?' ‹':''}</div></div>`;
   return `<h2>דו"ח חודשי 📊 <button class="x" data-close>✕</button></h2>
    <div class="field"><label>בחר חודש</label><input id="rep-month" type="month" value="${ym}"/></div>
-   <div style="text-align:center;font-weight:800;font-size:15px;margin:2px 0 12px;color:var(--red)">${this.monthName(ym)}</div>
-   <div class="stat">${card(d.quotes,'הצעות שהופקו',1,'quotes')}${card(d.sent,'נשלחו ללקוח',1)}</div>
-   <div class="stat" style="margin-top:10px">${card(d.closed,'אושרו',1,'closed')}${card(d.conv+'%','אחוז סגירה',1)}</div>
+   <div style="text-align:center;font-weight:800;font-size:15px;margin:2px 0 12px;color:var(--txt)">${this.monthName(ym)}</div>
+   <div class="stat">${card(d.quotes,'הצעות שהופקו','','quotes')}${card(d.sent,'נשלחו ללקוח','blue')}</div>
+   <div class="stat" style="margin-top:10px">${card(d.closed,'אושרו','ok','closed')}${card(d.conv+'%','אחוז סגירה',d.conv>=40?'ok':'')}</div>
    <div class="prog ${d.conv>=40?'ok':''}" style="margin:6px 2px 0"><i style="--w:${Math.min(100,d.conv)}%"></i></div>
-   <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף ההצעות',1)}${card(nis(d.approvedSum),'מתוכו אושר',1)}</div>
-   <div class="stat" style="margin-top:10px">${card(nis(d.avg),'הצעה ממוצעת',1)}${card(d.newClients,'לקוחות חדשים',1,'newClients')}</div>
-   <div class="stat" style="margin-top:10px">${card(d.reviews,'בקשות משוב',1,'reviews')}${card(d.feedbacks,'משובים שהתקבלו',1,'feedbacks')}</div>
+   <div class="stat" style="margin-top:10px">${card(nis(d.sum),'היקף ההצעות','')}${card(nis(d.approvedSum),'מתוכו אושר','ok')}</div>
+   <div class="stat" style="margin-top:10px">${card(nis(d.avg),'הצעה ממוצעת','')}${card(d.newClients,'לקוחות חדשים','blue','newClients')}</div>
+   <div class="stat" style="margin-top:10px">${card(d.reviews,'בקשות משוב','','reviews')}${card(d.feedbacks,'משובים שהתקבלו','gold','feedbacks')}</div>
    ${(()=>{let ins=[];try{ins=this.insights();}catch(e){}
      if(!ins.length)return '';
      return `<div class="ins-sec">💡 מה עובד ומה לא</div>
