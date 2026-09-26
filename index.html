@@ -2884,6 +2884,73 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
 /* לשוניות · 52 → 46 */
 .dockwrap .tabbar{padding:4px!important;margin-bottom:calc(6px + env(safe-area-inset-bottom))!important;}
 .dockwrap .tb{padding:5px 2px!important;}
+
+/* ═══════════════════════════════════════════════════════════════
+   v20.0 · מסך אחד — סבב שני
+   הסבב הקודם לא לקח בחשבון את כרטיס "הצעה פתוחה" ואת הריווח
+   התחתון של הגוף, והפאנל נשאר גבוה בגלל קו הפרדה פנימי ישן.
+   המטרה: להיכנס גם בתרחיש הגרוע — הצעה פתוחה + כרטיס דחוף.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── פאנל פותח: פריסה אופקית · 134 → ~86 ──
+   המספר בצד אחד, התוויות בצד השני, באותה שורה. */
+.hm-wrap .hero{padding:11px 14px!important;margin-bottom:7px!important;}
+.hm-wrap .hero-in{display:grid!important;grid-template-columns:1fr auto;
+  align-items:center;column-gap:10px;}
+.hm-wrap .hero-top{grid-column:1/-1;grid-row:1;line-height:1.3;}
+/* שורות מפורשות: בקוד העמודות באות לפני התוויות, ובמיקום
+   אוטומטי התוויות היו נדחפות לשורה רביעית משלהן. */
+.hm-wrap .hero-num{grid-row:2!important;}
+.hm-wrap .hero-row{grid-row:2!important;}
+.hm-wrap .spark{grid-row:3!important;}
+.hm-wrap .hero-num{grid-column:1;margin-top:2px!important;
+  font-size:clamp(28px,8.4vw,36px)!important;}
+.hm-wrap .hero-row{grid-column:2;margin:0!important;padding-top:0!important;
+  box-shadow:none!important;flex-direction:column!important;
+  align-items:flex-end;gap:4px!important;}
+.hm-wrap .hero-pill{padding:3px 9px!important;font-size:10px!important;white-space:nowrap;}
+.hm-wrap .spark{grid-column:1/-1;height:20px!important;margin-top:6px!important;}
+
+/* ── הצעה פתוחה · 69 → ~46 ── */
+.hm-wrap .hm-resume{padding:9px 14px!important;margin-bottom:7px!important;border-radius:14px!important;}
+.hm-wrap .hm-resume b{font-size:var(--fs-s)!important;}
+.hm-wrap .hm-resume span{font-size:var(--fs-xxs)!important;}
+
+/* ── מונים · 64 → ~52 ── */
+.hm-wrap .hm-kpis{margin-bottom:7px!important;}
+.hm-wrap .hm-kpis .hm-k,
+.hm-wrap .hm-kpis .hm-k:nth-child(1),.hm-wrap .hm-kpis .hm-k:nth-child(2),
+.hm-wrap .hm-kpis .hm-k:nth-child(3),.hm-wrap .hm-kpis .hm-k:nth-child(4){
+  padding:6px 2px!important;}
+.hm-wrap .hm-kpis .hm-k>b,
+.hm-wrap .hm-kpis .hm-k:nth-child(1)>b,
+.hm-wrap .hm-kpis .hm-k:nth-child(4)>b{font-size:20px!important;}
+
+/* ── כרטיס דחוף · הדוק יותר ── */
+.hm-wrap .hm-card{padding:9px 11px!important;}
+.hm-wrap .hm-acts{margin-top:7px!important;}
+.hm-wrap .hm-acts .mini{padding:6px 4px!important;min-height:34px!important;}
+
+/* ── מצב ריק והצעה חדשה ── */
+.hm-wrap .hm-clean{padding:8px 12px!important;margin-bottom:0!important;}
+.hm-wrap .hm-new{padding:9px!important;margin:7px 0!important;}
+
+/* ── הצעות אחרונות · 56 → ~46 ── */
+.hm-wrap .hm-sec{margin:8px 0 5px!important;}
+.hm-wrap .hq{padding:7px 11px!important;margin-bottom:5px!important;}
+.hm-wrap .hq-n{font-size:var(--fs-s)!important;}
+
+/* ── קיצורים · 86 → ~74 בכל שורה ──
+   האייקון עדיין גדול משמעותית מהמקור (26 מול 20). */
+.hm-wrap .hm-quick{gap:5px!important;margin-top:6px!important;}
+.hm-wrap .hm-quick:first-of-type{padding-top:8px!important;margin-top:8px!important;}
+.hm-wrap .hm-quick .hm-q{padding:6px 3px 6px!important;gap:4px!important;}
+.hm-wrap .hm-quick .hm-q .q-ic{width:42px!important;height:42px!important;
+  font-size:26px!important;border-radius:12px!important;}
+.hm-wrap .hm-quick .hm-q>b{top:3px!important;inset-inline-end:calc(50% - 29px)!important;}
+
+/* ── הריווח העליון ── */
+.hm-wrap{padding-top:6px!important;}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2917,7 +2984,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='19.9';
+const VERSION='20.0';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3071,7 +3138,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v19.9 — מסך אחד</div>
+   b:`<div class="g-plate"><div class="g-ph">v20.0 — מסך אחד, סבב שני</div>
+   <ul class="g-ul"><li><b>הבית עדיין נגלל</b> — בחישוב הקודם לא נלקחו בחשבון כרטיס "הצעה פתוחה", שמופיע רק כשיש הצעה בעבודה, ולא הריווח שמשאיר מקום לשורת הלשוניות. בנוסף, הפאנל הפותח נשאר גבוה בגלל קו הפרדה פנימי מגרסה קודמת.</li>
+   <li><b>הפאנל הפותח עבר לפריסה אופקית</b> — המספר בצד אחד, התוויות בצד השני, והברכה עם התווית בשורה אחת מעליהם.</li>
+   <li><b>כל אזור הודק</b> — כרטיס ההצעה הפתוחה, המונים, הכרטיס הדחוף, ההצעות האחרונות והקיצורים. האייקונים בקיצורים עדיין גדולים משמעותית מהמקור.</li>
+   <li><b>מתוכנן גם לתרחיש הגרוע</b> — הצעה פתוחה וגם כרטיס דחוף בו זמנית.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v19.9 — מסך אחד</div>
    <ul class="g-ul"><li><b>מרכז הבית נכנס במסך אחד</b> — הוא היה 852 פיקסלים על מסך של כ-760, ודרש גלילה. הצטמצם ל-640 בלי להסיר שום תוכן: הפאנל הפותח קטן, המספר בו קטן, ארבעת המונים עברו משתי שורות לשורה אחת, והריווחים בין האזורים הודקו.</li>
    <li><b>האייקונים בקיצורים גדלו</b> — האמוג'י היה 20 פיקסלים בתוך ריבוע של 40, והצבע בלט יותר מהסמל עצמו. עכשיו 30 בתוך 48.</li>
    <li><b>המספר עבר לתג על פינת האייקון</b> — במקום שורה נפרדת. כך האייקון גדל והכרטיס דווקא התכווץ. כשהמספר הוא אפס — התג לא מופיע.</li>
@@ -5296,8 +5368,7 @@ const App={
     <div class="hero">
       <div class="hero-mesh"></div>
       <div class="hero-in">
-        <div class="hero-greet">${greet}</div>
-        <div class="hero-lbl">בצנרת · ממתין לתשובה</div>
+        <div class="hero-top"><span class="hero-greet">${greet}</span><span class="hero-lbl">בצנרת · ממתין לתשובה</span></div>
         <div class="hero-num"><span data-count="${Math.round(pipeline)}">0</span><i>₪</i></div>
         ${this.sparkBars()}
         <div class="hero-row">
