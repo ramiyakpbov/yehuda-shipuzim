@@ -2065,8 +2065,9 @@ body::before{
 /* content-visibility הוסר מאלמנטים קבועים ודביקים: הוא מקריס
    את הגובה שלהם עד שהדפדפן מצייר אותם, והמסך קופץ בגלילה.
    נשאר רק על כרטיסים ברשימה, שם הוא בטוח ומועיל. */
-.cat,.item,.hq,.ins,.pi-row{
-  content-visibility:auto;contain-intrinsic-size:auto 90px;}
+/* content-visibility הוסר גם מכאן. הרשימה נבנית מחדש בכל עדכון,
+   ואז כל סעיף שמחוץ למסך קיבל גובה זמני של 90 פיקסלים עד שצויר —
+   הגובה האמיתי שונה, והמסך זז אחרי ששוחזר מיקום הגלילה. */
 
 body.bg-idle *,
 body.bg-idle *::before,
@@ -2938,6 +2939,13 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
 
 /* ── הריווח העליון ── */
 .hm-wrap{padding-top:6px!important;}
+
+/* ═══ v20.3 · הסכום מגיב בצבע, לא בתנועה ═══
+   הסכום קפץ 5 פיקסלים והתנפח בכל לחיצה — עוד מקור לתחושת קפיצה. */
+.tot .b.sum-up{animation:sumFlash .5s ease-out!important;--sf:#7ee0a5;}
+.tot .b.sum-down{animation:sumFlash .5s ease-out!important;--sf:#8ec5ff;}
+@keyframes sumFlash{0%{color:var(--sf);}100%{}}
+@media (prefers-reduced-motion:reduce){.tot .b.sum-up,.tot .b.sum-down{animation:none!important;}}
 </style>
 <meta property="og:title" content="הצעת מחיר · יהודה שיפוצים"/>
 <meta property="og:description" content="הצעת מחיר מוכנה לצפייה ואישור — לחצו לפתיחה"/>
@@ -2971,7 +2979,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='20.2';
+const VERSION='20.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3125,7 +3133,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v20.2 — ניקוי גיליון הסגנון</div>
+   b:`<div class="g-plate"><div class="g-ph">v20.3 — בלי קפיצה בשינוי כמות</div>
+   <ul class="g-ul"><li><b>כל לחיצה על + או − גרמה לקפיצה</b> — הלחיצה בונה מחדש את כל המסך, ואז כל אנימציות הכניסה רצו שוב: הסעיפים נעלמו וחזרו בגלים, כל תיבות הסימון קפצו בבת אחת, ברק עבר על כפתור ההצעה, והסכום בתחתית זז למעלה והתנפח. בנוסף, כל סעיף שמחוץ למסך קיבל גובה זמני עד שצויר — והמסך זז אחרי ששוחזר מיקום הגלילה.</li>
+   <li><b>האפליקציה מבחינה עכשיו בין שני סוגי עדכון</b> — מעבר מסך (לשונית, חלון, פתיחת קטגוריה) מציג את אנימציות הכניסה כרגיל. עדכון באותו מסך — כמות, סימון סעיף, הקלדה — מדלג עליהן לפני שהמסך מצויר. ההילות והפעימות הקבועות ממשיכות לפעול.</li>
+   <li><b>הסכום מגיב בצבע בלבד</b> — ירוק כשעולה, כחול כשיורד, בלי תזוזה.</li>
+   <li>התיקון חל על כל הסעיפים ובכל ההצעות, וגם על אנימציות שיתווספו בעתיד.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v20.2 — ניקוי גיליון הסגנון</div>
    <ul class="g-ul"><li><b>אין שום שינוי במראה.</b> זה ניקוי פנימי שנועד למנוע את הבאג הבא מהסוג שהזיז את שורת הלשוניות למרכז המסך.</li>
    <li><b>382 הגדרות מתות הוסרו</b> — הגדרות שהגדרה מאוחרת יותר על אותו אלמנט בדיוק דורסת תמיד, ולכן מעולם לא השפיעו על שום דבר. עם 68 כללים שהתרוקנו לגמרי. הגיליון ירד מ-171 ל-160 קילובייט.</li>
    <li><b>נבדק שהמראה זהה</b> — לכל אחד מ-5,859 הצירופים של אלמנט ומאפיין נבדק שהערך שמוצג בפועל לא השתנה, כולל בתוך הכללים שחלים רק במצבים מסוימים.</li></ul></div>
@@ -5205,11 +5218,38 @@ const App={
   }catch(e){}
  },
 
+ /* ═══ עדכון שקט ═══
+    לחיצה על + / − בונה מחדש את כל המסך, ואז כל אנימציות הכניסה רצו
+    שוב: הסעיפים נעלמו וחזרו בגלים, תיבות הסימון קפצו, ברק עבר על
+    הכפתור. כאן — אנימציות חד-פעמיות בתוך המסך מדלגות לסוף לפני
+    שהמסך מצויר. אנימציות קבועות (הילות, פעימות) לא נוגעים בהן,
+    וגם לא במשוב מכוון: שינוי הסכום, רעד שגיאה, הדגשת סעיף שנמצא. */
+ settleAnims(){
+  try{
+   if(!document.getAnimations)return;
+   const root=document.getElementById('root');if(!root)return;
+   void root.offsetHeight;                          // מכריח חישוב סגנון — האנימציות נוצרות
+   const KEEP={sumFlash:1,shakeX:1,readyPulse:1,flashHi:1,confFall:1,rip:1,lvPulse:1};
+   document.getAnimations().forEach(a=>{
+    try{
+     if(KEEP[a.animationName])return;
+     const tg=a.effect&&a.effect.target;
+     if(!tg||!root.contains(tg))return;               // רק בתוך המסך — לא הודעות צפות
+     const t=a.effect.getComputedTiming();
+     if(!t||t.iterations===Infinity)return;          // קבועות ממשיכות לרוץ
+     a.finish();
+    }catch(e){}
+   });
+  }catch(e){}
+ },
+
  runCounters(){
   try{
    document.querySelectorAll('[data-count]').forEach(el=>{
      if(el.dataset.counted)return;
      el.dataset.counted='1';
+     if(document.body.classList.contains('quiet')){
+       el.textContent=(+el.dataset.count||0).toLocaleString('en-US');return;}
      this.countUp(el,+el.dataset.count||0);
    });
   }catch(e){}
@@ -5925,8 +5965,19 @@ const App={
  idle(){try{const b=document.getElementById('busy-ov');if(b)b.style.display='none';}catch(e){}},
  render(){
   let _sc=null;try{const m=document.querySelector('.modal');const sc=document.querySelector('.modal-scroll,.qm-scroll,.sheet');_sc=sc?{el:'sc',y:sc.scrollTop}:(m?{el:'modal',y:m.scrollTop}:{el:'win',y:window.scrollY});}catch(e){}
+  // עדכון באותו מסך (אותה לשונית, אותו חלון, אותן קטגוריות פתוחות)
+  // מול מעבר מסך. בעדכון — אנימציות כניסה לא אמורות לרוץ שוב.
+  let _quiet=false;
+  try{
+   const st=this.state||{};const op=st.open||{};
+   const vk=(st.tab||'home')+'|'+(st.modal||'')+'|'+
+     Object.keys(op).filter(k=>op[k]).sort().join(',');
+   _quiet=(this._vk===vk);this._vk=vk;
+   document.body.classList.toggle('quiet',_quiet);
+  }catch(e){}
   document.getElementById('root').innerHTML=this.view();this.bind();
   try{if(_sc){if(_sc.el==='sc'){const s2=document.querySelector('.modal-scroll,.qm-scroll,.sheet');if(s2)s2.scrollTop=_sc.y;}else if(_sc.el==='modal'){const m2=document.querySelector('.modal');if(m2)m2.scrollTop=_sc.y;}else window.scrollTo(0,_sc.y);}}catch(e){}
+  if(_quiet)this.settleAnims();
   if(this.state.modal==='photos')this.loadPhotos();if(this.state.modal==='portfolio')this.loadPortfolio();if(this.state.modal==='tracking'&&!this._trackData)this.loadTracking();if(this.state.modal==='snaps'&&!this._snaps)this.loadSnaps();if(this.state.modal==='reviews'&&!this._revData)this.loadReviews();
   const isOpen=!!this.state.modal;
   if(isOpen&&!this._pushedModal){try{history.pushState({ysm:1},'');}catch(e){}this._pushedModal=true;}
