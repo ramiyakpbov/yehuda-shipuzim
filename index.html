@@ -2673,6 +2673,17 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
   box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 12px -4px hsl(var(--h) 65% 45% / .7);
   text-shadow:0 1px 2px rgba(0,0,0,.35);}
 .hm-top{display:flex;align-items:center;gap:12px;}
+/* כפתורי אייקון בכרטיס הדחוף — 44 פיקסלים, אזור נגיעה מלא */
+.hm-ic{flex:none;width:44px;height:44px;border-radius:50%;border:none;
+  display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),inset 0 1px 0 rgba(255,255,255,.16);
+  transition:transform .14s cubic-bezier(.2,0,0,1);}
+.hm-ic.pri{background:linear-gradient(150deg,rgba(237,28,36,.46),rgba(237,28,36,.26));
+  box-shadow:0 0 0 1px rgba(237,28,36,.55),inset 0 1px 0 rgba(255,255,255,.26),
+             0 6px 16px -8px rgba(237,28,36,.6);}
+.hm-ic:active{transform:scale(.9);}
+.hm-card[data-hmgo]{cursor:pointer;}
 .hq{display:flex!important;align-items:center;gap:12px;}
 
 /* ── 5 · שורת הלשוניות כאי צף ── */
@@ -2711,16 +2722,6 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
   background:var(--red);box-shadow:0 0 10px var(--red);flex:none;}
 .hm-sec::after{content:'';flex:1;height:1px;
   background:linear-gradient(90deg,rgba(255,255,255,.14),transparent);}
-
-/* ── 9 · עמודות בפאנל ── */
-.spark{display:flex;align-items:flex-end;gap:5px;height:38px;margin-top:14px;}
-.spark i{flex:1;border-radius:5px 5px 2px 2px;height:var(--hh);
-  background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.12));
-  transform-origin:bottom;transform:scaleY(0);
-  animation:barUp .6s cubic-bezier(.2,0,0,1) var(--dl) forwards;}
-.spark i:last-child{background:linear-gradient(180deg,#ff5a60,var(--red));
-  box-shadow:0 0 12px rgba(237,28,36,.6);}
-@keyframes barUp{to{transform:scaleY(1);}}
 
 /* ── 10 · אייקון לכל מונה ── */
 .hm-kpis .hm-k>span::before{margin-inline-end:4px;}
@@ -2785,9 +2786,8 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
              inset 0 1px 0 rgba(255,255,255,.28)!important;}
 
 @media (prefers-reduced-motion:reduce){
-  .spark i,.hm-quick .hm-q,.hm-q.hot .q-ic{animation:none!important;}
-  .spark i{transform:none;}
-}
+  .hm-quick .hm-q,.hm-q.hot .q-ic{animation:none!important;}
+  }
 
 /* ═══════════════════════════════════════════════════════════════
    v19.9 · מסך אחד בלי גלילה
@@ -2888,20 +2888,15 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
 .hm-wrap .hero-in{display:grid!important;grid-template-columns:1fr auto;
   align-items:center;column-gap:10px;}
 .hm-wrap .hero-top{grid-column:1/-1;grid-row:1;line-height:1.3;}
-/* שורות מפורשות: בקוד העמודות באות לפני התוויות, ובמיקום
-   אוטומטי התוויות היו נדחפות לשורה רביעית משלהן. */
 .hm-wrap .hero-num{grid-row:2!important;}
 .hm-wrap .hero-row{grid-row:2!important;}
-.hm-wrap .spark{grid-row:3!important;}
-.hm-wrap .hero-num{grid-column:1;margin-top:2px!important;
+.hm-wrap .hm-wrap .hero-num{grid-column:1;margin-top:2px!important;
   font-size:clamp(28px,8.4vw,36px)!important;}
 .hm-wrap .hero-row{grid-column:2;margin:0!important;padding-top:0!important;
   box-shadow:none!important;flex-direction:column!important;
   align-items:flex-end;gap:4px!important;}
 .hm-wrap .hero-pill{padding:3px 9px!important;font-size:10px!important;white-space:nowrap;}
-.hm-wrap .spark{grid-column:1/-1;height:20px!important;margin-top:6px!important;}
-
-/* ── הצעה פתוחה · 69 → ~46 ── */
+.hm-wrap /* ── הצעה פתוחה · 69 → ~46 ── */
 .hm-wrap .hm-resume{padding:9px 14px!important;margin-bottom:7px!important;border-radius:14px!important;}
 .hm-wrap .hm-resume b{font-size:var(--fs-s)!important;}
 .hm-wrap .hm-resume span{font-size:var(--fs-xxs)!important;}
@@ -2917,7 +2912,7 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
 .hm-wrap .hm-kpis .hm-k:nth-child(4)>b{font-size:20px!important;}
 
 /* ── כרטיס דחוף · הדוק יותר ── */
-.hm-wrap .hm-card{padding:9px 11px!important;}
+.hm-wrap .hm-card{padding:7px 10px!important;}
 .hm-wrap .hm-acts{margin-top:7px!important;}
 .hm-wrap .hm-acts .mini{padding:6px 4px!important;min-height:34px!important;}
 
@@ -2981,7 +2976,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='20.6';
+const VERSION='20.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3135,7 +3130,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v20.6 — פס תחתון אחד</div>
+   b:`<div class="g-plate"><div class="g-ph">v20.7 — הבית נכנס תמיד במסך אחד</div>
+   <ul class="g-ul"><li><b>כשהיו שני לקוחות דחופים והצעה פתוחה, הבית נגלל</b> — השורה השנייה של הקיצורים נחתכה מאחורי הלשוניות. והבעיה הייתה רחבה יותר: מספר הכרטיסים הדחופים לא היה מוגבל, וגם "הצעות אחרונות" הציג עד ארבע.</li>
+   <li><b>כרטיס דחוף קומפקטי</b> — חיוג ותזכורת עברו לאייקונים בשורת השם, ולחיצה על הכרטיס עצמו פותחת את המעקב. הכרטיס ירד מכ-100 לכ-58 פיקסלים.</li>
+   <li><b>שתי שורות משתנות בסך הכל</b> — עד שני דחופים, וההצעות האחרונות ממלאות את מה שנשאר. כשיש יותר משניים דחופים מופיע "עוד N ›" בכותרת.</li>
+   <li><b>הוסרו כפילויות</b> — השורה "אין מה שדורש טיפול" אמרה את מה שהתווית בפאנל כבר אמרה. העמודות בפאנל הוסרו: שלוש מתוך שבע היו אותה הצעה שנשמרה שלוש פעמים, והגרף לא סיפר כלום.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v20.6 — פס תחתון אחד</div>
    <ul class="g-ul"><li><b>שני פסים הפכו לאחד</b> — מספר הפריטים והסכום הופיעו פעמיים: בפס "מה בחרתי" ובפס התחתון. בנוסף, בזמן הקלדת כמות רק אחד מהם התעדכן, כך שלרגע הוצגו שני סכומים שונים. עכשיו יש פס אחד: מונה, סכום, ושורת מע"מ מתחתיו. לחיצה על הסכום פותחת את רשימת הנבחרים, כמו קודם.</li>
    <li><b>התראת "חסר" הפכה לשורה דקה</b> במקום קופסה כתומה.</li>
    <li><b>סכומים עם אגורות מוצגים תמיד עם שתי ספרות</b> — "2,737.60 ₪" במקום "2,737.6 ₪". סכום שלם נשאר בלי נקודה. חל בכל האפליקציה וגם ב-PDF.</li></ul></div>
@@ -5205,19 +5205,7 @@ const App={
   }catch(e){return '';}
  },
 
- /* ═══ 9 · גרף קטן בפאנל ═══
-    שבע ההצעות האחרונות כעמודות — רואים מגמה בלי להיכנס לדוח. */
- sparkBars(){
-  try{
-   const qs=this.realQuotes().slice(0,7).reverse();
-   if(qs.length<2)return '';
-   const mx=Math.max.apply(null,qs.map(q=>+q.grand||0))||1;
-   return '<div class="spark">'+qs.map((q,i)=>{
-     const hh=Math.max(10,Math.round((+q.grand||0)/mx*100));
-     return '<i style="--hh:'+hh+'%;--dl:'+(i*0.05).toFixed(2)+'s"></i>';
-   }).join('')+'</div>';
-  }catch(e){return '';}
- },
+
 
  pulseSum(){
   try{
@@ -5381,18 +5369,18 @@ const App={
    const cls=x.kind==='live'?'live':(x.kind==='expired'?'hot':(x.kind==='viewed'?'warn':''));
    const age=this.relTime(+x.l.ts||Date.now());
    const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
-   return `<div class="hm-card ${cls}">
+   /* כרטיס קומפקטי: חיוג ותזכורת כאייקונים בשורת השם, ולחיצה על
+      הכרטיס עצמו פותחת את המעקב. 100 → כ-58 פיקסלים, כך ששני
+      דחופים נכנסים במסך הבית בלי גלילה. */
+   return `<div class="hm-card ${cls}" data-hmgo="track">
      <div class="hm-top">
        ${this.avatar(x.l.client,42)}
        <div style="flex:1;min-width:0">
          <div class="hm-n">${esc(x.l.client||'—')}</div>
          <div class="hm-s">${lbl} · ${age}${x.l.total?' · '+nisR(x.l.total):''}</div>
        </div>
-     </div>
-     <div class="hm-acts">
-       ${ph?`<button class="mini ${x.kind==='live'?'pri':''}" onclick="location.href='tel:${ph}'">📞 ${x.kind==='live'?'התקשר עכשיו':'חיוג'}</button>`:''}
-       ${x.l.phone?`<button class="mini ${x.kind==='live'?'':'pri'}" data-trknudge="${esc(x.l.id)}">📲 תזכורת</button>`:''}
-       <button class="mini" data-gotab="track">מעקב ←</button>
+       ${ph?`<button class="hm-ic ${x.kind==='live'?'pri':''}" onclick="location.href='tel:${ph}'" aria-label="חיוג" title="חיוג">📞</button>`:''}
+       ${x.l.phone?`<button class="hm-ic ${x.kind==='live'?'':'pri'}" data-trknudge="${esc(x.l.id)}" aria-label="תזכורת בוואטסאפ" title="תזכורת">📲</button>`:''}
      </div></div>`;};
 
   // ─── פאנל הגיבור ───
@@ -5420,11 +5408,10 @@ const App={
       <div class="hero-in">
         <div class="hero-top"><span class="hero-greet">${greet}</span><span class="hero-lbl">בצנרת · ממתין לתשובה</span></div>
         <div class="hero-num"><span data-count="${Math.round(pipeline)}">0</span><i>₪</i></div>
-        ${this.sparkBars()}
         <div class="hero-row">
           <span class="hero-pill ok">✓ נסגר ${won>=10000?this.niceSum(won):nisR(won)}</span>
           ${st.hot.length?`<span class="hero-pill hot">${st.hot.length} דורש טיפול</span>`:
-            `<span class="hero-pill">הכל במעקב</span>`}
+            `<span class="hero-pill">${st.links?'הכל במעקב':(this.realQuotes().length?'אין הצעות פתוחות':'עוד לא נשלחו הצעות')}</span>`}
         </div>
       </div>
     </div>
@@ -5440,14 +5427,16 @@ const App={
       <button class="hm-k ok" data-gotab="track"><b data-count="${st.approved}">0</b><span>אושרו</span></button>
     </div>
 
-    ${st.hot.length?`<div class="hm-sec">דורש טיפול <span style="float:left;font-weight:600;color:var(--muted)">${st.hot.length}</span></div>${st.hot.map(card).join('')}`
-      :`<div class="hm-clean"><div style="font-size:38px;line-height:1">👌</div>
-         <div style="font-weight:800;margin-top:8px">אין מה שדורש טיפול</div>
-         <div style="font-size:12px;color:var(--muted);margin-top:5px">${st.links?'כל ההצעות במעקב':(this.realQuotes().length?'אין הצעות פתוחות במעקב':'עוד לא נשלחו הצעות')}</div></div>`}
+    ${st.hot.length?`<div class="hm-sec">דורש טיפול ${st.hot.length>2
+        ?`<button class="hm-all" data-gotab="track">עוד ${st.hot.length-2} ›</button>`
+        :`<span style="font-weight:600;color:var(--muted)">${st.hot.length}</span>`}</div>${st.hot.slice(0,2).map(card).join('')}`:''}
 
     <button class="hm-new" data-gotab="build">הצעה חדשה</button>
     ${(()=>{
-      const qs=(Store.get('quotes',[])||[]).filter(q=>q&&q.snap&&q.snap.lines&&q.snap.lines.length).slice(0,4);
+      // תקציב גובה: בבית יש מקום לשתי שורות דינמיות בסך הכל.
+      // הדחופים קודמים; ההצעות האחרונות ממלאות את מה שנשאר.
+      const slots=Math.max(0,2-Math.min(2,st.hot.length));
+      const qs=(Store.get('quotes',[])||[]).filter(q=>q&&q.snap&&q.snap.lines&&q.snap.lines.length).slice(0,slots);
       if(!qs.length)return '';
       const dt=t=>this.relTime(t);
       const total=(Store.get('quotes',[])||[]).length;
@@ -8354,6 +8343,12 @@ const App={
       el.appendChild(s);
       setTimeout(()=>{try{s.remove();}catch(x){}},560);
     }catch(x){}
+  });
+  on('[data-hmgo]','click',e=>{
+    if(e.target.closest('button'))return;   // חיוג ותזכורת — לא מעבר מסך
+    this.state.tab=e.currentTarget.dataset.hmgo;this.state.modal=null;this.haptic(8);
+    try{window.scrollTo(0,0);}catch(x){}
+    this.render();
   });
   on('[data-gotab]','click',e=>{
     const t=e.currentTarget.dataset.gotab;
