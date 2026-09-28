@@ -777,6 +777,13 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:11px 18px;border-radius:10px;font-size:12.5px;z-index:600;border:1px solid var(--line);max-width:88%;text-align:center;}
 .busy-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+/* שדות קלט בערכה כהה — אחרת הדפדפן מצייר את אייקון היומן בשחור על
+   רקע כהה, והוא כמעט בלתי נראה. רק על שדות, לא על כל הדף: ה-PDF נבנה
+   מ-HTML בתוך האפליקציה ולא אמור לרשת ערכה כהה. */
+input,select,textarea{color-scheme:dark;}
+input[type=date]{cursor:pointer;}
+input[type=date]::-webkit-calendar-picker-indicator{
+  opacity:.9;width:22px;height:22px;padding:6px;margin:-6px;cursor:pointer;}
 /* ═══ קפיץ — טוקן אחד לכל התנועה ═══
    תגובת קפיץ אמיתית (ריסון 0.75): חריגה של כ-3 אחוז ונרגע. בדפדפן שלא
    תומך ב-linear() נשארת העקומה הקודמת. */
@@ -1454,15 +1461,8 @@ input:focus,textarea:focus,select:focus{outline:none;}
 .lv-foot{text-align:center;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:#9a9aa6;line-height:1.8;}
 
 /* ═══ כרטיס פעילות לינק חי ═══ */
-.lv-act{width:100%;margin-top:10px;background:rgba(46,194,107,.07);border:1px solid rgba(46,194,107,.3);border-radius:10px;padding:11px 13px;}
-.lv-act-h{font-size:11px;letter-spacing:1px;font-weight:800;color:var(--ok);margin-bottom:7px;}
-.lv-act-r{font-size:12.5px;color:var(--muted);padding:3px 0;line-height:1.6;}
-.lv-act-r b{color:var(--txt);}
 .lv-act-r.warn{color:var(--warn);}
 .lv-act-r.ok{color:var(--ok);font-weight:600;}
-.lv-act-e{font-size:12.5px;color:var(--muted);}
-.lv-act-btn{width:100%;margin-top:9px;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#4fc3f7,var(--blue));color:#fff;font-weight:800;font-size:12.5px;cursor:pointer;}
-.lv-act-btn:active{transform:scale(.98);}
 
 .lv-sum .r.disc b{color:var(--ok);}
 .lv-sum .r.adv{border-top:1px dashed var(--line);margin-top:7px;padding-top:9px;font-size:12.5px;}
@@ -1536,6 +1536,15 @@ input:focus,textarea:focus,select:focus{outline:none;}
 .dl-node.now .dl-dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 4px rgba(237,28,36,.18);transform:scale(1.15);}
 .dl-lbl{font-size:10px;font-weight:800;color:var(--red);white-space:nowrap;position:absolute;top:32px;}
 .dl-flag{display:flex;align-items:center;gap:7px;background:var(--bg3);border-right:3px solid var(--warn);border-radius:8px;padding:9px 12px;margin-top:18px;font-size:12.5px;color:var(--txt);}
+/* תיבה אחת בכרטיס המעקב: מצב העסקה + מה הלקוח עשה בלינק החי */
+.dl-box{background:var(--bg3);border-inline-start:3px solid var(--line);border-radius:10px;
+  padding:9px 12px;margin-top:2px;display:flex;flex-direction:column;gap:4px;}
+.dl-box-t{font-size:var(--fs-s);font-weight:700;color:var(--txt);}
+.dl-box-r{font-size:var(--fs-xs);color:var(--muted);line-height:1.5;}
+.dl-cut{color:var(--warn);}
+.dl-cut b{color:var(--txt);font-weight:700;}
+/* שלב עתידי בפס — נקודה קטנה בלי אמוג'י */
+.dl-node:not(.past):not(.now) .dl-dot{width:11px;height:11px;margin-top:8px;}
 .dl-acts{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
 .dl-acts{padding-top:10px;border-top:1px solid var(--line);}
 .dl-acts .mini{flex:1;min-width:88px;text-align:center;padding:9px 10px;
@@ -3017,7 +3026,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='21.1';
+const VERSION='21.2';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3171,7 +3180,13 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v21.1 — תנועה עם משמעות</div>
+   b:`<div class="g-plate"><div class="g-ph">v21.2 — מחיקה שנשארת מחוקה</div>
+   <ul class="g-ul"><li><b>מחיקת לקוח מכל האפליקציה</b> — במסך הלקוחות 👥, הכפתור 🗑 מוחק עכשיו את הלקוח יחד עם ההצעות שלו בהיסטוריה, הלינקים שלו במעקב והתזכורות שלו. לפני המחיקה מופיע כמה בדיוק יימחק, ואחריה יש "בטל" לכמה שניות. קודם היו שלוש מחיקות נפרדות, וכל אחת מחקה רק מהרשימה שלה.</li>
+   <li><b>מחיקה כבר לא חוזרת מהענן</b> — הסנכרון מיזג רשימות בלי לדעת מה נמחק, ולכן לקוח שנמחק במכשיר אחד חזר מהמכשיר השני. עכשיו כל מחיקה נרשמת ומסונכרנת, והיא חלה בכל המכשירים.</li>
+   <li><b>לינק חי ולינק רגיל לאותה הצעה</b> — שליחת לינק חי מחקה את הלינק הרגיל של אותה הצעה, והאפליקציה הפסיקה לעקוב אחריו. עכשיו כל סוג מחליף רק את עצמו, וסוג הלינק מופיע בכל כרטיס.</li>
+   <li><b>כרטיס מעקב נקי יותר</b> — תיבה אחת במקום שתיים, בלי לחזור על הסכום, על "התלבט" ועל "לינק חי". כפתור וואטסאפ אחד, שמנסח הודעה מותאמת כשהלקוח ביטל סעיפים. בפס השלבים, רק השלב הנוכחי מקבל אייקון.</li>
+   <li><b>שדה תאריך היעד</b> — אייקון היומן היה שחור על רקע כהה. עכשיו הוא גלוי, ולחיצה בכל מקום בשדה פותחת את לוח השנה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v21.1 — תנועה עם משמעות</div>
    <ul class="g-ul"><li><b>הכפתור עצמו מראה שהוא עובד</b> — קודם, בהפקת PDF או לינק, כל המסך התכהה עם עיגול באמצע. עכשיו הכפתור שנלחץ הופך לעיגול טוען, ובסיום ל-✓ ירוק לרגע. ✓ מופיע רק כשהפעולה באמת הצליחה.</li>
    <li><b>התראה כשלקוח קורא את ההצעה</b> — במסכי ההצעה והמעקב מופיעה גלולה שחורה בראש המסך: "רמי קורא את ההצעה". לחיצה פותחת אותה עם כפתור חיוג. במסך הבית היא לא מופיעה, כי הכרטיס הירוק כבר ראשון ברשימה.</li>
    <li><b>מחוון בשורת הלשוניות</b> — הרקע האדום זז בין הלשוניות במקום לקפוץ. הקצה הקדמי מקדים את האחורי, כך שהמחוון נמתח בתנועה ומתכווץ בעצירה.</li>
@@ -4220,7 +4235,20 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+/* ═══ מצבות — מזהים שנמחקו ═══
+   הסנכרון ממזג רשימות כאיחוד: פריט שקיים בענן ולא מקומית מתווסף בחזרה.
+   בלי סימון מחיקה, פריט שנמחק במכשיר אחד חזר מהמכשיר השני בדחיפה הבאה
+   שלו. כל מחיקה רושמת כאן את המזהה, והמיזוג מסנן אותו בשני הכיוונים.
+   נשמר שנה, עד 1,500 רשומות. */
+const Tomb={
+ add(ids){try{const t=Store.get('tombs',{})||{};const now=Date.now();let n=0;
+   (ids||[]).forEach(id=>{if(id){t[id]=now;n++;}});if(n)Store.set('tombs',Tomb.prune(t));}catch(e){}},
+ remove(ids){try{const t=Store.get('tombs',{})||{};let n=0;
+   (ids||[]).forEach(id=>{if(id&&t[id]){delete t[id];n++;}});if(n)Store.set('tombs',t);}catch(e){}},
+ prune(t){const lim=Date.now()-365*864e5;const o={};
+   Object.keys(t||{}).filter(k=>+t[k]>lim).sort((a,b)=>t[b]-t[a]).slice(0,1500).forEach(k=>o[k]=t[k]);return o;}
+};
 const Sync=(()=>{
  let unsub=null,pushTimer=null,applying=false,lastPushed='';
  const DOC=()=>window._db?window._db.collection('appdata').doc('yehuda'):null;
@@ -4230,17 +4258,29 @@ const Sync=(()=>{
    if(Array.isArray(o.quotes)){o.quotes=o.quotes.slice(0,50).map(q=>({id:q.id,ts:q.ts,no:q.no,client:q.client,phone:q.phone||'',project:q.project||'',grand:q.grand}));}
    return o;};
  const applyRemote=(data)=>{if(!data)return 0;applying=true;let changed=0;
-   SYNC_KEYS.forEach(k=>{if(k in data){
+   // מצבות קודם: איחוד מקומי + ענן (הזמן המאוחר מנצח)
+   const TB=(()=>{try{const a=Store.get('tombs',{})||{};
+     const b=(data.tombs&&typeof data.tombs==='object'&&!Array.isArray(data.tombs))?data.tombs:{};
+     const o=Object.assign({},a);Object.keys(b).forEach(k=>{if(!o[k]||+b[k]>+o[k])o[k]=b[k];});
+     const p=Tomb.prune(o);
+     if(JSON.stringify(p)!==JSON.stringify(a)){Store.set('tombs',p);changed++;}
+     return p;}catch(e){return {};}})();
+   const dead=x=>!!(x&&x.id&&TB[x.id]);
+   SYNC_KEYS.forEach(k=>{if(k==='tombs')return;if(k in data||['clients','sentLinks','quotes','reviewLinks','customItems','userTemplates'].indexOf(k)>=0){
+     if(!(k in data)){   // הענן בלי המפתח — עדיין מנקים מקומית מה שנמחק במכשיר אחר
+       try{const loc=Store.get(k,null);if(Array.isArray(loc)&&loc.some(dead)){Store.set(k,loc.filter(x=>!dead(x)));changed++;}}catch(e){}
+       return;}
      // quotes: לא לדרוס גרסה מקומית מלאה (עם חתימות) בגרסה רזה מהענן. ממזגים לפי id — מקומי מנצח.
-     if(k==='quotes'){try{const loc=Store.get('quotes',[]);const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(!locIds[rq.id])merged.push(rq);});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
+     if(k==='quotes'){try{const loc=(Store.get('quotes',[])||[]).filter(q=>!dead(q));const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(rq&&!locIds[rq.id]&&!dead(rq))merged.push(rq);});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
      // רשימות עם מזהה: ממזגים במקום לדרוס. רשומה מקומית מנצחת, רשומה שקיימת רק בענן מתווספת.
      if(k==='clients'||k==='sentLinks'||k==='reviewLinks'||k==='customItems'||k==='userTemplates'){
-       try{const loc=Store.get(k,[])||[];
-         if(Array.isArray(loc)&&Array.isArray(data[k])){
+       try{const loc0=Store.get(k,[])||[];
+         if(Array.isArray(loc0)&&Array.isArray(data[k])){
+           const loc=loc0.filter(x=>!dead(x));
            const seen={};loc.forEach(x=>{if(x&&x.id)seen[x.id]=1;});
            const merged=loc.slice();
-           data[k].forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]){merged.push(rx);seen[rx.id]=1;}});
-           if(JSON.stringify(loc)!==JSON.stringify(merged)){Store.set(k,merged);changed++;}
+           data[k].forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]&&!dead(rx)){merged.push(rx);seen[rx.id]=1;}});
+           if(JSON.stringify(loc0)!==JSON.stringify(merged)){Store.set(k,merged);changed++;}
            return;}
        }catch(e){}
      }
@@ -7064,7 +7104,7 @@ const App={
   // ציר זמן ויזואלי
   return '<div class="dl-bar">'+st.steps.map((s,i)=>
     '<div class="dl-node'+(i<st.idx?' past':(i===st.idx?' now':''))+'" title="'+s.n+'">'+
-      '<span class="dl-dot">'+(i<st.idx?'✓':s.i)+'</span>'+
+      '<span class="dl-dot">'+(i<st.idx?'✓':(i===st.idx?s.i:''))+'</span>'+
       (i===st.idx?'<span class="dl-lbl">'+s.n+'</span>':'')+
     '</div>').join('')+'</div>';
  },
@@ -7084,7 +7124,8 @@ const App={
     if(isPlayed(d))played++;
     if(d.approvedAt){approved++;sumApproved+=(+l.total||0);}});
   // כפילויות: אותה הצעה שנשלחה יותר מפעם אחת
-  const byNo={};links.forEach(l=>{if(l.no)byNo[l.no]=(byNo[l.no]||0)+1;});
+  // לפי מספר הצעה וסוג לינק: לינק חי ולינק רגיל לאותה הצעה אינם כפילות
+  const byNo={};links.forEach(l=>{if(l.no){const k=l.no+(l.live?'|L':'|W');byNo[k]=(byNo[k]||0)+1;}});
   const dupes=Object.keys(byNo).reduce((n,k)=>n+(byNo[k]>1?byNo[k]-1:0),0);
   // סינון לפי הכרטיסייה שנלחצה + חיפוש חופשי
   const norm=s=>String(s||'').toLowerCase().replace(/[\s\-\u05be']/g,'');
@@ -7142,7 +7183,7 @@ const App={
    ${shown.length?shown.map(l=>{const d=live[l.id]||{};
      const cl=(Store.get('clients',[])||[]).find(x=>x.name===l.client)||{};
      const st=this.dealStage(l,d,cl);
-     const dupN=l.no?(byNo[l.no]||1):1;
+     const dupN=l.no?(byNo[l.no+(l.live?'|L':'|W')]||1):1;
      /* אותה שפה ויזואלית כמו הכרטיסים במסך הבית: אווטר עם ראשי
         תיבות, וצבע לפי מצב העסקה במקום כרטיס אפור אחיד. */
      const dcls=d.approvedAt?'ok':(d.live?'live':(st.flag?'warn':''));
@@ -7150,48 +7191,94 @@ const App={
        <div class="dl-top">
          ${this.avatar(l.client,38)}
          <div style="flex:1;min-width:0"><div class="dl-name">${esc(l.client)||'ללא שם'}</div>
-           <div class="dl-meta">${dupN>1?`<span class="dl-dup">נשלח ×${dupN}</span>`:''}${esc(l.no)} · נשלח ${ago(l.ts)}${d.live?' · ⚡ לינק חי':''}</div></div>
+           <div class="dl-meta">${dupN>1?`<span class="dl-dup">נשלח ×${dupN}</span>`:''}${esc(l.no)} · נשלח ${ago(l.ts)} · ${(l.live||d.live)?'⚡ לינק חי':'🔗 לינק'}</div></div>
          <div class="dl-amt">${nisR(d.curTotal!=null?d.curTotal:l.total)}</div>
        </div>
        ${this.stageBar(st)}
-       ${st.flag?`<div class="dl-flag" style="border-right-color:${st.flag.c}"><span>${st.idx===2?'⚡':'⏳'}</span><span>${st.flag.t}</span></div>`:''}
+       ${this.dealBox(l,d,st)}
        ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${esc(d.comment)}</div>`:''}
-       ${this.liveActivity(l.id)}
        <div class="dl-acts">
          ${l.phone?`<button class="mini" onclick="location.href='tel:${esc(l.phone).replace(/[^0-9+]/g,'')}'">📞 חיוג</button>`:''}
-         ${(!d.approvedAt&&l.phone)?`<button class="mini pri" data-trknudge="${l.id}">📲 תזכורת</button>`:''}
+         ${(!d.approvedAt&&l.phone)?(((this.liveFacts(d)||{}).hesit||[]).length
+            ?`<button class="mini pri" data-lvmsg="${l.id}">📲 נסח הודעה</button>`
+            :`<button class="mini pri" data-trknudge="${l.id}">📲 תזכורת</button>`):''}
          ${d.signature?`<button class="mini" data-trksig="${l.id}">✍️ חתימה</button>`:''}
          ${(d.approvedAt&&l.phone)?`<button class="mini" data-review="${cl.id||''}">📩 בקש משוב</button>`:''}
          <button class="del" data-trkdel="${l.id}">🗑️</button>
        </div>
        </div>`;}).join(''):(sent?`<div class="trk-none">אין תוצאות ${q?`עבור "${esc(q)}"`:`בקטגוריה "${FL[f]}"`}<br><button class="mini" id="trk-clearall" style="margin-top:10px">↺ נקה סינון</button></div>`:this.emptyState('🔗','עדיין לא נשלחו לינקים','לינק חי מתעד מה הלקוח פתח, מה הוריד ומתי אישר.',{attr:"data-gotab=\"build\"",label:'➕ בנה הצעה'}))}`;
  },
- liveActivity(id){
-  const d=(this._trackData||{})[id];
-  if(!d||!d.live)return '';
+ /* ═══ מחיקת לקוח מכל האפליקציה ═══
+    קודם היו שלוש מחיקות נפרדות, וכל אחת מחקה רק מהרשימה שלה: מעקב (לינק),
+    לקוחות (כרטיס), היסטוריה (הצעה). לקוח שנמחק במעקב נשאר במאגר ובהצעות
+    האחרונות. כאן — הכל ביחד, עם מצבות כדי שהסנכרון לא יחזיר אותו.
+    התאמה לפי שם בלבד: טלפון משותף (בני משפחה, בדיקות) היה מוחק לקוח אחר.
+    הלינקים שכבר נשלחו ממשיכים לעבוד אצל הלקוח — נמחק רק המעקב אחריהם. */
+ deleteClientEverywhere(id){
+  try{
+   const all=Store.get('clients',[])||[];
+   const cl=all.find(c=>c&&c.id===id);if(!cl)return;
+   const nm=String(cl.name||'').trim();
+   const same=x=>!!(nm&&x&&String(x.client||'').trim()===nm);
+   const qs=Store.get('quotes',[])||[], ls=Store.get('sentLinks',[])||[], rm=Store.get('reminders',[])||[];
+   const dq=qs.filter(same), dl=ls.filter(same);
+   const dr=rm.filter(r=>r&&nm&&r.text==='מעקב אחרי '+nm);
+   const parts=[];
+   if(dq.length)parts.push('· '+dq.length+(dq.length===1?' הצעה מההיסטוריה':' הצעות מההיסטוריה'));
+   if(dl.length)parts.push('· '+dl.length+(dl.length===1?' לינק מהמעקב':' לינקים מהמעקב'));
+   if(dr.length)parts.push('· '+dr.length+(dr.length===1?' תזכורת':' תזכורות'));
+   if(!confirm('למחוק את "'+(nm||'הלקוח')+'" מכל האפליקציה?'+
+     (parts.length?'\n\nיימחקו גם:\n'+parts.join('\n'):'')+
+     (dl.length?'\n\nלינקים שכבר נשלחו ימשיכו לעבוד אצל הלקוח.':'')))return;
+   const snap={clients:all,quotes:qs,sentLinks:ls,reminders:rm};
+   const ids=[cl.id].concat(dq.map(x=>x.id),dl.map(x=>x.id)).filter(Boolean);
+   Tomb.add(ids);                                   // לפני השמירה — מיזוג באמצע כבר מכיר אותם
+   Store.set('clients',all.filter(c=>c!==cl));
+   if(dq.length)Store.set('quotes',qs.filter(q=>dq.indexOf(q)<0));
+   if(dl.length)Store.set('sentLinks',ls.filter(l=>dl.indexOf(l)<0));
+   if(dr.length)Store.set('reminders',rm.filter(r=>dr.indexOf(r)<0));
+   this.invalidate();this.haptic(20);
+   this.toastUndo('"'+(nm||'הלקוח')+'" נמחק מכל האפליקציה',()=>{
+     Tomb.remove(ids);
+     Object.keys(snap).forEach(k=>Store.set(k,snap[k]));
+     this.invalidate();this.render();this.toast('שוחזר ✓');
+   });
+   this.render();
+  }catch(e){try{Store.logErr('deleteClient',e);}catch(_){}this.toast('המחיקה נכשלה');}
+ },
+
+ /* ═══ מה הלקוח עשה בלינק החי — נתונים, לא תצוגה ═══
+    קודם הפונקציה הזו ציירה תיבה ירוקה שלמה, שחזרה על הסכום מהכותרת,
+    על "התלבט" מפס השלבים, ועל "לינק חי" משורת הפרטים. עכשיו היא רק
+    מחשבת, ו-dealBox מציג תיבה אחת. */
+ liveFacts(d){
+  if(!d||!d.live)return null;
   const ev=d.events||[];
-  if(!ev.length)return '<div class="lv-act"><div class="lv-act-h">\u26a1 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9</div><div class="lv-act-e">\u05e2\u05d3\u05d9\u05d9\u05df \u05dc\u05d0 \u05e0\u05e4\u05ea\u05d7</div></div>';
-  // ספירת ביטולים לפי סעיף
   const cnt={};
   ev.forEach(e=>{if(e.a==='off'&&e.n){cnt[e.n]=cnt[e.n]||{off:0,p:e.p||0};cnt[e.n].off++;}});
   const hesit=Object.keys(cnt).sort((a,b)=>cnt[b].off-cnt[a].off);
   const opened=ev.filter(e=>e.a==='open').length;
-  const appr=ev.find(e=>e.a==='approve');
-  const last=d.lastSeen?new Date(d.lastSeen):null;
-  const ago=t=>{if(!t)return '';const m=Math.round((Date.now()-t)/60000);
-    if(m<1)return '\u05e2\u05db\u05e9\u05d9\u05d5';if(m<60)return '\u05dc\u05e4\u05e0\u05d9 '+m+' \u05d3\u05e7\u05f3';
-    const h=Math.round(m/60);if(h<24)return '\u05dc\u05e4\u05e0\u05d9 '+h+' \u05e9\u05e2\u05f3';return '\u05dc\u05e4\u05e0\u05d9 '+Math.round(h/24)+' \u05d9\u05de\u05d9\u05dd';};
-  let rows='';
-  if(opened)rows+='<div class="lv-act-r">\ud83d\udc41 \u05e0\u05e4\u05ea\u05d7 '+opened+' \u05e4\u05e2\u05de\u05d9\u05dd'+(last?' \u00b7 \u05d0\u05d7\u05e8\u05d5\u05df '+ago(d.lastSeen):'')+'</div>';
-  hesit.slice(0,4).forEach(n=>{
-    const x=cnt[n];
-    rows+='<div class="lv-act-r warn">\u26a0\ufe0f \u05d1\u05d9\u05d8\u05dc <b>'+esc(n)+'</b>'+(x.off>1?' ('+x.off+' \u05e4\u05e2\u05de\u05d9\u05dd)':'')+(x.p?' \u00b7 '+Math.round(x.p).toLocaleString('he-IL')+'\u20aa':'')+'</div>';
-  });
-  if(d.curTotal!=null)rows+='<div class="lv-act-r">\ud83d\udcb0 \u05d4\u05e1\u05db\u05d5\u05dd \u05e9\u05dc\u05d5 \u05db\u05e8\u05d2\u05e2: <b>'+Math.round(d.curTotal).toLocaleString('he-IL')+'\u20aa</b></div>';
-  rows+= appr ? '<div class="lv-act-r ok">\u2705 \u05d0\u05d9\u05e9\u05e8</div>'
-              : '<div class="lv-act-r">\u274c \u05d9\u05e6\u05d0 \u05d1\u05dc\u05d9 \u05dc\u05d0\u05e9\u05e8</div>';
-  const btn = (!appr&&hesit.length) ? '<button class="lv-act-btn" data-lvmsg="'+id+'">\u26a1 \u05e0\u05e1\u05d7 \u05dc\u05d5 \u05d4\u05d5\u05d3\u05e2\u05d4</button>' : '';
-  return '<div class="lv-act"><div class="lv-act-h">\u26a1 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d9 \u2014 \u05de\u05d4 \u05d4\u05dc\u05e7\u05d5\u05d7 \u05e2\u05e9\u05d4</div>'+rows+btn+'</div>';
+  const m=d.lastSeen?Math.round((Date.now()-d.lastSeen)/60000):null;
+  const last=m==null?'':(m<1?'עכשיו':(m<60?'לפני '+m+' דק׳':(m<1440?'לפני '+Math.round(m/60)+' שע׳':'לפני '+Math.round(m/1440)+' ימים')));
+  return {opened:opened,last:last,hesit:hesit,approved:!!ev.find(e=>e.a==='approve')};
+ },
+
+ // תיבה אחת: מצב העסקה + מה הלקוח עשה בלינק החי
+ dealBox(l,d,st){
+  const f=this.liveFacts(d);
+  const rows=[];
+  if(f){
+    rows.push(f.opened?('👁 פתח '+(f.opened===1?'פעם אחת':f.opened+' פעמים')+(f.last?' · אחרון '+f.last:'')):'👁 עדיין לא פתח');
+    if(f.hesit.length){
+      const cut=(d.curTotal!=null&&+l.total>+d.curTotal)?(+l.total-+d.curTotal):0;
+      rows.push('<span class="dl-cut">✂️ ביטל: '+f.hesit.slice(0,3).map(n=>esc(n)).join(' · ')+
+        (f.hesit.length>3?' ועוד '+(f.hesit.length-3):'')+(cut?' <b>−'+nisR(cut)+'</b>':'')+'</span>');
+    }
+  }
+  if(!st.flag&&!rows.length)return '';
+  return '<div class="dl-box"'+(st.flag?' style="border-inline-start-color:'+st.flag.c+'"':'')+'>'+
+    (st.flag?'<div class="dl-box-t">'+(st.idx===2?'⚡ ':'⏳ ')+st.flag.t+'</div>':'')+
+    rows.map(r=>'<div class="dl-box-r">'+r+'</div>').join('')+'</div>';
  },
  async liveDraftMsg(id){
   const d=(this._trackData||{})[id];const l=Store.get('sentLinks',[]).find(x=>x.id===id);
@@ -8515,6 +8602,8 @@ const App={
     }catch(x){}
   });
   on('#gen-pdf,#gen-share,#gen-contract,#livelink,#weblink','pointerdown',e=>this.bwArm(e.currentTarget.id));
+  // לחיצה בכל מקום בשדה תאריך פותחת את לוח השנה — לא רק על האייקון
+  on('input[type=date]','click',e=>{try{e.currentTarget.showPicker();}catch(_){}});
   // האי משנה צורה ישירות ב-DOM — render היה בונה אותו מחדש ומבטל את המעבר
   (()=>{const isle=document.getElementById('isle');if(!isle)return;
    const set=o=>{this._isleOpen=o;isle.classList.toggle('open',o);this.haptic(8);};
@@ -8742,7 +8831,7 @@ const App={
   on('[data-drill]','click',e=>{this._drill=e.currentTarget.dataset.drill;this.state.modal='drill';this.render();});
   const db=document.getElementById('drill-back');if(db)db.onclick=()=>{this.state.modal='stats';this.render();};
   const rvr=document.getElementById('rev-refresh');if(rvr)rvr.onclick=()=>{this._revData=null;this.toast('מרענן…');this.loadReviews();};
-  on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id));this.render();}});
+  on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){(Tomb.add([id]),Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id)));this.render();}});
   on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
   // ── סינון בלחיצה על כרטיסי הסיכום ──
@@ -8783,12 +8872,15 @@ const App={
     const best={},noKey=[];
     links.forEach(l=>{
       if(!l.no){noKey.push(l);return;}
-      if(!best[l.no]||score(l)>score(best[l.no]))best[l.no]=l;
+      const k=l.no+(l.live?'|L':'|W');          // לינק חי ורגיל לאותה הצעה — לא כפילות
+      if(!best[k]||score(l)>score(best[k]))best[k]=l;
     });
     const kept=Object.keys(best).map(k=>best[k]).concat(noKey).sort((a,b)=>(b.ts||0)-(a.ts||0));
     const removed=links.length-kept.length;
     if(!removed){this.toast('אין מה למזג');return;}
     if(!confirm('למזג '+removed+' כרטיסים כפולים?\nנשמר הכרטיס עם ההתקדמות הרבה ביותר לכל הצעה.'))return;
+    const keptIds={};kept.forEach(x=>{if(x&&x.id)keptIds[x.id]=1;});
+    Tomb.add(links.filter(x=>x&&x.id&&!keptIds[x.id]).map(x=>x.id));
     Store.set('sentLinks',kept);
     try{Sync.push&&Sync.push();}catch(x){}
     this.haptic(20);this.toast(removed+' כפילויות מוזגו ✓');this.render();
@@ -8805,12 +8897,12 @@ const App={
   on('[data-lvmsg]','click',e=>this.liveDraftMsg(e.currentTarget.dataset.lvmsg));
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
    const trc=document.getElementById('trk-recover');if(trc)trc.onclick=()=>this.recoverLinks();
-  on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר מהמעקב?')){Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.invalidate('links');this.render();}});
+  on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר את הלינק מהמעקב?\n\nהלקוח וההצעה נשארים באפליקציה.\nמחיקה מלאה של לקוח — במסך הלקוחות 👥')){Tomb.add([id]);Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.invalidate('links');this.render();}});
   on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
   on('[data-qsig]','click',e=>{const id=e.currentTarget.dataset.qsig;const q=Store.get('quotes',[]).find(x=>x.id===id);if(!q)return;const img=q.sig||(q.snap&&q.snap.clientSig)||'';this._sigView={img:img,client:q.client,no:q.no,at:q.ts,quoteId:id};this.state.modal='sigview';this.render();});
   on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
   on('[data-dupq]','click',e=>this.duplicateQuoteAsNew(e.currentTarget.dataset.dupq));
-  on('[data-delq]','click',e=>{const id=e.currentTarget.dataset.delq;if(confirm('למחוק את ההצעה מההיסטוריה?')){const qs=Store.get('quotes',[]).filter(x=>x.id!==id);Store.set('quotes',qs);this.render();}});
+  on('[data-delq]','click',e=>{const id=e.currentTarget.dataset.delq;if(confirm('למחוק את ההצעה מההיסטוריה?')){Tomb.add([id]);const qs=Store.get('quotes',[]).filter(x=>x.id!==id);Store.set('quotes',qs);this.render();}});
   on('[data-qfilter]','click',e=>{this.state.quoteClientFilter=e.currentTarget.dataset.qfilter;this.render();});
   on('[data-cquotes]','click',e=>{this.state.quoteClientFilter=e.currentTarget.dataset.cquotes;this.state.modal='sentquotes';this.render();});
   on('[data-cal-add]','click',e=>{this.addToCalendar(e.currentTarget.dataset.calAdd);});
@@ -8884,7 +8976,7 @@ const App={
   const wl=document.getElementById('weblink');if(wl)wl.onclick=()=>this.makeProposalLink();
   on('[data-review]','click',e=>this.sendReview(e.currentTarget.dataset.review));
   on('[data-photos]','click',e=>{this.state.photoClient=e.currentTarget.dataset.photos;this.state.modal='photos';this.render();});
-  on('[data-delclient]','click',e=>{const id=e.currentTarget.dataset.delclient;const cl=Store.get('clients',[]).find(c=>c.id===id);if(!confirm('למחוק את הלקוח'+(cl&&cl.name?' "'+cl.name+'"':'')+'? פעולה זו אינה הפיכה.'))return;Store.set('clients',Store.get('clients',[]).filter(c=>c.id!==id));this.toast('הלקוח נמחק');this.render();});
+  on('[data-delclient]','click',e=>this.deleteClientEverywhere(e.currentTarget.dataset.delclient));
 
   on('[data-nudge]','click',e=>{const cl=Store.get('clients',[]).find(c=>c.id===e.currentTarget.dataset.nudge);if(!cl)return;if(!phoneValid(cl.phone)){this.toast('מספר הטלפון של הלקוח חסר או לא תקין');return;}this.haptic(15);const msg='שלום'+(cl.name?' '+cl.name:'')+' 👋\nרק מוודא שההצעה הגיעה — אשמח לשמוע מה דעתך 🙂';window.open(waLink(cl.phone,msg),'_blank');});
   on('[data-markdone]','click',e=>{const list=Store.get('clients',[]);const cl=list.find(c=>c.id===e.currentTarget.dataset.markdone);cl.status='done';cl.doneAt=Date.now();if(cl.reviewSentAt&&!cl.feedbackAt)cl.feedbackAt=Date.now();Store.set('clients',list);this.toast('סומן כבוצע ✓');this.render();});
@@ -9624,8 +9716,8 @@ const App={
     const sent=Store.get('sentLinks',[]);
     sent.unshift({id:id,live:true,client:cl.name,phone:cl.phone||'',ts:Date.now(),total:this.grand(),no:s.quoteNo});
     // שליחה חוזרת של אותה הצעה מחליפה את הכרטיס במקום להוסיף עוד אחד
-    const _pv=sent.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);
-    if(_pv>0)sent.splice(_pv,1);
+    const _pv=sent.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo&&x.live);
+    if(_pv>0){Tomb.add([sent[_pv].id]);sent.splice(_pv,1);}
     Store.set('sentLinks',sent.slice(0,300));this.invalidate('links');
     this._quoteKind='live';this.recordQuote();this.verifySend('live',id);
     this.idle();this.haptic(25);
@@ -9654,7 +9746,7 @@ const App={
   if(id){link=base+'#id='+id;short=true;
     // remember link on the client for view-tracking
     try{const cl=Store.get('clients',[]);const rec=cl.find(x=>x.name===c.name&&c.name);if(rec){rec.proposalId=id;Store.set('clients',cl);}}catch(e){}
-    try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});const _pv=sl.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo);if(_pv>0)sl.splice(_pv,1);
+    try{const sl=Store.get('sentLinks',[]);sl.unshift({id:id,client:c.name||'',phone:c.phone||'',project:c.project||'',no:s.quoteNo,total:this.grand(),ts:Date.now()});const _pv=sl.findIndex((x,ix)=>ix>0&&x&&x.no&&x.no===s.quoteNo&&!x.live);if(_pv>0){Tomb.add([sl[_pv].id]);sl.splice(_pv,1);}
        Store.set('sentLinks',sl.slice(0,200));this.invalidate('links');}catch(e){}
     // חסר כאן — לינק דיגיטלי יצר רשומת מעקב אבל לא שמר את ההצעה עצמה
     this._quoteKind='link';this.recordQuote();this.verifySend('link',id);
