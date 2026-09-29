@@ -483,38 +483,31 @@ h2{color:var(--txt)!important;}
 .ins b{display:block;font-size:12.5px;line-height:1.4;}
 .ins small{display:block;font-size:11px;margin-top:3px;line-height:1.5;}
 .ins span:nth-child(2){flex:1;min-width:0;}
-.fu-stats{display:flex;margin-bottom:12px;}
-.fu-k{flex:1;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
-  border:1px solid rgba(255,255,255,.085);border-radius:14px;padding:11px 4px;text-align:center;}
-.fu-k b{display:block;font-size:20px;line-height:1.15;color:var(--muted);}
-.fu-k span{font-size:10px;color:var(--muted);}
-.fu-k.hot{border-color:var(--red);} .fu-k.hot b{color:var(--red);}
-.fu-tip{font-size:11px;color:var(--muted);background:var(--bg3);border:1px solid var(--line);
-  border-radius:10px;padding:9px 11px;margin-bottom:12px;line-height:1.6;}
-.fu-row{
-  border:1px solid rgba(255,255,255,.085);border-radius:14px;padding:12px 13px;
-  
-  }
-.fu-row::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--line);}
-.fu-row.now::before{background:var(--red);}
-.fu-row.soon::before{background:var(--warn);}
-.fu-row.done{opacity:.5;}
-.fu-row.done::before{background:var(--ok);}
-.fu-n{font-size:14px;}
-.fu-eye{font-size:10px;color:var(--ok);font-weight:600;}
-.fu-s{font-size:12.5px;color:var(--muted);margin-top:3px;}
-.fu-acts{display:flex;margin-top:10px;}
-.fu-acts .mini{flex:1;text-align:center;padding:9px 6px;font-size:12.5px;
-  background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;
-  font-weight:600;}
-.fu-acts .mini.pri{border-color:var(--red)!important;color:#fff!important;font-weight:800;}
-.fu-sec{margin:16px 0 8px;padding-top:11px;border-top:1px solid var(--line);}
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 body.cart-on .trk-shell{padding:10px 12px 4px;}
 .tabbar{position:fixed;inset-inline:0;bottom:0;z-index:60;display:flex;
   background:var(--bg2);border-top:1px solid var(--line);padding:5px 4px calc(5px + env(safe-area-inset-bottom));}
 .tb{position:relative;flex:1;background:none;border:none;color:var(--muted);padding:6px 2px;display:flex;
   flex-direction:column;align-items:center;gap:2px;-webkit-tap-highlight-color:transparent;}
-.tb-i{font-size:20px;line-height:1;position:relative;}
+.tb-i{font-size:20px;line-height:1;position:relative;display:inline-flex;}
 .tb-l{font-size:10px;}
 
 .tb-d{position:absolute;top:-4px;inset-inline-end:-9px;color:#fff;
@@ -1670,8 +1663,17 @@ input:focus,textarea:focus,select:focus{outline:none;}
 .tk-quote>.ico{margin-top:2px;color:var(--muted);}
 .tk-acts{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);}
 .tk-acts>.tk-btn{flex:1;min-width:0;}
+/* אייקוני קו במסכים היומיים — יורשים צבע מהטקסט */
+.icon-btn .ico{color:var(--txt);}
+.hm-wrap .hm-quick .hm-q .q-ic .ico{color:rgba(255,255,255,.92);}
+.hm-ic .ico{color:#fff;}
+.isle-b .ico{margin-inline-end:6px;}
 /* "כל ההצעות" ו"מעקב ותזכורות" — אותם רכיבים */
 .tk-range{grid-template-columns:repeat(4,1fr);}
+.tk-3{grid-template-columns:repeat(3,1fr);}
+div.tk-f{cursor:default;}
+div.tk-f:active{transform:none;}
+.sheet>h2>.ico{margin-inline-end:6px;color:var(--muted);}
 .tk-range .tk-seg-b{min-height:38px;font-size:var(--fs-xs);}
 .tk-kinds{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
 .tk-kind{display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:0 9px;border-radius:999px;
@@ -2929,11 +2931,11 @@ body.has-tabs{padding-bottom:calc(var(--dock-h,150px) + 4px)!important;}
   background:linear-gradient(90deg,rgba(255,255,255,.14),transparent);}
 
 /* ── 10 · אייקון לכל מונה ── */
-.hm-kpis .hm-k>span::before{margin-inline-end:4px;}
-.hm-kpis .hm-k:nth-child(1)>span::before{content:'⏰';}
-.hm-kpis .hm-k:nth-child(2)>span::before{content:'👁';}
-.hm-kpis .hm-k:nth-child(3)>span::before{content:'🕐';}
-.hm-kpis .hm-k:nth-child(4)>span::before{content:'✓';color:var(--ok);font-weight:800;}
+.hm-kpis .hm-k>span::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;margin-inline-end:5px;vertical-align:.12em;background:var(--muted);}
+.hm-kpis .hm-k:nth-child(1)>span::before{background:var(--red);}
+.hm-kpis .hm-k:nth-child(2)>span::before{background:var(--warn);}
+.hm-kpis .hm-k:nth-child(3)>span::before{background:var(--muted);}
+.hm-kpis .hm-k:nth-child(4)>span::before{background:var(--ok);}
 
 /* ── 11 · הצעה חדשה עם פלוס בעיגול ── */
 .hm-new{display:flex!important;align-items:center;justify-content:center;gap:12px;
@@ -3176,7 +3178,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='21.4';
+const VERSION='21.5';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3330,7 +3332,11 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v21.4 — "פג תוקף" אחיד</div>
+   b:`<div class="g-plate"><div class="g-ph">v21.5 — אייקונים אחידים</div>
+   <ul class="g-ul"><li><b>אייקוני קו במקום אמוג'י</b> — בשורת הלשוניות, בכפתורים העליונים, בשמונת הקיצורים במסך הבית ובכרטיס הדחוף. אמוג'י נראים אחרת בכל טלפון (סמסונג, גוגל, שיאומי); אייקוני קו נראים זהה בכל מכשיר, ובצבע אחד.</li>
+   <li><b>המונים במסך הבית</b> — נקודה קטנה בצבע המצב במקום אמוג'י: אדום לפג תוקף, כתום לנצפו, אפור לממתינות, ירוק לאושרו. אותה שפה כמו במסך המעקב.</li>
+   <li><b>"לחזור היום" בשפה החדשה</b> — כרטיס אדום כשיש איחור, כתום כשהיעד היום, בלי צבע לשאר. כל מסכי המעקב גמורים.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v21.4 — "פג תוקף" אחיד</div>
    <ul class="g-ul"><li><b>לקוח הופיע "פג תוקף" אחרי שנשלחה לו הצעה חדשה</b> — חלון התזכורות מדד את הזמן מיצירת כרטיס הלקוח, ולא מההצעה האחרונה שנשלחה אליו. לקוח ותיק נראה "פג תוקף" גם כשקיבל הצעה באותו בוקר, בזמן שמסך הבית אמר שהיא ממתינה. עכשיו שני המסכים מודדים מהפעילות האחרונה מול הלקוח, והתיקון חל גם על לקוחות קיימים.</li>
    <li><b>"כל ההצעות" ו"מעקב ותזכורות" בשפה של מסך המעקב</b> — סכומים לבנים במקום אדומים, כפתור ראשי שקוף במקום אדום מלא, ואייקונים אחידים. סוגי השליחה (PDF, לינק, לינק חי) מוצגים כתגיות ניטרליות, ורק "נחתם" ירוק.</li>
    <li><b>תאריכים קצרים</b> — "היום 23:52" או "אתמול 09:32" במקום התאריך המלא.</li></ul></div>
@@ -4578,7 +4584,8 @@ const nisR=n=>Math.round(+n||0).toLocaleString('en-US')+'\u00a0₪';
  * קו אחיד (1.75) וצבע מ-currentColor, כך שהאייקון יורש את צבע הטקסט.
  * @typedef {'search'|'x'|'check'|'copy'|'phone'|'message-circle'|'trending-down'|'chevron-down'|
  *   'arrow-up-down'|'refresh-cw'|'cloud-download'|'eye'|'list'|'zap'|'link'|'scissors'|'pen-line'|
- *   'star'|'trash-2'|'pencil'|'file-text'|'clipboard-list'|'clock'} IconName
+ *   'star'|'trash-2'|'pencil'|'file-text'|'clipboard-list'|'clock'|'house'|'calculator'|'send'|'bell'|
+ *   'users'|'settings'|'camera'|'chart-column'|'calendar-days'|'phone-outgoing'|'layout-grid'} IconName
  */
 const ICO={
  'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
@@ -4603,6 +4610,17 @@ const ICO={
  'file-text':'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
  'clipboard-list':'<rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>',
  'clock':'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+ 'house':'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+ 'calculator':'<rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/>',
+ 'send':'<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>',
+ 'bell':'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ 'users':'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+ 'settings':'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+ 'camera':'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+ 'chart-column':'<path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>',
+ 'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
+ 'phone-outgoing':'<polyline points="22 8 22 2 16 2"/><line x1="16" x2="22" y1="8" y2="2"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+ 'layout-grid':'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
  'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>'
 };
 /** @param {IconName} n @param {number} [s=16] @returns {string} */
@@ -5311,35 +5329,47 @@ const App={
   try{Sync.push&&Sync.push();}catch(e){}
  },
 
+ /**
+  * לחזור היום — מתי לחזור לכל לקוח. היעד מתרחק עם כל ניסיון:
+  * יום · 3 ימים · שבוע · שבועיים · חודש. "חייגתי" מזיז אותו קדימה.
+  * טון: אדום באיחור, כתום ליעד של היום, ניטרלי לשאר.
+  * @returns {string}
+  */
  followModal(){
   const s=this.followState();
   const dt=t=>new Date(t).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});
   const row=r=>{
    const ph=String(r.l.phone||'').replace(/[^0-9+]/g,'');
+   const nm=esc(r.l.client)||'ללא שם';
    const when=r.state==='now'?(r.overdue===0?'היום':(r.overdue===1?'איחור יום':'איחור '+r.overdue+' ימים')):
-     (r.state==='soon'?'מחר':(r.done?'סומן כטופל':'ב-'+dt(r.due)));
-   return `<div class="fu-row ${r.state}">
-     <div class="fu-top">
-       <div style="flex:1;min-width:0">
-         <div class="fu-n">${esc(r.l.client||'—')}${r.viewed?' <span class="fu-eye">👁 נצפתה</span>':''}</div>
-         <div class="fu-s">${when} · נשלח לפני ${r.age===0?'היום':r.age+' ימים'}${r.tries?' · '+r.tries+' ניסיונות':''}${r.l.total?' · '+nisR(r.l.total):''}</div>
-       </div>
-     </div>
-     ${r.done?'':`<div class="fu-acts">
-       ${ph?`<button class="mini" data-fudial="${esc(r.l.id)}|${ph}">📞 חייגתי</button>`:''}
-       ${r.l.phone?`<button class="mini pri" data-funudge="${esc(r.l.id)}">📲 שלח תזכורת</button>`:''}
-       <button class="mini" data-fudone="${esc(r.l.id)}">✓ סגור</button>
-     </div>`}</div>`;};
+     (r.state==='soon'?'מחר':(r.done?'טופל':'ב-'+dt(r.due)));
+   const tn=r.done?'neutral':(r.state==='now'?(r.overdue>0?'red':'warn'):'neutral');
+   const meta=[r.viewed?'נצפתה':'','נשלח '+(r.age===0?'היום':'לפני '+r.age+' ימים'),
+     r.tries?r.tries+' ניסיונות':'',r.l.total?nisR(r.l.total):'']
+     .filter(Boolean).map(x=>'<span>'+x+'</span>').join('<span aria-hidden="true">·</span>');
+   const acts=[];
+   if(!r.done){
+     if(ph)acts.push('<button class="tk-btn" data-fudial="'+esc(r.l.id)+'|'+ph+'">'+ico('phone',16)+'חייגתי</button>');
+     if(r.l.phone)acts.push('<button class="tk-btn pri" data-funudge="'+esc(r.l.id)+'">'+ico('message-circle',16)+'תזכורת</button>');
+     acts.push('<button class="tk-btn" data-fudone="'+esc(r.l.id)+'">'+ico('check',16)+'סגור</button>');
+   }
+   return '<article class="tk-card" data-tone="'+tn+'" aria-label="'+nm+' — '+when+'">'+
+     '<header class="tk-head">'+this.avatar(r.l.client,40)+
+       '<div class="tk-id"><h3 class="tk-name">'+nm+'</h3><p class="tk-meta">'+meta+'</p></div>'+
+       '<span class="tk-pill" data-tone="'+tn+'">'+ico('clock',13)+when+'</span></header>'+
+     (acts.length?'<footer class="tk-acts">'+acts.join('')+'</footer>':'')+'</article>';};
   const open=s.rows.filter(r=>!r.done);
-  return `<h2>📅 מתי לחזור ללקוח <button class="x" data-close>✕</button></h2>
-   <div class="fu-stats">
-     <div class="fu-k ${s.now?'hot':''}"><b>${s.now}</b><span>היום</span></div>
-     <div class="fu-k"><b>${s.soon}</b><span>מחר</span></div>
-     <div class="fu-k"><b>${open.length-s.now-s.soon}</b><span>בהמשך</span></div>
-   </div>
-   <div class="fu-tip">כל לקוח מקבל תאריך יעד לפי כמה פעמים כבר ניסית: יום · 3 · שבוע · שבועיים · חודש. לחיצה על "חייגתי" מזיזה את היעד קדימה.</div>
-   ${open.length?open.map(row).join(''):`<div class="empty" style="padding:24px">אין למי לחזור כרגע 👌</div>`}
-   ${s.done?`<div class="fu-sec">סומנו כטופלו (${s.done})</div>${s.rows.filter(r=>r.done).slice(0,5).map(row).join('')}`:''}`;
+  const later=Math.max(0,open.length-s.now-s.soon);
+  const K=[['היום',s.now,s.now?'warn':''],['מחר',s.soon,''],['בהמשך',later,'']];
+  return '<h2>'+ico('phone-outgoing',20)+' מתי לחזור ללקוח <button class="x" data-close>✕</button></h2>'+
+   '<div class="tk-filters tk-3" role="list" aria-label="סיכום">'+
+     K.map(([l,n,tn])=>'<div class="tk-f" role="listitem"><span class="tk-f-n">'+n+'</span><span class="tk-f-l">'+
+       (tn?'<i class="tk-dot" data-tone="'+tn+'"></i>':'')+l+'</span></div>').join('')+'</div>'+
+   '<p class="tk-hint start">היעד מתרחק עם כל ניסיון: יום · 3 ימים · שבוע · שבועיים · חודש. "חייגתי" מזיז אותו קדימה.</p>'+
+   (open.length?'<div class="tk-list">'+open.map(row).join('')+'</div>'
+     :'<div class="tk-empty">'+ico('check',22)+'<p>אין למי לחזור כרגע</p></div>')+
+   (s.done?'<h3 class="tk-sec"><span>סומנו כטופלו</span><b>'+s.done+'</b></h3><div class="tk-list">'+
+     s.rows.filter(r=>r.done).slice(0,5).map(row).join('')+'</div>':'');
  },
 
  /* ===== ביטול מטמונים =====
@@ -5660,8 +5690,8 @@ const App={
          <div class="hm-n">${esc(x.l.client||'—')}</div>
          <div class="hm-s">${lbl} · ${age}${x.l.total?' · '+nisR(x.l.total):''}</div>
        </div>
-       ${ph?`<button class="hm-ic ${x.kind==='live'?'pri':''}" onclick="location.href='tel:${ph}'" aria-label="חיוג" title="חיוג">📞</button>`:''}
-       ${x.l.phone?`<button class="hm-ic ${x.kind==='live'?'':'pri'}" data-trknudge="${esc(x.l.id)}" aria-label="תזכורת בוואטסאפ" title="תזכורת">📲</button>`:''}
+       ${ph?`<button class="hm-ic ${x.kind==='live'?'pri':''}" onclick="location.href='tel:${ph}'" aria-label="חיוג" title="חיוג">${ico('phone',19)}</button>`:''}
+       ${x.l.phone?`<button class="hm-ic ${x.kind==='live'?'':'pri'}" data-trknudge="${esc(x.l.id)}" aria-label="תזכורת בוואטסאפ" title="תזכורת">${ico('message-circle',19)}</button>`:''}
      </div></div>`;};
 
   // ─── פאנל הגיבור ───
@@ -5734,14 +5764,14 @@ const App={
 
     <div class="hm-quick">
       <button class="hm-q q-cli" data-modal="clients">
-        <span class="q-ic">👥</span><b data-count="${st.clients}">0</b><span class="q-t">לקוחות</span></button>
+        <span class="q-ic">${ico('users',24)}</span><b data-count="${st.clients}">0</b><span class="q-t">לקוחות</span></button>
       ${(()=>{let n=0;try{n=this.followState().now;}catch(e){}
         return `<button class="hm-q q-fol ${n?'hot':''}" data-modal="follow">
-        <span class="q-ic">📅</span><b data-count="${n}">0</b><span class="q-t">לחזור היום</span></button>`;})()}
+        <span class="q-ic">${ico('phone-outgoing',24)}</span><b data-count="${n}">0</b><span class="q-t">לחזור היום</span></button>`;})()}
       <button class="hm-q q-gal" data-modal="gallery">
-        <span class="q-ic">📷</span><span class="q-t">תמונות</span></button>
+        <span class="q-ic">${ico('camera',24)}</span><span class="q-t">תמונות</span></button>
       <button class="hm-q q-sta" data-modal="stats">
-        <span class="q-ic">📊</span><span class="q-t">דוחות</span></button>
+        <span class="q-ic">${ico('chart-column',24)}</span><span class="q-t">דוחות</span></button>
     </div>
     <div class="hm-quick" style="margin-top:8px">
       ${(()=>{let n=0;try{
@@ -5750,13 +5780,13 @@ const App={
         n=cls.filter(c=>c&&c.dueDate&&c.status!=='done'&&new Date(c.dueDate)>=now).length;
       }catch(e){}
       return `<button class="hm-q q-cal" data-modal="calendar">
-        <span class="q-ic">🗓️</span>${n?`<b data-count="${n}">0</b>`:''}<span class="q-t">יומן</span></button>`;})()}
+        <span class="q-ic">${ico('calendar-days',24)}</span>${n?`<b data-count="${n}">0</b>`:''}<span class="q-t">יומן</span></button>`;})()}
       <button class="hm-q q-wa" data-modal="wacenter">
-        <span class="q-ic">💬</span><span class="q-t">הודעות</span></button>
+        <span class="q-ic">${ico('message-circle',24)}</span><span class="q-t">הודעות</span></button>
       <button class="hm-q q-rev" data-modal="reviews">
-        <span class="q-ic">⭐</span><span class="q-t">משובים</span></button>
+        <span class="q-ic">${ico('star',24)}</span><span class="q-t">משובים</span></button>
       <button class="hm-q q-mor" data-modal="menu">
-        <span class="q-ic">⚙️</span><span class="q-t">עוד</span></button>
+        <span class="q-ic">${ico('layout-grid',24)}</span><span class="q-t">עוד</span></button>
     </div>
   </div>`;
  },
@@ -5820,9 +5850,9 @@ const App={
   const T=(id,ic,lbl,n)=>`<button class="tb ${t===id?'on':''}" data-gotab="${id}">
     <span class="tb-i">${ic}${n?`<span class="tb-d">${n}</span>`:''}</span><span class="tb-l">${lbl}</span></button>`;
   return `<div class="tabbar"><span class="tb-ind" aria-hidden="true"></span>
-    ${T('home','🏠','בית',badge)}
-    ${T('build','🧮','הצעה',st.openQuote)}
-    ${T('track','📤','מעקב',0)}
+    ${T('home',ico('house',22),'בית',badge)}
+    ${T('build',ico('calculator',22),'הצעה',st.openQuote)}
+    ${T('track',ico('send',22),'מעקב',0)}
   </div>`;
  },
 
@@ -6280,7 +6310,7 @@ const App={
      <div class="isle-body">
        <button class="isle-h" id="isle-h" aria-label="כווץ"><b>${nm}</b><span>פתח את ההצעה ${when}${x.l.total?' · '+nisR(x.l.total):''}</span></button>
        <div class="isle-acts">
-         ${ph?`<button class="isle-b pri" onclick="location.href='tel:${ph}'">📞 חיוג</button>`:''}
+         ${ph?`<button class="isle-b pri" onclick="location.href='tel:${ph}'">${ico('phone',15)}חיוג</button>`:''}
          <button class="isle-b" data-gotab="track">מעקב ←</button>
          <button class="isle-b x" id="isle-x" aria-label="סגור">✕</button>
        </div></div></div>`;
@@ -6401,9 +6431,9 @@ const App={
   return `<div class="topbar"><div class="brand"><div class="lg"><img src="${LOGO_APP}" alt="לוגו" style="width:100%;height:auto;display:block"/></div>
       <div><div class="name">יהודה שיפוצים</div><div class="sub">קבלן רשום 134094 · ${tab==='track'?'מעקב':'מרכז הבית'}</div></div>
       <div class="spacer"></div>
-      <button class="icon-btn" data-modal="reminders">🔔${rem?`<span class="dot">${rem}</span>`:''}</button>
-      <button class="icon-btn" data-modal="clients">👥</button>
-      <button class="icon-btn" data-modal="menu">⚙️</button></div>${tab==='track'?this.liveIsland():''}</div>
+      <button class="icon-btn" data-modal="reminders" aria-label="מעקב ותזכורות">${ico('bell',20)}${rem?`<span class="dot">${rem}</span>`:''}</button>
+      <button class="icon-btn" data-modal="clients" aria-label="לקוחות">${ico('users',20)}</button>
+      <button class="icon-btn" data-modal="menu" aria-label="תפריט והגדרות">${ico('settings',20)}</button></div>${tab==='track'?this.liveIsland():''}</div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.offlineBanner()}
   ${tab==='track'?this.trackShell():this.homeView()}
@@ -6486,9 +6516,9 @@ const App={
   return `<div class="topbar"><div class="brand"><div class="lg"><img src="${LOGO_APP}" alt="לוגו" style="width:100%;height:auto;display:block"/></div>
       <div><div class="name">יהודה שיפוצים</div><div class="sub">קבלן רשום 134094 · דירות · משרדים · מרפאות</div></div>
       <div class="spacer"></div>
-      <button class="icon-btn" data-modal="reminders">🔔${rem?`<span class="dot">${rem}</span>`:''}</button>
-      <button class="icon-btn" data-modal="clients">👥</button>
-      <button class="icon-btn" data-modal="menu">⚙️</button></div>
+      <button class="icon-btn" data-modal="reminders" aria-label="מעקב ותזכורות">${ico('bell',20)}${rem?`<span class="dot">${rem}</span>`:''}</button>
+      <button class="icon-btn" data-modal="clients" aria-label="לקוחות">${ico('users',20)}</button>
+      <button class="icon-btn" data-modal="menu" aria-label="תפריט והגדרות">${ico('settings',20)}</button></div>
     ${this.liveIsland()}
     <div class="searchwrap"><span class="mag">🔍</span>
       <input id="search" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
@@ -8055,7 +8085,7 @@ const App={
   const open=list.filter(c=>!expIds[c.id]);
   const sec=(t,n,tn)=>'<h3 class="tk-sec">'+(tn?'<i class="tk-dot" data-tone="'+tn+'"></i>':'')+'<span>'+t+'</span><b>'+n+'</b></h3>';
   const hint='לקוח נכנס לכאן אוטומטית כשמפיקים לו הצעה או שולחים לינק.';
-  return '<h2>מעקב ותזכורות 🔔 <button class="x" data-close>✕</button></h2>'+
+  return '<h2>'+ico('bell',20)+' מעקב ותזכורות <button class="x" data-close>✕</button></h2>'+
    ((expired.length||open.length)?'<p class="tk-hint start">'+hint+'</p>':'')+
    (expired.length?sec('פג תוקף — מעל 14 יום',expired.length,'red')+'<div class="tk-list">'+expired.map(c=>card(c,true)).join('')+'</div>':'')+
    (open.length?sec('מעקב שוטף',open.length,'')+'<div class="tk-list">'+open.map(c=>card(c,false)).join('')+'</div>':'')+
