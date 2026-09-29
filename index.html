@@ -163,10 +163,9 @@ input,select,textarea{font-family:inherit;}
 .bb-hint::after{content:' ›';}
 .bb-hint:active{transform:scale(.99);}
 .bottombar{position:fixed;bottom:0;left:0;right:0;z-index:55;flex-wrap:wrap;background:#141417;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;}
-/* שורת הלשוניות יושבת בתחתית, ולכן פס הסכום עולה מעליה במקום להיחבא */
-.trk-alert{background:rgba(237,28,36,.12);border:1px solid rgba(237,28,36,.45);border-radius:10px;padding:12px;margin-bottom:12px;}
-.trk-alert .ta-h{font-size:12.5px;font-weight:800;color:var(--red);margin-bottom:8px;}
-.trk-alert .ta-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;color:var(--txt);padding:5px 0;}
+
+
+
 .trk-comment{flex-basis:100%;background:var(--bg3);border-radius:8px;padding:8px 10px;font-size:12.5px;color:var(--txt);margin-top:8px;line-height:1.5;}
 .statcard.clickable{cursor:pointer;border-color:rgba(255,255,255,.16);}
 .statcard.clickable:active{background:rgba(255,255,255,.08);}
@@ -181,22 +180,22 @@ input,select,textarea{font-family:inherit;}
 .srch-info b{color:var(--txt);}
 .srch-info button{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:3px 9px;font-size:11px;}
 .trk-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
-.trk-stats4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px;}
+
 .trk-box{background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:12px 4px;text-align:center;position:relative;}
-.trk-stats4 .trk-box{cursor:pointer;-webkit-tap-highlight-color:transparent;}
-.trk-stats4 .trk-box:active{transform:scale(.96);}
-.trk-box.on{border-color:var(--red);background:rgba(237,28,36,.10);box-shadow:0 0 0 1px rgba(237,28,36,.35) inset;}
-.trk-box.on::after{content:'✕';position:absolute;top:3px;inset-inline-end:6px;font-size:10px;color:var(--red);opacity:.85;}
+
+
+.trk-box.on{border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.07);box-shadow:none;}
+.trk-box.on::after{content:'✕';position:absolute;top:3px;inset-inline-end:6px;font-size:10px;color:var(--muted);opacity:.85;}
 .trk-box .n{font-size:20px;font-weight:800;color:var(--txt);line-height:1.1;}
 .trk-box .l{font-size:10px;color:var(--muted);margin-top:3px;}
-.trk-search{display:flex;align-items:center;gap:7px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:10px;}
-.trk-search .mg{font-size:14px;opacity:.6;flex:none;}
-.trk-search input{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-size:14px;font-family:inherit;padding:0;}
-.trk-search .cl{background:var(--bg2);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:3px 8px;font-size:12.5px;flex:none;}
-.trk-count{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--muted);margin-bottom:10px;}
+
+
+
+
+
 .trk-sort{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:5px 8px;font-size:12.5px;font-family:inherit;flex:none;}
-.trk-dupe{display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.3);border-radius:10px;padding:9px 11px;margin-bottom:10px;font-size:11px;color:var(--warn);}
-.dl-dup{display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:10px;color:var(--muted);margin-right:6px;}
+
+
 .rm-card{border-radius:14px;padding:12px 13px;margin-bottom:10px;position:relative;overflow:hidden;}
 .rm-card::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:4px;background:var(--line);}
 .rm-card.warn::before{background:var(--warn);} .rm-card.hot::before{background:var(--red);}
@@ -259,9 +258,9 @@ input,select,textarea{font-family:inherit;}
 .dp-row{margin-bottom:11px;}
 .dp-top{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;font-weight:600;}
 .dp-n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.dp-p{flex:none;color:var(--red);direction:ltr;}
-.dp-bar{height:5px;background:var(--bg2);border-radius:4px;overflow:hidden;margin:5px 0 4px;}
-.dp-bar>div{height:100%;background:var(--red);border-radius:4px;}
+.dp-p{flex:none;color:var(--muted);font-variant-numeric:tabular-nums;direction:ltr;}
+.dp-bar{height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin:5px 0 4px;}
+.dp-bar>div{height:100%;background:rgba(255,255,255,.5);border-radius:4px;}
 .dp-d{font-size:11px;color:var(--muted);}
 .dp-sec{margin:12px 0 6px;padding-top:10px;border-top:1px solid var(--line);}
 .dp-sec.ok{color:var(--ok);}
@@ -627,7 +626,7 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .acc-body{display:none;padding:6px 3px 4px;}
 .acc-body.on{display:block;animation:accIn .18s ease;}
 @keyframes accIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
-.trk-none{text-align:center;padding:26px 16px;color:var(--muted);font-size:12.5px;background:var(--bg3);border:1px dashed var(--line);border-radius:14px;}
+
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
 .pv-cat{margin-bottom:14px;}
@@ -1509,51 +1508,189 @@ input:focus,textarea:focus,select:focus{outline:none;}
 .lv-row.off .lv-qb{pointer-events:none;opacity:.35;}
 .lv-row.off .lv-stepper{opacity:.5;}
 
-/* ═══════════════ ציר סטטוס אחוד ═══════════════ */
-.dl-card{background:linear-gradient(165deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
-  border:1px solid transparent;border-radius:14px;padding:14px 15px;margin-bottom:11px;
-  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 1px 2px rgba(0,0,0,.28),
-             0 4px 10px -4px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1);}
-.dl-card.ok{background:linear-gradient(165deg,rgba(46,194,107,.11),rgba(46,194,107,.025));
-  box-shadow:0 0 0 1px rgba(46,194,107,.3),inset 0 1px 0 rgba(255,255,255,.1);}
-.dl-card.live{background:linear-gradient(165deg,rgba(46,194,107,.13),rgba(46,194,107,.03));
-  box-shadow:0 0 0 1px rgba(46,194,107,.4), 0 6px 18px -8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,.12);}
-.dl-card.warn{background:linear-gradient(165deg,rgba(245,166,35,.1),rgba(245,166,35,.025));
-  box-shadow:0 0 0 1px rgba(245,166,35,.3),inset 0 1px 0 rgba(255,255,255,.1);}
-.dl-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;}
-.dl-name{font-weight:800;font-size:14px;color:var(--txt);line-height:1.35;}
-.dl-meta{font-size:11px;color:var(--muted);margin-top:3px;}
-.dl-amt{font-weight:800;font-size:16px;color:var(--txt);white-space:nowrap;
-  font-variant-numeric:tabular-nums;letter-spacing:-.3px;}
-.dl-card.ok .dl-amt{color:#5fe19a;}
-.dl-bar{display:flex;align-items:center;gap:0;margin:12px 0 10px;}
-.dl-node{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;}
-.dl-node::before{content:'';position:absolute;top:13px;right:50%;left:-50%;height:2px;background:var(--line);z-index:0;}
-.dl-node:first-child::before{display:none;}
-.dl-node.past::before,.dl-node.now::before{background:var(--ok);}
-.dl-dot{width:27px;height:27px;border-radius:50%;background:var(--bg3);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12.5px;position:relative;z-index:1;transition:.25s;}
-.dl-node.past .dl-dot{background:var(--ok);border-color:var(--ok);color:#fff;font-weight:800;}
-.dl-node.now .dl-dot{background:var(--red);border-color:var(--red);box-shadow:0 0 0 4px rgba(237,28,36,.18);transform:scale(1.15);}
-.dl-lbl{font-size:10px;font-weight:800;color:var(--red);white-space:nowrap;position:absolute;top:32px;}
-.dl-flag{display:flex;align-items:center;gap:7px;background:var(--bg3);border-right:3px solid var(--warn);border-radius:8px;padding:9px 12px;margin-top:18px;font-size:12.5px;color:var(--txt);}
-/* תיבה אחת בכרטיס המעקב: מצב העסקה + מה הלקוח עשה בלינק החי */
-.dl-box{background:var(--bg3);border-inline-start:3px solid var(--line);border-radius:10px;
-  padding:9px 12px;margin-top:2px;display:flex;flex-direction:column;gap:4px;}
-.dl-box-t{font-size:var(--fs-s);font-weight:700;color:var(--txt);}
-.dl-box-r{font-size:var(--fs-xs);color:var(--muted);line-height:1.5;}
-.dl-cut{color:var(--warn);}
-.dl-cut b{color:var(--txt);font-weight:700;}
-/* שלב עתידי בפס — נקודה קטנה בלי אמוג'י */
-.dl-node:not(.past):not(.now) .dl-dot{width:11px;height:11px;margin-top:8px;}
-.dl-acts{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
-.dl-acts{padding-top:10px;border-top:1px solid var(--line);}
-.dl-acts .mini{flex:1;min-width:88px;text-align:center;padding:9px 10px;
-  background:var(--bg2)!important;color:var(--txt)!important;
-  border:1px solid var(--line)!important;border-radius:10px;font-weight:600;font-size:12.5px;}
-.dl-acts .mini:active{transform:scale(.96);}
-.dl-acts .mini.pri{background:var(--red)!important;border-color:var(--red)!important;color:#fff!important;font-weight:800;}
-.dl-acts .del{flex:0 0 auto;padding:9px 12px;background:var(--bg2)!important;
-  border:1px solid var(--line)!important;border-radius:10px;opacity:.6;font-size:14px;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   מסך המעקב · v21.3
+   משטחים ניטרליים; הצבע נגזר ממה שיהודה צריך לעשות (trkTone),
+   לא מהשלב ולא מסוג הלינק. פעולה ראשית אחת לכל כרטיס.
+   ═══════════════════════════════════════════════════════════════ */
+:root{--hair:rgba(255,255,255,.08);--hair-2:rgba(255,255,255,.15);
+  --focus-ring:0 0 0 2px var(--bg),0 0 0 4px rgba(255,255,255,.6);}
+.ico{flex:none;display:inline-block;vertical-align:-.15em;}
+.tk-card[data-tone="neutral"],.tk-pill[data-tone="neutral"],.tk-meter[data-tone="neutral"],.tk-dot[data-tone="neutral"]{--tone:var(--muted);--tone-bg:rgba(255,255,255,.07);}
+.tk-card[data-tone="ok"],.tk-pill[data-tone="ok"],.tk-meter[data-tone="ok"],.tk-dot[data-tone="ok"]{--tone:var(--ok);--tone-bg:rgba(46,194,107,.14);}
+.tk-card[data-tone="warn"],.tk-pill[data-tone="warn"],.tk-meter[data-tone="warn"],.tk-dot[data-tone="warn"]{--tone:var(--warn);--tone-bg:rgba(245,166,35,.14);}
+.tk-card[data-tone="red"],.tk-pill[data-tone="red"],.tk-meter[data-tone="red"],.tk-dot[data-tone="red"]{--tone:#ff6b70;--tone-bg:rgba(237,28,36,.15);}
+
+/* בקרת מקטעים */
+.tk-seg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin-bottom:12px;
+  background:var(--bg2);border:1px solid var(--hair);border-radius:var(--r-l);}
+.tk-seg-b{display:flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 10px;
+  border:0;border-radius:var(--r-m);background:transparent;color:var(--muted);
+  font-family:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer;
+  transition:background-color .2s ease,color .2s ease,box-shadow .2s ease;}
+.tk-seg-b[aria-selected="true"]{background:var(--bg3);color:var(--txt);
+  box-shadow:inset 0 0 0 1px var(--hair-2),0 1px 2px rgba(0,0,0,.45);}
+
+/* מסננים — מספרים ניטרליים, נקודה קטנה נושאת את המשמעות */
+.tk-filters{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:4px;margin-bottom:10px;
+  background:var(--bg2);border:1px solid var(--hair);border-radius:var(--r-l);}
+.tk-f{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:62px;padding:8px 2px;
+  border:0;border-radius:var(--r-m);background:transparent;color:var(--muted);font-family:inherit;cursor:pointer;
+  transition:background-color .2s ease,color .2s ease,box-shadow .2s ease,transform .3s var(--spring);}
+.tk-f-n{font-size:var(--fs-xl);font-weight:700;line-height:1;color:var(--txt);
+  font-variant-numeric:tabular-nums;letter-spacing:-.4px;}
+.tk-f-l{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);white-space:nowrap;}
+.tk-f[aria-pressed="true"]{background:var(--bg3);color:var(--txt);
+  box-shadow:inset 0 0 0 1px var(--hair-2),0 1px 2px rgba(0,0,0,.45);}
+.tk-f:active{transform:scale(.97);}
+.tk-dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--tone);}
+
+/* חיפוש */
+.tk-search{display:flex;align-items:center;gap:8px;min-height:46px;padding:0 6px 0 12px;margin-bottom:10px;
+  background:var(--bg2);border:1px solid var(--hair);border-radius:var(--r-m);color:var(--muted);
+  transition:border-color .2s ease,box-shadow .2s ease;}
+.tk-search:focus-within{border-color:rgba(255,255,255,.28);box-shadow:0 0 0 3px rgba(255,255,255,.06);}
+.tk-search input,.tk-search input:focus{flex:1;min-width:0;height:44px;min-height:0;margin:0;padding:0;
+  background:none!important;border:0!important;border-radius:0;outline:0;box-shadow:none!important;
+  color:var(--txt);font-family:inherit;font-size:var(--fs-m);}
+.tk-search .tk-ib{width:36px;height:36px;border:0;background:transparent;}
+
+/* כפתורים */
+.tk-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:0 14px;
+  border-radius:var(--r-m);border:1px solid var(--hair);background:var(--bg3);color:var(--txt);
+  font-family:inherit;font-size:var(--fs-s);font-weight:600;line-height:1;text-decoration:none;white-space:nowrap;cursor:pointer;
+  transition:background-color .2s ease,border-color .2s ease,transform .3s var(--spring);}
+.tk-btn:active{transform:scale(.97);}
+.tk-btn.pri{background:rgba(237,28,36,.16);border-color:rgba(237,28,36,.5);color:#fff;}
+.tk-btn.sm{min-height:34px;padding:0 12px;font-size:var(--fs-xs);}
+.tk-ib{flex:none;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;
+  border-radius:var(--r-m);border:1px solid var(--hair);background:var(--bg2);color:var(--muted);cursor:pointer;
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease,transform .3s var(--spring);}
+.tk-ib:active{transform:scale(.93);}
+@media (hover:hover){
+  .tk-btn:hover{background:#2a2a31;}
+  .tk-btn.pri:hover{background:rgba(237,28,36,.24);}
+  .tk-ib:hover{color:var(--txt);background:var(--bg3);}
+  .tk-ib.danger:hover{color:#ff8a8f;border-color:rgba(237,28,36,.4);}
+  .tk-seg-b:not([aria-selected="true"]):hover,.tk-f:not([aria-pressed="true"]):hover{color:var(--txt);}
+}
+.tk-btn:focus-visible,.tk-ib:focus-visible,.tk-f:focus-visible,.tk-seg-b:focus-visible,
+.tk-disc>summary:focus-visible,.tk-select:focus-within{outline:none;box-shadow:var(--focus-ring);}
+
+/* סרגל כלים — ספירה, מיון, רענון ושחזור בשורה אחת */
+.tk-toolbar{display:flex;align-items:center;gap:8px;margin:2px 0 12px;}
+.tk-count{flex:1;min-width:0;font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tk-count b{color:var(--txt);font-variant-numeric:tabular-nums;}
+.tk-select{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 12px;
+  border-radius:var(--r-m);border:1px solid var(--hair);background:var(--bg2);color:var(--muted);cursor:pointer;}
+.tk-select select,.tk-select select:focus{-webkit-appearance:none;appearance:none;height:auto;min-height:0;margin:0;padding:0;
+  background:none!important;border:0!important;box-shadow:none!important;outline:0;
+  color:var(--txt);font-family:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer;}
+
+/* תיבה מתקפלת */
+.tk-disc{margin-bottom:12px;background:var(--bg2);border:1px solid var(--hair);border-radius:var(--r-l);overflow:hidden;}
+.tk-disc>summary{list-style:none;display:flex;align-items:center;gap:10px;min-height:52px;padding:0 14px;cursor:pointer;}
+.tk-disc>summary::-webkit-details-marker{display:none;}
+.tk-disc-i,.tk-disc-c{display:inline-flex;color:var(--muted);}
+.tk-disc-t{font-size:var(--fs-s);font-weight:700;color:var(--txt);white-space:nowrap;}
+.tk-disc-s{flex:1;min-width:0;font-size:var(--fs-xs);color:var(--muted);text-align:end;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tk-disc-c{transition:transform .4s var(--spring);}
+.tk-disc[open] .tk-disc-c{transform:rotate(180deg);}
+.tk-disc-b{padding:12px 14px 14px;border-top:1px solid var(--hair);}
+.tk-disc .dp-box{background:none!important;border:0!important;padding:0!important;margin:0!important;box-shadow:none!important;}
+.tk-disc .dp-h{display:none;}
+
+/* התראה, הודעות, מצב ריק */
+.tk-alert{margin-bottom:12px;padding:12px 14px 4px;background:rgba(245,166,35,.06);
+  border:1px solid rgba(245,166,35,.26);border-radius:var(--r-l);}
+.tk-alert-h{display:flex;align-items:center;gap:7px;margin:0 0 6px;font-size:var(--fs-s);font-weight:700;color:var(--warn);}
+.tk-alert-r{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;
+  font-size:var(--fs-xs);color:var(--muted);border-top:1px solid var(--hair);}
+.tk-alert-r b{color:var(--txt);}
+.tk-banner{display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 10px 10px 12px;
+  border-radius:var(--r-m);background:rgba(255,255,255,.04);border:1px solid var(--hair);font-size:var(--fs-xs);color:var(--muted);}
+.tk-banner>span{flex:1;min-width:0;}
+.tk-note{display:flex;align-items:center;justify-content:center;gap:6px;margin:-2px 0 10px;font-size:var(--fs-xs);color:var(--muted);}
+.tk-note .ico{color:var(--ok);}
+.tk-note b{color:var(--txt);font-variant-numeric:tabular-nums;}
+.tk-hint{margin:-4px 0 12px;font-size:var(--fs-xs);color:var(--muted);text-align:center;}
+.tk-empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:32px 16px;text-align:center;color:var(--muted);
+  background:var(--bg2);border:1px dashed var(--hair-2);border-radius:var(--r-l);}
+.tk-empty p{margin:0;font-size:var(--fs-s);}
+
+/* כרטיס */
+.tk-list{display:flex;flex-direction:column;gap:10px;}
+.tk-card{position:relative;overflow:hidden;padding:14px 14px 12px;
+  background:var(--bg2);border:1px solid var(--hair);border-radius:var(--r-l);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 12px 28px -20px rgba(0,0,0,.9);}
+.tk-card::before{content:'';position:absolute;inset-inline-start:0;top:14px;bottom:14px;width:3px;
+  border-start-end-radius:3px;border-end-end-radius:3px;background:var(--tone);}
+.tk-card[data-tone="neutral"]::before{display:none;}
+.tk-head{display:flex;align-items:center;gap:12px;}
+.tk-id{flex:1;min-width:0;}
+.tk-name{margin:0;font-size:var(--fs-l);font-weight:700;letter-spacing:-.2px;color:var(--txt);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tk-meta{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;margin:3px 0 0;font-size:var(--fs-xs);color:var(--muted);}
+.tk-kind{display:inline-flex;align-items:center;gap:4px;}
+.tk-tag{padding:1px 7px;border-radius:999px;font-size:var(--fs-xxs);font-weight:700;background:rgba(255,255,255,.08);color:var(--txt);}
+.tk-amt{flex:none;font-size:var(--fs-l);font-weight:700;letter-spacing:-.3px;color:var(--txt);font-variant-numeric:tabular-nums;}
+.tk-stage{margin-top:12px;}
+.tk-stage-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+.tk-pill{display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:999px;
+  font-size:var(--fs-xs);font-weight:700;background:var(--tone-bg);color:var(--tone);}
+.tk-stage-h{font-size:var(--fs-xs);color:var(--muted);text-align:end;}
+.tk-meter{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;}
+.tk-meter>i{display:block;height:4px;border-radius:2px;background:rgba(255,255,255,.1);}
+.tk-meter>i.done{background:rgba(255,255,255,.45);}
+.tk-meter>i.now{background:var(--tone);}
+.tk-meter[data-tone="neutral"]>i.now{background:var(--txt);}
+.tk-facts{display:flex;flex-direction:column;gap:6px;margin:12px 0 0;padding:10px 12px;list-style:none;
+  background:rgba(255,255,255,.035);border:1px solid var(--hair);border-radius:var(--r-m);}
+.tk-facts>li{display:flex;align-items:flex-start;gap:8px;font-size:var(--fs-xs);line-height:1.5;color:var(--muted);}
+.tk-facts>li>.ico{margin-top:2px;}
+.tk-facts>li.cut{color:var(--warn);}
+.tk-facts>li.cut b{color:var(--txt);font-weight:700;}
+.tk-quote{display:flex;gap:8px;margin:10px 0 0;padding:10px 12px;border-radius:var(--r-m);
+  background:rgba(255,255,255,.035);border:1px solid var(--hair);font-size:var(--fs-xs);line-height:1.55;color:var(--txt);}
+.tk-quote>.ico{margin-top:2px;color:var(--muted);}
+.tk-acts{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);}
+.tk-acts>.tk-btn{flex:1;min-width:0;}
+
+@media (prefers-reduced-motion:reduce){
+  .tk-seg-b,.tk-f,.tk-btn,.tk-ib,.tk-search,.tk-disc-c{transition:none!important;}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* ===== זכוכית צלולה + מספרים גלויים =====
    נכתב בסוף גיליון הסגנון בכוונה: כללי הזכוכית שנוספו קודם
@@ -3026,7 +3163,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='21.2';
+const VERSION='21.3';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3180,7 +3317,14 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v21.2 — מחיקה שנשארת מחוקה</div>
+   b:`<div class="g-plate"><div class="g-ph">v21.3 — מסך מעקב נקי</div>
+   <ul class="g-ul"><li><b>צבע רק כשצריך לעשות משהו</b> — כרטיס אדום כשהלקוח התלבט (הזדמנות), כתום כשלא פתח או לא אישר, ירוק כשנסגר, ובלי צבע כשהכל תקין. קודם כרטיס של לינק חי נצבע ירוק כולו, גם כשהעסקה עוד לא נסגרה.</li>
+   <li><b>מונים בלי צבע</b> — המספרים לבנים, ונקודה קטנה ליד כל תווית מסמנת את המשמעות. המסנן הפעיל מובלט במשטח, לא במסגרת אדומה.</li>
+   <li><b>פס שלבים דק</b> — שבעה מקטעים במקום שבעה עיגולים עם אייקונים, ותווית אחת שאומרת איפה העסקה עומדת ומה זה אומר.</li>
+   <li><b>"מה הלקוחות מורידים" מקופל</b> — שורה אחת עם הסעיף המוביל. לחיצה פותחת את הפירוט. קודם התיבה תפסה כמעט חצי מסך.</li>
+   <li><b>רענון ושחזור מהענן</b> עברו לאייקונים בשורת המיון, במקום שורה שלמה של כפתורים.</li>
+   <li><b>אייקונים אחידים</b> במקום אמוג'י במסך הזה, וכפתור ראשי שקוף במקום אדום מלא.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v21.2 — מחיקה שנשארת מחוקה</div>
    <ul class="g-ul"><li><b>מחיקת לקוח מכל האפליקציה</b> — במסך הלקוחות 👥, הכפתור 🗑 מוחק עכשיו את הלקוח יחד עם ההצעות שלו בהיסטוריה, הלינקים שלו במעקב והתזכורות שלו. לפני המחיקה מופיע כמה בדיוק יימחק, ואחריה יש "בטל" לכמה שניות. קודם היו שלוש מחיקות נפרדות, וכל אחת מחקה רק מהרשימה שלה.</li>
    <li><b>מחיקה כבר לא חוזרת מהענן</b> — הסנכרון מיזג רשימות בלי לדעת מה נמחק, ולכן לקוח שנמחק במכשיר אחד חזר מהמכשיר השני. עכשיו כל מחיקה נרשמת ומסונכרנת, והיא חלה בכל המכשירים.</li>
    <li><b>לינק חי ולינק רגיל לאותה הצעה</b> — שליחת לינק חי מחקה את הלינק הרגיל של אותה הצעה, והאפליקציה הפסיקה לעקוב אחריו. עכשיו כל סוג מחליף רק את עצמו, וסוג הלינק מופיע בכל כרטיס.</li>
@@ -4412,6 +4556,36 @@ const nis=n=>{const v=Math.round((+n||0)*100)/100;
   return (Number.isInteger(v)?v.toLocaleString('en-US')
     :v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}))+'\u00a0₪';};
 const nisR=n=>Math.round(+n||0).toLocaleString('en-US')+'\u00a0₪';
+/**
+ * אייקוני Lucide כ-SVG פנימי — בלי תלות ברשת, כי האפליקציה עובדת גם אופליין.
+ * קו אחיד (1.75) וצבע מ-currentColor, כך שהאייקון יורש את צבע הטקסט.
+ * @typedef {'search'|'x'|'check'|'copy'|'phone'|'message-circle'|'trending-down'|'chevron-down'|
+ *   'arrow-up-down'|'refresh-cw'|'cloud-download'|'eye'|'list'|'zap'|'link'|'scissors'|'pen-line'|
+ *   'star'|'trash-2'} IconName
+ */
+const ICO={
+ 'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+ 'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+ 'check':'<path d="M20 6 9 17l-5-5"/>',
+ 'copy':'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+ 'phone':'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+ 'message-circle':'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+ 'trending-down':'<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>',
+ 'chevron-down':'<path d="m6 9 6 6 6-6"/>',
+ 'arrow-up-down':'<path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/>',
+ 'refresh-cw':'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+ 'cloud-download':'<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/>',
+ 'eye':'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+ 'list':'<path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>',
+ 'zap':'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+ 'link':'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+ 'scissors':'<circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/>',
+ 'pen-line':'<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+ 'star':'<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+ 'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>'
+};
+/** @param {IconName} n @param {number} [s=16] @returns {string} */
+const ico=(n,s)=>{const z=s||16;return '<svg class="ico" width="'+z+'" height="'+z+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+(ICO[n]||'')+'</svg>';};
 const today=()=>new Date().toLocaleDateString('en-GB');
 const addMonth=()=>{const d=new Date();d.setMonth(d.getMonth()+1);return d.toLocaleDateString('en-GB');};
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -7100,17 +7274,26 @@ const App={
   else if(idx===2)flag={t:'התלבט על סעיפים — הזדמנות',c:'var(--red)'};
   return {idx:idx, cur:S[idx], steps:S, age:age, flag:flag};
  },
- stageBar(st){
-  // ציר זמן ויזואלי
-  return '<div class="dl-bar">'+st.steps.map((s,i)=>
-    '<div class="dl-node'+(i<st.idx?' past':(i===st.idx?' now':''))+'" title="'+s.n+'">'+
-      '<span class="dl-dot">'+(i<st.idx?'✓':(i===st.idx?s.i:''))+'</span>'+
-      (i===st.idx?'<span class="dl-lbl">'+s.n+'</span>':'')+
-    '</div>').join('')+'</div>';
+ /**
+  * מד שלבי העסקה — שבעה מקטעים דקים במקום שבעה עיגולים עם אמוג'י.
+  * התווית מציגה את השלב הנוכחי, והרמז לצידה אומר מה זה אומר ליהודה.
+  * @param {{idx:number,cur:{n:string},steps:Array<{n:string}>,flag:?{t:string}}} st
+  * @param {'neutral'|'ok'|'warn'|'red'} tn
+  * @returns {string}
+  */
+ stageMeter(st,tn){
+  const n=st.steps.length,cur=st.idx;
+  const hint=cur===2?'הזדמנות לסגירה':(st.flag?(cur===1?'עוד לא אישר':st.flag.t):('שלב '+(cur+1)+' מתוך '+n));
+  return '<div class="tk-stage">'+
+    '<div class="tk-stage-top"><span class="tk-pill" data-tone="'+tn+'">'+esc(st.cur.n)+'</span>'+
+    '<span class="tk-stage-h">'+esc(hint)+'</span></div>'+
+    '<div class="tk-meter" data-tone="'+tn+'" role="progressbar" aria-label="שלב העסקה" aria-valuemin="1" aria-valuemax="'+n+
+    '" aria-valuenow="'+(cur+1)+'" aria-valuetext="'+esc(st.cur.n)+'">'+
+    st.steps.map((s,i)=>'<i class="'+(i<cur?'done':(i===cur?'now':''))+'"></i>').join('')+'</div></div>';
  },
  trackingModal(){const tab=this.state.trkTab||'track';
   if(tab==='all')return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
-   <div class="chips" style="padding:0 0 10px"><button class="chip" data-trktab="track">👁 מעקב לינקים</button><button class="chip on" data-trktab="all">📋 כל ההצעות</button></div>
+   ${this.trkSeg('all')}
    <div class="tab-swap">${this.sentQuotesBody()}</div>`;
   const links=Store.get('sentLinks',[]);const live=this._trackData||{};
   const ago=ts=>{if(!ts)return '';const m=Math.floor((Date.now()-ts)/60000);if(m<1)return 'הרגע';if(m<60)return 'לפני '+m+' דק׳';const hr=Math.floor(m/60);if(hr<24)return 'לפני '+hr+' שע׳';const d=Math.floor(hr/24);return 'לפני '+d+' ימים';};
@@ -7145,68 +7328,46 @@ const App={
   const FL={all:'הכל',viewed:'נצפו',played:'התלבטו',approved:'אושרו'};
   const pct=sent?Math.round(approved/sent*100):0;
   const vpct=sent?Math.round(viewed/sent*100):0;
+  // "זמן להתקשר" — לקוח אחד בשורה (הצפייה העדכנית ביותר), עד 5
+  const callAlert=(()=>{
+    const hot=links.filter(l=>{const d=live[l.id]||{};return d.viewedAt&&!d.approvedAt&&(Date.now()-d.viewedAt)>2*864e5;});
+    const seen={},uniq=[];
+    hot.slice().sort((a,b)=>((live[b.id]||{}).viewedAt||0)-((live[a.id]||{}).viewedAt||0))
+       .forEach(l=>{const k=String(l.client||'—').trim();if(seen[k])return;seen[k]=1;uniq.push(l);});
+    if(!uniq.length)return '';
+    const top=uniq.slice(0,5),more=uniq.length-top.length;
+    return `<section class="tk-alert" aria-label="זמן להתקשר">
+      <h3 class="tk-alert-h">${ico('phone',15)}זמן להתקשר · ${uniq.length} צפו ולא אישרו</h3>
+      ${top.map(l=>`<div class="tk-alert-r"><span><b>${esc(l.client)||'—'}</b> · ${nisR(l.total)} · צפה ${ago((live[l.id]||{}).viewedAt)}</span>${l.phone?`<button class="tk-ib" data-trknudge="${esc(l.id)}" aria-label="שלח תזכורת ל${esc(l.client)||'לקוח'}">${ico('message-circle',16)}</button>`:''}</div>`).join('')}
+      ${more>0?`<div class="tk-alert-r"><span>ועוד ${more} לקוחות</span><button class="tk-btn sm" data-trkf2="viewed">הצג</button></div>`:''}
+    </section>`;})();
+  const clients=Store.get('clients',[])||[];
+  const F=[['all',sent,'נשלחו',''],['viewed',viewed,'נצפו · '+vpct+'%','warn'],['played',played,'התלבטו','red'],['approved',approved,'אושרו · '+pct+'%','ok']];
   return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
-   <div class="chips" style="padding:0 0 10px"><button class="chip on" data-trktab="track">👁 מעקב לינקים</button><button class="chip" data-trktab="all">📋 כל ההצעות</button></div>
-   <div class="trk-stats4">
-     <div class="trk-box ${f==='all'?'on':''}" data-trkf="all"><div class="n">${sent}</div><div class="l">נשלחו</div></div>
-     <div class="trk-box ${f==='viewed'?'on':''}" data-trkf="viewed"><div class="n" style="color:var(--blue)">${viewed}</div><div class="l">נצפו ${vpct}%</div></div>
-     <div class="trk-box ${f==='played'?'on':''}" data-trkf="played"><div class="n" style="color:var(--warn)">${played}</div><div class="l">התלבטו</div></div>
-     <div class="trk-box ${f==='approved'?'on':''}" data-trkf="approved"><div class="n" style="color:var(--ok)">${approved}</div><div class="l">אושרו ${pct}%</div></div>
+   ${this.trkSeg('track')}
+   <div class="tk-filters" role="group" aria-label="סינון לפי מצב">
+     ${F.map(([k,n,lb,tn])=>`<button class="tk-f" data-trkf="${k}" aria-pressed="${f===k}"><span class="tk-f-n">${n}</span><span class="tk-f-l">${tn?`<i class="tk-dot" data-tone="${tn}"></i>`:''}${lb}</span></button>`).join('')}
    </div>
-   <div class="trk-search"><span class="mg">🔍</span>
-     <input id="trk-q" placeholder="חיפוש: שם לקוח, מס׳ הצעה או טלפון" value="${String(q).replace(/"/g,'&quot;')}"/>
-     ${q?`<button class="cl" id="trk-qclear">✕</button>`:''}</div>
-   ${approved?`<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:10px">היקף שאושר: <b style="color:var(--ok)">${nisR(sumApproved)}</b></div>`:''}
-   ${dupes>0?`<div class="trk-dupe"><span>⚠️ ${dupes} כרטיסים כפולים — אותה הצעה נשלחה שוב</span><button class="mini" id="trk-dedupe">🧹 מזג</button></div>`:''}
-   ${(()=>{const hot=links.filter(l=>{const d=live[l.id]||{};return d.viewedAt&&!d.approvedAt&&(Date.now()-d.viewedAt)>2*864e5;});
-     // לקוח אחד = שורה אחת (הצפייה העדכנית ביותר), עד 5 שורות
-     const seen={},uniq=[];
-     hot.slice().sort((a,b)=>((live[b.id]||{}).viewedAt||0)-((live[a.id]||{}).viewedAt||0))
-        .forEach(l=>{const k=String(l.client||'—').trim();if(seen[k])return;seen[k]=1;uniq.push(l);});
-     if(!uniq.length)return '';
-     const top=uniq.slice(0,5),more=uniq.length-top.length;
-     return `<div class="trk-alert"><div class="ta-h">🔥 זמן להתקשר — ${uniq.length} לקוחות צפו ולא אישרו</div>${top.map(l=>`<div class="ta-row"><span>${esc(l.client)||'—'} · ${nisR(l.total)} · צפה ${ago((live[l.id]||{}).viewedAt)}</span>${l.phone?`<button class="mini" data-trknudge="${l.id}">📲</button>`:''}</div>`).join('')}${more>0?`<div class="ta-row" style="opacity:.75;font-size:11.5px"><span>ועוד ${more} לקוחות</span><button class="mini" data-trkf2="viewed">הצג</button></div>`:''}</div>`;})()}
-   ${this.dropPanel()}
-   <div class="trk-count">
-     <span>מציג <b style="color:var(--txt)">${shown.length}</b> מתוך ${sent}${(f!=='all'||q)?' · '+FL[f]+(q?' · "'+esc(q)+'"':''):''}</span>
-     <select class="trk-sort" id="trk-sort">
+   <div class="tk-search">${ico('search',17)}
+     <input id="trk-q" type="text" enterkeyhint="search" autocomplete="off" placeholder="חיפוש: שם, מס׳ הצעה או טלפון" aria-label="חיפוש בהצעות שנשלחו" value="${String(q).replace(/"/g,'&quot;')}"/>
+     ${q?`<button class="tk-ib" id="trk-qclear" aria-label="נקה חיפוש">${ico('x',16)}</button>`:''}</div>
+   ${approved?`<p class="tk-note">${ico('check',14)}היקף שאושר <b>${nisR(sumApproved)}</b></p>`:''}
+   ${dupes>0?`<div class="tk-banner" role="status">${ico('copy',16)}<span>${dupes} כרטיסים כפולים — אותה הצעה נשלחה שוב</span><button class="tk-btn sm" id="trk-dedupe">מזג</button></div>`:''}
+   ${callAlert}
+   ${this.dropDisclosure()}
+   <div class="tk-toolbar">
+     <span class="tk-count" aria-live="polite">מציג <b>${shown.length}</b> מתוך ${sent}${(f!=='all'||q)?' · '+FL[f]+(q?' · "'+esc(q)+'"':''):''}</span>
+     <label class="tk-select" title="מיון">${ico('arrow-up-down',14)}<select id="trk-sort" aria-label="מיון">
        <option value="new" ${sortBy==='new'?'selected':''}>הכי חדש</option>
        <option value="amount" ${sortBy==='amount'?'selected':''}>סכום גבוה</option>
-       <option value="urgent" ${sortBy==='urgent'?'selected':''}>הכי דחוף</option>
-     </select>
+       <option value="urgent" ${sortBy==='urgent'?'selected':''}>הכי דחוף</option></select></label>
+     <button class="tk-ib" id="trk-refresh" aria-label="רענן סטטוס" title="רענן סטטוס">${ico('refresh-cw',17)}</button>
+     <button class="tk-ib" id="trk-recover" aria-label="שחזר לינקים מהענן" title="שחזר מהענן">${ico('cloud-download',17)}</button>
    </div>
-   <div style="display:flex;gap:8px;margin-bottom:12px">
-     <button class="btn-ghost" id="trk-refresh" style="flex:1;margin:0">🔄 רענן</button>
-     <button class="btn-ghost" id="trk-recover" style="flex:1;margin:0">☁️ שחזר מהענן</button>
-   </div>
-   ${!sent?`<div style="font-size:11.5px;color:var(--muted);text-align:center;margin:-4px 0 12px">רשימת המעקב ריקה. אם שלחת לינקים — "שחזר מהענן" יביא אותם חזרה.</div>`:''}
-   ${shown.length?shown.map(l=>{const d=live[l.id]||{};
-     const cl=(Store.get('clients',[])||[]).find(x=>x.name===l.client)||{};
-     const st=this.dealStage(l,d,cl);
-     const dupN=l.no?(byNo[l.no+(l.live?'|L':'|W')]||1):1;
-     /* אותה שפה ויזואלית כמו הכרטיסים במסך הבית: אווטר עם ראשי
-        תיבות, וצבע לפי מצב העסקה במקום כרטיס אפור אחיד. */
-     const dcls=d.approvedAt?'ok':(d.live?'live':(st.flag?'warn':''));
-     return `<div class="dl-card ${dcls}">
-       <div class="dl-top">
-         ${this.avatar(l.client,38)}
-         <div style="flex:1;min-width:0"><div class="dl-name">${esc(l.client)||'ללא שם'}</div>
-           <div class="dl-meta">${dupN>1?`<span class="dl-dup">נשלח ×${dupN}</span>`:''}${esc(l.no)} · נשלח ${ago(l.ts)} · ${(l.live||d.live)?'⚡ לינק חי':'🔗 לינק'}</div></div>
-         <div class="dl-amt">${nisR(d.curTotal!=null?d.curTotal:l.total)}</div>
-       </div>
-       ${this.stageBar(st)}
-       ${this.dealBox(l,d,st)}
-       ${d.comment?`<div class="trk-comment">💬 <b>הערת לקוח:</b> ${esc(d.comment)}</div>`:''}
-       <div class="dl-acts">
-         ${l.phone?`<button class="mini" onclick="location.href='tel:${esc(l.phone).replace(/[^0-9+]/g,'')}'">📞 חיוג</button>`:''}
-         ${(!d.approvedAt&&l.phone)?(((this.liveFacts(d)||{}).hesit||[]).length
-            ?`<button class="mini pri" data-lvmsg="${l.id}">📲 נסח הודעה</button>`
-            :`<button class="mini pri" data-trknudge="${l.id}">📲 תזכורת</button>`):''}
-         ${d.signature?`<button class="mini" data-trksig="${l.id}">✍️ חתימה</button>`:''}
-         ${(d.approvedAt&&l.phone)?`<button class="mini" data-review="${cl.id||''}">📩 בקש משוב</button>`:''}
-         <button class="del" data-trkdel="${l.id}">🗑️</button>
-       </div>
-       </div>`;}).join(''):(sent?`<div class="trk-none">אין תוצאות ${q?`עבור "${esc(q)}"`:`בקטגוריה "${FL[f]}"`}<br><button class="mini" id="trk-clearall" style="margin-top:10px">↺ נקה סינון</button></div>`:this.emptyState('🔗','עדיין לא נשלחו לינקים','לינק חי מתעד מה הלקוח פתח, מה הוריד ומתי אישר.',{attr:"data-gotab=\"build\"",label:'➕ בנה הצעה'}))}`;
+   ${!sent?`<p class="tk-hint">רשימת המעקב ריקה. אם שלחת לינקים — כפתור הענן ${ico('cloud-download',13)} יחזיר אותם.</p>`:''}
+   ${shown.length?`<div class="tk-list">${shown.map(l=>this.trackCard(l,live[l.id]||{},clients,byNo,ago)).join('')}</div>`
+     :(sent?`<div class="tk-empty">${ico('search',22)}<p>אין תוצאות ${q?`עבור "${esc(q)}"`:`ב"${FL[f]}"`}</p><button class="tk-btn" id="trk-clearall">${ico('x',15)}נקה סינון</button></div>`
+     :this.emptyState('🔗','עדיין לא נשלחו לינקים','לינק חי מתעד מה הלקוח פתח, מה הוריד ומתי אישר.',{attr:"data-gotab=\"build\"",label:'➕ בנה הצעה'}))}`;
  },
  /* ═══ מחיקת לקוח מכל האפליקציה ═══
     קודם היו שלוש מחיקות נפרדות, וכל אחת מחקה רק מהרשימה שלה: מעקב (לינק),
@@ -7247,6 +7408,78 @@ const App={
   }catch(e){try{Store.logErr('deleteClient',e);}catch(_){}this.toast('המחיקה נכשלה');}
  },
 
+ /**
+  * בקרת מקטעים — מעקב לינקים / כל ההצעות.
+  * @param {'track'|'all'} a  @returns {string}
+  */
+ trkSeg(a){
+  return '<div class="tk-seg" role="tablist" aria-label="תצוגת מעקב">'+
+    '<button class="tk-seg-b" role="tab" aria-selected="'+(a==='track')+'" data-trktab="track">'+ico('eye',15)+'מעקב לינקים</button>'+
+    '<button class="tk-seg-b" role="tab" aria-selected="'+(a==='all')+'" data-trktab="all">'+ico('list',15)+'כל ההצעות</button></div>';
+ },
+
+ /**
+  * הטון של כרטיס נגזר ממה שיהודה צריך לעשות — לא מהשלב ולא מסוג הלינק.
+  * קודם כרטיס של לינק חי נצבע ירוק כולו, גם כשהעסקה עוד לא נסגרה.
+  * @param {{idx:number,flag:?object}} st  @returns {'neutral'|'ok'|'warn'|'red'}
+  */
+ trkTone(st){return st.idx>=3?'ok':(st.idx===2?'red':(st.flag?'warn':'neutral'));},
+
+ /**
+  * כרטיס מעקב לינק.
+  * @param {{id:string,client?:string,phone?:string,no?:string,total?:number,ts?:number,live?:boolean}} l
+  * @param {{viewedAt?:number,approvedAt?:number,live?:boolean,events?:Array,curTotal?:number,comment?:string,signature?:string}} d
+  * @param {Array<{id:string,name:string}>} clients
+  * @param {Object<string,number>} byNo  ספירת כפילויות לפי מספר+סוג
+  * @param {(ts:number)=>string} ago
+  * @returns {string}
+  */
+ trackCard(l,d,clients,byNo,ago){
+  const cl=clients.find(x=>x&&x.name===l.client)||{};
+  const st=this.dealStage(l,d,cl);
+  const tn=this.trkTone(st);
+  const isLive=!!(l.live||d.live);
+  const dupN=l.no?(byNo[l.no+(l.live?'|L':'|W')]||1):1;
+  const nm=esc(l.client)||'ללא שם';
+  const ph=String(l.phone||'').replace(/[^0-9+]/g,'');
+  const hes=((this.liveFacts(d)||{}).hesit||[]).length>0;
+  const acts=[];
+  if(ph)acts.push('<a class="tk-btn" href="tel:'+ph+'">'+ico('phone',16)+'חיוג</a>');
+  if(!d.approvedAt&&l.phone)acts.push(hes
+    ?'<button class="tk-btn pri" data-lvmsg="'+esc(l.id)+'">'+ico('message-circle',16)+'נסח הודעה</button>'
+    :'<button class="tk-btn pri" data-trknudge="'+esc(l.id)+'">'+ico('message-circle',16)+'תזכורת</button>');
+  if(d.signature)acts.push('<button class="tk-btn" data-trksig="'+esc(l.id)+'">'+ico('pen-line',16)+'חתימה</button>');
+  if(d.approvedAt&&l.phone)acts.push('<button class="tk-btn" data-review="'+esc(cl.id||'')+'">'+ico('star',16)+'בקש משוב</button>');
+  acts.push('<button class="tk-ib danger" data-trkdel="'+esc(l.id)+'" aria-label="הסר את '+nm+' מהמעקב" title="הסר מהמעקב">'+ico('trash-2',17)+'</button>');
+  return '<article class="tk-card" data-tone="'+tn+'" aria-label="'+nm+' — '+esc(st.cur.n)+'">'+
+   '<header class="tk-head">'+this.avatar(l.client,40)+
+     '<div class="tk-id"><h3 class="tk-name">'+nm+'</h3>'+
+     '<p class="tk-meta">'+(dupN>1?'<span class="tk-tag">נשלח ×'+dupN+'</span>':'')+
+       '<span dir="ltr">'+esc(l.no||'')+'</span><span aria-hidden="true">·</span><span>נשלח '+ago(l.ts)+'</span>'+
+       '<span aria-hidden="true">·</span><span class="tk-kind">'+ico(isLive?'zap':'link',13)+(isLive?'לינק חי':'לינק')+'</span></p></div>'+
+     '<div class="tk-amt">'+nisR(d.curTotal!=null?d.curTotal:l.total)+'</div></header>'+
+   this.stageMeter(st,tn)+
+   this.tkFacts(l,d)+
+   (d.comment?'<blockquote class="tk-quote">'+ico('message-circle',14)+'<span><b>הערת לקוח:</b> '+esc(d.comment)+'</span></blockquote>':'')+
+   '<footer class="tk-acts">'+acts.join('')+'</footer></article>';
+ },
+
+ /**
+  * "מה הלקוחות מורידים" — מקופל כברירת מחדל, עם שורת סיכום.
+  * קודם התיבה תפסה כמעט חצי מסך לפני הכרטיס הראשון.
+  * @returns {string}
+  */
+ dropDisclosure(){
+  let s;try{s=this.dropStats();}catch(e){return '';}
+  const inner=this.dropPanel();if(!inner)return '';
+  const top=s&&s.rows&&s.rows[0];
+  const sum=top?esc(top.name)+' · '+top.pct+'%':((s&&s.seenLinks)?s.seenLinks+' לינקים':'');
+  return '<details class="tk-disc"'+(this._dropOpen?' open':'')+'>'+
+    '<summary><span class="tk-disc-i">'+ico('trending-down',16)+'</span><span class="tk-disc-t">מה הלקוחות מורידים</span>'+
+    '<span class="tk-disc-s">'+sum+'</span><span class="tk-disc-c">'+ico('chevron-down',16)+'</span></summary>'+
+    '<div class="tk-disc-b">'+inner+'</div></details>';
+ },
+
  /* ═══ מה הלקוח עשה בלינק החי — נתונים, לא תצוגה ═══
     קודם הפונקציה הזו ציירה תיבה ירוקה שלמה, שחזרה על הסכום מהכותרת,
     על "התלבט" מפס השלבים, ועל "לינק חי" משורת הפרטים. עכשיו היא רק
@@ -7263,22 +7496,19 @@ const App={
   return {opened:opened,last:last,hesit:hesit,approved:!!ev.find(e=>e.a==='approve')};
  },
 
- // תיבה אחת: מצב העסקה + מה הלקוח עשה בלינק החי
- dealBox(l,d,st){
-  const f=this.liveFacts(d);
-  const rows=[];
-  if(f){
-    rows.push(f.opened?('👁 פתח '+(f.opened===1?'פעם אחת':f.opened+' פעמים')+(f.last?' · אחרון '+f.last:'')):'👁 עדיין לא פתח');
-    if(f.hesit.length){
-      const cut=(d.curTotal!=null&&+l.total>+d.curTotal)?(+l.total-+d.curTotal):0;
-      rows.push('<span class="dl-cut">✂️ ביטל: '+f.hesit.slice(0,3).map(n=>esc(n)).join(' · ')+
-        (f.hesit.length>3?' ועוד '+(f.hesit.length-3):'')+(cut?' <b>−'+nisR(cut)+'</b>':'')+'</span>');
-    }
+ /**
+  * מה הלקוח עשה בלינק החי — רשימה קצרה, רק מידע שלא מופיע במקום אחר בכרטיס.
+  * @param {{total?:number}} l  @param {object} d  @returns {string}
+  */
+ tkFacts(l,d){
+  const f=this.liveFacts(d);if(!f)return '';
+  const rows=['<li>'+ico('eye',14)+'<span>'+(f.opened?('פתח '+(f.opened===1?'פעם אחת':f.opened+' פעמים')+(f.last?' · אחרון '+f.last:'')):'עדיין לא פתח')+'</span></li>'];
+  if(f.hesit.length){
+    const cut=(d.curTotal!=null&&+l.total>+d.curTotal)?(+l.total-+d.curTotal):0;
+    rows.push('<li class="cut">'+ico('scissors',14)+'<span>ביטל: '+f.hesit.slice(0,3).map(x=>esc(x)).join(' · ')+
+      (f.hesit.length>3?' ועוד '+(f.hesit.length-3):'')+(cut?' <b>−'+nisR(cut)+'</b>':'')+'</span></li>');
   }
-  if(!st.flag&&!rows.length)return '';
-  return '<div class="dl-box"'+(st.flag?' style="border-inline-start-color:'+st.flag.c+'"':'')+'>'+
-    (st.flag?'<div class="dl-box-t">'+(st.idx===2?'⚡ ':'⏳ ')+st.flag.t+'</div>':'')+
-    rows.map(r=>'<div class="dl-box-r">'+r+'</div>').join('')+'</div>';
+  return '<ul class="tk-facts">'+rows.join('')+'</ul>';
  },
  async liveDraftMsg(id){
   const d=(this._trackData||{})[id];const l=Store.get('sentLinks',[]).find(x=>x.id===id);
@@ -8834,6 +9064,8 @@ const App={
   on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){(Tomb.add([id]),Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id)));this.render();}});
   on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
+  // התיבה המתקפלת זוכרת אם הייתה פתוחה — render בונה אותה מחדש
+  (()=>{const dd=document.querySelector('.tk-disc');if(dd)dd.addEventListener('toggle',()=>{this._dropOpen=dd.open;});})();
   // ── סינון בלחיצה על כרטיסי הסיכום ──
   on('[data-trkf]','click',e=>{
     const v=e.currentTarget.dataset.trkf;
