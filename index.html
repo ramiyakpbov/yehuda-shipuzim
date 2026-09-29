@@ -241,13 +241,11 @@ input,select,textarea{font-family:inherit;}
 .cl-acts .mini.go{border-color:var(--red);color:#fff;font-weight:800;flex:1 1 100%;}
 .cl-acts .del{flex:0 0 auto;padding:9px 12px;background:var(--bg2)!important;
   border:1px solid var(--line)!important;border-radius:10px;opacity:.65;}
-.acc-head{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;
-  background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:13px 15px;
-  margin:9px 0 0;-webkit-tap-highlight-color:transparent;transition:border-color .15s;}
-.acc-head:active{transform:scale(.99);}
-.acc-head.on{border-color:var(--red);}
-.acc-head::after{content:'⌄';font-size:16px;opacity:.55;transition:transform .2s;flex:none;}
-.acc-head.on::after{transform:rotate(180deg);opacity:1;}
+
+
+
+
+
 .dp-box{background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:13px;margin:12px 0;}
 .dp-h{font-weight:800;font-size:14px;display:flex;flex-direction:column;gap:2px;margin-bottom:10px;}
 .dp-sub{font-size:11px;color:var(--muted);font-weight:600;}
@@ -611,9 +609,9 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .pf-t{font-weight:800;font-size:14px;line-height:1.35;}
 .pf-d{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.45;}
 .pf-f{font-size:11px;color:var(--warn);margin-top:4px;}
-.acc-body{display:none;padding:6px 3px 4px;}
-.acc-body.on{display:block;animation:accIn .18s ease;}
-@keyframes accIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+
+
+
 
 .suggest-bar{position:fixed;bottom:74px;left:0;right:0;z-index:59;background:linear-gradient(180deg,rgba(20,20,23,.6),#141417);padding:8px 12px;border-top:1px solid var(--line);}
 .chip-ai{border-color:rgba(237,28,36,.5)!important;color:var(--red)!important;font-weight:800;}
@@ -658,6 +656,9 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .sheet h2{margin:0 0 14px;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:space-between;}
 .sheet h2 .x{background:var(--bg3);border:1px solid var(--line);color:var(--muted);width:32px;height:32px;border-radius:8px;font-size:16px;}
 .sec-title{font-size:12.5px;color:var(--red);margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center;}
+/* כותרת מקטע = כותרת קבוצה, לא כפתור. קו דק מעליה מפריד בין הקבוצות. */
+.sheet .sec-title{padding-top:16px;border-top:1px solid var(--hair);}
+.sheet .sec-title:first-child{padding-top:0;border-top:0;}
 .sec-title .mini2{background:var(--bg3);border:1px solid var(--line);color:var(--txt);font-size:12.5px;border-radius:8px;padding:5px 10px;font-weight:600;}
 .field{margin-bottom:12px;}
 .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:400;}
@@ -3178,7 +3179,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='21.5';
+const VERSION='21.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3332,7 +3333,11 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v21.5 — אייקונים אחידים</div>
+   b:`<div class="g-plate"><div class="g-ph">v21.6 — בלי גרמושקות</div>
+   <ul class="g-ul"><li><b>פרטי ההצעה — הכל פתוח</b> — קודם כל המקטעים התחילו סגורים, כולל ההנחה, המקדמה, וסה"כ לתשלום (שהסתתר בתוך "גלריית עבודות"). 7 מתוך 17 השדות היו מוסתרים. עכשיו הכל גלוי, עם קו דק שמפריד בין הקבוצות.</li>
+   <li><b>הגדרות — הכל פתוח</b> — קודם רק מקטע אחד נפתח בכל פעם, ופתיחה של אחד סגרה את השני וקפצה במסך.</li>
+   <li><b>מה נשאר מתקפל, ולמה</b> — רק דברים משניים שהכותרת שלהם מספיקה: כלי ה-AI בהצעה (כדי שלא ידחפו את כפתורי השליחה למטה), "מה הלקוחות מורידים" במעקב, והקטגוריות בקטלוג.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v21.5 — אייקונים אחידים</div>
    <ul class="g-ul"><li><b>אייקוני קו במקום אמוג'י</b> — בשורת הלשוניות, בכפתורים העליונים, בשמונת הקיצורים במסך הבית ובכרטיס הדחוף. אמוג'י נראים אחרת בכל טלפון (סמסונג, גוגל, שיאומי); אייקוני קו נראים זהה בכל מכשיר, ובצבע אחד.</li>
    <li><b>המונים במסך הבית</b> — נקודה קטנה בצבע המצב במקום אמוג'י: אדום לפג תוקף, כתום לנצפו, אפור לממתינות, ירוק לאושרו. אותה שפה כמו במסך המעקב.</li>
    <li><b>"לחזור היום" בשפה החדשה</b> — כרטיס אדום כשיש איחור, כתום כשהיעד היום, בלי צבע לשאר. כל מסכי המעקב גמורים.</li></ul></div>
@@ -6188,83 +6193,6 @@ const App={
  // הופך כל כותרת לכפתור שפותח וסוגר את התוכן שמתחתיו.
  // אקורדיון להגדרות בלבד. כל שאר המסכים (הצעת מחיר, הצעות מהירות,
  // גיבוי, תמונות) משתמשים באותו class ואסור לגעת בהם.
- /* מקפל את המקטעים המשניים במסך ההצעה. ארבעת השדות שבשימוש
-    יומיומי — לקוח, פרויקט, תוקף, שליחה — נשארים פתוחים תמיד. */
- sectionizeQuote(){
-  try{
-   if(this.state.modal!=='quote')return;
-   const root=document.querySelector('.sheet');
-   if(!root)return;
-   const titles=Array.prototype.slice.call(root.querySelectorAll('.sec-title'));
-   if(!titles.length)return;
-   const st=this.state.qOpen||(this.state.qOpen={});
-   const bodies=[];
-   titles.forEach((t,idx)=>{
-    let body=t.nextElementSibling;
-    if(!(body&&body.classList.contains('acc-body'))){
-      body=document.createElement('div');body.className='acc-body';
-      let n=t.nextElementSibling;
-      // עוצר גם ב-acc-stop: אזור השליחה נשאר תמיד גלוי. קודם הכל נאסף
-      // לתוך "שפת המסמך", שמתחיל סגור — והכפתורים הוסתרו בפתיחה.
-      while(n&&!n.classList.contains('sec-title')&&!n.classList.contains('acc-stop')){const nx=n.nextElementSibling;body.appendChild(n);n=nx;}
-      t.parentNode.insertBefore(body,t.nextElementSibling);
-    }
-    t.classList.add('acc-head');
-    bodies.push(body);
-   });
-   const paint=()=>titles.forEach((t,i)=>{
-     const on=st['q'+i]===true;
-     t.classList.toggle('on',on);bodies[i].classList.toggle('on',on);});
-   titles.forEach((t,idx)=>{
-     t.onclick=()=>{st['q'+idx]=!st['q'+idx];this.state.qOpen=st;paint();this.haptic(8);};
-   });
-   paint();
-  }catch(e){}
- },
- sectionizeSettings(){
-  try{
-   if(this.state.modal!=='settings')return;
-   const root=document.getElementById('set-root')||document.querySelector('.sheet');
-   if(!root)return;
-   const titles=Array.prototype.slice.call(root.querySelectorAll('.sec-title'));
-   if(!titles.length)return;
-   const st=this.state.setOpen||(this.state.setOpen={});
-   // מקטע אחד פתוח תמיד, כדי שלא ייפתח מסך שנראה ריק
-   if(!Object.keys(st).some(k=>st[k])){
-     st[this.state.secureUnlocked?'s0':('s'+(titles.length-1))]=true;
-   }
-   const bodies=[];
-   titles.forEach((t,idx)=>{
-    let body=t.nextElementSibling;
-    if(!(body&&body.classList.contains('acc-body'))){
-      body=document.createElement('div');
-      body.className='acc-body';
-      let n=t.nextElementSibling;
-      while(n&&!n.classList.contains('sec-title')){const nx=n.nextElementSibling;body.appendChild(n);n=nx;}
-      t.parentNode.insertBefore(body,t.nextElementSibling);
-    }
-    t.classList.add('acc-head');
-    bodies.push(body);
-   });
-   const paint=()=>{
-     titles.forEach((t,i)=>{
-       const on=st['s'+i]===true;
-       t.classList.toggle('on',on);
-       bodies[i].classList.toggle('on',on);
-     });
-   };
-   titles.forEach((t,idx)=>{
-     t.onclick=()=>{
-       const willOpen=st['s'+idx]!==true;
-       Object.keys(st).forEach(k=>st[k]=false);
-       st['s'+idx]=willOpen;this.state.setOpen=st;
-       paint();this.haptic(10);
-       if(willOpen)setTimeout(()=>{try{t.scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},80);
-     };
-   });
-   paint();
-  }catch(e){}
- },
  openWa(phone,msg){
   const url=waLink(phone,msg);
   let w=null;
@@ -7531,6 +7459,14 @@ const App={
     '<div class="tk-disc-b">'+inner+'</div></details>';
  },
 
+ /* ═══ בלי גרמושקות בטפסים ═══
+    עד v21.6 פרטי ההצעה וההגדרות הפכו כל כותרת מקטע לגרמושקה אחרי הרינדור
+    (sectionizeQuote / sectionizeSettings). בפרטי ההצעה הכל התחיל סגור — כולל
+    הנחה, מקדמה, וסה"כ לתשלום (שישב בתוך "גלריית עבודות"). בהגדרות רק מקטע
+    אחד נפתח בכל פעם, ופתיחה קפצה במסך. הוסר לבקשת רמי.
+    הכלל: קיפול מותר רק סביב כלי או פירוט משני שהכותרת הסגורה מספיקה כדי לדעת
+    מה בו (כלי AI בהצעה, "מה הלקוחות מורידים", קטגוריות הקטלוג). לעולם לא סביב
+    שדות, סכומים או הגדרות. */
  /* ═══ מה הלקוח עשה בלינק החי — נתונים, לא תצוגה ═══
     קודם הפונקציה הזו ציירה תיבה ירוקה שלמה, שחזרה על הסכום מהכותרת,
     על "התלבט" מפס השלבים, ועל "לינק חי" משורת הפרטים. עכשיו היא רק
@@ -8700,8 +8636,8 @@ const App={
     setTimeout(()=>this.toast('📚 המחירון עודכן — נוספו '+m.items+' סעיפים חדשים'+(m.cats?' ו-'+m.cats+' קטגוריות':'')),700);}
   
   const aip=document.getElementById('ai-provider');if(aip)aip.onchange=()=>Store.set('aiProvider',aip.value);
-  this.sectionizeSettings();
-  this.sectionizeQuote();
+  
+  
   this.runCounters();
   this.pulseSum();
   // פס ההתקדמות מונפש ב-scaleX — הערך מוזן כמשתנה
