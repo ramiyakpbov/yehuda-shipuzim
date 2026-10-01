@@ -1695,6 +1695,41 @@ div.tk-f:active{transform:none;}
 .plan-scan>li.pr{justify-content:space-between;color:var(--txt);}
 .plan-scan>li.pr>b{font-variant-numeric:tabular-nums;}
 .plan-scan-acts{margin-top:8px;padding-top:0;border-top:0;}
+/* כפתור ביטול במסך ההמתנה */
+.busy-x{margin-top:14px;min-height:40px;padding:0 22px;border-radius:var(--r-m);border:1px solid var(--hair-2);
+  background:transparent;color:var(--txt);font-family:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer;}
+.busy-x:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+/* כלים חכמים */
+.ait-grid{display:flex;flex-direction:column;gap:8px;}
+.ait-row{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:10px 12px;text-align:start;
+  background:var(--bg2);border:1px solid var(--hair);border-radius:var(--r-l);color:var(--txt);font-family:inherit;cursor:pointer;
+  transition:background-color .2s ease,transform .3s var(--spring);}
+.ait-row:active{transform:scale(.98);}
+@media (hover:hover){.ait-row:hover{background:var(--bg3);}}
+.ait-row:focus-visible{outline:none;box-shadow:var(--focus-ring);}
+.ait-ic{flex:none;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:var(--r-m);
+  background:var(--bg3);border:1px solid var(--hair);color:var(--txt);}
+.ait-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.ait-tx>b{font-size:var(--fs-s);font-weight:700;}
+.ait-tx>span{font-size:var(--fs-xs);color:var(--muted);line-height:1.45;}
+.ait-go{flex:none;display:inline-flex;color:var(--muted);}
+.ait-back{width:auto;margin:0 0 6px;}
+.ait-lbl{display:block;margin:10px 2px 6px;font-size:var(--fs-xs);color:var(--muted);}
+.ait-in,.ait-msg{width:100%;box-sizing:border-box;padding:12px;border-radius:var(--r-m);border:1px solid var(--hair);
+  background:var(--bg2);color:var(--txt);font-family:inherit;font-size:var(--fs-m);line-height:1.6;resize:vertical;}
+.ait-lang{margin-top:10px;grid-template-columns:repeat(5,1fr);}
+.ait-prev{display:block;max-width:100%;max-height:220px;margin:10px auto 0;border-radius:var(--r-m);border:1px solid var(--hair);}
+.ait-run{width:100%;margin-top:12px;}
+.ait-res{margin-top:14px;}
+.ait-res .ait-msg{min-height:160px;}
+.ait-list>li small{color:var(--muted);font-size:var(--fs-xxs);}
+.ait-list>li em{font-style:normal;color:var(--txt);}
+.ait-list>li.ok{color:var(--ok);}
+.ait-issue>.tk-dot{margin-top:7px;}
+.ait-chk label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;}
+.ait-chk input{flex:none;width:20px;height:20px;margin-top:2px;accent-color:var(--red);}
+.ait-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:var(--fs-s);color:var(--txt);}
+.ait-acts{flex-wrap:wrap;}
 .tk-banner b{color:var(--txt);}
 .tk-banner.warn{color:var(--warn);background:rgba(245,166,35,.06);border-color:rgba(245,166,35,.28);}
 
@@ -3185,7 +3220,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='21.8';
+const VERSION='21.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3339,7 +3374,12 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v21.8 — שטח מתוכנית גם בעוזר ההצעות</div>
+   b:`<div class="g-plate"><div class="g-ph">v21.9 — 16 כלים חכמים</div>
+   <ul class="g-ul"><li><b>כלים חכמים</b> — בעוזר ההצעות ← כלי כתיבה. על ההצעה: סקירה מקצועית, רשימת חומרים, לוח זמנים, לוח תשלומים, תנאים מותאמים, הודעה עם ההצעה, הסבר ללקוח, אפשרויות להוזלה. מול הלקוח: ניתוח תגובה, חיפוש חכם במחירון, תרגום, מענה לתלונה, הודעת מעקב. שטח ושיווק: צילום המקום ← סעיפים, צ׳קליסט לביקור, פוסט לרשתות.</li>
+   <li><b>כל מספר מחושב מההצעה</b> — חיסכון, תשלומים, סכומים: האפליקציה מחשבת מהסעיפים, לא ה-AI. ה-AI יכול לטעות במספר; החישוב לא.</li>
+   <li><b>כל טקסט ניתן לעריכה</b> לפני העתקה או שליחה בוואטסאפ, וכל ההודעות נכתבות בסגנון שלך.</li>
+   <li><b>כפתור "ביטול"</b> בכל המתנה ל-AI. <b>עומס רגעי</b> — ניסיון נוסף אוטומטי לפני מעבר לגיבוי. <b>בלי אינטרנט</b> — הודעה מיד, בלי לחכות.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v21.8 — שטח מתוכנית גם בעוזר ההצעות</div>
    <ul class="g-ul"><li><b>"קרא שטח מתוכנית" בעוזר ההצעות</b> — בוחרים "הצעת תכנון", והכרטיס מופיע מיד מתחת. אחרי הקריאה עוברים לפרטי ההצעה, ליד שדה השטח, ושם מאשרים.</li>
    <li><b>העוזר נפתח על סוג ההצעה הנוכחית</b> — קודם הוא תמיד נפתח על "מחשבון", גם כשההצעה כבר הייתה הצעת תכנון.</li></ul></div>
    <div class="g-plate"><div class="g-ph">v21.7 — AI אמין יותר, ושני כלים חדשים</div>
@@ -4300,15 +4340,19 @@ const AI=(()=>{
 
  /* ═══ תשתית v21.7 ═══ */
  // בקשה עם מגבלת זמן — כולל קריאת גוף התשובה. קריאה שנתקעת עוברת לגיבוי.
+ // בקשות פעילות — כדי שכפתור "ביטול" יעצור אותן. ביטול הוא שגיאה קשה: לא עוברים לגיבוי.
+ const LIVE=new Set();let cancelAt=0;
+ function cancel(){let n=0;LIVE.forEach(ac=>{ac._cancel=true;try{ac.abort();}catch(e){}n++;});cancelAt=Date.now();return n;}
  async function fetchJ(url,init,ms){
   const ac=typeof AbortController!=='undefined'?new AbortController():null;
+  if(ac)LIVE.add(ac);
   const t=ac?setTimeout(()=>ac.abort(),ms||45000):null;
   try{
    const r=await fetch(url,Object.assign({},init,ac?{signal:ac.signal}:{}));
    let d=null;try{d=await r.json();}catch(e){if(e&&e.name==='AbortError')throw e;}
    return {r:r,d:d};
-  }catch(e){if(e&&e.name==='AbortError')throw E('timeout');throw e;}
-  finally{if(t)clearTimeout(t);}
+  }catch(e){if(e&&e.name==='AbortError')throw (ac&&ac._cancel)?E('cancelled',false):E('timeout');throw e;}
+  finally{if(t)clearTimeout(t);if(ac)LIVE.delete(ac);}
  }
  // מה שנלמד על השרת: האם פלט מובנה נתמך. נבדק מחדש אחרי שבוע.
  function caps(patch){
@@ -4392,7 +4436,7 @@ const AI=(()=>{
     headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':AV,'anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify(Object.assign({model:smart?M.cSmart:M.cFast,max_tokens:maxTokens||1000,messages:[{role:'user',content}]},
      useCat?{system:[{type:'text',text:catalogText(),cache_control:{type:'ephemeral'}}]}:{}))},to));
-  }catch(e){if(e&&e.message==='timeout')throw e;try{Store.logErr('ai',e);}catch(x){} throw E('network');}
+  }catch(e){if(e&&(e.message==='timeout'||e.message==='cancelled'))throw e;try{Store.logErr('ai',e);}catch(x){} throw E('network');}
   if(!r.ok||(d&&d.error))throw E(classify(r.status,d&&d.error&&d.error.message));
   const u=(d&&d.usage)||{};bump('claude',(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0),u.output_tokens);
   try{if(u.cache_read_input_tokens>0){const s=Store.get('aiUsage',{});const k2='cacheHits:'+new Date().toISOString().slice(0,7);s[k2]=(s[k2]||0)+1;Store.set('aiUsage',s);}}catch(e){}
@@ -4428,10 +4472,10 @@ const AI=(()=>{
     if(viaQuery())return await byQuery(ws);
     return await fetchJ(base,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:bodyOf(ws)},to);
    }catch(e){
-    if(e&&e.message==='timeout')throw e;
+    if(e&&(e.message==='timeout'||e.message==='cancelled'))throw e;
     if(viaQuery()){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
     try{const out=await byQuery(ws);caps({gHdr:false});return out;}
-    catch(e2){if(e2&&e2.message==='timeout')throw e2;try{Store.logErr('ai',e2);}catch(x){} throw E('network');}
+    catch(e2){if(e2&&(e2.message==='timeout'||e2.message==='cancelled'))throw e2;try{Store.logErr('ai',e2);}catch(x){} throw E('network');}
    }};
   const ws=!!schema&&schemaOn();
   let {r,d}=await send(ws);
@@ -4453,6 +4497,8 @@ const AI=(()=>{
     opts: {maxTokens, smart, onFallback(providerName)} */
  async function run(parts,opts){
   opts=opts||{};
+  // בלי רשת — הודעה מיד, במקום לחכות 45 שניות למגבלת הזמן
+  if(typeof navigator!=='undefined'&&navigator.onLine===false)throw E('network',false);
   const audio=parts.some(p=>p&&p.t==='audio');
   const pri=Store.get('aiProvider','gemini');
   const sec=pri==='claude'?'gemini':'claude';
@@ -4463,15 +4509,21 @@ const AI=(()=>{
    if(Store.get('aiFallback',true)&&has(sec))chain.push(sec);
   }
   if(!chain.length)throw E('no-key',false);
-  let last=null;
+  let last=null;const t0=Date.now();
   for(let i=0;i<chain.length;i++){
    const p=chain[i];
-   try{
-    const to=opts.timeout||(audio?90000:45000);
-    const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to);
-    if(i>0&&typeof opts.onFallback==='function'){try{opts.onFallback(nameOf(p));}catch(e){}}
-    return txt;
-   }catch(e){last=e;if(e&&e.soft===false&&e.message!=='no-key')break;}
+   for(let k=0;k<2;k++){
+    try{
+     const to=opts.timeout||(audio?90000:45000);
+     const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to);
+     if(i>0&&typeof opts.onFallback==='function'){try{opts.onFallback(nameOf(p));}catch(e){}}
+     return txt;
+    }catch(e){last=e;
+     // עומס רגעי בשרת: עוד ניסיון אחד באותו ספק אחרי שנייה וחצי, לפני שעוברים לגיבוי
+     if(k===0&&e&&e.message==='busy'&&cancelAt<t0){await new Promise(r=>setTimeout(r,opts.retryMs!=null?opts.retryMs:1500));if(cancelAt<t0)continue;}
+     break;}
+   }
+   if(last&&last.soft===false&&last.message!=='no-key')break;
   }
   throw last||E('ai-error');
  }
@@ -4510,7 +4562,7 @@ const AI=(()=>{
   return out.length?out.join(' | '):'אין שימוש החודש';
  }
 
- return{run,json,parse,check,caps,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES};
+ return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -4697,7 +4749,8 @@ const nisR=n=>Math.round(+n||0).toLocaleString('en-US')+'\u00a0₪';
  * @typedef {'search'|'x'|'check'|'copy'|'phone'|'message-circle'|'trending-down'|'chevron-down'|
  *   'arrow-up-down'|'refresh-cw'|'cloud-download'|'eye'|'list'|'zap'|'link'|'scissors'|'pen-line'|
  *   'star'|'trash-2'|'pencil'|'file-text'|'clipboard-list'|'clock'|'house'|'calculator'|'send'|'bell'|
- *   'users'|'settings'|'camera'|'chart-column'|'calendar-days'|'phone-outgoing'|'layout-grid'|'ruler'} IconName
+ *   'users'|'settings'|'camera'|'chart-column'|'calendar-days'|'phone-outgoing'|'layout-grid'|'ruler'|
+ *   'sparkles'|'shield-check'|'package'|'wallet'|'circle-help'|'languages'|'megaphone'|'chevron-left'|'chevron-right'} IconName
  */
 const ICO={
  'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
@@ -4734,6 +4787,15 @@ const ICO={
  'phone-outgoing':'<polyline points="22 8 22 2 16 2"/><line x1="16" x2="22" y1="8" y2="2"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
  'layout-grid':'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
  'ruler':'<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
+ 'sparkles':'<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>',
+ 'shield-check':'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+ 'package':'<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>',
+ 'wallet':'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+ 'circle-help':'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+ 'languages':'<path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>',
+ 'megaphone':'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+ 'chevron-left':'<path d="m15 18-6-6 6-6"/>',
+ 'chevron-right':'<path d="m9 18 6-6-6-6"/>',
  'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>'
 };
 /** @param {IconName} n @param {number} [s=16] @returns {string} */
@@ -5022,6 +5084,7 @@ const App={
   if(k==='ai-error')return 'ה-AI החזיר שגיאה — נסה שוב';
   if(k==='network')return 'אין חיבור לרשת — בדוק אינטרנט';
   // שגיאות קובץ — לא חיבור. קודם נפלו לברירת המחדל, ויהודה בדק את האינטרנט.
+  if(k==='cancelled')return 'הפעולה בוטלה';
   if(k==='read')return 'לא הצלחתי לקרוא את הקובץ — נסה קובץ אחר';
   if(k==='bad-image')return 'הקובץ לא נקרא כתמונה — נסה צילום אחר או PDF';
   return 'שגיאת חיבור — בדוק אינטרנט';
@@ -5034,6 +5097,330 @@ const App={
      scan(snap.lines);
      (snap.catalog||[]).forEach(c=>scan(c.items));Object.values(snap.subItems||{}).forEach(scan);scan(snap.custom);
    });}catch(e){}return hist;},
+ /* ═══════════════════════════════════════════════════════════════
+    כלים חכמים · v21.9
+    מסגרת אחת לכל הכלים: הגדרה (קלט · קריאה · תצוגה · פעולות), חלון
+    רשימה אחד וחלון הרצה אחד. כל כלי מחזיר מבנה קבוע (סכמה). כל מספר
+    שמוצג ליהודה — חיסכון, תשלום, סכום — מחושב באפליקציה מההצעה עצמה,
+    לא מהמודל: מודל יכול להמציא מספר, האפליקציה לא.
+    ═══════════════════════════════════════════════════════════════ */
+ /** ההקשר של ההצעה הפתוחה. @returns {{name:string,phone:string,project:string,lines:Array,grand:number,quoteNo:string,style:string,planMode:boolean,vatOn:boolean}} */
+ aiCtx(){
+  try{this.captureQuote();}catch(e){}
+  const s=this.state,cl=s.client||{};
+  const lines=[];
+  try{this.chosen().forEach(g=>{const c=g.cat||{};
+    const ct=(AI.catTitles&&AI.catTitles[c.id])||c.title||c.name||c.id||'';
+    g.lines.forEach(l=>lines.push({cat:ct,name:String(l.name||''),qty:+l.qty||0,unit:l.unit||'',price:+l.price||0}));});}catch(e){}
+  let grand=0;try{grand=this.grand();}catch(e){}
+  return {name:String(cl.name||'').trim(),phone:String(cl.phone||''),project:String(cl.project||'').trim(),
+    lines:lines,grand:Math.round(grand),vatOn:!!s.vatOn,planMode:!!s.planMode,quoteNo:s.quoteNo||'',
+    style:String(Store.get('myStyle','')||'').trim().slice(0,900)};
+ },
+ aiLinesText(c){const NL=String.fromCharCode(10);
+  return c.lines.slice(0,90).map((x,i)=>(i+1)+'. ['+x.cat+'] '+x.name+' | '+x.qty+' '+x.unit+' | '+x.price+' ₪ ליח׳').join(NL);},
+ /** הקול של יהודה — לכל כלי כתיבה. */
+ aiVoice(c){const NL=String.fromCharCode(10);
+  return ['אתה כותב בשם יהודה, קבלן שיפוצים בישראל ("יהודה שיפוצים"), בגוף ראשון.',
+   'עברית טבעית, חמה ומקצועית. משפטים קצרים. בלי סלנג, בלי הגזמות, ובלי להבטיח דבר שלא נאמר.',
+   c.style?'חשוב: כתוב באותו טון וסגנון כמו בדוגמאות הבאות שנכתבו על ידי יהודה:'+NL+c.style:''].filter(Boolean).join(NL);},
+ /** מצב הלינק האחרון של ההצעה הפתוחה — להודעת מעקב. */
+ aiLinkStatus(c){
+  const ls=(Store.get('sentLinks',[])||[]).filter(l=>l&&c.quoteNo&&l.no===c.quoteNo).sort((a,b)=>(b.ts||0)-(a.ts||0));
+  const l=ls[0];if(!l)return null;
+  const d=(this._trackData||{})[l.id]||{};
+  const f=this.liveFacts?this.liveFacts(d):null;
+  return {days:Math.max(0,Math.floor((Date.now()-(+l.ts||Date.now()))/864e5)),viewed:!!d.viewedAt,
+    approved:!!d.approvedAt,live:!!(l.live||d.live),hesit:(f&&f.hesit)||[]};
+ },
+ aiAppendTerms(arr){
+  const NL=String.fromCharCode(10);
+  const add=(arr||[]).map(x=>String(x||'').trim()).filter(Boolean);if(!add.length)return 0;
+  const t=String(this.state.terms||'').trim();
+  this.state.terms=(t?t+NL:'')+add.join(NL);Store.set('terms',this.state.terms);this.state.showTerms=true;
+  return add.length;
+ },
+ aiCopy(text){
+  const ok=()=>{this.haptic(15);this.toast('הועתק ✓');};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,()=>this.aiCopyOld(text,ok));return;}}catch(e){}
+  this.aiCopyOld(text,ok);
+ },
+ aiCopyOld(text,ok){try{const t=document.createElement('textarea');t.value=text;t.setAttribute('readonly','');
+   t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();ok();}
+   catch(e){this.toast('ההעתקה נכשלה — סמן והעתק ידנית');}},
+
+ /** הגדרות הכלים. g: quote · client · field. inp: quote · text · text+quote · photo. */
+ aiToolDefs(){
+  const NL=String.fromCharCode(10);
+  const A=this;
+  const S=(props,req)=>({type:'object',properties:props,required:req||Object.keys(props)});
+  const str={type:'string'},num={type:'number'};
+  const arr=(items)=>({type:'array',items:items});
+  const msg=r=>'<textarea id="ait-msg" class="ait-msg" rows="9" aria-label="הטקסט — אפשר לערוך לפני שליחה">'+esc(r.message||r.text||r.reply||r.post||'')+'</textarea>';
+  const li=(ic,html,cls)=>'<li'+(cls?' class="'+cls+'"':'')+'>'+ico(ic,14)+'<span>'+html+'</span></li>';
+  const ul=rows=>'<ul class="tk-facts ait-list">'+rows.join('')+'</ul>';
+  const sevTone={high:'red',medium:'warn',low:'neutral'};
+  const sevName={high:'חשוב',medium:'כדאי לבדוק',low:'הערה'};
+  return {
+   // ── על ההצעה הנוכחית ──
+   review:{g:'quote',ico:'shield-check',t:'סקירה מקצועית',d:'מוצא סעיפים חסרים, יחידות לא הגיוניות וסדר עבודה בעייתי — לפני שהלקוח מוצא',
+    inp:'quote',busy:'בודק את ההצעה…',acts:['copy'],
+    run:async c=>AI.json([{t:'text',v:['אתה מהנדס ביצוע ותיק שבודק הצעת מחיר לשיפוץ בישראל לפני שהיא נשלחת ללקוח.',
+      'מצא רק בעיות אמיתיות: סעיף שתלוי בסעיף חסר (ריצוף מקלחת בלי איטום, חשמל חדש בלי בדיקת לוח), יחידה לא הגיונית לסעיף, כמות חשודה, כפילות, או סדר עבודה בעייתי.',
+      'אל תמציא בעיות. אם ההצעה תקינה — issues ריק, ו-ok_note משפט אחד.','',
+      'פרויקט: '+(c.project||'לא צוין'),'הסעיפים (מספר. [קטגוריה] שם | כמות יחידה | מחיר):',A.aiLinesText(c),'',
+      'sev: high=עלול לפגוע בעבודה או בכסף · medium=כדאי לבדוק · low=הערה. title קצר, detail משפט, fix מה לעשות. עברית.'].join(NL)}],
+      S({issues:arr(S({sev:{type:'string',enum:['high','medium','low']},title:str,detail:str,fix:str})),ok_note:str},['issues']),{timeout:60000}),
+    view:r=>{const is=(r.issues||[]).slice(0,12);
+      if(!is.length)return ul([li('check',esc(r.ok_note||'לא נמצאו בעיות בהצעה'),'ok')]);
+      return '<ul class="tk-facts ait-list">'+is.map(x=>'<li class="ait-issue"><i class="tk-dot" data-tone="'+(sevTone[x.sev]||'neutral')+'"></i><span><b>'+esc(x.title)+'</b>'+
+        (x.detail?' — '+esc(x.detail):'')+(x.fix?'<br><em>'+esc(x.fix)+'</em>':'')+' <small>'+(sevName[x.sev]||'')+'</small></span></li>').join('')+'</ul>';},
+    txt:r=>(r.issues||[]).map(x=>'• '+x.title+(x.detail?' — '+x.detail:'')+(x.fix?' ('+x.fix+')':'')).join(NL)||(r.ok_note||'')},
+
+   materials:{g:'quote',ico:'package',t:'רשימת חומרים',d:'מה לקנות לביצוע ההצעה, בכמויות עם פחת — מוכן לשליחה לספק',
+    inp:'quote',busy:'מחשב חומרים…',acts:['copy','waAny'],
+    run:async c=>AI.json([{t:'text',v:['אתה מנהל עבודה בשיפוצים בישראל. הכן רשימת קניות של חומרים בלבד (לא עבודה) לביצוע הסעיפים.',
+      'כמויות ביחידות קנייה אמיתיות (שקים, קרטונים, מ"ר, דליים, יחידות), כולל פחת סביר. אל תכלול כלי עבודה.',
+      'for: לאיזה סעיף. note: הערה קצרה אם יש (למשל אחוז הפחת). עברית.','',A.aiLinesText(c)].join(NL)}],
+      S({items:arr(S({name:str,qty:num,unit:str,for:str},['name','qty','unit'])),note:str},['items']),{timeout:60000}),
+    view:r=>ul((r.items||[]).slice(0,60).map(x=>li('package','<b>'+esc(x.name)+'</b> — '+(+x.qty||0).toLocaleString('he-IL')+' '+esc(x.unit||'')+(x.for?' <small>('+esc(x.for)+')</small>':''),'pr'))
+      .concat(r.note?[li('message-circle',esc(r.note))]:[])),
+    txt:(r,c)=>'רשימת חומרים'+(c.project?' — '+c.project:'')+':'+NL+(r.items||[]).map(x=>'• '+x.name+' — '+(+x.qty||0)+' '+(x.unit||'')).join(NL)},
+
+   schedule:{g:'quote',ico:'calendar-days',t:'לוח זמנים משוער',d:'שלבי העבודה, סדר וימים — להודעה ללקוח או לתכנון הצוות',
+    inp:'quote',busy:'מתכנן שלבים…',acts:['copy','wa'],
+    run:async c=>AI.json([{t:'text',v:['אתה מנהל פרויקטים בשיפוצים בישראל. בנה לוח זמנים משוער לביצוע הסעיפים, צוות קטן רגיל.',
+      'שלבים בסדר ביצוע אמיתי (הריסה ← תשתיות ← טיח/גבס ← איטום ← ריצוף ← צבע ← גמר), כולל זמני ייבוש והמתנה.',
+      'days: ימי עבודה לשלב. note: משפט על הנחות (למשל זמינות חומרים). עברית.','',A.aiLinesText(c)].join(NL)}],
+      S({stages:arr(S({name:str,days:num,note:str},['name','days'])),note:str},['stages']),{timeout:60000}),
+    view:r=>{const st=(r.stages||[]).slice(0,20);const tot=st.reduce((a,x)=>a+Math.max(0,+x.days||0),0);
+      return ul(st.map((x,i)=>li('clock','<b>'+(i+1)+'. '+esc(x.name)+'</b> — '+(+x.days||0)+' ימים'+(x.note?' <small>'+esc(x.note)+'</small>':''),'pr'))
+        .concat([li('calendar-days','<b>סה״כ כ-'+tot+' ימי עבודה</b>'+(r.note?' · '+esc(r.note):''))]));},
+    txt:(r,c)=>{const st=r.stages||[];const tot=st.reduce((a,x)=>a+Math.max(0,+x.days||0),0);
+      return 'לוח זמנים משוער'+(c.project?' — '+c.project:'')+':'+NL+st.map((x,i)=>(i+1)+'. '+x.name+' — '+(+x.days||0)+' ימים').join(NL)+NL+'סה״כ כ-'+tot+' ימי עבודה.';}},
+
+   payments:{g:'quote',ico:'wallet',t:'לוח תשלומים',d:'מקדמה ותשלומים לפי שלבי העבודה — הסכומים מחושבים מההצעה',
+    inp:'quote',busy:'בונה לוח תשלומים…',acts:['copy','terms'],
+    run:async c=>AI.json([{t:'text',v:['אתה קבלן שיפוצים ותיק בישראל. הצע חלוקת תשלומים הוגנת ומקובלת להצעה, צמודה לשלבי עבודה מוחשיים.',
+      'מקדמה סבירה, תשלומי ביניים לפי סיום שלבים, ויתרה קטנה בסיום ומסירה. pct באחוזים, בסכום של 100. when: מתי משלמים. עברית.','',
+      'הסעיפים:',A.aiLinesText(c)].join(NL)}],S({milestones:arr(S({name:str,pct:num,when:str},['name','pct','when']))}),{timeout:45000}),
+    calc:(r,c)=>{let ms=(r.milestones||[]).filter(x=>x&&x.name&&+x.pct>0).slice(0,8);
+      const s=ms.reduce((a,x)=>a+(+x.pct),0)||1;
+      // האחוזים מנורמלים ל-100, והסכומים מחושבים מהסה״כ של ההצעה — לא מהמודל
+      let left=c.grand;
+      // התשלום האחרון משלים: גם האחוזים מסתכמים ב-100 בדיוק, וגם הסכומים בסה״כ ההצעה
+      let pl=100;
+      return ms.map((x,i)=>{const last=i===ms.length-1;const p=last?pl:Math.round(+x.pct*100/s);pl-=p;
+        const amt=last?left:Math.round(c.grand*p/100);left-=amt;return {name:x.name,when:x.when||'',pct:p,amt:amt};});},
+    view:function(r,c){return ul(this.calc(r,c).map(x=>li('wallet','<b>'+esc(x.name)+'</b> — '+x.pct+'% · '+nisR(x.amt)+(x.when?' <small>'+esc(x.when)+'</small>':''),'pr'))
+      .concat([li('check','מתוך '+nisR(c.grand)+' — הסכומים מחושבים מההצעה')]));},
+    txt:function(r,c){return 'לוח תשלומים:'+NL+this.calc(r,c).map(x=>'• '+x.name+' — '+x.pct+'% ('+nisR(x.amt)+')'+(x.when?' — '+x.when:'')).join(NL);},
+    terms:function(r,c){return ['לוח תשלומים: '+this.calc(r,c).map(x=>x.pct+'% '+x.name+(x.when?' ('+x.when+')':'')).join(' · ')+'.'];}},
+
+   terms:{g:'quote',ico:'file-text',t:'תנאים מותאמים',d:'סעיפי אחריות, החרגות ותנאים שמתאימים לעבודות שבהצעה — מסמנים ומוסיפים',
+    inp:'quote',busy:'מנסח תנאים…',acts:['terms','copy'],
+    run:async c=>AI.json([{t:'text',v:['אתה קבלן שיפוצים בישראל שמנסח תנאים להצעת מחיר. הצע עד 8 סעיפי תנאים קצרים שמתאימים במיוחד לעבודות שבהצעה:',
+      'אחריות (למשל על איטום), מה לא כלול, אחריות הלקוח (פינוי חפצים, גישה), שינויים ותוספות, ותנאים מיוחדים לסוג העבודה.',
+      'משפט אחד לכל סעיף, ברור ולא משפטי מדי. אל תציין סכומים או אחוזי מקדמה. עברית.','',
+      'תנאים שכבר קיימים (אל תחזור עליהם): '+String(A.state.terms||'אין').slice(0,800),'',A.aiLinesText(c)].join(NL)}],
+      S({clauses:arr(S({title:str,text:str}))}),{timeout:45000}),
+    view:r=>'<ul class="tk-facts ait-list">'+(r.clauses||[]).slice(0,8).map((x,i)=>'<li class="ait-chk"><label><input type="checkbox" data-aitterm="'+i+'" checked/>'+
+      '<span><b>'+esc(x.title)+'</b> — '+esc(x.text)+'</span></label></li>').join('')+'</ul>',
+    txt:r=>(r.clauses||[]).map(x=>'• '+x.text).join(NL),
+    terms:(r,c,sel)=>(r.clauses||[]).filter((x,i)=>!sel||sel.indexOf(i)>=0).map(x=>x.text)},
+
+   cover:{g:'quote',ico:'send',t:'הודעה עם ההצעה',d:'הודעת וואטסאפ אישית שמלווה את ההצעה — בסגנון שלך',
+    inp:'quote',busy:'מנסח…',acts:['copy','wa'],
+    run:async c=>AI.json([{t:'text',v:[A.aiVoice(c),'',
+      'כתוב הודעת וואטסאפ קצרה (3–5 שורות) שמלווה את הצעת המחיר ללקוח'+(c.name?' '+c.name:'')+'.',
+      'הזכר את הפרויקט'+(c.project?' ('+c.project+')':'')+' ושתי-שלוש עבודות עיקריות, הזמן לשאלות, וסיים בצעד הבא. אל תציין סכום — הוא בהצעה.','',A.aiLinesText(c)].join(NL)}],
+      S({message:str}),{timeout:40000}),
+    view:msg,txt:r=>r.message||''},
+
+   explain:{g:'quote',ico:'circle-help',t:'הסבר ללקוח',d:'הסבר פשוט למה צריך עבודה מסוימת — או את ההצעה כולה',
+    inp:'text+quote',optText:true,lbl:'על איזה סעיף? (ריק = על ההצעה כולה)',ph:'למשל: איטום רצפת המקלחת',rows:2,busy:'מנסח הסבר…',acts:['copy','wa'],
+    run:async(c,T)=>AI.json([{t:'text',v:[A.aiVoice(c),'',
+      String(T.text||'').trim()?'הסבר ללקוח בשפה פשוטה (4–6 שורות) למה צריך את העבודה: "'+String(T.text).trim()+'" — מה קורה בלעדיה, ומה הוא מקבל.'
+        :'הסבר ללקוח בשפה פשוטה (5–7 שורות) מה כוללת ההצעה, באיזה סדר העבודה מתבצעת, ולמה כל שלב חשוב.',
+      'בלי מונחים טכניים מיותרים, בלי הפחדה. אל תציין מחירים.','',A.aiLinesText(c)].join(NL)}],S({message:str}),{timeout:40000}),
+    view:msg,txt:r=>r.message||''},
+
+   cheaper:{g:'quote',ico:'trending-down',t:'אפשרויות להוזלה',d:'כשהלקוח מבקש פחות — אילו סעיפים להוריד או לצמצם, והחיסכון המדויק',
+    inp:'quote',busy:'מחפש אפשרויות…',acts:['copy'],
+    run:async c=>AI.json([{t:'text',v:['אתה קבלן שיפוצים בישראל. הלקוח מבקש להוזיל. הצע 2–4 אפשרויות הוזלה מקצועיות שלא פוגעות באיכות הבסיסית:',
+      'הורדת סעיפים לא חיוניים (remove — מספרי שורות), או צמצום כמות (reduce — מספר שורה וכמות חדשה).',
+      'לעולם אל תציע לוותר על איטום, בטיחות חשמל או תשתית. how: משפט למה זה סביר. אל תחשב סכומים. עברית.','',A.aiLinesText(c)].join(NL)}],
+      S({options:arr(S({title:str,how:str,remove:arr({type:'integer'}),reduce:arr(S({line:{type:'integer'},qty:num}))},['title','how']))}),{timeout:50000}),
+    // החיסכון מחושב מהשורות עצמן. מספרי שורה לא קיימים — מסוננים.
+    save:(o,c)=>{const N=c.lines.length;const rm=Array.from(new Set((o.remove||[]).map(n=>+n).filter(n=>n>=1&&n<=N)));
+      let s=0;rm.forEach(n=>{const x=c.lines[n-1];s+=x.qty*x.price;});
+      (o.reduce||[]).forEach(r=>{const n=+(r&&r.line);const x=c.lines[n-1];if(!x||rm.indexOf(n)>=0)return;const q=+r.qty;if(q>=0&&q<x.qty)s+=(x.qty-q)*x.price;});
+      return Math.round(s);},
+    view:function(r,c){const os=(r.options||[]).slice(0,5);
+      return ul(os.map(o=>{const sv=this.save(o,c);return li('trending-down','<b>'+esc(o.title)+'</b>'+(sv>0?' — חיסכון '+nisR(sv):'')+'<br><small>'+esc(o.how||'')+'</small>','pr');})
+        .concat([li('check','החיסכון לפני מע״מ והנחה, מחושב מהסעיפים שבהצעה')]));},
+    txt:function(r,c){return (r.options||[]).map(o=>{const sv=this.save(o,c);return '• '+o.title+(sv>0?' — חיסכון '+nisR(sv)+' לפני מע״מ':'')+(o.how?' ('+o.how+')':'');}).join(NL);}},
+
+   // ── מול הלקוח ──
+   reply:{g:'client',ico:'message-circle',t:'ניתוח תגובת לקוח',d:'מדביקים מה הלקוח כתב — מקבלים מה הוא רוצה, תשובה מוכנה וצעד הבא',
+    inp:'text',lbl:'מה הלקוח כתב',ph:'הדבק כאן את ההודעה של הלקוח…',rows:5,need:'הדבק קודם את ההודעה של הלקוח',busy:'קורא את ההודעה…',acts:['copy','wa'],
+    run:async(c,T)=>AI.json([{t:'text',v:[A.aiVoice(c),'',
+      'זו הודעה שהלקוח'+(c.name?' '+c.name:'')+' שלח על הצעת מחיר לשיפוץ'+(c.project?' ('+c.project+')':'')+':','"""'+String(T.text).slice(0,3000)+'"""','',
+      'intent: approve=מאשר · negotiate=מתמקח · question=שאלה · postpone=דוחה · decline=מסרב · other.',
+      'summary: מה הוא רוצה, משפט אחד. reply: תשובה מוכנה לשליחה בשם יהודה. next: הצעד הבא המומלץ ליהודה, משפט אחד. עברית.'].join(NL)}],
+      S({intent:{type:'string',enum:['approve','negotiate','question','postpone','decline','other']},summary:str,reply:str,next:str}),{timeout:40000}),
+    view:r=>{const IN={approve:['מאשר','ok'],negotiate:['מתמקח','warn'],question:['שואל שאלה','neutral'],postpone:['דוחה','warn'],decline:['מסרב','red'],other:['אחר','neutral']}[r.intent]||['—','neutral'];
+      return '<div class="ait-head"><span class="tk-pill" data-tone="'+IN[1]+'">'+IN[0]+'</span><span>'+esc(r.summary||'')+'</span></div>'+
+        msg({reply:r.reply})+(r.next?ul([li('phone-outgoing','<b>הצעד הבא:</b> '+esc(r.next))]):'');},
+    txt:r=>r.reply||''},
+
+   search:{g:'client',ico:'search',t:'חיפוש חכם במחירון',d:'כותבים במילים שלך — "משהו לאיטום מקלחת" — ומקבלים את הסעיפים מהמחירון',
+    inp:'text',lbl:'מה מחפשים',ph:'למשל: החלפת ברז במטבח, צבע לחדר ילדים',rows:2,need:'כתוב מה לחפש',busy:'מחפש במחירון…',acts:['items'],
+    run:async(c,T)=>AI.json([{t:'text',v:['קבלן מחפש סעיפים במחירון שלו. הבקשה: "'+String(T.text).slice(0,300)+'".',
+      'החזר עד 8 התאמות מהמחירון, מהטובה לפחות טובה. ref חייב להיות מזהה קיים מהמחירון. why: כמה מילים למה זה מתאים. אם אין התאמה — רשימה ריקה.'].join(NL)}],
+      S({matches:arr(S({ref:str,why:str},['ref']))}),{catalog:true,timeout:45000}),
+    items:r=>{const seen={};return (r.matches||[]).map(m=>{const x=AI.resolveRef(m&&m.ref);if(!x||seen[x.ref])return null;seen[x.ref]=1;
+      return {name:x.name,qty:1,unit:x.unit||'גלובלי',price:+x.price||0,cat:x.cid||'custom',ref:x.ref,ok:true,why:m.why||''};}).filter(Boolean);},
+    view:function(r){const it=this.items(r);if(!it.length)return ul([li('search','לא נמצאה התאמה במחירון — נסה מילים אחרות')]);
+      return ul(it.map(x=>li('check','<b>'+esc(x.name)+'</b> — '+nisR(x.price)+' / '+esc(x.unit)+(x.why?' <small>'+esc(x.why)+'</small>':''),'pr')));},
+    txt:function(r){return this.items(r).map(x=>'• '+x.name).join(NL);}},
+
+   translate:{g:'client',ico:'languages',t:'תרגום הודעה',d:'הודעה ללקוח ברוסית, ערבית, אנגלית או אמהרית — בשפה מקצועית',
+    inp:'text',lang:true,lbl:'ההודעה בעברית',ph:'הדבק או כתוב את ההודעה…',rows:5,need:'כתוב קודם את ההודעה',busy:'מתרגם…',acts:['copy','wa'],
+    pre:function(){return this._lastAiMsg||'';},
+    run:async(c,T)=>{const L={ru:'רוסית',ar:'ערבית',en:'אנגלית',am:'אמהרית',fr:'צרפתית'};const lg=L[T.lang]?T.lang:'ru';
+      return AI.json([{t:'text',v:['תרגם את ההודעה הבאה של קבלן שיפוצים ללקוח ל'+L[lg]+'. שמור על טון אישי ומקצועי, מונחי שיפוץ נכונים, ומספרים כמו שהם. החזר רק את התרגום.',
+        '"""'+String(T.text).slice(0,3000)+'"""'].join(NL)}],S({text:str}),{timeout:40000});},
+    view:msg,txt:r=>r.text||''},
+
+   complaint:{g:'client',ico:'shield-check',t:'מענה לתלונה או ביקורת',d:'לקוח כועס או ביקורת שלילית — תשובה רגועה ומקצועית שמורידה את הטון',
+    inp:'text',lbl:'מה נכתב',ph:'הדבק את התלונה או הביקורת…',rows:5,need:'הדבק קודם את התלונה',busy:'מנסח תשובה…',acts:['copy','wa'],
+    run:async(c,T)=>AI.json([{t:'text',v:[A.aiVoice(c),'',
+      'לקוח כתב את התלונה או הביקורת הבאה:','"""'+String(T.text).slice(0,3000)+'"""','',
+      'reply: תשובה רגועה, מכבדת ומקצועית. מכירה בתחושה, לא מתווכחת, לא מודה באשמה שלא הוכחה, ומציעה צעד מעשי (שיחה, ביקור, בדיקה).',
+      'tips: עד 3 עצות קצרות ליהודה איך לנהל את השיחה. עברית.'].join(NL)}],S({reply:str,tips:arr(str)},['reply']),{timeout:40000}),
+    view:r=>msg({reply:r.reply})+((r.tips||[]).length?ul(r.tips.slice(0,3).map(t=>li('circle-help',esc(t)))):''),
+    txt:r=>r.reply||''},
+
+   followup:{g:'client',ico:'phone-outgoing',t:'הודעת מעקב חכמה',d:'תזכורת ללקוח לפי מה שקרה עם ההצעה: האם פתח, כמה זמן עבר, מה ביטל',
+    inp:'quote',busy:'מנסח…',acts:['copy','wa'],
+    run:async c=>{const st=A.aiLinkStatus(c);
+      const facts=st?['ההצעה נשלחה לפני '+st.days+' ימים.',st.approved?'הלקוח כבר אישר.':(st.viewed?'הלקוח פתח את ההצעה ועוד לא אישר.':'הלקוח עוד לא פתח את ההצעה.'),
+        st.hesit.length?'בלינק החי הוא ביטל: '+st.hesit.slice(0,3).join(', ')+'.':''].filter(Boolean).join(' '):'אין מידע על שליחת לינק להצעה הזו.';
+      return AI.json([{t:'text',v:[A.aiVoice(c),'',
+        'כתוב הודעת מעקב קצרה (2–4 שורות) ללקוח'+(c.name?' '+c.name:'')+' על הצעת המחיר'+(c.project?' ל'+c.project:'')+'.',
+        'מה ידוע: '+facts,
+        'התאם את ההודעה למצב: אם לא פתח — תזכורת עדינה; אם פתח ולא אישר — שאל אם יש שאלות; אם ביטל סעיפים — הצע לדבר עליהם. בלי לחץ ובלי אשמה.'].join(NL)}],S({message:str}),{timeout:40000});},
+    view:msg,txt:r=>r.message||''},
+
+   // ── שטח ושיווק ──
+   sitephoto:{g:'field',ico:'camera',t:'צילום המקום → סעיפים',d:'מצלמים חדר או מקלחת — מקבלים רשימת עבודות משוערת מהמחירון, לאישור',
+    inp:'photo',busy:'בוחן את התמונה…',acts:['items'],
+    run:async(c,T)=>{const m=String(T.img||'').match(/^data:([^;]+);base64,(.+)$/);if(!m)throw new Error('bad-image');
+      const txt=await AI.run([{t:'image',mime:m[1],data:m[2]},{t:'text',v:['אתה קבלן שיפוצים ותיק בישראל שבוחן צילום של המקום לפני הצעת מחיר.',
+        'זהה את העבודות שכנראה נדרשות לפי מה שרואים (מצב ריצוף, חיפוי, צבע, כלים סניטריים, חשמל גלוי, רטיבות).',
+        'זו הערכה מצילום: כמויות משוערות, ורק עבודות שבאמת נראה שצריך. אל תמציא עבודות שלא רואים.','',A._itemFmt(25)].join(NL)}],{catalog:true,timeout:90000});
+      const r=A._parseItems(txt,25);return {items:r.items||[]};},
+    items:r=>(r.items||[]).map(x=>Object.assign({},x,{ok:true})),
+    view:r=>{const it=r.items||[];if(!it.length)return ul([li('camera','לא זוהו עבודות בתמונה — נסה צילום רחב יותר')]);
+      return ul(it.map(x=>li('check','<b>'+esc(x.name)+'</b> — '+(+x.qty||0)+' '+esc(x.unit||''),'pr')).concat([li('circle-help','הערכה מצילום — בדוק כמויות במקום')]));},
+    txt:r=>(r.items||[]).map(x=>'• '+x.name+' — '+x.qty+' '+x.unit).join(NL)},
+
+   checklist:{g:'field',ico:'clipboard-list',t:'צ׳קליסט לביקור',d:'לפני ביקור אצל לקוח: מה למדוד, מה לצלם ומה לשאול',
+    inp:'text',lbl:'איזה פרויקט',ph:'למשל: שיפוץ מקלחת בדירה ישנה',rows:2,need:'כתוב איזה פרויקט',busy:'מכין צ׳קליסט…',acts:['copy'],
+    run:async(c,T)=>AI.json([{t:'text',v:['אתה קבלן שיפוצים ותיק בישראל. הכן צ׳קליסט קצר לביקור ראשון אצל לקוח לפני הצעת מחיר.',
+      'הפרויקט: "'+String(T.text).slice(0,300)+'".','measure: מה למדוד. photo: מה לצלם. ask: מה לשאול את הלקוח. watch: מה לבדוק שעלול להפתיע (רטיבות, צנרת ישנה, לוח חשמל). עד 6 בכל רשימה. עברית.'].join(NL)}],
+      S({measure:arr(str),photo:arr(str),ask:arr(str),watch:arr(str)}),{timeout:40000}),
+    view:r=>{const G=[['measure','ruler','למדוד'],['photo','camera','לצלם'],['ask','message-circle','לשאול'],['watch','shield-check','לבדוק']];
+      return G.map(([k,ic,t])=>(r[k]||[]).length?'<h3 class="tk-sec"><span>'+t+'</span></h3>'+ul(r[k].slice(0,6).map(x=>li(ic,esc(x)))):'').join('');},
+    txt:r=>[['measure','למדוד'],['photo','לצלם'],['ask','לשאול'],['watch','לבדוק']].map(([k,t])=>(r[k]||[]).length?t+':'+NL+r[k].map(x=>'☐ '+x).join(NL):'').filter(Boolean).join(NL+NL)},
+
+   social:{g:'field',ico:'megaphone',t:'פוסט לרשתות',d:'פוסט לפייסבוק או אינסטגרם על הפרויקט — בלי שם הלקוח ובלי מחירים',
+    inp:'text+quote',optText:true,lbl:'מה מיוחד בפרויקט? (לא חובה)',ph:'למשל: סיימנו בזמן למרות רטיבות קשה',rows:2,busy:'כותב פוסט…',acts:['copy'],
+    run:async(c,T)=>AI.json([{t:'text',v:[A.aiVoice(c),'',
+      'כתוב פוסט לרשתות החברתיות (4–7 שורות) על פרויקט שיפוץ שיהודה שיפוצים ביצע'+(c.project?': '+c.project:'')+'.',
+      String(T.text||'').trim()?'מה מיוחד: '+String(T.text).trim():'',
+      'בלי שם הלקוח, בלי כתובת ובלי מחירים. בסוף — הזמנה ליצור קשר. hashtags: עד 6, בעברית, בלי #.','',
+      'העבודות שבוצעו:',c.lines.slice(0,40).map(x=>'• '+x.name).join(NL)].filter(Boolean).join(NL)}],S({post:str,hashtags:arr(str)},['post']),{timeout:40000}),
+    view:r=>msg({post:(r.post||'')+((r.hashtags||[]).length?String.fromCharCode(10,10)+r.hashtags.slice(0,6).map(h=>'#'+String(h).replace(/^#/,'').replace(/\s+/g,'_')).join(' '):'')}),
+    txt:r=>(r.post||'')}
+  };
+ },
+
+ /** רשימת הכלים — חלון אחד, שלוש קבוצות. */
+ aiToolsModal(){
+  const D=this.aiToolDefs();
+  const G=[['quote','על ההצעה הנוכחית'],['client','מול הלקוח'],['field','שטח ושיווק']];
+  return '<h2>'+ico('sparkles',20)+' כלים חכמים <button class="x" data-close>✕</button></h2>'+
+   '<p class="tk-hint start">כל כלי מחזיר טיוטה. בודקים ומתקנים לפני ששולחים ללקוח.</p>'+
+   G.map(([g,t])=>'<h3 class="tk-sec"><span>'+t+'</span></h3><div class="ait-grid">'+
+     Object.keys(D).filter(k=>D[k].g===g).map(k=>{const d=D[k];
+       return '<button class="ait-row" data-aitool="'+k+'"><span class="ait-ic">'+ico(d.ico,20)+'</span>'+
+         '<span class="ait-tx"><b>'+d.t+'</b><span>'+d.d+'</span></span><span class="ait-go">'+ico('chevron-left',16)+'</span></button>';}).join('')+
+   '</div>').join('');
+ },
+
+ /** חלון הרצה של כלי אחד. */
+ aiToolModal(){
+  const T=this._tool||{};const D=this.aiToolDefs();const d=D[T.id];
+  if(!d)return '<h2>כלים חכמים <button class="x" data-close>✕</button></h2>';
+  const c=this.aiCtx();
+  const needQ=d.inp.indexOf('quote')>=0,needT=d.inp.indexOf('text')>=0;
+  let inp='';
+  if(needQ)inp+=c.lines.length
+    ?'<p class="tk-count-line">על ההצעה הפתוחה: <b>'+c.lines.length+'</b> סעיפים · '+nisR(c.grand)+(c.name?' · '+esc(c.name):'')+'</p>'
+    :'<div class="tk-empty">'+ico('file-text',22)+'<p>אין סעיפים בהצעה</p><p class="tk-hint">הכלי עובד על ההצעה הפתוחה. בחר סעיפים וחזור לכאן.</p></div>';
+  if(needT)inp+='<label class="ait-lbl" for="ait-in">'+esc(d.lbl||'טקסט')+'</label>'+
+    '<textarea id="ait-in" class="ait-in" rows="'+(d.rows||4)+'" placeholder="'+esc(d.ph||'')+'">'+esc(T.text!=null?T.text:(d.pre?d.pre.call(this,c):''))+'</textarea>';
+  if(d.lang){const L=[['ru','רוסית'],['ar','ערבית'],['en','אנגלית'],['am','אמהרית'],['fr','צרפתית']];
+    inp+='<div class="tk-seg tk-range ait-lang" role="group" aria-label="שפה">'+L.map(([v,t])=>'<button class="tk-seg-b" data-aitlang="'+v+'" aria-pressed="'+((T.lang||'ru')===v)+'">'+t+'</button>').join('')+'</div>';}
+  if(d.inp==='photo')inp+='<button class="tk-btn ghost" id="ait-pick">'+ico('camera',16)+(T.img?'החלף תמונה':'בחר או צלם תמונה')+'</button>'+
+    '<input id="ait-file" type="file" accept="image/*" hidden/>'+(T.img?'<img class="ait-prev" src="'+T.img+'" alt="התמונה שנבחרה"/>':'');
+  const can=!(needQ&&!c.lines.length);
+  const AB={copy:['copy','העתק',''],waAny:['message-circle','שלח בוואטסאפ',''],
+    wa:['message-circle',c.phone?'שלח ל'+(c.name||'לקוח'):'שלח בוואטסאפ','pri'],
+    terms:['file-text','הוסף לתנאים','pri'],items:['check','לאישור והוספה','pri']};
+  return '<h2>'+ico(d.ico,20)+' '+d.t+' <button class="x" data-close>✕</button></h2>'+
+   '<button class="tk-btn sm ghost ait-back" data-modal="aitools">'+ico('chevron-right',15)+'כל הכלים</button>'+
+   '<p class="tk-hint start">'+d.d+'</p>'+inp+
+   (can?'<button class="tk-btn pri ait-run" id="ait-run">'+ico('sparkles',16)+(T.res?'הפעל שוב':'הפעל')+'</button>':'')+
+   (T.res?'<div class="ait-res" aria-live="polite">'+d.view.call(d,T.res,c)+'</div>'+
+     '<div class="tk-acts ait-acts">'+d.acts.map(a=>{const b=AB[a];return '<button class="tk-btn '+b[2]+'" data-aitact="'+a+'">'+ico(b[0],16)+b[1]+'</button>';}).join('')+'</div>':'');
+ },
+
+ async aiToolRun(){
+  const T=this._tool;if(!T)return;const d=this.aiToolDefs()[T.id];if(!d)return;
+  if(!AI.anyKey()){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
+  const inp=document.getElementById('ait-in');if(inp)T.text=inp.value;
+  const c=this.aiCtx();
+  if(d.inp.indexOf('quote')>=0&&!c.lines.length){this.toast('אין סעיפים בהצעה');return;}
+  if(d.inp.indexOf('text')>=0&&!d.optText&&!String(T.text||'').trim()){this.toast(d.need||'כתוב קודם טקסט');return;}
+  if(d.inp==='photo'&&!T.img){this.toast('בחר קודם תמונה');return;}
+  this.busy(d.busy||'ה-AI עובד…',true);this.haptic(15);
+  try{const r=await d.run(c,T);
+    if(!r||typeof r!=='object')throw new Error('bad-json');
+    T.res=r;const tx=d.txt?d.txt.call(d,r,c):'';if(tx&&['cover','explain','followup','reply','complaint'].indexOf(T.id)>=0)this._lastAiMsg=tx;
+    this.idle();this.render();}
+  catch(e){this.idle();this.toast(this.aiErrMsg(e));}
+ },
+
+ aiToolAct(a){
+  const T=this._tool;if(!T||!T.res)return;const d=this.aiToolDefs()[T.id];if(!d)return;const c=this.aiCtx();
+  const ta=document.getElementById('ait-msg');
+  const text=ta?ta.value:(d.txt?d.txt.call(d,T.res,c):'');
+  if(a==='copy'){this.aiCopy(text);return;}
+  if(a==='wa'||a==='waAny'){try{window.open(waLink(a==='wa'?c.phone:'',text),'_blank');}catch(e){}return;}
+  if(a==='terms'){
+    const sel=[].slice.call(document.querySelectorAll('[data-aitterm]')).filter(x=>x.checked).map(x=>+x.dataset.aitterm);
+    const has=document.querySelectorAll('[data-aitterm]').length>0;
+    const n=this.aiAppendTerms(d.terms.call(d,T.res,c,has?sel:null));
+    this.haptic(20);this.toast(n?n+(n===1?' סעיף נוסף':' סעיפים נוספו')+' לתנאים ✓':'לא סומן אף סעיף');return;}
+  if(a==='items'){const it=(d.items.call(d,T.res,c)||[]).filter(x=>x&&x.name);if(!it.length){this.toast('אין סעיפים להוספה');return;}
+    // בלי זה, האישור במסך הסקירה איפס הצעת תכנון למחשבון
+    this._aiQuoteType=this.state.planMode?'plan':'calc';
+    this._v2qResult=it;this.state.modal='v2qreview';this.render();}
+ },
+
  /* ═══ תוכנית דירה → שטח ═══
     קורא תמונה או PDF של תוכנית ומחזיר חדרים ושטח כולל.
     עובד רק כשהמידות או השטחים כתובים בתוכנית — מצילום של חדר אי אפשר למדוד,
@@ -5067,7 +5454,7 @@ const App={
   const isPdf=f.type==='application/pdf';
   if(!isPdf&&!/^image\//.test(f.type||'')){this.toast('צריך תמונה או PDF של התוכנית');return;}
   if(f.size>15*1024*1024){this.toast('הקובץ גדול מדי — עד 15MB');return;}
-  this.busy('קורא את התוכנית…');this.haptic(15);
+  this.busy('קורא את התוכנית…',true);this.haptic(15);
   try{
     const url=isPdf?await this.readDataUrl(f):await this.planImage(f);
     const m=String(url).match(/^data:([^;]+);base64,(.+)$/);if(!m)throw new Error('bad-image');
@@ -5217,7 +5604,7 @@ const App={
  async v2qConvert(){const el=document.getElementById('v2q-text');let raw=(el?el.value:this._v2qText||'').trim();
   raw=this.dedupeWords(raw);if(el)el.value=raw;this._v2qText=raw;
   if(raw.length<8){this.toast('הקלט או כתוב תיאור עבודה קצת יותר מפורט');return;}
-  this.v2qStop();this._v2qText=raw;this.busy('ה-AI ממיר לסעיפים…');this.haptic(15);
+  this.v2qStop();this._v2qText=raw;this.busy('ה-AI ממיר לסעיפים…',true);this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
   const P=['אתה עוזר לקבלן שיפוצים ישראלי. הקבלן מסר תיאור עבודה חופשי (קול או טקסט מודבק, יתכנו שגיאות כתיב). המר אותו לרשימת סעיפי עבודה מסודרים להצעת מחיר.',
     '',
@@ -5250,7 +5637,7 @@ const App={
   if(!this._aiPdfRaw){this.toast('לא נבחר קובץ');return;}
   const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();
   if(!key){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
-  this.busy('ה-AI קורא את הקובץ…');this.haptic(15);
+  this.busy('ה-AI קורא את הקובץ…',true);this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
   const P=['אתה עוזר לקבלן שיפוצים ישראלי. במסמך המצורף יש תיאור עבודות שיפוץ (כתב כמויות/הצעה). קרא בעיון והפק רשימת סעיפי עבודה מסודרים.',
     this._itemFmt(60),
@@ -6169,7 +6556,7 @@ const App={
   if(!groups.length){this.toast('בחר קודם כמה סעיפים');return;}
   const key=AI.anyKey();
   if(!key){this.toast('הגדר קודם מפתח AI בהגדרות מפתח');return;}
-  this.busy('ה-AI בודק מה חסר…');this.haptic(15);
+  this.busy('ה-AI בודק מה חסר…',true);this.haptic(15);
   const have=[];groups.forEach(g=>g.lines.forEach(l=>have.push(l.name)));
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
   const P=['אתה קבלן שיפוצים ותיק בישראל. לפניך רשימת סעיפים בהצעת מחיר. זהה עד 12 סעיפים חשובים שכנראה חסרים ומקובל לכלול בעבודה כזו (למשל: אטימה בעבודות רטובות, פינוי פסולת, ניקיון סופי, חשמל נלווה).',
@@ -6215,7 +6602,7 @@ const App={
  },
  async aiVisionConvert(imageDataUrl){
   if(!imageDataUrl){this.toast('לא נבחרה תמונה');return;}
-  this.busy('ה-AI קורא את התמונה…');this.haptic(15);
+  this.busy('ה-AI קורא את התמונה…',true);this.haptic(15);
   const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
   const _wa=(this._visionMode==='wa');
   const _intro=_wa?'אתה עוזר לקבלן שיפוצים ישראלי. בתמונה צילום מסך של שיחת וואטסאפ. קרא את ההודעות וזהה אילו עבודות הלקוח מבקש. התעלם מברכות, שיחת חולין והודעות לא רלוונטיות. הפק רק סעיפי עבודה.':'אתה עוזר לקבלן שיפוצים ישראלי. בתמונה המצורפת יש פתק/מסמך עם תיאור עבודות שיפוץ (יתכן כתב יד, יתכן טבלה מודפסת). קרא את התמונה בעיון והפק רשימת סעיפי עבודה מסודרים להצעת מחיר.';
@@ -6412,7 +6799,12 @@ const App={
   }
  },
  haptic(ms){try{if(navigator.vibrate)navigator.vibrate(ms||15);}catch(e){}},
- busy(m){if(this.bwStart())return;try{let b=document.getElementById('busy-ov');if(!b){b=document.createElement('div');b.id='busy-ov';b.className='busy-ov';b.innerHTML='<div class="busy-box"><div class="busy-spin"></div><div class="busy-txt"></div></div>';document.body.appendChild(b);}b.querySelector('.busy-txt').textContent=m||'רגע…';b.style.display='flex';}catch(e){}},
+ /** @param {string} m  @param {boolean} [cancelable] כפתור "ביטול" — רק לקריאת AI בודדת */
+ busy(m,cancelable){if(this.bwStart())return;try{let b=document.getElementById('busy-ov');if(!b){b=document.createElement('div');b.id='busy-ov';b.className='busy-ov';b.innerHTML='<div class="busy-box"><div class="busy-spin"></div><div class="busy-txt"></div></div>';document.body.appendChild(b);}b.querySelector('.busy-txt').textContent=m||'רגע…';
+   let x=b.querySelector('.busy-x');
+   if(!x){x=document.createElement('button');x.type='button';x.className='busy-x';x.textContent='ביטול';b.querySelector('.busy-box').appendChild(x);}
+   x.style.display=cancelable?'':'none';x.onclick=()=>{try{AI.cancel();}catch(e){}};
+   b.style.display='flex';}catch(e){}},
  idle(){try{const b=document.getElementById('busy-ov');if(b)b.style.display='none';}catch(e){}
   if(this._bw&&this._bw.phase==='load')this.bwEnd();},
 
@@ -7079,7 +7471,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
+ modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',aitools:'aiToolsModal',aitool:'aiToolModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -7761,7 +8153,7 @@ const App={
     const msg='\u05e9\u05dc\u05d5\u05dd'+(nm?' '+nm:'')+' \ud83d\udc4b'+String.fromCharCode(10)+'\u05e8\u05d0\u05d9\u05ea\u05d9 \u05e9\u05d4\u05ea\u05dc\u05d1\u05d8\u05ea \u05e2\u05dc '+items[0]+'.'+String.fromCharCode(10)+'\u05d9\u05e9 \u05dc\u05d9 \u05db\u05de\u05d4 \u05d7\u05dc\u05d5\u05e4\u05d5\u05ea \u2014 \u05e0\u05e9\u05de\u05d7 \u05dc\u05d3\u05d1\u05e8.';
     window.open(waLink(l.phone,msg),'_blank');return;
   }
-  this.busy('\u05de\u05e0\u05e1\u05d7\u2026');
+  this.busy('\u05de\u05e0\u05e1\u05d7\u2026',true);
   const st=Store.get('myStyle','');
   const P=['\u05d0\u05ea\u05d4 \u05e2\u05d5\u05d6\u05e8 \u05dc\u05e7\u05d1\u05dc\u05df \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd. \u05d4\u05dc\u05e7\u05d5\u05d7 \u05e4\u05ea\u05d7 \u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea \u05d5\u05d1\u05d9\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd, \u05d5\u05dc\u05d0 \u05d0\u05d9\u05e9\u05e8.',
    '\u05e9\u05dd \u05d4\u05dc\u05e7\u05d5\u05d7: '+(nm||''),
@@ -8051,6 +8443,7 @@ const App={
    </div>
    <div class="ah-sec">כלי כתיבה</div>
    <div class="aihub-grid">
+     ${card('aitools','🧠','כלים חכמים','סקירה · חומרים · לוח זמנים · תשלומים · הודעות ללקוח','16 כלים')}
      ${card('gemini','🤖','ניסוח וכתיבה','הודעות ללקוח · תיאורי עבודה · טיפים','')}
      ${card('mystyle','✍️','הסגנון שלי','למד את ה-AI לכתוב כמוך','חדש')}
      <button class="aihub-card" id="hub-check-prices">
@@ -8410,7 +8803,7 @@ const App={
     else if(n.endsWith('.wav'))mime='audio/wav';
     else mime='audio/mpeg';
   }
-  this.busy('\u05de\u05d0\u05d6\u05d9\u05df \u05dc\u05d4\u05e7\u05dc\u05d8\u05d4...');this.haptic(15);
+  this.busy('\u05de\u05d0\u05d6\u05d9\u05df \u05dc\u05d4\u05e7\u05dc\u05d8\u05d4...',true);this.haptic(15);
   const cats='\u05d4\u05e8\u05d9\u05e1\u05d4 \u05d5\u05e4\u05d9\u05e0\u05d5\u05d9, \u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4, \u05d7\u05e9\u05de\u05dc \u05d5\u05ea\u05e7\u05e9\u05d5\u05e8\u05ea, \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d2\u05de\u05e8 \u05d5\u05e2\u05d9\u05e6\u05d5\u05d1 \u05e4\u05e0\u05d9\u05dd, \u05e0\u05d2\u05e8\u05d5\u05ea \u05de\u05e1\u05d2\u05e8\u05d5\u05ea \u05d5\u05d0\u05dc\u05d5\u05de\u05d9\u05e0\u05d9\u05d5\u05dd, \u05ea\u05db\u05e0\u05d5\u05df \u05e0\u05d9\u05d4\u05d5\u05dc \u05d5\u05e8\u05d9\u05e9\u05d5\u05d9, \u05e9\u05dc\u05d3 \u05d5\u05ea\u05e9\u05ea\u05d9\u05ea \u05db\u05d1\u05d3\u05d4, \u05e4\u05d9\u05ea\u05d5\u05d7 \u05d7\u05d5\u05e5 \u05d5\u05e1\u05d1\u05d9\u05d1\u05d4, \u05d0\u05d7\u05e8';
   const P=['\u05d0\u05ea\u05d4 \u05e2\u05d5\u05d6\u05e8 \u05dc\u05e7\u05d1\u05dc\u05df \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd \u05d9\u05e9\u05e8\u05d0\u05dc\u05d9. \u05d1\u05d4\u05e7\u05dc\u05d8\u05d4 \u05d4\u05de\u05e6\u05d5\u05e8\u05e4\u05ea \u05de\u05d3\u05d1\u05e8\u05d9\u05dd \u05e2\u05dc \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05e9\u05d9\u05e4\u05d5\u05e5. \u05d4\u05d0\u05d6\u05df \u05d1\u05e2\u05d9\u05d5\u05df \u05d5\u05d4\u05e4\u05e7 \u05e8\u05e9\u05d9\u05de\u05ea \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd.',
    '\u05d4\u05d3\u05d5\u05d1\u05e8 \u05e2\u05e9\u05d5\u05d9 \u05dc\u05d3\u05d1\u05e8 \u05d1\u05de\u05e9\u05e4\u05d8\u05d9\u05dd \u05dc\u05d0 \u05de\u05e1\u05d5\u05d3\u05e8\u05d9\u05dd, \u05dc\u05d7\u05d6\u05d5\u05e8 \u05d5\u05dc\u05ea\u05e7\u05df \u05d0\u05ea \u05e2\u05e6\u05de\u05d5. \u05e7\u05d7 \u05d0\u05ea \u05d4\u05d2\u05e8\u05e1\u05d4 \u05d4\u05e1\u05d5\u05e4\u05d9\u05ea \u05e9\u05dc\u05d5.',
@@ -8463,7 +8856,7 @@ const App={
   this._oneShotText=t;
   const key=AI.anyKey();
   if(!key){this.toast('\u05d4\u05d2\u05d3\u05e8 \u05e7\u05d5\u05d3\u05dd \u05de\u05e4\u05ea\u05d7 AI');return;}
-  this.busy('\u05de\u05e0\u05ea\u05d7...');this.haptic(15);
+  this.busy('\u05de\u05e0\u05ea\u05d7...',true);this.haptic(15);
   const cats='\u05d4\u05e8\u05d9\u05e1\u05d4 \u05d5\u05e4\u05d9\u05e0\u05d5\u05d9, \u05d0\u05d9\u05e0\u05e1\u05d8\u05dc\u05e6\u05d9\u05d4, \u05d7\u05e9\u05de\u05dc \u05d5\u05ea\u05e7\u05e9\u05d5\u05e8\u05ea, \u05e2\u05d1\u05d5\u05d3\u05d5\u05ea \u05d2\u05de\u05e8 \u05d5\u05e2\u05d9\u05e6\u05d5\u05d1 \u05e4\u05e0\u05d9\u05dd, \u05e0\u05d2\u05e8\u05d5\u05ea \u05de\u05e1\u05d2\u05e8\u05d5\u05ea \u05d5\u05d0\u05dc\u05d5\u05de\u05d9\u05e0\u05d9\u05d5\u05dd, \u05ea\u05db\u05e0\u05d5\u05df \u05e0\u05d9\u05d4\u05d5\u05dc \u05d5\u05e8\u05d9\u05e9\u05d5\u05d9, \u05e9\u05dc\u05d3 \u05d5\u05ea\u05e9\u05ea\u05d9\u05ea \u05db\u05d1\u05d3\u05d4, \u05e4\u05d9\u05ea\u05d5\u05d7 \u05d7\u05d5\u05e5 \u05d5\u05e1\u05d1\u05d9\u05d1\u05d4, \u05d0\u05d7\u05e8';
   const P=['\u05d0\u05ea\u05d4 \u05e2\u05d5\u05d6\u05e8 \u05dc\u05e7\u05d1\u05dc\u05df \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd. \u05de\u05d4\u05de\u05e9\u05e4\u05d8 \u05d4\u05d1\u05d0 \u05d7\u05dc\u05e5 \u05d2\u05dd \u05e4\u05e8\u05d8\u05d9 \u05dc\u05e7\u05d5\u05d7 \u05d5\u05d2\u05dd \u05e1\u05e2\u05d9\u05e4\u05d9 \u05e2\u05d1\u05d5\u05d3\u05d4.',
    '\u05d4\u05de\u05e9\u05e4\u05d8: '+t,
@@ -8841,6 +9234,20 @@ const App={
   const obk=document.getElementById('open-backup');if(obk)obk.onclick=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='backup';this.render();};
   const cpr=document.getElementById('check-prices');if(cpr)cpr.onclick=()=>this.checkPriceFreshness();
   const hcp=document.getElementById('hub-check-prices');if(hcp)hcp.onclick=()=>this.checkPriceFreshness();
+  // ── כלים חכמים ──
+  on('[data-aitool]','click',e=>{const id=e.currentTarget.dataset.aitool;
+    if(!this._tool||this._tool.id!==id)this._tool={id:id};this.haptic(10);this.state.modal='aitool';this.render();});
+  (()=>{const T=this._tool;
+    const inp=document.getElementById('ait-in');if(inp&&T)inp.oninput=()=>{T.text=inp.value;};
+    const run=document.getElementById('ait-run');if(run)run.onclick=()=>this.aiToolRun();
+    const pk=document.getElementById('ait-pick'),fi=document.getElementById('ait-file');
+    if(pk&&fi&&T){pk.onclick=()=>fi.click();
+      fi.onchange=async e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+        if(!/^image\//.test(f.type||'')){this.toast('צריך תמונה');return;}
+        try{T.img=await this.planImage(f);T.res=null;this.render();}catch(x){this.toast(this.aiErrMsg(x));}};}})();
+  on('[data-aitlang]','click',e=>{const T=this._tool;if(!T)return;const i=document.getElementById('ait-in');if(i)T.text=i.value;
+    T.lang=e.currentTarget.dataset.aitlang;T.res=null;this.render();});
+  on('[data-aitact]','click',e=>this.aiToolAct(e.currentTarget.dataset.aitact));
   // קרא שטח מתוכנית — מתוך עוזר ההצעות
   (()=>{const b=document.getElementById('hub-plan-scan'),inp=document.getElementById('hub-plan-in');
     if(b&&inp){b.onclick=()=>inp.click();
