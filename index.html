@@ -1689,6 +1689,12 @@ div.tk-f:active{transform:none;}
 .tk-count-line{margin:0 2px 10px;font-size:var(--fs-xs);color:var(--muted);}
 .tk-count-line b{color:var(--txt);font-variant-numeric:tabular-nums;}
 .tk-btn.ghost{width:100%;margin-bottom:10px;background:transparent;}
+/* תוכנית → שטח */
+.plan-scan-btn{margin:10px 0 0;}
+.plan-scan{margin-top:10px;}
+.plan-scan>li.pr{justify-content:space-between;color:var(--txt);}
+.plan-scan>li.pr>b{font-variant-numeric:tabular-nums;}
+.plan-scan-acts{margin-top:8px;padding-top:0;border-top:0;}
 .tk-banner b{color:var(--txt);}
 .tk-banner.warn{color:var(--warn);background:rgba(245,166,35,.06);border-color:rgba(245,166,35,.28);}
 
@@ -3179,7 +3185,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='21.6';
+const VERSION='21.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3333,7 +3339,13 @@ const GUIDE=[
    <div class="g-note ok"><b>עובד אופליין</b><br>אפשר לבנות הצעה בלי קליטה. הכל נשמר במכשיר ומסתנכרן כשחוזרת רשת. רק כלי ה-AI צריכים חיבור.</div>`},
 
   {id:'g2',ic:'📲',t:'התקנה בטלפון',d:'נטען מהר יותר, עובד אופליין',
-   b:`<div class="g-plate"><div class="g-ph">v21.6 — בלי גרמושקות</div>
+   b:`<div class="g-plate"><div class="g-ph">v21.7 — AI אמין יותר, ושני כלים חדשים</div>
+   <ul class="g-ul"><li><b>קרא שטח מתוכנית</b> — בפרטי ההצעה, במצב "תכנון למ"ר": מצלמים או מעלים PDF של תוכנית הדירה, וה-AI מחזיר את החדרים ואת השטח הכולל. התוצאה מוצגת לאישור ולעולם לא מוחלת לבד. עובד רק כשהמידות כתובות בתוכנית — מצילום של חדר אי אפשר למדוד, וה-AI מונחה לומר את זה במקום לנחש.</li>
+   <li><b>אזהרת מחיר חריג לפני שליחה</b> — אם מחיר של סעיף רחוק מאוד מהמחיר הרגיל שלך בהצעות קודמות (פי 1.6 ומעלה, או חצי), תופיע אזהרה צהובה עם המחיר הרגיל. נועד לתפוס אפס חסר או מיותר בהקלדה.</li>
+   <li><b>"מחיר מההיסטוריה שלך" עובד שוב</b> — מאז שינוי פורמט השמירה הוא לא מצא אף מחיר קודם, ותמיד פנה ל-AI.</li>
+   <li><b>AI יציב יותר</b> — קריאה שנתקעת עוברת לגיבוי אחרי 45 שניות (90 לקול ולקבצים). התשובות מגיעות במבנה קבוע. שם מודל הגיבוי תוקן. המפתח לא מופיע עוד בכתובת.</li>
+   <li><b>בדיקת AI</b> — בהגדרות ← עוזר AI: בודק כל מודל ומראה מה עובד ומה לא, עם הודעת השגיאה.</li></ul></div>
+   <div class="g-plate"><div class="g-ph">v21.6 — בלי גרמושקות</div>
    <ul class="g-ul"><li><b>פרטי ההצעה — הכל פתוח</b> — קודם כל המקטעים התחילו סגורים, כולל ההנחה, המקדמה, וסה"כ לתשלום (שהסתתר בתוך "גלריית עבודות"). 7 מתוך 17 השדות היו מוסתרים. עכשיו הכל גלוי, עם קו דק שמפריד בין הקבוצות.</li>
    <li><b>הגדרות — הכל פתוח</b> — קודם רק מקטע אחד נפתח בכל פעם, ופתיחה של אחד סגרה את השני וקפצה במסך.</li>
    <li><b>מה נשאר מתקפל, ולמה</b> — רק דברים משניים שהכותרת שלהם מספיקה: כלי ה-AI בהצעה (כדי שלא ידחפו את כפתורי השליחה למטה), "מה הלקוחות מורידים" במעקב, והקטגוריות בקטלוג.</li></ul></div>
@@ -4266,7 +4278,7 @@ try{
    קודי שגיאה תואמים ל-aiErrMsg הקיים: no-key / quota / bad-key / ai-error / network
 */
 const AI=(()=>{
- const M={cFast:'claude-haiku-4-5-20251001',cSmart:'claude-sonnet-5',g:'gemini-flash-latest'};
+ const M={cFast:'claude-haiku-4-5-20251001',cSmart:'claude-sonnet-5-5',g:'gemini-flash-latest'};
  const AV='2023-06-01';
  const keyOf=p=>String((p==='claude'?Store.get('claudeKey',''):Store.get('geminiKey',''))||'').trim();
  const has=p=>!!keyOf(p);
@@ -4275,10 +4287,53 @@ const AI=(()=>{
  function E(code,soft){const e=new Error(code);e.soft=soft!==false;return e;}
  function classify(status,msg){
   const m=String(msg||'');
-  if(status===429||/quota|rate.?limit|exhausted|overload/i.test(m))return 'quota';
+  // עומס בשרת — רגעי, ונבדק ראשון: "overloaded" היה ברשימת המילים של "מכסה",
+  // ויהודה קרא "תתחדש מחר" על תקלה של דקה.
+  if(status===500||status===502||status===503||status===504||status===529||/unavailable|overload|high demand/i.test(m))return 'busy';
+  if(status===429||/quota|rate.?limit|exhausted/i.test(m))return 'quota';
   if(status===401||status===403||/api key|permission|invalid.?key|authentication/i.test(m))return 'bad-key';
-  if(status===500||status===502||status===503||status===504||status===529)return 'quota';
   return 'ai-error';
+ }
+
+ /* ═══ תשתית v21.7 ═══ */
+ // בקשה עם מגבלת זמן — כולל קריאת גוף התשובה. קריאה שנתקעת עוברת לגיבוי.
+ async function fetchJ(url,init,ms){
+  const ac=typeof AbortController!=='undefined'?new AbortController():null;
+  const t=ac?setTimeout(()=>ac.abort(),ms||45000):null;
+  try{
+   const r=await fetch(url,Object.assign({},init,ac?{signal:ac.signal}:{}));
+   let d=null;try{d=await r.json();}catch(e){if(e&&e.name==='AbortError')throw e;}
+   return {r:r,d:d};
+  }catch(e){if(e&&e.name==='AbortError')throw E('timeout');throw e;}
+  finally{if(t)clearTimeout(t);}
+ }
+ // מה שנלמד על השרת: האם פלט מובנה נתמך. נבדק מחדש אחרי שבוע.
+ function caps(patch){
+  let c={};try{c=Store.get('aiCaps',{})||{};}catch(e){}
+  if(patch){c=Object.assign({},c,patch,{at:Date.now()});try{Store.set('aiCaps',c);}catch(e){}}
+  return c;
+ }
+ function schemaOn(){const c=caps();return !(c.gSchema===false&&Date.now()-(+c.at||0)<7*864e5);}
+ /* פענוח עמיד: מנקה markdown, מוצא את המבנה הראשון לפי סוגריים מאוזנים
+    (מתחשב במחרוזות), ומציל מערך חתוך עד האיבר השלם האחרון —
+    ומסמן אותו _truncated, כדי שהמשתמש יידע שחסרים פריטים. */
+ function parse(txt){
+  const s=String(txt||'').replace(/```(?:json)?/gi,'').trim();
+  if(!s)return null;
+  try{return JSON.parse(s);}catch(e){}
+  const i=s.search(/[\[{]/);if(i<0)return null;
+  const arr=s[i]==='[';
+  let d=0,inS=false,esc=false,end=-1,lastEl=-1;
+  for(let k=i;k<s.length;k++){const c=s[k];
+   if(inS){if(esc)esc=false;else if(c==='\\')esc=true;else if(c==='"')inS=false;continue;}
+   if(c==='"'){inS=true;continue;}
+   if(c==='['||c==='{')d++;
+   else if(c===']'||c==='}'){d--;if(arr&&d===1&&c==='}')lastEl=k;if(d===0){end=k;break;}}
+  }
+  if(end>0){try{return JSON.parse(s.slice(i,end+1));}catch(e){}}
+  if(arr&&lastEl>0){try{const a=JSON.parse(s.slice(i,lastEl+1)+']');
+    Object.defineProperty(a,'_truncated',{value:true,enumerable:false});return a;}catch(e){}}
+  return null;
  }
  function bump(p,inTok,outTok){
   try{const s=Store.get('aiUsage',{});const k=p+':'+new Date().toISOString().slice(0,7);
@@ -4319,7 +4374,7 @@ const AI=(()=>{
  function resolveRef(ref){if(!_cIdx)buildCatalog();const r=_cIdx[String(ref||'').trim()];return r?Object.assign({},r):null;}
  function catalogStats(){buildCatalog();return{items:Object.keys(_cIdx).length,chars:_cTxt.length,tokens:Math.round(_cTxt.length/2.5)};}
 
- async function claude(parts,maxTokens,smart,useCat){
+ async function claude(parts,maxTokens,smart,useCat,to){
   const k=keyOf('claude');if(!k)throw E('no-key',false);
   const content=[];
   parts.forEach(p=>{
@@ -4328,14 +4383,13 @@ const AI=(()=>{
    else if(p.t==='pdf')content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:p.data}});
   });
   if(!content.length)throw E('ai-error',false);
-  let r;
+  let r,d;
   try{
-   r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+   ({r,d}=await fetchJ('https://api.anthropic.com/v1/messages',{method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':AV,'anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify(Object.assign({model:smart?M.cSmart:M.cFast,max_tokens:maxTokens||1000,messages:[{role:'user',content}]},
-     useCat?{system:[{type:'text',text:catalogText(),cache_control:{type:'ephemeral'}}]}:{}))});
-  }catch(e){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
-  let d=null;try{d=await r.json();}catch(e){}
+     useCat?{system:[{type:'text',text:catalogText(),cache_control:{type:'ephemeral'}}]}:{}))},to));
+  }catch(e){if(e&&e.message==='timeout')throw e;try{Store.logErr('ai',e);}catch(x){} throw E('network');}
   if(!r.ok||(d&&d.error))throw E(classify(r.status,d&&d.error&&d.error.message));
   const u=(d&&d.usage)||{};bump('claude',(u.input_tokens||0)+(u.cache_creation_input_tokens||0)+(u.cache_read_input_tokens||0),u.output_tokens);
   try{if(u.cache_read_input_tokens>0){const s=Store.get('aiUsage',{});const k2='cacheHits:'+new Date().toISOString().slice(0,7);s[k2]=(s[k2]||0)+1;Store.set('aiUsage',s);}}catch(e){}
@@ -4344,7 +4398,12 @@ const AI=(()=>{
   return txt;
  }
 
- async function gemini(parts,maxTokens,useCat){
+ /* Gemini. המפתח בכותרת (לא בכתובת — כתובות נשמרות ביומנים), ואם הדפדפן
+    חוסם את הכותרת — חוזר לכתובת כמו עד v21.6. פלט מובנה עם רשת ביטחון:
+    אם השרת דוחה את הסכמה (400) והקריאה בלעדיה מצליחה — זוכרים לשבוע ולא
+    מנסים שוב. בכוונה בלי maxOutputTokens: במודל שחושב, החשיבה נספרת במגבלה
+    והתשובה נחתכת. ובלי temperature — הוצא משימוש (יולי 2026). */
+ async function gemini(parts,maxTokens,useCat,schema,to){
   const k=keyOf('gemini');if(!k)throw E('no-key',false);
   const gp=[];
   if(useCat)gp.push({text:catalogText()});
@@ -4355,12 +4414,29 @@ const AI=(()=>{
    else if(p.t==='audio')gp.push({inline_data:{mime_type:p.mime,data:p.data}});
   });
   if(!gp.length)throw E('ai-error',false);
-  let r;
-  try{
-   r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+M.g+':generateContent?key='+encodeURIComponent(k),
-    {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:gp}]})});
-  }catch(e){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
-  let d=null;try{d=await r.json();}catch(e){}
+  const base='https://generativelanguage.googleapis.com/v1beta/models/'+M.g+':generateContent';
+  const bodyOf=ws=>JSON.stringify(Object.assign({contents:[{parts:gp}]},
+    ws?{generationConfig:{responseMimeType:'application/json',responseJsonSchema:schema}}:{}));
+  // אם הכותרת נחסמה פעם והכתובת עבדה — זוכרים לשבוע, בלי ניסיון מבוזבז בכל קריאה
+  const viaQuery=()=>{const c=caps();return c.gHdr===false&&Date.now()-(+c.at||0)<7*864e5;};
+  const byQuery=ws=>fetchJ(base+'?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:bodyOf(ws)},to);
+  const send=async ws=>{
+   try{
+    if(viaQuery())return await byQuery(ws);
+    return await fetchJ(base,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:bodyOf(ws)},to);
+   }catch(e){
+    if(e&&e.message==='timeout')throw e;
+    if(viaQuery()){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
+    try{const out=await byQuery(ws);caps({gHdr:false});return out;}
+    catch(e2){if(e2&&e2.message==='timeout')throw e2;try{Store.logErr('ai',e2);}catch(x){} throw E('network');}
+   }};
+  const ws=!!schema&&schemaOn();
+  let {r,d}=await send(ws);
+  if(ws&&r.status===400){
+   const why=String((d&&d.error&&d.error.message)||'400').slice(0,160);
+   ({r,d}=await send(false));
+   if(r.ok)caps({gSchema:false,gSchemaErr:why});
+  }else if(ws&&r.ok)caps({gSchema:true,gSchemaErr:''});
   if(d&&d.error)throw E(classify(d.error.code||r.status,d.error.message));
   if(!r.ok)throw E(classify(r.status,''));
   const u=(d&&d.usageMetadata)||{};bump('gemini',u.promptTokenCount,u.candidatesTokenCount);
@@ -4388,12 +4464,40 @@ const AI=(()=>{
   for(let i=0;i<chain.length;i++){
    const p=chain[i];
    try{
-    const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog):await gemini(parts,opts.maxTokens,opts.catalog);
+    const to=opts.timeout||(audio?90000:45000);
+    const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to);
     if(i>0&&typeof opts.onFallback==='function'){try{opts.onFallback(nameOf(p));}catch(e){}}
     return txt;
    }catch(e){last=e;if(e&&e.soft===false&&e.message!=='no-key')break;}
   }
   throw last||E('ai-error');
+ }
+
+ /** בקשה שמחזירה אובייקט/מערך מפוענח. זורק bad-json אם אין מבנה בתשובה. */
+ async function json(parts,schema,opts){
+  const txt=await run(parts,Object.assign({},opts||{},{schema:schema}));
+  const o=parse(txt);
+  if(o==null)throw E('bad-json');
+  return o;
+ }
+
+ /** בדיקת חיבור — קריאה זעירה לכל מודל. מחזיר שורה לכל מודל עם מצב וזמן. */
+ async function check(){
+  const S={type:'object',properties:{ok:{type:'boolean'}},required:['ok']};
+  const rows=[];
+  const one=async(label,model,fn)=>{
+   const t0=Date.now();
+   try{const o=parse(await fn());
+     rows.push({label:label,model:model,state:(o&&o.ok===true)?'ok':'odd',ms:Date.now()-t0});}
+   catch(e){rows.push({label:label,model:model,state:'err',code:(e&&e.message)||'?',ms:Date.now()-t0});}
+  };
+  if(has('gemini'))await one('Gemini',M.g,()=>gemini([{t:'text',v:'Return exactly this JSON: {"ok":true}'}],0,false,S,20000));
+  else rows.push({label:'Gemini',model:M.g,state:'no-key'});
+  if(has('claude')){
+   await one('Claude מהיר',M.cFast,()=>claude([{t:'text',v:'Return exactly this JSON and nothing else: {"ok":true}'}],40,false,false,20000));
+   await one('Claude חכם',M.cSmart,()=>claude([{t:'text',v:'Return exactly this JSON and nothing else: {"ok":true}'}],40,true,false,20000));
+  }else rows.push({label:'Claude',model:M.cFast,state:'no-key'});
+  return {rows:rows,caps:caps()};
  }
 
  function report(){
@@ -4403,7 +4507,7 @@ const AI=(()=>{
   return out.length?out.join(' | '):'אין שימוש החודש';
  }
 
- return{run,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES};
+ return{run,json,parse,check,caps,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -4590,7 +4694,7 @@ const nisR=n=>Math.round(+n||0).toLocaleString('en-US')+'\u00a0₪';
  * @typedef {'search'|'x'|'check'|'copy'|'phone'|'message-circle'|'trending-down'|'chevron-down'|
  *   'arrow-up-down'|'refresh-cw'|'cloud-download'|'eye'|'list'|'zap'|'link'|'scissors'|'pen-line'|
  *   'star'|'trash-2'|'pencil'|'file-text'|'clipboard-list'|'clock'|'house'|'calculator'|'send'|'bell'|
- *   'users'|'settings'|'camera'|'chart-column'|'calendar-days'|'phone-outgoing'|'layout-grid'} IconName
+ *   'users'|'settings'|'camera'|'chart-column'|'calendar-days'|'phone-outgoing'|'layout-grid'|'ruler'} IconName
  */
 const ICO={
  'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
@@ -4626,6 +4730,7 @@ const ICO={
  'calendar-days':'<rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/>',
  'phone-outgoing':'<polyline points="22 8 22 2 16 2"/><line x1="16" x2="22" y1="8" y2="2"/><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
  'layout-grid':'<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+ 'ruler':'<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
  'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/>'
 };
 /** @param {IconName} n @param {number} [s=16] @returns {string} */
@@ -4905,18 +5010,124 @@ const App={
  },
  aiErrMsg(e){
   const k=(e&&e.message)||'';
-  if(k==='no-key')return '\u05dc\u05d0 \u05d4\u05d5\u05d2\u05d3\u05e8 \u05de\u05e4\u05ea\u05d7 AI \u2014 \u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7';
-  if(k==='quota')return '\ud83d\udd34 \u05de\u05db\u05e1\u05ea \u05d4-AI \u05d4\u05d9\u05d5\u05de\u05d9\u05ea \u05e0\u05d2\u05de\u05e8\u05d4 \u2014 \u05ea\u05ea\u05d7\u05d3\u05e9 \u05de\u05d7\u05e8. \u05db\u05dc \u05e9\u05d0\u05e8 \u05d4\u05d0\u05e4\u05dc\u05d9\u05e7\u05e6\u05d9\u05d4 \u05e2\u05d5\u05d1\u05d3\u05ea \u05db\u05e8\u05d2\u05d9\u05dc';
-  if(k==='bad-key')return '\u05d4\u05de\u05e4\u05ea\u05d7 \u05dc\u05d0 \u05ea\u05e7\u05d9\u05df \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d1\u05d4\u05d2\u05d3\u05e8\u05d5\u05ea \u05de\u05e4\u05ea\u05d7';
-  if(k==='ai-error')return '\u05d4-AI \u05d4\u05d7\u05d6\u05d9\u05e8 \u05e9\u05d2\u05d9\u05d0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1';
-  if(k==='network')return '\u05d0\u05d9\u05df \u05d7\u05d9\u05d1\u05d5\u05e8 \u05dc\u05e8\u05e9\u05ea \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d0\u05d9\u05e0\u05d8\u05e8\u05e0\u05d8';
-  return '\u05e9\u05d2\u05d9\u05d0\u05ea \u05d7\u05d9\u05d1\u05d5\u05e8 \u2014 \u05d1\u05d3\u05d5\u05e7 \u05d0\u05d9\u05e0\u05d8\u05e8\u05e0\u05d8';
+  if(k==='no-key')return 'לא הוגדר מפתח AI — הגדרות מפתח';
+  if(k==='quota')return 'מכסת ה-AI נגמרה — מתחדשת בדרך כלל עד מחר. כל שאר האפליקציה עובדת כרגיל';
+  if(k==='busy')return 'שירות ה-AI עמוס כרגע — נסה שוב בעוד דקה';
+  if(k==='timeout')return 'ה-AI לא ענה בזמן — נסה שוב, או קובץ קצר יותר';
+  if(k==='bad-key')return 'המפתח לא תקין — בדוק בהגדרות מפתח';
+  if(k==='bad-json')return 'ה-AI החזיר תשובה לא מובנת — נסה שוב';
+  if(k==='ai-error')return 'ה-AI החזיר שגיאה — נסה שוב';
+  if(k==='network')return 'אין חיבור לרשת — בדוק אינטרנט';
+  // שגיאות קובץ — לא חיבור. קודם נפלו לברירת המחדל, ויהודה בדק את האינטרנט.
+  if(k==='read')return 'לא הצלחתי לקרוא את הקובץ — נסה קובץ אחר';
+  if(k==='bad-image')return 'הקובץ לא נקרא כתמונה — נסה צילום אחר או PDF';
+  return 'שגיאת חיבור — בדוק אינטרנט';
  },
  // #29: תמחור חכם — מציע מחיר ליחידה לפי ההיסטוריה של המשתמש + טווח מומלץ
  priceHistory(){const hist={};try{Store.get('quotes',[]).forEach(q=>{const snap=q.snap;if(!snap)return;
      const scan=arr=>{(arr||[]).forEach(it=>{if(it&&it.name&&+it.price>0&&it.selected!==false){const k=it.name.trim();(hist[k]=hist[k]||[]).push({p:+it.price,u:it.unit||''});}});};
+     // הפורמט הנוכחי: snap.lines — רק סעיפים שנבחרו. הפורמט הישן (catalog/subItems/custom)
+     // נשמר להצעות ישנות. עד v21.7 נקרא רק הישן, ולכן "מחיר מההיסטוריה שלך" לא מצא כלום.
+     scan(snap.lines);
      (snap.catalog||[]).forEach(c=>scan(c.items));Object.values(snap.subItems||{}).forEach(scan);scan(snap.custom);
    });}catch(e){}return hist;},
+ /* ═══ תוכנית דירה → שטח ═══
+    קורא תמונה או PDF של תוכנית ומחזיר חדרים ושטח כולל.
+    עובד רק כשהמידות או השטחים כתובים בתוכנית — מצילום של חדר אי אפשר למדוד,
+    ולכן המודל מונחה להחזיר ריק במקום להמציא. התוצאה מוצגת תמיד לאישור. */
+ readDataUrl(f){return new Promise((res,rej)=>{const rd=new FileReader();
+   rd.onload=()=>res(rd.result);rd.onerror=()=>rej(new Error('read'));rd.readAsDataURL(f);});},
+ /** תמונת תוכנית — מוקטנת פחות מתמונה רגילה: מספרים קטנים חייבים להישאר קריאים. */
+ planImage(f){return new Promise((res,rej)=>{const rd=new FileReader();rd.onerror=()=>rej(new Error('read'));
+   rd.onload=()=>{const img=new Image();img.onerror=()=>rej(new Error('bad-image'));
+     img.onload=()=>{const max=2400;let w=img.width,h=img.height;
+       if(w>max||h>max){const k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k);}
+       const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+       res(cv.toDataURL('image/jpeg',0.88));};
+     img.src=rd.result;};
+   rd.readAsDataURL(f);});},
+ /** תשובת המודל → חדרים מנוקים ושטח. פונקציה טהורה, כדי שאפשר לבדוק אותה. */
+ planResult(o,file){
+  const rooms=(Array.isArray(o&&o.rooms)?o.rooms:[])
+    .map(r=>({name:String((r&&r.name)||'').trim().slice(0,40),sqm:Math.round((+(r&&r.sqm)||0)*10)/10}))
+    .filter(r=>r.name&&r.sqm>0&&r.sqm<2000).slice(0,40);
+  const sum=Math.round(rooms.reduce((a,r)=>a+r.sqm,0)*10)/10;
+  const t=+(o&&o.total_sqm);
+  const total=(t>0&&t<20000)?Math.round(t*10)/10:sum;
+  return {rooms:rooms,total:total,sum:sum,source:String((o&&o.source)||''),
+    note:String((o&&o.note)||'').slice(0,160),file:String(file||'').slice(0,60)};
+ },
+ /** @param {File} f */
+ async planScan(f){
+  if(!f)return;
+  if(!AI.anyKey()){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
+  const isPdf=f.type==='application/pdf';
+  if(!isPdf&&!/^image\//.test(f.type||'')){this.toast('צריך תמונה או PDF של התוכנית');return;}
+  if(f.size>15*1024*1024){this.toast('הקובץ גדול מדי — עד 15MB');return;}
+  this.busy('קורא את התוכנית…');this.haptic(15);
+  try{
+    const url=isPdf?await this.readDataUrl(f):await this.planImage(f);
+    const m=String(url).match(/^data:([^;]+);base64,(.+)$/);if(!m)throw new Error('bad-image');
+    const S={type:'object',properties:{
+      rooms:{type:'array',items:{type:'object',properties:{name:{type:'string'},sqm:{type:'number'}},required:['name','sqm']}},
+      total_sqm:{type:'number'},
+      source:{type:'string',enum:['written_areas','computed_from_dimensions','none']},
+      note:{type:'string'}},required:['rooms','total_sqm','source']};
+    const P=['אתה קורא תוכניות דירה עבור קבלן שיפוצים בישראל.',
+      'זהה את החדרים בתוכנית ואת השטח של כל חדר במ"ר.',
+      'שטח שכתוב בתוכנית — העתק אותו כמו שהוא (source=written_areas).',
+      'רק אורך ורוחב כתובים — חשב אורך×רוחב (source=computed_from_dimensions).',
+      'אין שום מידה כתובה — אל תעריך ואל תמציא: rooms ריק, total_sqm=0, source=none, ובהערה כתוב שחסרות מידות.',
+      'total_sqm: אם כתוב בתוכנית שטח כולל — אותו; אחרת סכום החדרים.',
+      'note: משפט קצר בעברית על מה שלא היה ברור. החזר JSON בלבד.'].join(String.fromCharCode(10));
+    const o=await AI.json([isPdf?{t:'pdf',data:m[2]}:{t:'image',mime:m[1],data:m[2]},{t:'text',v:P}],S,{maxTokens:2000,timeout:90000});
+    const r=this.planResult(o,f.name);
+    this.idle();
+    if(!r.rooms.length&&!(r.total>0)){this.toast(r.note||'לא נמצאו מידות בתוכנית');return;}
+    this.state.planScan=r;this.render();
+  }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
+ },
+ /** פאנל האישור — מתחת לשדה השטח. */
+ planScanPanel(){
+  const p=this.state.planScan;if(!p)return '';
+  const SRC={written_areas:'השטחים כתובים בתוכנית',computed_from_dimensions:'חושב מהמידות שבתוכנית',none:''};
+  const off=p.sum>0&&Math.abs(p.total-p.sum)/p.sum>0.03;
+  const n=x=>(+x).toLocaleString('he-IL');
+  return '<ul class="tk-facts plan-scan" aria-label="תוצאת קריאת התוכנית">'+
+    '<li>'+ico('file-text',14)+'<span>'+esc(p.file||'תוכנית')+(SRC[p.source]?' · '+SRC[p.source]:'')+'</span></li>'+
+    p.rooms.map(r=>'<li class="pr"><span>'+esc(r.name)+'</span><b>'+n(r.sqm)+' מ"ר</b></li>').join('')+
+    (off?'<li class="cut">'+ico('ruler',14)+'<span>סכום החדרים '+n(p.sum)+' מ"ר — שונה מהשטח הכולל שבתוכנית</span></li>':'')+
+    (p.note?'<li>'+ico('message-circle',14)+'<span>'+esc(p.note)+'</span></li>':'')+'</ul>'+
+    '<div class="tk-acts plan-scan-acts">'+
+      '<button class="tk-btn pri" data-planapply="'+p.total+'">'+ico('check',16)+'החל '+n(p.total)+' מ"ר</button>'+
+      (off?'<button class="tk-btn" data-planapply="'+p.sum+'">סכום החדרים</button>':'')+
+      '<button class="tk-btn" id="plan-scan-x">ביטול</button></div>';
+ },
+
+ /**
+  * המחיר הרגיל של יהודה לכל סעיף — חציון ומספר הצעות. רק סעיפים שנבחרו בפועל
+  * (כמות > 0), סעיף אחד לכל הצעה, ובלי ההצעה הנוכחית עצמה.
+  * חציון ולא ממוצע: מחיר חריג אחד לא מזיז אותו.
+  * @param {string} [skipNo] מספר ההצעה הנוכחית
+  * @returns {Object<string,{med:number,n:number}>}
+  */
+ priceNorms(skipNo){
+  const h={};
+  try{(Store.get('quotes',[])||[]).forEach(q=>{
+    if(!q||!q.snap||(skipNo&&q.no===skipNo))return;
+    const seen={};
+    const scan=arr=>(arr||[]).forEach(it=>{
+      if(!it||!it.name||!(+it.price>0)||!(+it.qty>0)||it.selected===false)return;
+      const k=String(it.name).trim();if(seen[k])return;seen[k]=1;
+      (h[k]=h[k]||[]).push(+it.price);});
+    scan(q.snap.lines);
+    (q.snap.catalog||[]).forEach(c=>scan(c&&c.items));Object.values(q.snap.subItems||{}).forEach(scan);scan(q.snap.custom);
+  });}catch(e){}
+  const out={};
+  Object.keys(h).forEach(k=>{const a=h[k].slice().sort((x,y)=>x-y),n=a.length;
+    out[k]={med:n%2?a[(n-1)/2]:(a[n/2-1]+a[n/2])/2,n:n};});
+  return out;
+ },
  async aiPriceFor(cid,iid,btn){const it=this.find(cid,iid);if(!it)return;if(btn){btn.classList.add('working');btn.textContent='⏳';}try{const hist=this.priceHistory();const exact=hist[it.name.trim()];if(exact&&exact.length){const avg=Math.round(exact.reduce((s,x)=>s+x.p,0)/exact.length);this.setField(cid,iid,'price',avg);this.haptic(20);this.toast('מחיר מההיסטוריה שלך: '+nis(avg));this.render();return;}const keys=Object.keys(hist).slice(0,25);const samples=keys.map(k=>{const a=hist[k];const av=Math.round(a.reduce((s,x)=>s+x.p,0)/a.length);return k+' = '+av+' ILS/'+(a[0].u||'');}).join('; ');const parts=['אתה מתמחר עבור קבלן שיפוצים בישראל 2026.','עבודה: '+it.name+' (יחידה: '+(it.unit||'')+')'];if(it.range)parts.push('טווח שוק: '+it.range);if(samples)parts.push('מחירים קודמים של הקבלן: '+samples);parts.push('החזר אך ורק מספר שלם בשקלים ליחידה, בלי טקסט ובלי סימנים.');const prompt=parts.join(String.fromCharCode(10));const txt=await this.callAI(prompt,50);const num=parseInt(String(txt||'').replace(/[^0-9]/g,''),10);if(!num||num<1){this.toast('לא התקבל מחיר תקין');if(btn){btn.classList.remove('working');btn.textContent='🤖';}return;}this.setField(cid,iid,'price',num);this.haptic(20);this.toast('הצעת AI: '+nis(num)+' — בדוק והתאם');this.render();}catch(e){this.toast('שגיאת AI — בדוק מפתח');if(btn){btn.classList.remove('working');btn.textContent='🤖';}} },
  v2qStart(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('זיהוי קולי לא נתמך בדפדפן זה');return;}
   const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();
@@ -5081,18 +5292,8 @@ const App={
  learnCat(name,cid){if(!name||!cid||cid==='custom')return;try{const m=Store.get('learnedCats',{});m[name.trim()]=cid;Store.set('learnedCats',m);}catch(e){}},
  recallCat(name){if(!name)return null;try{const m=Store.get('learnedCats',{});return m[name.trim()]||null;}catch(e){return null;}},
  _parseJSONArray(txt){
-  // פרסר עמיד: מנקה markdown, מחלץ מערך, ומתקן JSON חתוך
-  try{
-   txt=String(txt||'').replace(/```json/gi,'').replace(/```/g,'').trim();
-   const a=txt.indexOf('[');if(a<0)return null;
-   let b=txt.lastIndexOf(']');
-   let slice=b>a?txt.slice(a,b+1):txt.slice(a);
-   try{return JSON.parse(slice);}catch(e){}
-   // תיקof JSON חתוך: חתוך אחרי האובייקט השלם האחרון
-   const lastObj=slice.lastIndexOf('}');
-   if(lastObj>0){try{return JSON.parse(slice.slice(0,lastObj+1)+']');}catch(e){}}
-   return null;
-  }catch(e){return null;}
+  // דרך המפענח של הליבה: סוגריים מאוזנים, מחרוזות, והצלת מערך חתוך (מסומן _truncated)
+  try{const o=AI.parse(txt);return Array.isArray(o)?o:null;}catch(e){return null;}
  },
  /* ===== ייבוא מחירים מרוכז =====
     מדביקים את התשובה של ג'מיני בפורמט מזהה|מחיר ומקבלים תצוגה מקדימה
@@ -5972,10 +6173,10 @@ const App={
     'סעיף שאינו במחירון — ref ריק, ואז תן מחיר שוק ריאלי ועדכני בישראל לקבלן שיפוצים, מספר בלבד בלי סימנים. אל תחזיר 0.',
     'דוגמה: [{"ref":"dm4","name":"פינוי פסולת במכולה","cat":"הריסה ופינוי","unit":"יח׳","price":1700}]'];
   const prompt=P.join(String.fromCharCode(10));
-  try{let txt=await AI.run([{t:'text',v:prompt}],{maxTokens:2000,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
-   if(!txt||!txt.trim()){this.idle();this.toast('ה-AI לא החזיר תשובה — ייתכן שהמכסה נגמרה. נסה שוב');return;}
-   txt=txt.replace(/```json/gi,'').replace(/```/g,'').trim();const a=txt.indexOf('['),b=txt.lastIndexOf(']');if(a>=0&&b>a)txt=txt.slice(a,b+1);
-   let arr;try{arr=JSON.parse(txt);}catch(pe){this.idle();this.toast('ה-AI החזיר תשובה לא תקינה — נסה שוב');return;}
+  const S={type:'array',maxItems:12,items:{type:'object',properties:{
+    ref:{type:'string',description:'מזהה מהמחירון, או ריק'},name:{type:'string'},cat:{type:'string'},
+    unit:{type:'string'},price:{type:'number',description:'מחיר ליחידה בשקלים'}},required:['ref','name','unit','price']}};
+  try{let arr=await AI.json([{t:'text',v:prompt}],S,{maxTokens:2000,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
    if(!Array.isArray(arr))arr=[];
    arr=arr.filter(x=>x&&(x.name||x.ref)).map(x=>{
      const hit=x.ref?AI.resolveRef(x.ref):null;
@@ -6586,34 +6787,44 @@ const App={
     const p=+L.price||0;if(p<=0)return;
     const k=String(L.name).trim();
     if(!idx[k])idx[k]=[];
-    if(idx[k].length<8)idx[k].push({p:p,ts:q.ts||0,client:q.client||'',unit:L.unit||''});
+    if(idx[k].length<8)idx[k].push({p:p,ts:q.ts||0,client:q.client||'',unit:L.unit||'',no:q.no||''});
    });
   });
   this._px=idx;this._pxSig=sig;
   return idx;
  },
- priceStat(name){
-  const arr=(this.priceIndex()[String(name||'').trim()])||[];
+ /**
+  * המחיר שיהודה גובה בדרך כלל על סעיף — חציון, לא ממוצע: טעות הקלדה אחת
+  * (18,000 במקום 1,800) הטתה את הממוצע לכל ההצעות הבאות, וכפתור "החל" החיל
+  * אותו. בלי ההצעה הנוכחית (אחרי PDF/לינק היא בהיסטוריה והשוותה לעצמה),
+  * ורק באותה יחידה (מ"ר מול גלובלי הם לא אותו מחיר).
+  * @param {string} name @param {string} [unit]
+  * @returns {?{n:number,med:number,avg:number,min:number,max:number,last:number,lastClient:string,list:number[]}}
+  */
+ priceStat(name,unit){
+  const cur=String((this.state&&this.state.quoteNo)||'');
+  let arr=(this.priceIndex()[String(name||'').trim()])||[];
+  arr=arr.filter(x=>!(cur&&x.no===cur));
+  if(unit)arr=arr.filter(x=>!x.unit||x.unit===unit);
   if(!arr.length)return null;
   const ps=arr.map(x=>x.p);
-  const avg=Math.round(ps.reduce((a,b)=>a+b,0)/ps.length);
-  const sorted=ps.slice().sort((a,b)=>a-b);
-  return {n:ps.length,avg:avg,min:sorted[0],max:sorted[sorted.length-1],
-    last:arr[0].p,lastClient:arr[0].client,list:ps};
+  const s=ps.slice().sort((a,b)=>a-b),n=s.length;
+  const med=Math.round(n%2?s[(n-1)/2]:(s[n/2-1]+s[n/2])/2);
+  return {n:n,med:med,avg:med,min:s[0],max:s[n-1],last:arr[0].p,lastClient:arr[0].client,list:ps};
  },
- priceHint(name,cur){
-  const st=this.priceStat(name);
+ priceHint(name,cur,unit){
+  const st=this.priceStat(name,unit);
   if(!st)return '';
   const c=+cur||0;
   let cls='',tip='';
-  if(c>0&&st.avg>0){
-   const d=Math.round((c-st.avg)/st.avg*100);
+  if(c>0&&st.med>0){
+   const d=Math.round((c-st.med)/st.med*100);
    if(d>=30){cls='hi';tip=' · +'+d+'%';}
    else if(d<=-30){cls='lo';tip=' · '+d+'%';}
   }
-  const range=st.min===st.max?nisR(st.avg):(st.min.toLocaleString()+'–'+st.max.toLocaleString());
-  return `<button type="button" class="px-hint ${cls}" data-pxapply="${st.avg}"
-    title="לחיצה מחילה את הממוצע">💡 גבית ${range} (${st.n}) · ממוצע ${st.avg.toLocaleString()}${tip}</button>`;
+  const range=st.min===st.max?nisR(st.med):(st.min.toLocaleString()+'–'+st.max.toLocaleString());
+  return `<button type="button" class="px-hint ${cls}" data-pxapply="${st.med}"
+    title="לחיצה מחילה את המחיר הרגיל שלך">💡 גבית ${range} (${st.n}) · בדרך כלל ${st.med.toLocaleString()}${tip}</button>`;
  },
  preflight(){
   // חובה לפני הכל: מה שהוקלד בשדות ועדיין לא נשמר למצב.
@@ -6652,6 +6863,16 @@ const App={
   if(dup.length)R('red',dup.length+' סעיפים כפולים',
     Array.from(new Set(dup)).slice(0,3).join(' · '),'הלקוח יראה את אותו סעיף פעמיים');
 
+  // מחיר חריג מול ההיסטוריה של יהודה — רק כשיש לפחות 3 הצעות קודמות לאותו סעיף,
+  // ורק בפער של פי 1.6 ומעלה או 0.6 ומטה. מטרה: לתפוס אפס חסר או מיותר בהקלדה.
+  try{
+    const N=this.priceNorms(s.quoteNo);
+    const odd=lines.filter(x=>{const r=N[String(x.it.name).trim()];const p=+x.it.price;
+      return r&&r.n>=3&&r.med>0&&p>0&&(p>=r.med*1.6||p<=r.med*0.6);});
+    if(odd.length)R('yellow',odd.length+(odd.length===1?' מחיר חריג':' מחירים חריגים')+' מול ההצעות הקודמות שלך',
+      odd.slice(0,3).map(x=>{const r=N[String(x.it.name).trim()];
+        return esc(x.it.name)+' — '+nis(+x.it.price)+' (בד״כ '+nis(r.med)+')';}).join(' · '),'בדוק שזו לא טעות הקלדה');
+  }catch(e){}
   const huge=lines.filter(x=>(+x.it.qty)>500);
   if(huge.length)R('yellow','כמות חריגה',
     huge.slice(0,2).map(x=>x.it.name+' — '+x.it.qty+' '+x.it.unit).join(' · '));
@@ -6688,10 +6909,10 @@ const App={
   try{
    const off=[];
    lines.forEach(x=>{
-    const st=this.priceStat(x.it.name);
-    if(!st||st.n<2||!(+x.it.price>0)||!(st.avg>0))return;
-    const d=Math.round(((+x.it.price)-st.avg)/st.avg*100);
-    if(Math.abs(d)>=35)off.push(x.it.name+' — '+nisR(+x.it.price)+' מול ממוצע '+nisR(st.avg)+' ('+(d>0?'+':'')+d+'%)');
+    const st=this.priceStat(x.it.name,x.it.unit);
+    if(!st||st.n<2||!(+x.it.price>0)||!(st.med>0))return;
+    const d=Math.round(((+x.it.price)-st.med)/st.med*100);
+    if(Math.abs(d)>=35)off.push(x.it.name+' — '+nisR(+x.it.price)+' מול '+nisR(st.med)+' בדרך כלל ('+(d>0?'+':'')+d+'%)');
    });
    if(off.length)R('yellow',off.length+' סעיפים חורגים מהמחיר שאתה גובה בדרך כלל',
      off.slice(0,3).join(' · '),'ודא שזה מכוון ולא טעות הקלדה');
@@ -6844,7 +7065,7 @@ const App={
       <div class="item-name">${esc(i.name)}<div class="item-range">${i.laborMode?`<span class="lb-note">⚙️ התקנה בלבד — החומר על הלקוח</span>`:(i.range||'')}</div></div>
       ${custom?`<button class="del-custom" data-delcustom="${i.id}">🗑️</button>`:(i.sub?`<button class="del-custom" data-delsub="${cid}|${i.id}">🗑️</button>`:'')}</div>
     <div class="fields">
-      <div class="f"><label>מחיר ₪</label><div style="display:flex;gap:5px"><input type="number" inputmode="decimal" value="${i.price}" data-fld="price" data-k="${cid}|${i.id}" class="price-in" style="flex:1"/><button class="ai-price-btn" data-aiprice="${cid}|${i.id}" type="button" title="הצע מחיר AI">🤖</button></div>${i.selected?this.priceHint(i.name,i.price):''}</div>
+      <div class="f"><label>מחיר ₪</label><div style="display:flex;gap:5px"><input type="number" inputmode="decimal" value="${i.price}" data-fld="price" data-k="${cid}|${i.id}" class="price-in" style="flex:1"/><button class="ai-price-btn" data-aiprice="${cid}|${i.id}" type="button" title="הצע מחיר AI">🤖</button></div>${i.selected?this.priceHint(i.name,i.price,i.unit):''}</div>
       <div class="f"><label>יחידה</label><select data-fld="unit" data-k="${cid}|${i.id}">${UNITS.map(u=>`<option ${u===i.unit?'selected':''}>${u}</option>`).join('')}</select></div>
       <div class="f"><label>כמות</label><div class="qty"><button class="qstep" data-step="${cid}|${i.id}|-1" type="button">−</button><input type="number" inputmode="decimal" value="${i.qty||''}" data-fld="qty" data-k="${cid}|${i.id}" class="qty-in"/><button class="qstep" data-step="${cid}|${i.id}|1" type="button">+</button></div></div></div>
     <div class="item-total">
@@ -6886,6 +7107,9 @@ const App={
      <div class="field"><label>מחיר למ"ר (₪)</label><input id="q_persqm" type="number" inputmode="decimal" value="${s.planPerSqm||''}" placeholder="3200"/></div>
      <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="475"/></div>
    </div>
+   <button class="tk-btn sm ghost plan-scan-btn" id="plan-scan-btn">${ico('ruler',15)}קרא שטח מתוכנית — תמונה או PDF</button>
+   <input id="plan-scan-in" type="file" accept="image/*,application/pdf" hidden/>
+   ${this.planScanPanel()}
    <div style="font-size:11px;color:var(--muted);margin-top:4px">💡 בהצעת תכנון ה-PDF יציג סעיפים וכמויות בלבד (בלי מחיר לכל שורה), ובסוף: המחיר למ"ר.</div>`:''}
    <div class="sec-title">הנחת לקוח ומקדמה</div>
    <div class="row2"><div class="field"><label>אחוז הנחה (%)</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
@@ -6954,6 +7178,9 @@ const App={
    <div class="field"><label>בחר עוזר פעיל</label><select id="ai-provider">${[['gemini','Gemini (Google) — ראשי'],['claude','Claude (Anthropic)']].map(o=>`<option value="${o[0]}" ${Store.get('aiProvider','gemini')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="ai-fallback" ${Store.get('aiFallback',true)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>גיבוי אוטומטי — כשנגמרת מכסת Gemini, Claude נכנס לבד</span></label></div>
    <div class="field"><label>שימוש החודש</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${AI.report()}</div></div>
+   <div class="field"><label>בדיקת חיבור</label>
+     <button class="tk-btn" id="ai-check" style="width:100%">${ico('check',16)}בדוק את כל המודלים</button>
+     <div id="ai-check-out" aria-live="polite">${this._aiCheckHtml||''}</div></div>
    ${(()=>{const L=Store.get('errLog',[])||[];if(!L.length)return '';
      const rows=L.slice(0,6).map(x=>`<div style="font-size:11px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line)">
        <b style="color:var(--warn)">${esc(x.w)}</b> · ${new Date(x.t).toLocaleString('he-IL')}<br>${esc(x.m)}</div>`).join('');
@@ -7111,7 +7338,7 @@ const App={
    this.state.subItems=_si;Store.set('subItems',_si);
    this.state.open={};this.state.onlySel=false;this.state.search='';
    this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
-   this.state.discount=0;this.state.advance=0;this.state.planMode=false;this.state.planPerSqm='';this.state.planTotalSqm='';
+   this.state.discount=0;this.state.advance=0;this.state.planMode=false;this.state.planPerSqm='';this.state.planTotalSqm='';this.state.planScan=null;
    Store.set('planMode',false);
    this.state.quoteNo=nextQuoteNo();this._aiQuoteType='calc';
    this.haptic(20);this.toast('ההצעה אופסה ✓ — הסעיפים הקבועים נשמרו');this.state.modal=null;this.render();
@@ -7467,6 +7694,25 @@ const App={
     הכלל: קיפול מותר רק סביב כלי או פירוט משני שהכותרת הסגורה מספיקה כדי לדעת
     מה בו (כלי AI בהצעה, "מה הלקוחות מורידים", קטגוריות הקטלוג). לעולם לא סביב
     שדות, סכומים או הגדרות. */
+ /**
+  * תוצאת בדיקת ה-AI: שורה לכל מודל. ✓ עובד · ✗ שגיאה עם הסבר · — אין מפתח.
+  * @param {{rows:Array<{label:string,model:string,state:string,ms?:number,code?:string}>,caps:object}} res
+  * @returns {string}
+  */
+ aiCheckHtml(res){
+  const why={'bad-key':'המפתח לא תקין','quota':'המכסה נגמרה','busy':'השירות עמוס','timeout':'לא ענה בזמן',
+    'network':'אין רשת','ai-error':'שגיאה — ייתכן ששם המודל לא קיים','bad-json':'תשובה לא מובנת'};
+  const rows=(res.rows||[]).map(r=>{
+    const ok=r.state==='ok',none=r.state==='no-key';
+    const tn=ok?'ok':(none?'neutral':'red');
+    const txt=ok?('עובד · '+(r.ms/1000).toFixed(1)+' שנ׳'):(none?'אין מפתח':(r.state==='odd'?'ענה, אבל לא במבנה הנכון':(why[r.code]||r.code||'שגיאה')));
+    return '<div class="tk-alert-r"><span><b>'+esc(r.label)+'</b> <span dir="ltr">'+esc(r.model)+'</span></span>'+
+      '<span class="tk-pill" data-tone="'+tn+'">'+ico(ok?'check':'x',13)+txt+'</span></div>';}).join('');
+  const c=res.caps||{};
+  const sch=c.gSchema===true?'פלט מובנה: נתמך ✓':(c.gSchema===false?'פלט מובנה: לא נתמך — עובד בפענוח טקסט ('+esc(c.gSchemaErr||'')+')':'');
+  return '<div class="tk-facts" style="margin-top:8px;padding:4px 12px">'+rows+'</div>'+(sch?'<p class="tk-hint start" style="margin-top:6px">'+sch+'</p>':'');
+ },
+
  /* ═══ מה הלקוח עשה בלינק החי — נתונים, לא תצוגה ═══
     קודם הפונקציה הזו ציירה תיבה ירוקה שלמה, שחזרה על הסכום מהכותרת,
     על "התלבט" מפס השלבים, ועל "לינק חי" משורת הפרטים. עכשיו היא רק
@@ -8155,24 +8401,22 @@ const App={
    '\u05d4\u05d3\u05d5\u05d1\u05e8 \u05e2\u05e9\u05d5\u05d9 \u05dc\u05d3\u05d1\u05e8 \u05d1\u05de\u05e9\u05e4\u05d8\u05d9\u05dd \u05dc\u05d0 \u05de\u05e1\u05d5\u05d3\u05e8\u05d9\u05dd, \u05dc\u05d7\u05d6\u05d5\u05e8 \u05d5\u05dc\u05ea\u05e7\u05df \u05d0\u05ea \u05e2\u05e6\u05de\u05d5. \u05e7\u05d7 \u05d0\u05ea \u05d4\u05d2\u05e8\u05e1\u05d4 \u05d4\u05e1\u05d5\u05e4\u05d9\u05ea \u05e9\u05dc\u05d5.',
    '\u05d4\u05d7\u05d6\u05e8 \u05d0\u05da \u05d5\u05e8\u05e7 JSON \u05ea\u05e7\u05d9\u05df (\u05de\u05e2\u05e8\u05da). \u05dc\u05db\u05dc \u05e1\u05e2\u05d9\u05e3: {"name":"\u05ea\u05d9\u05d0\u05d5\u05e8 \u05d1\u05e2\u05d1\u05e8\u05d9\u05ea","qty":\u05de\u05e1\u05e4\u05e8,"unit":"\u05de\\"\u05e8/\u05de\\"\u05d0/\u05d9\u05d7\u05f3/\u05e0\u05e7\u05d5\u05d3\u05d4/\u05d2\u05dc\u05d5\u05d1\u05dc\u05d9","price":\u05de\u05d7\u05d9\u05e8_\u05dc\u05d9\u05d7\u05d9\u05d3\u05d4,"cat":"\u05d0\u05d7\u05ea \u05de: '+cats+'"}',
    '\u05d0\u05dd \u05dc\u05d0 \u05e0\u05d0\u05de\u05e8 \u05de\u05d7\u05d9\u05e8 \u2014 price=0. \u05d0\u05dd \u05e0\u05d0\u05de\u05e8 \u05e1\u05db\u05d5\u05dd \u05db\u05d5\u05dc\u05dc \u05dc\u05db\u05de\u05d5\u05ea \u2014 \u05d7\u05dc\u05e7 \u05dc\u05de\u05d7\u05d9\u05e8 \u05dc\u05d9\u05d7\u05d9\u05d3\u05d4. \u05e2\u05d3 30 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd. \u05d1\u05dc\u05d9 markdown, \u05d1\u05dc\u05d9 \u05d4\u05e1\u05d1\u05e8\u05d9\u05dd.'];
+  // דרך הליבה (v21.7): מגבלת זמן, סכמה, וכל חלקי התשובה. קודם קריאה ישירה
+  // עם maxOutputTokens:2600 — במודל שחושב התשובה נחתכה, והסעיפים האחרונים
+  // נעלמו בשקט. עכשיו חיתוך מוצג ליהודה.
+  const S={type:'array',maxItems:30,items:{type:'object',properties:{
+    name:{type:'string',description:'תיאור הסעיף בעברית'},
+    qty:{type:'number',description:'כמות'},
+    unit:{type:'string',enum:['מ"ר','מ"א','יח׳','נקודה','גלובלי']},
+    price:{type:'number',description:'מחיר ליחידה בשקלים; 0 אם לא נאמר'},
+    cat:{type:'string',description:'קטגוריה'}},required:['name','qty','unit','price']}};
   try{
-   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+key,{
-     method:'POST',headers:{'Content-Type':'application/json'},
-     body:JSON.stringify({contents:[{parts:[
-       {inline_data:{mime_type:mime,data:b64}},
-       {text:P.join(String.fromCharCode(10))}
-     ]}],generationConfig:{maxOutputTokens:2600,temperature:0.2}})
-   });
-   const d=await r.json();
-   if(d&&d.error){this.idle();this.toast('\u05e9\u05d2\u05d9\u05d0\u05d4: '+(d.error.message||'').slice(0,60));return;}
-   let txt='';
-   try{txt=d.candidates[0].content.parts[0].text||'';}catch(e){txt='';}
-   if(!txt.trim()){this.idle();this.toast('\u05d4-AI \u05dc\u05d0 \u05d4\u05d7\u05d6\u05d9\u05e8 \u05ea\u05d5\u05e6\u05d0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
-   const arr=this._parseJSONArray(txt);
-   if(!arr||!arr.length){this.idle();this.toast('\u05dc\u05d0 \u05d6\u05d5\u05d4\u05d5 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d1\u05d4\u05e7\u05dc\u05d8\u05d4');return;}
+   const arr=await AI.json([{t:'audio',mime:mime,data:b64},{t:'text',v:P.join(String.fromCharCode(10))}],S,{timeout:90000});
+   if(!Array.isArray(arr)||!arr.length){this.idle();this.toast('לא זוהו סעיפים בהקלטה');return;}
    this.idle();this.haptic(25);
    this._v2qResult=arr;this.state.modal='v2qreview';this.render();
-  }catch(e){this.idle();this.toast('\u05e2\u05d9\u05d1\u05d5\u05d3 \u05d4\u05d4\u05e7\u05dc\u05d8\u05d4 \u05e0\u05db\u05e9\u05dc');}
+   if(arr._truncated)setTimeout(()=>this.toast('התשובה נחתכה — ייתכן שחסרים סעיפים מסוף ההקלטה'),400);
+  }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
  },
  waShotModal(){
   const has=!!this._waShotRaw;
@@ -8212,11 +8456,12 @@ const App={
    '\u05dc\u05db\u05dc \u05e1\u05e2\u05d9\u05e3 \u05d7\u05e4\u05e9 \u05e7\u05d5\u05d3\u05dd \u05d4\u05ea\u05d0\u05de\u05d4 \u05d1\u05de\u05d7\u05d9\u05e8\u05d5\u05df \u05d5\u05d4\u05d7\u05d6\u05e8 \u05d0\u05ea \u05d4-ref \u05e9\u05dc\u05d5. \u05e8\u05e7 \u05d0\u05dd \u05d0\u05d9\u05df \u05d4\u05ea\u05d0\u05de\u05d4 \u05e1\u05d1\u05d9\u05e8\u05d4 \u2014 ref \u05e8\u05d9\u05e7.',
    '\u05e9\u05d3\u05d4 \u05e9\u05dc\u05d0 \u05e0\u05d0\u05de\u05e8 \u2014 \u05de\u05d7\u05e8\u05d5\u05d6\u05ea \u05e8\u05d9\u05e7\u05d4. \u05d0\u05dd \u05e0\u05d0\u05de\u05e8 \u05e1\u05db\u05d5\u05dd \u05db\u05d5\u05dc\u05dc \u05dc\u05db\u05de\u05d5\u05ea \u2014 \u05d7\u05dc\u05e7 \u05dc\u05de\u05d7\u05d9\u05e8 \u05dc\u05d9\u05d7\u05d9\u05d3\u05d4. \u05d1\u05dc\u05d9 markdown.'];
   try{
-   let txt=await AI.run([{t:'text',v:P.join(String.fromCharCode(10))}],{maxTokens:3000,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
-   txt=String(txt||'').replace(/```json/gi,'').replace(/```/g,'').trim();
-   const a=txt.indexOf('{'),b=txt.lastIndexOf('}');
-   if(a<0||b<=a){this.idle();this.toast('\u05dc\u05d0 \u05d4\u05e6\u05dc\u05d7\u05ea\u05d9 \u05dc\u05e0\u05ea\u05d7 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
-   let o;try{o=JSON.parse(txt.slice(a,b+1));}catch(e){this.idle();this.toast('\u05ea\u05e9\u05d5\u05d1\u05d4 \u05dc\u05d0 \u05ea\u05e7\u05d9\u05e0\u05d4 \u2014 \u05e0\u05e1\u05d4 \u05e9\u05d5\u05d1');return;}
+   const S={type:'object',properties:{
+     client:{type:'object',properties:{name:{type:'string'},phone:{type:'string'},project:{type:'string'},address:{type:'string'}},required:['name','phone','project','address']},
+     items:{type:'array',items:{type:'object',properties:{ref:{type:'string'},name:{type:'string'},qty:{type:'number'},unit:{type:'string'},price:{type:'number'},cat:{type:'string'}},required:['ref','name','qty','unit','price']}}},
+     required:['client','items']};
+   const o=await AI.json([{t:'text',v:P.join(String.fromCharCode(10))}],S,{maxTokens:3000,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
+   if(!o||typeof o!=='object'||Array.isArray(o)){this.idle();this.toast('לא הצלחתי לנתח — נסה שוב');return;}
    const cl=o.client||{};const items=Array.isArray(o.items)?o.items:[];
    if(cl.name){
      this.state.client.name=cl.name;
@@ -8240,7 +8485,7 @@ const App={
    if(items.length){this.state.modal='v2qreview';}
    else{this.state.modal='quote';this.toast('\u05d4\u05dc\u05e7\u05d5\u05d7 \u05e0\u05d5\u05e6\u05e8 \u2014 \u05dc\u05d0 \u05d6\u05d5\u05d4\u05d5 \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd');}
    this.render();
-  }catch(e){this.idle();this.toast('\u05d4\u05e4\u05e2\u05d5\u05dc\u05d4 \u05e0\u05db\u05e9\u05dc\u05d4');}
+  }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
  },
  styleModal(){
   const s=Store.get('myStyle','');
@@ -8528,8 +8773,8 @@ const App={
     const inp=row.querySelector('.price-in');if(!inp)return;
     const k=inp.dataset.k||'';const[c,i]=k.split('|');
     const it=this.find(c,i);if(!it)return;
-    it.price=v;this.saveActive(c);this.haptic(12);
-    this.toast('הוחל הממוצע שלך: '+nisR(v));this.render();
+    this.setField(c,i,'price',v);this.haptic(12);   // כמו עריכה ידנית: מסומן כמאומת
+    this.toast('הוחל המחיר הרגיל שלך: '+nisR(v));this.render();
   });
   on('[data-fld]','input',e=>{const[c,i]=e.currentTarget.dataset.k.split('|');const it=this.find(c,i);if(!it)return;const f=e.currentTarget.dataset.fld;it[f]=e.currentTarget.value;
     if(f==='qty'){it.selected=(+it.qty>0);}else if(f==='price'&&(+it.qty>0)&&!it.selected){it.selected=true;}this.saveActive(c);
@@ -9082,6 +9327,26 @@ const App={
   on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){(Tomb.add([id]),Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id)));this.render();}});
   on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
+  // תוכנית → שטח. captureQuote לפני בחירת הקובץ: ה-render שאחרי הקריאה בונה
+  // את החלון מהמצב, ובלי זה מה שהוקלד בשדות ולא נשמר היה נמחק.
+  (()=>{const b=document.getElementById('plan-scan-btn'),inp=document.getElementById('plan-scan-in');
+    if(b&&inp){b.onclick=()=>{try{this.captureQuote();}catch(e){}inp.click();};
+      inp.onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)this.planScan(f);};}
+    const x=document.getElementById('plan-scan-x');if(x)x.onclick=()=>{this.state.planScan=null;this.render();};})();
+  on('[data-planapply]','click',e=>{const v=+e.currentTarget.dataset.planapply||0;
+    try{this.captureQuote();}catch(x){}
+    if(v>0){this.state.planTotalSqm=v;Store.set('planTotalSqm',v);}
+    this.state.planScan=null;this.haptic(20);this.toast('השטח עודכן: '+v.toLocaleString('he-IL')+' מ"ר ✓');this.render();});
+  // בדיקת AI — בלי render, כדי שהתוצאה לא תיעלם
+  (()=>{const b=document.getElementById('ai-check');if(!b)return;
+    b.onclick=async()=>{
+      const out=document.getElementById('ai-check-out');
+      b.disabled=true;b.setAttribute('aria-busy','true');if(out)out.innerHTML='<p class="tk-hint start">בודק…</p>';
+      let res;try{res=await AI.check();}catch(e){res={rows:[],caps:{}};}
+      this._aiCheckHtml=this.aiCheckHtml(res);
+      if(out)out.innerHTML=this._aiCheckHtml;
+      b.disabled=false;b.removeAttribute('aria-busy');
+    };})();
   // התיבה המתקפלת זוכרת אם הייתה פתוחה — render בונה אותה מחדש
   (()=>{const dd=document.querySelector('.tk-disc');if(dd)dd.addEventListener('toggle',()=>{this._dropOpen=dd.open;});})();
   // ── סינון בלחיצה על כרטיסי הסיכום ──
