@@ -1691,6 +1691,14 @@ div.tk-f:active{transform:none;}
 .plan-scan>li.pr{justify-content:space-between;color:var(--txt);}
 .plan-scan>li.pr>b{font-variant-numeric:tabular-nums;}
 .plan-scan-acts{margin-top:8px;padding-top:0;border-top:0;}
+/* רשימת קבצים ל-AI */
+.doc-list{margin-top:10px;}
+.doc-list>li.doc-row{align-items:center;color:var(--txt);}
+.doc-row>.ico{flex:none;color:var(--muted);}
+.doc-n{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.doc-row>small{flex:none;color:var(--muted);font-variant-numeric:tabular-nums;}
+.doc-x{width:36px;height:36px;border:0;background:transparent;}
+.doc-add{width:100%;box-sizing:border-box;margin-top:10px;}
 /* כפתור ביטול במסך ההמתנה */
 .busy-x{margin-top:14px;min-height:40px;padding:0 22px;border-radius:var(--r-m);border:1px solid var(--hair-2);
   background:transparent;color:var(--txt);font-family:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer;}
@@ -3228,7 +3236,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='22.0';
+const VERSION='22.1';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3459,7 +3467,10 @@ const GUIDE=[
   {id:'g12',ic:'smartphone',t:'צילום מסך מוואטסאפ',d:'הודעה של לקוח → סעיפים',
    b:`<p>הלקוח כתב מה הוא צריך — מצלמים את המסך. ה-AI יודע שזו שיחה: מתעלם מברכות ושיחת חולין, ומוציא רק בקשות עבודה.</p>`},
   {id:'g10',ic:'file-text',t:'קובץ PDF או תמונה',d:'כתב כמויות מאדריכל',
-   b:`<p>מעלים כתב כמויות, או הצעה ישנה, ומקבלים אותה בפורמט שלך — במקום להקליד 40 שורות.</p>`},
+   b:`<p>מעלים כתב כמויות, תוכניות או הצעה ישנה, ומקבלים אותה בפורמט שלך — במקום להקליד 40 שורות.</p>
+   <ul class="g-ul"><li><b>כמה קבצים יחד</b> — עד 10 מאותו פרויקט, PDF ותמונות מעורבבים. ה-AI מאחד אותם לרשימה אחת, וסעיף שמופיע בכמה קבצים נכנס פעם אחת.</li>
+   <li>✕ ליד קובץ מסיר אותו. <b>הוסף עוד קבצים</b> — מוסיף לרשימה.</li><li>עד 35MB לקובץ, ו-45MB יחד.</li></ul>
+   <div class="g-note">קבצים מוואטסאפ ומדרייב מזוהים גם כשהטלפון לא מסמן אותם כ-PDF.</div>`},
   {id:'g11',ic:'headphones',t:'הקלטה קולית',d:'קובץ קול מוואטסאפ',
    b:`<ol class="g-ol"><li>בוואטסאפ: לחיצה ארוכה על ההקלטה ← שתף ← שמור לקבצים.</li><li>בעוזר: <b>הקלטה</b> ← בוחרים את הקובץ.</li>
    <li>ה-AI מאזין ובונה סעיפים ← בודקים ומאשרים.</li></ol><div class="g-note">הקלטות עובדות רק עם Gemini.</div>`},
@@ -3467,7 +3478,7 @@ const GUIDE=[
    b:`<div class="g-eg"><i>"הצעה לרונית כהן 054-1234567, שיפוץ מטבח ברמת גן, הריסה 3000, ריצוף 12 מטר 250 למטר"</i></div>
    <p>↓ נוצר לקוח עם טלפון וכתובת, סעיפים בקטגוריות, ותזכורת מעקב.</p>`},
   {id:'g35',ic:'ruler',t:'קרא שטח מתוכנית',d:'תוכנית דירה → חדרים ושטח',v:'plan',
-   b:`<ol class="g-ol"><li>בעוזר: בוחרים <b>הצעת תכנון</b>.</li><li><b>קרא שטח מתוכנית 📏</b> ← תמונה או PDF של התוכנית.</li>
+   b:`<ol class="g-ol"><li>בעוזר: בוחרים <b>הצעת תכנון</b>.</li><li><b>קרא שטח מתוכנית 📏</b> ← תמונה או PDF של התוכנית. <b>אפשר כמה קבצים</b> — קומות או עמודים של אותה דירה, בלי לספור חדר פעמיים.</li>
    <li>עוברים לפרטי ההצעה, ליד שדה השטח: רשימת החדרים והשטח הכולל ← <b>החל</b>.</li></ol>
    <div class="g-note warn"><b>רק כשהמידות כתובות בתוכנית.</b> מצילום של חדר אי אפשר למדוד — וה-AI אומר "חסרות מידות" במקום לנחש. התוצאה לעולם לא מוחלת לבד.</div>
    <div class="g-note">גם מתוך פרטי ההצעה: במצב תכנון, מתחת לשדה השטח.</div>`},
@@ -3527,7 +3538,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>מדריך חדש</b> — לפי משימות, עם סרטון קצר לכל משימה.</li>
+   b:`<ul class="g-ul"><li><b>כמה קבצים יחד</b> — ב"קובץ" וב"קרא שטח מתוכנית". ותוקן: PDF מוואטסאפ או מדרייב נשלח כתמונה ונכשל.</li>
+   <li><b>מדריך חדש</b> — לפי משימות, עם סרטון קצר לכל משימה.</li>
    <li><b>16 כלים חכמים</b>, כפתור "ביטול" בכל המתנה ל-AI, וניסיון חוזר אוטומטי בעומס.</li>
    <li><b>קרא שטח מתוכנית</b>, ואזהרת מחיר חריג לפני שליחה.</li>
    <li><b>מסכים נקיים</b> — מעקב, כל ההצעות, תזכורות ולחזור היום. צבע רק כשצריך לעשות משהו, ואייקונים אחידים.</li>
@@ -3684,6 +3696,8 @@ const AI=(()=>{
   if(status===500||status===502||status===503||status===504||status===529||/unavailable|overload|high demand/i.test(m))return 'busy';
   if(status===429||/quota|rate.?limit|exhausted/i.test(m))return 'quota';
   if(status===401||status===403||/api key|permission|invalid.?key|authentication/i.test(m))return 'bad-key';
+  // בקשה גדולה מדי — כמה קבצים גדולים יחד. קודם נפלה ל"ה-AI החזיר שגיאה".
+  if(status===413||/payload|too large|exceeds the (?:maximum|limit)|request size/i.test(m))return 'too-big';
   return 'ai-error';
  }
 
@@ -3852,7 +3866,9 @@ const AI=(()=>{
   const pri=Store.get('aiProvider','gemini');
   const sec=pri==='claude'?'gemini':'claude';
   let chain=[];
-  if(audio){chain=has('gemini')?['gemini']:[];}
+  // only: ספק אחד בלבד — קבצים גדולים מעבר למה ש-Claude מקבל; גיבוי היה רק מוסיף המתנה ומסתיר את השגיאה
+  if(opts.only){chain=has(opts.only)?[opts.only]:[];}
+  else if(audio){chain=has('gemini')?['gemini']:[];}
   else{
    if(has(pri))chain.push(pri);
    if(Store.get('aiFallback',true)&&has(sec))chain.push(sec);
@@ -4446,6 +4462,7 @@ const App={
   if(k==='network')return 'אין חיבור לרשת — בדוק אינטרנט';
   // שגיאות קובץ — לא חיבור. קודם נפלו לברירת המחדל, ויהודה בדק את האינטרנט.
   if(k==='cancelled')return 'הפעולה בוטלה';
+  if(k==='too-big')return 'הקבצים גדולים מדי לשליחה — הסר קובץ או שלח פחות עמודים';
   if(k==='read')return 'לא הצלחתי לקרוא את הקובץ — נסה קובץ אחר';
   if(k==='bad-image')return 'הקובץ לא נקרא כתמונה — נסה צילום אחר או PDF';
   return 'שגיאת חיבור — בדוק אינטרנט';
@@ -4782,6 +4799,66 @@ const App={
     this._v2qResult=it;this.state.modal='v2qreview';this.render();}
  },
 
+ /* ═══ קבצים ל-AI — PDF ותמונות, אחד או כמה ═══
+    זיהוי לפי סוג הקובץ; אם הוא חסר — לפי הסיומת, ואם גם היא חסרה — לפי החתימה
+    בתחילת הקובץ. באנדרואיד, קבצים מוואטסאפ ומדרייב מגיעים לפעמים בלי סוג:
+    "קרא שטח" דחה אותם, ו"קובץ" שלח PDF כתמונה. */
+ async fileKind(f){
+  if(!f)return null;
+  const t=String(f.type||'').toLowerCase(),n=String(f.name||'').toLowerCase();
+  if(t==='application/pdf'||/\.pdf$/.test(n))return 'pdf';
+  if(/^image\//.test(t)||/\.(jpe?g|png|webp|heic|heif)$/.test(n))return 'image';
+  try{const b=new Uint8Array(await f.slice(0,16).arrayBuffer());
+    const s=String.fromCharCode.apply(null,Array.from(b));
+    if(s.indexOf('%PDF')===0)return 'pdf';
+    if(b[0]===0xFF&&b[1]===0xD8)return 'image';
+    if(b[0]===0x89&&s.slice(1,4)==='PNG')return 'image';
+    if(s.slice(0,4)==='RIFF'&&s.slice(8,12)==='WEBP')return 'image';
+    if(s.slice(4,8)==='ftyp'&&/hei[cfx]|mif1/.test(s.slice(8,12)))return 'image';
+  }catch(e){}
+  return null;
+ },
+ /** קובץ → {name,kind,size,mime,data}. PDF כמו שהוא; תמונה מוקטנת — מספרים קטנים נשארים קריאים. */
+ async readDoc(f){
+  const kind=await this.fileKind(f);
+  if(!kind)return {name:f.name,err:'kind'};
+  if(kind==='pdf'){const u=await this.readDataUrl(f);const m=String(u).match(/^data:[^;]*;base64,(.+)$/);
+    return m?{name:f.name,kind:'pdf',size:f.size,mime:'application/pdf',data:m[1]}:{name:f.name,err:'read'};}
+  let u;try{u=await this.planImage(f);}catch(e){u=await this.readDataUrl(f);}
+  const m=String(u).match(/^data:([^;]*);base64,(.+)$/);if(!m)return {name:f.name,err:'read'};
+  let mime=m[1];if(!/^image\//.test(mime))mime=/\.hei[cf]$/i.test(f.name||'')?'image/heic':'image/jpeg';
+  return {name:f.name,kind:'image',size:Math.round(m[2].length*0.75),mime:mime,data:m[2]};
+ },
+ /** גבולות. Gemini: עד 50MB ל-PDF ו-100MB לבקשה (אחרי base64). עם מרווח — 35MB לקובץ, 45MB יחד.
+     מעל 22MB יחד — רק Gemini: הבקשה של Claude קטנה יותר. */
+ docLimits(){return {file:35*1048576,total:45*1048576,count:10,claude:22*1048576};},
+ fmtMB(b){return (b/1048576).toLocaleString('he-IL',{maximumFractionDigits:1})+' MB';},
+ /** מוסיף קבצים לרשימה עם בדיקות. מחזיר את מה שנדחה, עם הסיבה. */
+ async addDocs(list,files){
+  const L=this.docLimits();const bad=[];
+  for(const f of Array.from(files||[])){
+    if(list.length>=L.count){bad.push({n:f.name,why:'count'});continue;}
+    if(f.size>L.file){bad.push({n:f.name,why:'big'});continue;}
+    if(list.some(d=>d.name===f.name&&Math.abs(d.size-f.size)<1))continue;
+    try{const d=await this.readDoc(f);
+      if(d.err){bad.push({n:f.name,why:d.err});continue;}
+      if(list.reduce((a,x)=>a+x.size,0)+d.size>L.total){bad.push({n:f.name,why:'total'});continue;}
+      list.push(d);
+    }catch(e){bad.push({n:f.name,why:'read'});}
+  }
+  return bad;
+ },
+ docBadMsg(bad){const L=this.docLimits();
+  const W={count:'עד '+L.count+' קבצים',big:'גדול מ-'+this.fmtMB(L.file),total:'חורג מ-'+this.fmtMB(L.total)+' יחד',kind:'לא PDF ולא תמונה',read:'לא נקרא'};
+  return 'לא נוספו: '+bad.slice(0,2).map(b=>b.n+' — '+(W[b.why]||'')).join(' · ')+(bad.length>2?' ועוד '+(bad.length-2):'');},
+ /** הרשימה → חלקי בקשה. בכמה קבצים — תווית לפני כל אחד, כדי שה-AI ידע מה מאיפה. */
+ docParts(list){const out=[];list.forEach((d,i)=>{
+   if(list.length>1)out.push({t:'text',v:'קובץ '+(i+1)+': '+d.name});
+   out.push(d.kind==='pdf'?{t:'pdf',data:d.data}:{t:'image',mime:d.mime,data:d.data});});return out;},
+ /** זמן: 150 שנ' לקובץ, ועוד 30 לכל קובץ נוסף, עד 4 דקות. מעל 22MB — רק Gemini. */
+ docOpts(list,base){const L=this.docLimits();const tot=list.reduce((a,x)=>a+x.size,0);
+  return Object.assign({timeout:Math.min(240000,150000+30000*Math.max(0,list.length-1))},tot>L.claude?{only:'gemini'}:{},base||{});},
+
  /* ═══ תוכנית דירה → שטח ═══
     קורא תמונה או PDF של תוכנית ומחזיר חדרים ושטח כולל.
     עובד רק כשהמידות או השטחים כתובים בתוכנית — מצילום של חדר אי אפשר למדוד,
@@ -4809,16 +4886,17 @@ const App={
     note:String((o&&o.note)||'').slice(0,160),file:String(file||'').slice(0,60)};
  },
  /** @param {File} f */
- async planScan(f){
-  if(!f)return;
+ /** @param {File|FileList|Array<File>} files — אחד או כמה: קומות או עמודים של אותה דירה */
+ async planScan(files){
+  const fs=(files&&typeof files.length==='number')?Array.from(files):(files?[files]:[]);
+  if(!fs.length)return;
   if(!AI.anyKey()){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
-  const isPdf=f.type==='application/pdf';
-  if(!isPdf&&!/^image\//.test(f.type||'')){this.toast('צריך תמונה או PDF של התוכנית');return;}
-  if(f.size>15*1024*1024){this.toast('הקובץ גדול מדי — עד 15MB');return;}
-  this.busy('קורא את התוכנית…',true);this.haptic(15);
+  this.busy(fs.length>1?'קורא '+fs.length+' תוכניות…':'קורא את התוכנית…',true);this.haptic(15);
   try{
-    const url=isPdf?await this.readDataUrl(f):await this.planImage(f);
-    const m=String(url).match(/^data:([^;]+);base64,(.+)$/);if(!m)throw new Error('bad-image');
+    const D=[];const bad=await this.addDocs(D,fs);
+    if(!D.length){this.idle();
+      this.toast(bad.length&&bad.every(b=>b.why==='kind')?'צריך תמונה או PDF של התוכנית':(bad.length&&bad[0].why==='big'?'הקובץ גדול מדי — עד '+this.fmtMB(this.docLimits().file):this.docBadMsg(bad)));return;}
+    if(bad.length)this.toast(this.docBadMsg(bad));
     const S={type:'object',properties:{
       rooms:{type:'array',items:{type:'object',properties:{name:{type:'string'},sqm:{type:'number'}},required:['name','sqm']}},
       total_sqm:{type:'number'},
@@ -4830,9 +4908,10 @@ const App={
       'רק אורך ורוחב כתובים — חשב אורך×רוחב (source=computed_from_dimensions).',
       'אין שום מידה כתובה — אל תעריך ואל תמציא: rooms ריק, total_sqm=0, source=none, ובהערה כתוב שחסרות מידות.',
       'total_sqm: אם כתוב בתוכנית שטח כולל — אותו; אחרת סכום החדרים.',
-      'note: משפט קצר בעברית על מה שלא היה ברור. החזר JSON בלבד.'].join(String.fromCharCode(10));
-    const o=await AI.json([isPdf?{t:'pdf',data:m[2]}:{t:'image',mime:m[1],data:m[2]},{t:'text',v:P}],S,{maxTokens:2000,timeout:90000});
-    const r=this.planResult(o,f.name);
+      D.length>1?'מצורפים '+D.length+' קבצים של אותה דירה (קומות, עמודים או חלקים שונים). אל תספור אותו חדר פעמיים.':'',
+      'note: משפט קצר בעברית על מה שלא היה ברור. החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
+    const o=await AI.json(this.docParts(D).concat([{t:'text',v:P}]),S,this.docOpts(D,{maxTokens:2000}));
+    const r=this.planResult(o,D.length>1?D.length+' קבצים':D[0].name);
     this.idle();
     if(!r.rooms.length&&!(r.total>0)){this.toast(r.note||'לא נמצאו מידות בתוכנית');return;}
     this.state.planScan=r;
@@ -4994,26 +5073,26 @@ const App={
   }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
  },
  async aiPdfConvert(){
-  if(this._aiPdfData){return this.aiVisionConvert(this._aiPdfData);}
-  if(!this._aiPdfRaw){this.toast('לא נבחר קובץ');return;}
-  const provider=Store.get('aiProvider','gemini');const key=AI.anyKey();
-  if(!key){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
-  this.busy('ה-AI קורא את הקובץ…',true);this.haptic(15);
-  const cats='הריסה ופינוי, אינסטלציה, חשמל ותקשורת, עבודות גמר ועיצוב פנים, נגרות מסגרות ואלומיניום, תכנון ניהול ורישוי, שלד ותשתית כבדה, פיתוח חוץ וסביבה, אחר';
-  const P=['אתה עוזר לקבלן שיפוצים ישראלי. במסמך המצורף יש תיאור עבודות שיפוץ (כתב כמויות/הצעה). קרא בעיון והפק רשימת סעיפי עבודה מסודרים.',
-    this._itemFmt(60),
+  const D=this._docs||[];
+  if(!D.length){this.toast('לא נבחר קובץ');return;}
+  if(!AI.anyKey()){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
+  const many=D.length>1,NL=String.fromCharCode(10);
+  this.busy(many?'ה-AI קורא '+D.length+' קבצים…':'ה-AI קורא את הקובץ…',true);this.haptic(15);
+  const P=['אתה עוזר לקבלן שיפוצים ישראלי. '+(many?'מצורפים '+D.length+' קבצים מאותו פרויקט (כתב כמויות, תוכניות, הצעות).':'במסמך המצורף יש תיאור עבודות שיפוץ (כתב כמויות/הצעה).')+' קרא בעיון והפק רשימת סעיפי עבודה אחת מסודרת.',
+    many?'אחד את הקבצים: סעיף שמופיע בכמה קבצים — פעם אחת בלבד, עם הכמות המפורטת ביותר. תוכנית בלי כמויות כתובות — רק להבנת ההקשר; אל תמציא ממנה כמויות.':'',
+    this._itemFmt(many?90:60),
     'לכל סעיף חפש קודם התאמה במחירון והחזר את ה-ref שלו. רק אם אין התאמה סבירה — ref ריק.',
-    'אם אין מחיר — price=0. price ליחידה אחת. '];
-  const prompt=P.join(String.fromCharCode(10));
-  const m=String(this._aiPdfRaw).match(/^data:([^;]+);base64,(.+)$/);if(!m){this.idle();this.toast('שגיאה בקריאת הקובץ');return;}
-  const b64=m[2];
-  try{let txt='';
-   txt=await AI.run([{t:'pdf',data:b64},{t:'text',v:prompt}],{maxTokens:6000,smart:true,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)});
-   const r=this._parseItems(txt,60);
-   if(!r.items.length){throw new Error('empty');}
-   this._v2qResult=r.items;this._aiPdfRaw=null;this._aiPdfName=null;this.idle();this.state.modal='v2qreview';this.render();
+    'אם אין מחיר — price=0. price ליחידה אחת.'].filter(Boolean).join(NL);
+  try{
+   const txt=await AI.run(this.docParts(D).concat([{t:'text',v:P}]),
+     this.docOpts(D,{maxTokens:8000,smart:true,catalog:true,onFallback:p=>this.toast('עברתי אוטומטית ל-'+p)}));
+   const r=this._parseItems(txt,many?90:60);
+   if(!r.items.length)throw new Error('empty');
+   this._v2qResult=r.items;this._docs=[];this.idle();this.state.modal='v2qreview';this.render();
    const nt=this._itemsNote(r);if(nt)setTimeout(()=>this.toast(nt),300);
-  }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
+  }catch(e){this.idle();
+   // "לא נמצאו סעיפים" — לא שגיאת חיבור. קודם נפל לברירת המחדל "בדוק אינטרנט".
+   this.toast(e&&e.message==='empty'?(many?'לא נמצאו סעיפי עבודה בקבצים':'לא נמצאו סעיפי עבודה בקובץ'):this.aiErrMsg(e));}
  },
  async checkPriceFreshness(){
   const key=AI.anyKey();
@@ -6866,8 +6945,8 @@ const App={
      <div class="field"><label>מחיר למ"ר (₪)</label><input id="q_persqm" type="number" inputmode="decimal" value="${s.planPerSqm||''}" placeholder="3200"/></div>
      <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="475"/></div>
    </div>
-   <button class="tk-btn sm ghost plan-scan-btn" id="plan-scan-btn">${ico('ruler',15)}קרא שטח מתוכנית — תמונה או PDF</button>
-   <input id="plan-scan-in" type="file" accept="image/*,application/pdf" hidden/>
+   <button class="tk-btn sm ghost plan-scan-btn" id="plan-scan-btn">${ico('ruler',15)}קרא שטח מתוכנית — תמונה או PDF, גם כמה</button>
+   <input id="plan-scan-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>
    ${this.planScanPanel()}
    <div style="font-size:11px;color:var(--muted);margin-top:4px">💡 בהצעת תכנון ה-PDF יציג סעיפים וכמויות בלבד (בלי מחיר לכל שורה), ובסוף: המחיר למ"ר.</div>`:''}
    <div class="sec-title">הנחת לקוח ומקדמה</div>
@@ -7789,9 +7868,9 @@ const App={
    <div class="aihub-grid">
      <button class="aihub-card" id="hub-plan-scan">
        <div class="ah-icon">📏</div>
-       <div class="ah-txt"><div class="ah-t">קרא שטח מתוכנית<span class="ah-badge">חדש</span></div><div class="ah-d">תמונה או PDF · חדרים ושטח כולל</div></div>
+       <div class="ah-txt"><div class="ah-t">קרא שטח מתוכנית<span class="ah-badge">חדש</span></div><div class="ah-d">תמונה או PDF — גם כמה קבצים · חדרים ושטח כולל</div></div>
        <div class="ah-arrow">‹</div></button>
-     <input id="hub-plan-in" type="file" accept="image/*,application/pdf" hidden/>
+     <input id="hub-plan-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>
    </div>`:''}
    <div class="ah-sec">מאיפה הסעיפים</div>
    <div class="aihub-grid">
@@ -7829,19 +7908,18 @@ const App={
    <div style="margin-top:14px;font-size:11px;color:var(--muted);line-height:1.7">💡 צלם ברור, עם תאורה טובה. ככל שכתב היד קריא יותר — התוצאה מדויקת יותר.</div>`;
  },
  aiPdfModal(){
-  const f=this._aiPdfName;
-  return `<h2>📄 העלאת קובץ <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">טען קובץ PDF או תמונה של כתב כמויות / הצעה קיימת — ה-AI יסדר אותה מחדש לפורמט שלך.</div>
-   ${f?`<div style="text-align:center;margin-bottom:14px;padding:16px;background:var(--bg3);border-radius:12px"><div style="font-size:32px">📄</div><div style="font-weight:700;margin-top:6px">${f}</div></div>
-     <button class="btn-block" id="aipdf-go">✨ נתח והמר להצעה</button>
-     <button class="btn-ghost" id="aipdf-clear" style="margin-top:8px">🗑️ בחר קובץ אחר</button>`
-   :`<label class="aiphoto-drop" for="aipdf-in">
-       <div style="font-size:40px;margin-bottom:8px">📄</div>
-       <div style="font-weight:700;margin-bottom:4px">לחץ לבחירת קובץ</div>
-       <div style="font-size:11px;color:var(--muted)">PDF · JPG · PNG</div>
-     </label>
-     <input id="aipdf-in" type="file" accept="image/*,application/pdf" style="display:none"/>`}
-   <div style="margin-top:14px;font-size:11px;color:var(--muted);line-height:1.7">💡 קבצי PDF עם טקסט ברור עובדים הכי טוב. תמונות סרוקות גם נתמכות.</div>`;
+  const D=this._docs||[];const L=this.docLimits();const tot=D.reduce((a,x)=>a+x.size,0);
+  return '<h2>'+ico('file-text',20)+' העלאת קבצים <button class="x" data-close>✕</button></h2>'+
+   '<p class="tk-hint start">כתב כמויות, תוכניות או הצעה קיימת — PDF או תמונות. אפשר כמה קבצים מאותו פרויקט, וה-AI מאחד אותם לרשימת סעיפים אחת.</p>'+
+   (D.length?'<ul class="tk-facts doc-list" aria-label="הקבצים שנבחרו">'+D.map((d,i)=>'<li class="doc-row">'+ico(d.kind==='pdf'?'file-text':'image',16)+
+     '<span class="doc-n">'+esc(d.name)+'</span><small>'+this.fmtMB(d.size)+'</small>'+
+     '<button class="tk-ib doc-x" data-docrm="'+i+'" aria-label="הסר את '+esc(d.name)+'">'+ico('x',15)+'</button></li>').join('')+'</ul>'+
+     '<p class="tk-count-line">'+D.length+(D.length===1?' קובץ':' קבצים')+' · '+this.fmtMB(tot)+' מתוך '+this.fmtMB(L.total)+'</p>':'')+
+   '<label class="tk-btn ghost doc-add" for="aipdf-in">'+ico('file-text',16)+(D.length?'הוסף עוד קבצים':'בחר קבצים — PDF או תמונות')+'</label>'+
+   '<input id="aipdf-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>'+
+   (D.length?'<button class="tk-btn pri ait-run" id="aipdf-go">'+ico('sparkles',16)+(D.length>1?'נתח את '+D.length+' הקבצים יחד':'נתח והמר להצעה')+'</button>'+
+     '<button class="tk-btn sm ghost" id="aipdf-clear">נקה הכל</button>':'')+
+   '<p class="tk-hint start">PDF עם טקסט ברור עובד הכי טוב. עד '+L.count+' קבצים, '+this.fmtMB(L.file)+' לקובץ.</p>';
  },
  v2qModal(){const on=this._v2qOn;const txt=this._v2qText||'';
   return `<h2>🎤 הצעה קולית / טקסט <button class="x" data-close>✕</button></h2>
@@ -8613,7 +8691,7 @@ const App={
   // קרא שטח מתוכנית — מתוך עוזר ההצעות
   (()=>{const b=document.getElementById('hub-plan-scan'),inp=document.getElementById('hub-plan-in');
     if(b&&inp){b.onclick=()=>inp.click();
-      inp.onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)this.planScan(f);};}})();
+      inp.onchange=e=>{const fs=Array.from(e.target.files||[]);e.target.value='';if(fs.length)this.planScan(fs);};}})();
   // עדכון מחיר בודד מפופאפ המחירון
   document.querySelectorAll('[data-updateprice]').forEach(btn=>{btn.onclick=()=>{const i=+btn.dataset.updateprice;const it=(this._priceFresh||[])[i];if(!it)return;if(this.applyPriceUpdate(it.name,it.suggest)){btn.textContent='✓ עודכן';btn.style.background='var(--muted)';btn.disabled=true;this.haptic(20);this.toast('המחיר עודכן ונשמר ✓');}else{this.toast('הפריט לא נמצא במחירון (אולי סעיף מותאם)');}};});
   const uap=document.getElementById('update-all-prices');if(uap)uap.onclick=()=>{const arr=this._priceFresh||[];let n=0;arr.forEach(it=>{if(this.applyPriceUpdate(it.name,it.suggest))n++;});this._priceFresh=null;this.state.modal=null;this.haptic(25);this.toast(n>0?('עודכנו '+n+' מחירים ונשמרו ✓'):'לא נמצאו פריטים לעדכון');this.render();};
@@ -9119,7 +9197,7 @@ const App={
   // את החלון מהמצב, ובלי זה מה שהוקלד בשדות ולא נשמר היה נמחק.
   (()=>{const b=document.getElementById('plan-scan-btn'),inp=document.getElementById('plan-scan-in');
     if(b&&inp){b.onclick=()=>{try{this.captureQuote();}catch(e){}inp.click();};
-      inp.onchange=e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(f)this.planScan(f);};}
+      inp.onchange=e=>{const fs=Array.from(e.target.files||[]);e.target.value='';if(fs.length)this.planScan(fs);};}
     const x=document.getElementById('plan-scan-x');if(x)x.onclick=()=>{this.state.planScan=null;this.render();};})();
   on('[data-planapply]','click',e=>{const v=+e.currentTarget.dataset.planapply||0;
     try{this.captureQuote();}catch(x){}
@@ -9230,11 +9308,14 @@ const App={
   const aphGo=document.getElementById('aiphoto-go');if(aphGo)aphGo.onclick=()=>this.aiVisionConvert(this._aiPhotoData);
   const aphClr=document.getElementById('aiphoto-clear');if(aphClr)aphClr.onclick=()=>{this._aiPhotoData=null;this.render();};
   // עוזר AI — העלאת קובץ (תמונה או PDF)
-  const apdIn=document.getElementById('aipdf-in');if(apdIn)apdIn.onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;this._aiPdfName=f.name;
-    if(f.type==='application/pdf'){this.toast('מעבד PDF…');this._aiPdfIsPdf=true;const rd=new FileReader();rd.onload=()=>{this._aiPdfRaw=rd.result;this.render();};rd.readAsDataURL(f);}
-    else{this._aiPdfIsPdf=false;const rd=new FileReader();rd.onload=()=>{this._aiPdfData=rd.result;this.render();};rd.readAsDataURL(f);}};
+  const apdIn=document.getElementById('aipdf-in');
+  if(apdIn)apdIn.onchange=async e=>{const fs=Array.from(e.target.files||[]);e.target.value='';if(!fs.length)return;
+    this._docs=this._docs||[];this.busy(fs.length>1?'קורא '+fs.length+' קבצים…':'קורא את הקובץ…');
+    const bad=await this.addDocs(this._docs,fs);this.idle();this.render();
+    if(bad.length)this.toast(this.docBadMsg(bad));};
   const apdGo=document.getElementById('aipdf-go');if(apdGo)apdGo.onclick=()=>this.aiPdfConvert();
-  const apdClr=document.getElementById('aipdf-clear');if(apdClr)apdClr.onclick=()=>{this._aiPdfData=null;this._aiPdfRaw=null;this._aiPdfName=null;this.render();};
+  const apdClr=document.getElementById('aipdf-clear');if(apdClr)apdClr.onclick=()=>{this._docs=[];this.render();};
+  on('[data-docrm]','click',e=>{const i=+e.currentTarget.dataset.docrm;(this._docs||[]).splice(i,1);this.render();});
   // גרירת כרטיסים בקנבן
   document.querySelectorAll('.kb-card[draggable]').forEach(card=>{
     card.addEventListener('dragstart',ev=>{ev.dataTransfer.setData('text/plain',card.dataset.kbid);card.classList.add('dragging');});
