@@ -1718,6 +1718,9 @@ div.tk-f:active{transform:none;}
   background:var(--bg2);color:var(--txt);font-family:inherit;font-size:var(--fs-m);}
 .boq-arch{display:flex;align-items:flex-start;gap:6px;margin:4px 2px;font-size:var(--fs-xs);color:var(--muted);}
 .boq-arch>.ico{margin-top:2px;flex:none;}
+.boq-unsure{display:flex;align-items:flex-start;gap:6px;margin:8px 2px 0;padding:10px 12px;border-radius:var(--r-m);
+  background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.32);font-size:var(--fs-xs);color:var(--warn);line-height:1.5;}
+.boq-unsure>.ico{margin-top:2px;flex:none;}.boq-unsure b{color:var(--txt);}
 .boq-sum{position:sticky;top:0;z-index:2;margin:10px 0 4px;padding:10px 12px;background:var(--bg2);border:1px solid var(--hair-2);border-radius:var(--r-l);
   box-shadow:0 10px 24px -16px rgba(0,0,0,.9);}
 .boq-sum-r{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:var(--fs-xs);color:var(--muted);}
@@ -3278,7 +3281,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='22.3';
+const VERSION='22.4';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3524,6 +3527,7 @@ const GUIDE=[
    <li><b>"לא כלול"</b> ו<b>"לבירור"</b> — מה שהמפרט מגדיר אופציונלי, ומה שלא ברור בכמויות.</li>
    <li><b>פרטי הלקוח מזוהים מהמסמך</b> — שם, טלפון, פרויקט וכתובת מופיעים בראש המסך לבדיקה, ונרשמים אוטומטית בפרטי ההצעה בהעברה. האדריכל ומספר המסמך נכנסים להערות הפנימיות.</li>
    <li><b>טלפון של האדריכל לעולם לא נרשם כטלפון הלקוח.</b> טלפון לקוח נרשם רק כשהוא מסומן במסמך כלקוח או מזמין.</li>
+   <li><b>לפני ההעברה מוצגים הפרטים לאישור.</b> ה-AI יכול לטעות בקריאה — בשרטוט של אדריכל האותיות הן ציור, לא טקסט. כשהוא לא בטוח מופיעה אזהרה, עם מה שנקרא במסמך. תיקון בכרטיס = אישור.</li>
    <li><b>מספור הסעיפים של האדריכל</b> נשמר בתחילת כל שורה בהצעה — להשוואה שורה מול שורה.</li>
    <li><b>כמה פרויקטים</b> — "כל הפרויקטים" מציג את השמורים; פותחים, ממשיכים או מוחקים. "כתב כמויות חדש" לא מוחק כלום.</li>
    <li><b>הצעה פתוחה עם סעיפים</b> נשמרת כטיוטה ב"כל ההצעות" לפני שמתחילה ההצעה לפרויקט.</li>
@@ -3873,7 +3877,7 @@ const AI=(()=>{
     אם השרת דוחה את הסכמה (400) והקריאה בלעדיה מצליחה — זוכרים לשבוע ולא
     מנסים שוב. בכוונה בלי maxOutputTokens: במודל שחושב, החשיבה נספרת במגבלה
     והתשובה נחתכת. ובלי temperature — הוצא משימוש (יולי 2026). */
- async function gemini(parts,maxTokens,useCat,schema,to){
+ async function gemini(parts,maxTokens,useCat,schema,to,hires){
   const k=keyOf('gemini');if(!k)throw E('no-key',false);
   const gp=[];
   if(useCat)gp.push({text:catalogText()});
@@ -3885,28 +3889,45 @@ const AI=(()=>{
   });
   if(!gp.length)throw E('ai-error',false);
   const base='https://generativelanguage.googleapis.com/v1beta/models/'+M.g+':generateContent';
-  const bodyOf=ws=>JSON.stringify(Object.assign({contents:[{parts:gp}]},
+  // רזולוציה גבוהה ל-PDF: ברירת המחדל 560 טוקנים לעמוד מספיקה למסמך עם טקסט אמיתי,
+  // אבל שרטוט של אדריכל (אותיות כציור, בלי טקסט) הוא רק תמונה — והיא מוקטנת מדי.
+  // "מרפאת שיניים" נקראה "מרפסת שיפוצים". HIGH = 1120 טוקנים לעמוד.
+  const gpHi=gp.map(x=>(x.inline_data&&x.inline_data.mime_type==='application/pdf')?Object.assign({},x,{media_resolution:{level:'MEDIA_RESOLUTION_HIGH'}}):x);
+  const bodyOf=(ws,hr)=>JSON.stringify(Object.assign({contents:[{parts:hr?gpHi:gp}]},
     ws?{generationConfig:{responseMimeType:'application/json',responseJsonSchema:schema}}:{}));
   // אם הכותרת נחסמה פעם והכתובת עבדה — זוכרים לשבוע, בלי ניסיון מבוזבז בכל קריאה
   const viaQuery=()=>{const c=caps();return c.gHdr===false&&Date.now()-(+c.at||0)<7*864e5;};
-  const byQuery=ws=>fetchJ(base+'?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:bodyOf(ws)},to);
-  const send=async ws=>{
+  const byQuery=(ws,hr)=>fetchJ(base+'?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:bodyOf(ws,hr)},to);
+  const send=async (ws,hr)=>{
    try{
-    if(viaQuery())return await byQuery(ws);
-    return await fetchJ(base,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:bodyOf(ws)},to);
+    if(viaQuery())return await byQuery(ws,hr);
+    return await fetchJ(base,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:bodyOf(ws,hr)},to);
    }catch(e){
     if(e&&(e.message==='timeout'||e.message==='cancelled'))throw e;
     if(viaQuery()){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
-    try{const out=await byQuery(ws);caps({gHdr:false});return out;}
+    try{const out=await byQuery(ws,hr);caps({gHdr:false});return out;}
     catch(e2){if(e2&&(e2.message==='timeout'||e2.message==='cancelled'))throw e2;try{Store.logErr('ai',e2);}catch(x){} throw E('network');}
    }};
   const ws=!!schema&&schemaOn();
-  let {r,d}=await send(ws);
+  const mediaOn=()=>{const c=caps();return !(c.gMedia===false&&Date.now()-(+c.at||0)<7*864e5);};
+  let hr=!!hires&&gpHi.some((x,i)=>x!==gp[i])&&mediaOn();
+  let {r,d}=await send(ws,hr);
+  const msgOf=x=>String((x&&x.error&&x.error.message)||'400').slice(0,160);
+  // 400 — מי גרם? לפי הודעת השגיאה. רזולוציה ("media") — מוותרים עליה; אחרת קודם על הסכמה,
+  // ורק בסוף גם על הרזולוציה. כך דחיית סכמה לא מורידה בטעות את הרזולוציה בשרטוטים.
+  if(hr&&r.status===400&&/media/i.test(msgOf(d))){
+   const why=msgOf(d);({r,d}=await send(ws,false));hr=false;
+   if(r.status!==400)caps({gMedia:false,gMediaErr:why});
+  }
+  let wsNow=ws;
   if(ws&&r.status===400){
-   const why=String((d&&d.error&&d.error.message)||'400').slice(0,160);
-   ({r,d}=await send(false));
+   const why=msgOf(d);({r,d}=await send(false,hr));wsNow=false;
    if(r.ok)caps({gSchema:false,gSchemaErr:why});
   }else if(ws&&r.ok)caps({gSchema:true,gSchemaErr:''});
+  if(hr&&r.status===400){
+   const why=msgOf(d);({r,d}=await send(wsNow,false));
+   if(r.status!==400)caps({gMedia:false,gMediaErr:why});
+  }
   if(d&&d.error)throw E(classify(d.error.code||r.status,d.error.message));
   if(!r.ok)throw E(classify(r.status,''));
   const u=(d&&d.usageMetadata)||{};bump('gemini',u.promptTokenCount,u.candidatesTokenCount);
@@ -3940,7 +3961,7 @@ const AI=(()=>{
    for(let k=0;k<2;k++){
     try{
      const to=opts.timeout||(audio?90000:45000);
-     const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to);
+     const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to,opts.hires);
      if(i>0&&typeof opts.onFallback==='function'){try{opts.onFallback(nameOf(p));}catch(e){}}
      return txt;
     }catch(e){last=e;
@@ -4949,7 +4970,9 @@ const App={
      const f=(k,l,t)=>'<label class="boq-f"><span>'+l+'</span><input data-boqc="'+k+'" type="'+(t||'text')+'"'+(t==='tel'?' inputmode="tel" dir="ltr"':'')+' value="'+esc(c[k]||'')+'"/></label>';
      return '<section class="boq-cl" aria-label="פרטי הלקוח וההצעה"><h3 class="tk-sec"><span>פרטי הלקוח וההצעה</span></h3>'+
        '<div class="boq-fs">'+f('name','שם הלקוח')+f('phone','טלפון','tel')+f('project','פרויקט')+f('address','כתובת')+'</div>'+
-       '<p class="tk-hint start">זוהה מהמסמך — בדוק לפני ההעברה. נרשם אוטומטית בפרטי ההצעה.</p>'+
+       (c.conf&&c.conf!=='high'&&!c.ok?'<p class="boq-unsure" role="alert">'+ico('circle-help',14)+'<span>ה-AI לא בטוח בקריאת השם והכתובת — השווה למסמך'+
+         ((c.lines||[]).length?'. כך זה נקרא: <b>'+c.lines.map(esc).join(' · ')+'</b>':'')+'</span></p>':'')+
+       '<p class="tk-hint start">'+(c.ok?'אושר ✓ · ':'זוהה מהמסמך — בדוק לפני ההעברה. ')+'נרשם אוטומטית בפרטי ההצעה.</p>'+
        ((a.name||a.phone)?'<p class="boq-arch">'+ico('pen-line',14)+'<span>אדריכל: '+esc(a.name||'')+(a.phone?' · <span dir="ltr">'+esc(a.phone)+'</span>':'')+' — לא נרשם כטלפון הלקוח</span></p>':'')+
        (p.docRef?'<p class="boq-arch">'+ico('file-text',14)+'<span>מסמך: '+esc(p.docRef)+(p.docDate?' · '+esc(p.docDate):'')+'</span></p>':'')+'</section>';})()+
    '<div class="boq-gs">'+pct('boq-oh',p.oh,'הוצאות כלליות')+pct('boq-pr',p.pr,'רווח')+'</div>'+
@@ -4996,6 +5019,9 @@ const App={
   // טלפון של האדריכל לעולם לא נרשם כטלפון הלקוח — גם אם ה-AI התבלבל
   if(client.phone&&client.phone===arch.phone)client.phone='';
   if(!client.name)client.name=client.project;
+  client.conf=['high','medium','low'].indexOf(S(pj.confidence))>=0?S(pj.confidence):'medium';
+  client.lines=(Array.isArray(pj.title_lines)?pj.title_lines:[]).map(S).filter(Boolean).slice(0,4);
+  client.ok=false;   // עד שיהודה מאשר
   const sections=(Array.isArray(o&&o.sections)?o.sections:[]).map(s=>({title:S((s&&s.title)||'כללי').slice(0,60),
     cat:ids.indexOf(s&&s.cat)>=0?s.cat:'custom',
     items:(Array.isArray(s&&s.items)?s.items:[]).filter(it=>it&&S(it.desc)).slice(0,150).map(it=>{
@@ -5019,12 +5045,13 @@ const App={
   const str={type:'string'};
   const S={type:'object',properties:{
     project:{type:'object',properties:{client_name:str,client_phone:str,client_email:str,project_name:str,address:str,
-      architect:str,architect_phone:str,doc_ref:str,doc_date:str}},
+      architect:str,architect_phone:str,doc_ref:str,doc_date:str,title_lines:{type:'array',items:str},
+      confidence:{type:'string',enum:['high','medium','low']}}},
     sections:{type:'array',items:{type:'object',properties:{title:str,cat:str,
       items:{type:'array',items:{type:'object',properties:{num:str,desc:str,unit:str,qty:{type:'number'},qty_note:str,ref:str},required:['desc','unit']}}},required:['title','items']}},
     excluded:{type:'array',items:{type:'object',properties:{desc:str,why:str},required:['desc','why']}},
     questions:{type:'array',items:str}},required:['sections']};
-  const P=['אתה מהנדס כמויות. מצורף כתב כמויות / מפרט טכני של אדריכל לפרויקט שיפוץ — טופס מכרז. העתק את הסעיפים לתמחור בדיוק כמו שהם.',
+  const P=['אתה מהנדס כמויות. מצורף כתב כמויות / מפרט טכני של אדריכל — טופס מכרז. העתק את הסעיפים לתמחור בדיוק כמו שהם.',
    '1. desc — הניסוח של האדריכל, כמעט מילה במילה. מותר רק לקצר רשימה ארוכה בסוגריים. אל תנסח מחדש.',
    '2. פרקים וסדר — כמו במסמך. title = שם הפרק (למשל "בניה — תקרות").',
    '3. qty — הכמות המספרית מעמודת הכמות. "X3" → 3. "קומפלט" → 1 עם unit=גלובלי. אין כמות — השמט את qty. אל תמציא ואל תחשב ממידות.',
@@ -5042,6 +5069,9 @@ const App={
    '· project_name — שם הפרויקט · address — כתובת הפרויקט · doc_ref — שם/מספר המסמך או הגרסה · doc_date — תאריך המסמך.',
    '· architect — משרד האדריכלים / המתכנן · architect_phone — הטלפון שלו.',
    '· client_phone ו-client_email — רק אם כתובים במפורש ליד המזמין / הלקוח. טלפון של אדריכל, מתכנן או יועץ — לעולם לא ב-client_phone.',
+   '· קרא את כותרת הפרויקט אות-אות, בדיוק כמו שהיא כתובה. אל תתקן ואל תשלים למילים מוכרות. הפרויקט לא בהכרח "שיפוצים" — יכול להיות מרפאה, משרד, חנות, דירה או מבנה ציבור.',
+   '· title_lines — שורות כותרת הפרויקט כפי שהן מופיעות במסמך, עד 4.',
+   '· confidence — high / medium / low: עד כמה בטוח בקריאת שם הפרויקט והכתובת. low — אם האותיות לא ברורות.',
    '· מה שלא כתוב — השאר ריק. אל תנחש.',
    'החזר JSON בלבד.'].join(NL);
   try{
@@ -5062,6 +5092,15 @@ const App={
     // temp: סעיף של הפרויקט הזה בלבד — לא נשמר לצמיתות במחירון של יהודה
     items.push({name:nm,qty:c.q,unit:it.unit,price:c.price,cat:s.cat||'custom',ref:'',ok:true,temp:true});}));
   if(!items.length){this.toast('אין עדיין סעיפים עם עלות וכמות');return;}
+  // פרטי הלקוח שזוהו — אישור אנושי לפני שהם נרשמים בהצעה. ה-AI יכול לטעות בקריאה
+  // ("מרפאת שיניים" נקראה "מרפסת שיפוצים"), והפרטים האלה נשלחים ללקוח.
+  const pc=p.client;
+  if(pc&&!pc.ok&&(pc.name||pc.project||pc.address||pc.phone)){
+    const L=[['שם',pc.name],['פרויקט',pc.project],['כתובת',pc.address],['טלפון',pc.phone]].filter(x=>x[1]).map(x=>x[0]+': '+x[1]).join('\n');
+    if(!confirm('פרטי הלקוח שיירשמו בהצעה:\n\n'+L+'\n\nנכון? ("ביטול" — לתקן בכרטיס למעלה)')){
+      const el=document.querySelector('.boq-cl');if(el)el.scrollIntoView({block:'start',behavior:'smooth'});return;}
+    pc.ok=true;this.boqSave(p);
+  }
   if(skip&&!confirm(skip+' סעיפים בלי עלות או כמות לא יועברו.\n\nלהעביר את '+items.length+' המתומחרים?'))return;
   // הצעה פתוחה עם סעיפים — נשמרת כטיוטה ב"כל ההצעות", ומתחילה הצעה חדשה לפרויקט.
   // resetCurrentQuote לבדה לא שומרת — הצעה נשמרת להיסטוריה רק ב-PDF או לינק.
@@ -5142,7 +5181,7 @@ const App={
    out.push(d.kind==='pdf'?{t:'pdf',data:d.data}:{t:'image',mime:d.mime,data:d.data});});return out;},
  /** זמן: 150 שנ' לקובץ, ועוד 30 לכל קובץ נוסף, עד 4 דקות. מעל 22MB — רק Gemini. */
  docOpts(list,base){const L=this.docLimits();const tot=list.reduce((a,x)=>a+x.size,0);
-  return Object.assign({timeout:Math.min(240000,150000+30000*Math.max(0,list.length-1))},tot>L.claude?{only:'gemini'}:{},base||{});},
+  return Object.assign({timeout:Math.min(240000,150000+30000*Math.max(0,list.length-1)),hires:true},tot>L.claude?{only:'gemini'}:{},base||{});},
 
  /* ═══ תוכנית דירה → שטח ═══
     קורא תמונה או PDF של תוכנית ומחזיר חדרים ושטח כולל.
@@ -8990,7 +9029,8 @@ const App={
       if(!confirm('למחוק את "'+nm+'"?\n\nהעלויות שהוזנו יימחקו.'))return;
       Store.set('boqProjects',L.filter(y=>y&&y.id!==id));if(Store.get('boqActive',null)===id)Store.set('boqActive',null);this.render();});
     document.querySelectorAll('[data-boqc]').forEach(el=>{el.oninput=()=>{const p=this.boqGet();if(!p)return;
-      p.client=p.client||{name:p.name||'',address:p.address||''};p.client[el.dataset.boqc]=el.value;this.boqSave(p);};});
+      p.client=p.client||{name:p.name||'',address:p.address||''};p.client[el.dataset.boqc]=el.value;p.client.ok=true;this.boqSave(p);
+      const w=document.querySelector('.boq-unsure');if(w)w.remove();};});   // בלי render — המקלדת נשארת פתוחה
     const cq=document.getElementById('boq-copyq');if(cq)cq.onclick=()=>{const p=this.boqGet();if(p)this.aiCopy((p.questions||[]).map((q,i)=>(i+1)+'. '+q).join(String.fromCharCode(10)));};
     const g=(id,key)=>{const el=document.getElementById(id);if(el)el.oninput=()=>{const p=this.boqGet();if(!p)return;p[key]=el.value===''?null:+el.value;this.boqSave(p);this.boqUpdate();};};
     g('boq-oh','oh');g('boq-pr','pr');
