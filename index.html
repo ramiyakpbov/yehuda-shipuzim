@@ -3281,7 +3281,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='22.5';
+const VERSION='22.6';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3542,7 +3542,8 @@ const GUIDE=[
    <p>↓ נוצר לקוח עם טלפון וכתובת, סעיפים בקטגוריות, ותזכורת מעקב.</p>`},
   {id:'g35',ic:'ruler',t:'קרא שטח מתוכנית',d:'תוכנית → חדרים ושטח',v:'plan',
    b:`<ol class="g-ol"><li>בעוזר: בוחרים <b>הצעת תכנון</b>.</li><li><b>קרא שטח מתוכנית 📏</b> ← תמונה או PDF של התוכנית. <b>אפשר כמה קבצים</b> — קומות, עמודים, או כל תוכניות האדריכל של הנכס. ה-AI לוקח את השטח מתוכנית הבנייה, ומתעלם מחשמל, תקרות ואינסטלציה.</li>
-   <li>עוברים לפרטי ההצעה, ליד שדה השטח: רשימת החדרים והשטח הכולל ← <b>החל</b>.</li></ol>
+   <li>עוברים לפרטי ההצעה, ליד שדה השטח: רשימת החדרים והשטח הכולל ← <b>החל</b>.</li>
+   <li><b>פרטי הלקוח</b> — שם הפרויקט והכתובת מבלוק החותמת נרשמים בשדות הריקים בלבד, והאדריכל להערות הפנימיות. <b>רק השטח</b> — בלי פרטים.</li></ol>
    <div class="g-note warn"><b>רק כשהשטח או המידות כתובים.</b> אם כתוב רק שטח כולל ("שטח המתחם 82 מ\"ר") — הוא נלקח גם בלי פירוט חדרים. מצילום של חדר אי אפשר למדוד — וה-AI אומר מה חסר במקום לנחש. התוצאה לעולם לא מוחלת לבד.</div>
    <div class="g-note">גם מתוך פרטי ההצעה: במצב תכנון, מתחת לשדה השטח.</div>`},
   {id:'g16',ic:'check',t:'סעיפים חסרים',d:'מה מקובל לכלול ולא נמצא',
@@ -3601,7 +3602,7 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>קרא שטח מתוכנית</b> — מזהה גם שטח כולל כתוב ("שטח המתחם") ותוכניות שאינן תוכנית בנייה, ומסביר תמיד למה לא נמצא שטח.</li>
+   b:`<ul class="g-ul"><li><b>קרא שטח מתוכנית</b> — ממלא גם את פרטי הלקוח מהתוכנית, מזהה שטח כולל כתוב ("שטח המתחם"), ומסביר תמיד למה לא נמצא שטח. ותוקן: "החל" לא עדכן את השטח.</li>
    <li><b>כתב כמויות של אדריכל</b> — בעוזר ההצעות: הסעיפים, המספור והכמויות כמו במפרט, ומזינים רק עלות חומר ועבודה. פרטי הלקוח מזוהים ונרשמים אוטומטית, ואפשר לעבוד על כמה פרויקטים.</li>
    <li><b>כמה קבצים יחד</b> — ב"קובץ" וב"קרא שטח מתוכנית". ותוקן: PDF מוואטסאפ או מדרייב נשלח כתמונה ונכשל.</li>
    <li><b>מדריך חדש</b> — לפי משימות, עם סרטון קצר לכל משימה.</li>
@@ -5008,11 +5009,26 @@ const App={
   const w=document.getElementById('boq-warn');if(w)w.hidden=(+p.pr||0)>0;
  },
  /** תשובת המודל → פרויקט. פונקציה טהורה, לבדיקה. */
- boqFromAI(o,files){
-  const ids=(this.state.catalog||[]).map(c=>c.id);
+ /* ═══ פרטי הפרויקט מבלוק החותמת — משותף לכתב כמויות ולקריאת שטח ═══ */
+ docProjSchema(){const str={type:'string'};
+  return {type:'object',properties:{client_name:str,client_phone:str,client_email:str,project_name:str,address:str,
+      architect:str,architect_phone:str,doc_ref:str,doc_date:str,title_lines:{type:'array',items:str},
+      confidence:{type:'string',enum:['high','medium','low']}}};},
+ docProjPrompt(){return [
+   'project — מכותרת המסמך ומבלוק החותמת:',
+   '· client_name — המזמין / הלקוח. אם כתוב רק שם הפרויקט (למשל "מרפאת שיניים") — השתמש בו.',
+   '· project_name — שם הפרויקט · address — כתובת הפרויקט · doc_ref — שם/מספר המסמך או הגרסה · doc_date — תאריך המסמך.',
+   '· architect — משרד האדריכלים / המתכנן · architect_phone — הטלפון שלו.',
+   '· client_phone ו-client_email — רק אם כתובים במפורש ליד המזמין / הלקוח. טלפון של אדריכל, מתכנן או יועץ — לעולם לא ב-client_phone.',
+   '· קרא את כותרת הפרויקט אות-אות, בדיוק כמו שהיא כתובה. אל תתקן ואל תשלים למילים מוכרות. הפרויקט לא בהכרח "שיפוצים" — יכול להיות מרפאה, משרד, חנות, דירה או מבנה ציבור.',
+   '· title_lines — שורות כותרת הפרויקט כפי שהן מופיעות במסמך, עד 4.',
+   '· confidence — high / medium / low: עד כמה בטוח בקריאת שם הפרויקט והכתובת. low — אם האותיות לא ברורות.',
+   '· מה שלא כתוב — השאר ריק. אל תנחש.'];},
+ /** project מה-AI → לקוח + אדריכל. פונקציה טהורה. */
+ docClient(pj){
+  pj=pj||{};
   const S=x=>String(x==null?'':x).trim();
   const phone=x=>{const d=S(x).replace(/[^\d+]/g,'').replace(/^\+972/,'0');return /^0\d{8,9}$/.test(d)?d:'';};
-  const pj=(o&&o.project)||{};
   // גם שמות שדות חלופיים (name, client, phone) — מודל לא תמיד נצמד לשמות שבסכמה
   const client={name:S(pj.client_name||pj.client||pj.name).slice(0,80),phone:phone(pj.client_phone||pj.phone),email:S(pj.client_email||pj.email).slice(0,80),
     project:S(pj.project_name||pj.project||pj.name).slice(0,80),address:S(pj.address).slice(0,120)};
@@ -5023,6 +5039,14 @@ const App={
   client.conf=['high','medium','low'].indexOf(S(pj.confidence))>=0?S(pj.confidence):'medium';
   client.lines=(Array.isArray(pj.title_lines)?pj.title_lines:[]).map(S).filter(Boolean).slice(0,4);
   client.ok=false;   // עד שיהודה מאשר
+  return {client:client,arch:arch,docRef:S(pj.doc_ref).slice(0,60),docDate:S(pj.doc_date).slice(0,30)};
+ },
+ boqFromAI(o,files){
+  const ids=(this.state.catalog||[]).map(c=>c.id);
+  const S=x=>String(x==null?'':x).trim();
+  const phone=x=>{const d=S(x).replace(/[^\d+]/g,'').replace(/^\+972/,'0');return /^0\d{8,9}$/.test(d)?d:'';};
+  const pj=(o&&o.project)||{};
+  const DC=this.docClient(pj);const client=DC.client,arch=DC.arch;
   const sections=(Array.isArray(o&&o.sections)?o.sections:[]).map(s=>({title:S((s&&s.title)||'כללי').slice(0,60),
     cat:ids.indexOf(s&&s.cat)>=0?s.cat:'custom',
     items:(Array.isArray(s&&s.items)?s.items:[]).filter(it=>it&&S(it.desc)).slice(0,150).map(it=>{
@@ -5032,7 +5056,7 @@ const App={
         refPrice:r?(+r.price||0):0,refName:r?r.name:'',mat:null,lab:null};})}))
    .filter(s=>s.items.length);
   return {id:uid(),name:client.project||client.name,address:client.address,client:client,arch:arch,
-   docRef:S(pj.doc_ref).slice(0,60),docDate:S(pj.doc_date).slice(0,30),
+   docRef:DC.docRef,docDate:DC.docDate,
    files:(files||[]).map(d=>d.name),at:Date.now(),oh:null,pr:null,vat:+Store.get('vatPct',18)||18,sections:sections,
    excluded:(Array.isArray(o&&o.excluded)?o.excluded:[]).filter(x=>x&&x.desc).slice(0,30).map(x=>({desc:S(x.desc).slice(0,200),why:S(x.why).slice(0,80)})),
    questions:(Array.isArray(o&&o.questions)?o.questions:[]).map(S).filter(Boolean).slice(0,20)};
@@ -5045,9 +5069,7 @@ const App={
   const cats=(this.state.catalog||[]).map(c=>c.id+'='+((AI.catTitles&&AI.catTitles[c.id])||c.title||c.name||c.id)).join(' · ');
   const str={type:'string'};
   const S={type:'object',properties:{
-    project:{type:'object',properties:{client_name:str,client_phone:str,client_email:str,project_name:str,address:str,
-      architect:str,architect_phone:str,doc_ref:str,doc_date:str,title_lines:{type:'array',items:str},
-      confidence:{type:'string',enum:['high','medium','low']}}},
+    project:this.docProjSchema(),
     sections:{type:'array',items:{type:'object',properties:{title:str,cat:str,
       items:{type:'array',items:{type:'object',properties:{num:str,desc:str,unit:str,qty:{type:'number'},qty_note:str,ref:str},required:['desc','unit']}}},required:['title','items']}},
     excluded:{type:'array',items:{type:'object',properties:{desc:str,why:str},required:['desc','why']}},
@@ -5066,15 +5088,7 @@ const App={
    '11. המסמך יכול להיות בכל פורמט: טבלה (מס׳ סעיף, תיאור, יח׳, כמות, מחיר, סה״כ), כמה עמודים, פרקים ותתי-פרקים, מפרט עם עמודת כמות, או PDF שיוצא מאקסל. עמודות מחיר ריקות — התעלם מהן.',
    '12. num — מספר הסעיף כמו במסמך (למשל 01.02.030 או 3.4), אם יש. אחרת ריק.',
    '13. כמה קבצים: רק טבלה / מפרט עם עמודת כמות הוא מקור לסעיפים. שרטוטים (תוכנית בנייה, חשמל, תקרות, אינסטלציה, מבטים) — לא מקור לסעיפים ולא לכמויות; השתמש בהם רק לפרטי הפרויקט מבלוק החותמת.',
-   'project — מכותרת המסמך ומבלוק החותמת:',
-   '· client_name — המזמין / הלקוח. אם כתוב רק שם הפרויקט (למשל "מרפאת שיניים") — השתמש בו.',
-   '· project_name — שם הפרויקט · address — כתובת הפרויקט · doc_ref — שם/מספר המסמך או הגרסה · doc_date — תאריך המסמך.',
-   '· architect — משרד האדריכלים / המתכנן · architect_phone — הטלפון שלו.',
-   '· client_phone ו-client_email — רק אם כתובים במפורש ליד המזמין / הלקוח. טלפון של אדריכל, מתכנן או יועץ — לעולם לא ב-client_phone.',
-   '· קרא את כותרת הפרויקט אות-אות, בדיוק כמו שהיא כתובה. אל תתקן ואל תשלים למילים מוכרות. הפרויקט לא בהכרח "שיפוצים" — יכול להיות מרפאה, משרד, חנות, דירה או מבנה ציבור.',
-   '· title_lines — שורות כותרת הפרויקט כפי שהן מופיעות במסמך, עד 4.',
-   '· confidence — high / medium / low: עד כמה בטוח בקריאת שם הפרויקט והכתובת. low — אם האותיות לא ברורות.',
-   '· מה שלא כתוב — השאר ריק. אל תנחש.',
+   ...this.docProjPrompt(),
    'החזר JSON בלבד.'].join(NL);
   try{
    const o=await AI.json(this.docParts(D).concat([{t:'text',v:P}]),S,this.docOpts(D,{maxTokens:12000,catalog:true}));
@@ -5208,8 +5222,10 @@ const App={
   const sum=Math.round(rooms.reduce((a,r)=>a+r.sqm,0)*10)/10;
   const t=+(o&&o.total_sqm);
   const total=(t>0&&t<20000)?Math.round(t*10)/10:sum;
+  const DC=this.docClient(o&&o.project);
   return {rooms:rooms,total:total,sum:sum,source:String((o&&o.source)||''),
-    note:String((o&&o.note)||'').slice(0,160),file:String(file||'').slice(0,60)};
+    note:String((o&&o.note)||'').slice(0,160),file:String(file||'').slice(0,60),
+    client:DC.client,arch:DC.arch,docRef:DC.docRef,docDate:DC.docDate};
  },
  /** @param {File} f */
  /** @param {File|FileList|Array<File>} files — אחד או כמה: קומות או עמודים של אותה דירה */
@@ -5227,7 +5243,7 @@ const App={
       rooms:{type:'array',items:{type:'object',properties:{name:{type:'string'},sqm:{type:'number'}},required:['name','sqm']}},
       total_sqm:{type:'number'},
       source:{type:'string',enum:['written_areas','computed_from_dimensions','written_total','none']},
-      note:{type:'string'}},required:['rooms','total_sqm','source','note']};
+      note:{type:'string'},project:this.docProjSchema()},required:['rooms','total_sqm','source','note']};
     const P=['אתה קורא תוכניות של נכס (דירה, מרפאה, משרד, חנות) עבור קבלן שיפוצים בישראל. מטרה: שטח הנכס במ"ר, ואם אפשר — גם לפי חדרים.',
       'האותיות במסמכים יכולות להיות מצוירות (בלי שכבת טקסט). קרא אותן מהתמונה, מספר-מספר.',
       'סדר עדיפויות:',
@@ -5236,7 +5252,9 @@ const App={
       '3. אין שום שטח כתוב, אבל לחדר כתובים אורך ורוחב (בס"מ או במטרים) — חשב אורך×רוחב (source=computed_from_dimensions). אל תחשב משרשראות מידה מורכבות או מצורה לא מלבנית.',
       '4. אין שום שטח ושום אורך×רוחב — אל תעריך ואל תמציא: rooms ריק, total_sqm=0, source=none.',
       D.length>1?'מצורפים '+D.length+' קבצים של אותו נכס. תוכנית בנייה / אדריכלות / העמדה — המקור לחדרים. תוכניות חשמל, תקרות, אינסטלציה, מיזוג, חתכים ומבטים — אינן מקור לשטח: התעלם מהן, אלא אם כתוב בהן שטח כולל. כתב כמויות / מפרט — מקור טוב לשטח כולל. אל תספור אותו חדר פעמיים.':'',
-      'note — חובה, משפט קצר בעברית: מאיפה השטח (שם הקובץ או המסגרת), או למה לא נמצא. החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
+      'note — חובה, משפט קצר בעברית: מאיפה השטח (שם הקובץ או המסגרת), או למה לא נמצא.',
+      ...this.docProjPrompt(),
+      'החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
     const o=await AI.json(this.docParts(D).concat([{t:'text',v:P}]),S,this.docOpts(D,{maxTokens:2000}));
     const r=this.planResult(o,D.length>1?D.length+' קבצים':D[0].name);
     this.idle();
@@ -5247,19 +5265,43 @@ const App={
     this.render();
   }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
  },
+ /** אילו פרטי לקוח ייכתבו — רק לשדות ריקים בפרטי ההצעה, כדי לא לדרוס מה שיהודה הקליד. */
+ planClientFill(p){
+  const c=(p&&p.client)||{};const cur=this.state.client||{};const out=[];
+  [['name','שם'],['project','פרויקט'],['address','כתובת'],['phone','טלפון']].forEach(([k,l])=>{
+    if(c[k]&&!String(cur[k]||'').trim())out.push([l,c[k],k]);});
+  return out;
+ },
+ /** החלה: שדות ריקים + אדריכל ומסמך להערות הפנימיות (בלי כפילות). */
+ planClientApply(p){
+  const fill=this.planClientFill(p);const cur=this.state.client||{};const NL=String.fromCharCode(10);
+  const note=[(p.docRef?'תוכנית: '+p.docRef+(p.docDate?' ('+p.docDate+')':''):''),
+    (p.arch&&(p.arch.name||p.arch.phone))?'אדריכל: '+[p.arch.name,p.arch.phone].filter(Boolean).join(' · '):''].filter(Boolean).join(NL);
+  const curN=String(cur.notes||'').trim();
+  const upd={};fill.forEach(x=>{upd[x[2]]=x[1];});
+  if(note&&curN.indexOf(note)<0)upd.notes=[curN,note].filter(Boolean).join(NL);
+  this.state.client=Object.assign({},cur,upd);
+  return fill.length;
+ },
  /** פאנל האישור — מתחת לשדה השטח. */
  planScanPanel(){
   const p=this.state.planScan;if(!p)return '';
   const SRC={written_areas:'השטחים כתובים בתוכנית',computed_from_dimensions:'חושב מהמידות שבתוכנית',written_total:'שטח כולל שכתוב במסמך',none:''};
   const off=p.sum>0&&Math.abs(p.total-p.sum)/p.sum>0.03;
   const n=x=>(+x).toLocaleString('he-IL');
+  const fill=this.planClientFill(p);
   return '<ul class="tk-facts plan-scan" aria-label="תוצאת קריאת התוכנית">'+
     '<li>'+ico('file-text',14)+'<span>'+esc(p.file||'תוכנית')+(SRC[p.source]?' · '+SRC[p.source]:'')+'</span></li>'+
     p.rooms.map(r=>'<li class="pr"><span>'+esc(r.name)+'</span><b>'+n(r.sqm)+' מ"ר</b></li>').join('')+
     (off?'<li class="cut">'+ico('ruler',14)+'<span>סכום החדרים '+n(p.sum)+' מ"ר — שונה מהשטח הכולל שבתוכנית</span></li>':'')+
     (p.note?'<li>'+ico('message-circle',14)+'<span>'+esc(p.note)+'</span></li>':'')+'</ul>'+
+    (fill.length?'<ul class="tk-facts plan-scan plan-cl" aria-label="פרטי לקוח מהמסמך">'+
+      '<li>'+ico('users',14)+'<span><b>יירשם בפרטי הלקוח</b> (שדות ריקים בלבד)</span></li>'+
+      fill.map(x=>'<li class="pr"><span>'+x[0]+'</span><b>'+esc(x[1])+'</b></li>').join('')+
+      (p.client.conf!=='high'&&p.client.lines.length?'<li class="cut">'+ico('eye',14)+'<span>בדוק את האיות — כך נקרא: '+esc(p.client.lines.join(' · '))+'</span></li>':'')+'</ul>':'')+
     '<div class="tk-acts plan-scan-acts">'+
-      '<button class="tk-btn pri" data-planapply="'+p.total+'">'+ico('check',16)+'החל '+n(p.total)+' מ"ר</button>'+
+      '<button class="tk-btn pri" data-planapply="'+p.total+'" data-plancl="1">'+ico('check',16)+'החל '+n(p.total)+' מ"ר'+(fill.length?' + פרטים':'')+'</button>'+
+      (fill.length?'<button class="tk-btn" data-planapply="'+p.total+'">רק השטח</button>':'')+
       (off?'<button class="tk-btn" data-planapply="'+p.sum+'">סכום החדרים</button>':'')+
       '<button class="tk-btn" id="plan-scan-x">ביטול</button></div>';
  },
@@ -9553,10 +9595,16 @@ const App={
     if(b&&inp){b.onclick=()=>{try{this.captureQuote();}catch(e){}inp.click();};
       inp.onchange=e=>{const fs=Array.from(e.target.files||[]);e.target.value='';if(fs.length)this.planScan(fs);};}
     const x=document.getElementById('plan-scan-x');if(x)x.onclick=()=>{this.state.planScan=null;this.render();};})();
-  on('[data-planapply]','click',e=>{const v=+e.currentTarget.dataset.planapply||0;
+  on('[data-planapply]','click',e=>{const v=+e.currentTarget.dataset.planapply||0;const withCl=!!e.currentTarget.dataset.plancl;
     try{this.captureQuote();}catch(x){}
     if(v>0){this.state.planTotalSqm=v;Store.set('planTotalSqm',v);}
-    this.state.planScan=null;this.haptic(20);this.toast('השטח עודכן: '+v.toLocaleString('he-IL')+' מ"ר ✓');this.render();});
+    let k=0;if(withCl&&this.state.planScan){k=this.planClientApply(this.state.planScan);}
+    // ⚠️ render() קורא ל-preflight → captureQuote, שקוראת את השדות שעדיין על המסך (הישנים)
+    // ודורסת את מה שנקבע כאן. לכן מעדכנים גם את השדות עצמם לפני render.
+    {const c=this.state.client||{};const setIn=(id,x)=>{const el=document.getElementById(id);if(el&&x!==undefined)el.value=x;};
+     if(v>0)setIn('q_totsqm',v);
+     [['c_name','name'],['c_project','project'],['c_address','address'],['c_phone','phone'],['c_notes','notes']].forEach(([id,f])=>setIn(id,c[f]));}
+    this.state.planScan=null;this.haptic(20);this.toast('השטח עודכן: '+v.toLocaleString('he-IL')+' מ"ר'+(k?' · '+k+' פרטי לקוח':'')+' ✓');this.render();});
   // בדיקת AI — בלי render, כדי שהתוצאה לא תיעלם
   (()=>{const b=document.getElementById('ai-check');if(!b)return;
     b.onclick=async()=>{
