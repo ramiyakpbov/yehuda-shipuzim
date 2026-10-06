@@ -1699,6 +1699,9 @@ div.tk-f:active{transform:none;}
 .doc-row>small{flex:none;color:var(--muted);font-variant-numeric:tabular-nums;}
 .doc-x{width:36px;height:36px;border:0;background:transparent;}
 .doc-add{width:100%;box-sizing:border-box;margin-top:10px;}
+.lib-row{gap:8px;}
+.lib-row>.tk-btn.sm{flex:none;}
+.lib-row>small{white-space:nowrap;}
 /* כתב כמויות */
 .boq-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:0 2px 10px;font-size:var(--fs-s);color:var(--txt);}
 .boq-top span,.boq-top small{color:var(--muted);font-size:var(--fs-xs);}
@@ -3281,7 +3284,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='22.6';
+const VERSION='22.7';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3543,7 +3546,8 @@ const GUIDE=[
   {id:'g35',ic:'ruler',t:'קרא שטח מתוכנית',d:'תוכנית → חדרים ושטח',v:'plan',
    b:`<ol class="g-ol"><li>בעוזר: בוחרים <b>הצעת תכנון</b>.</li><li><b>קרא שטח מתוכנית 📏</b> ← תמונה או PDF של התוכנית. <b>אפשר כמה קבצים</b> — קומות, עמודים, או כל תוכניות האדריכל של הנכס. ה-AI לוקח את השטח מתוכנית הבנייה, ומתעלם מחשמל, תקרות ואינסטלציה.</li>
    <li>עוברים לפרטי ההצעה, ליד שדה השטח: רשימת החדרים והשטח הכולל ← <b>החל</b>.</li>
-   <li><b>פרטי הלקוח</b> — שם הפרויקט והכתובת מבלוק החותמת נרשמים בשדות הריקים בלבד, והאדריכל להערות הפנימיות. <b>רק השטח</b> — בלי פרטים.</li></ol>
+   <li><b>פרטי הלקוח</b> — שם הפרויקט והכתובת מבלוק החותמת נרשמים בשדות הריקים בלבד, והאדריכל להערות הפנימיות. <b>רק השטח</b> — בלי פרטים.</li>
+   <li><b>קבצים שמורים</b> — כל קבצים שהועלו נשמרים בטלפון, בשם הפרויקט. בפעם הבאה: "קרא שטח" מהרשימה, בלי להעלות שוב. אותה רשימה גם ב"כתב כמויות" וב"קובץ".</li></ol>
    <div class="g-note warn"><b>רק כשהשטח או המידות כתובים.</b> אם כתוב רק שטח כולל ("שטח המתחם 82 מ\"ר") — הוא נלקח גם בלי פירוט חדרים. מצילום של חדר אי אפשר למדוד — וה-AI אומר מה חסר במקום לנחש. התוצאה לעולם לא מוחלת לבד.</div>
    <div class="g-note">גם מתוך פרטי ההצעה: במצב תכנון, מתחת לשדה השטח.</div>`},
   {id:'g16',ic:'check',t:'סעיפים חסרים',d:'מה מקובל לכלול ולא נמצא',
@@ -3602,7 +3606,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>קרא שטח מתוכנית</b> — ממלא גם את פרטי הלקוח מהתוכנית, מזהה שטח כולל כתוב ("שטח המתחם"), ומסביר תמיד למה לא נמצא שטח. ותוקן: "החל" לא עדכן את השטח.</li>
+   b:`<ul class="g-ul"><li><b>קבצים שמורים</b> — תוכניות וכתבי כמויות נשמרים בטלפון בשם הפרויקט, ולא צריך להעלות שוב. ותוכניות של אדריכל (אותיות כקווים) נקראות מוגדלות, כדי שטקסט קטן ייקרא.</li>
+   <li><b>קרא שטח מתוכנית</b> — ממלא גם את פרטי הלקוח מהתוכנית, מזהה שטח כולל כתוב ("שטח המתחם"), ומסביר תמיד למה לא נמצא שטח. ותוקן: "החל" לא עדכן את השטח.</li>
    <li><b>כתב כמויות של אדריכל</b> — בעוזר ההצעות: הסעיפים, המספור והכמויות כמו במפרט, ומזינים רק עלות חומר ועבודה. פרטי הלקוח מזוהים ונרשמים אוטומטית, ואפשר לעבוד על כמה פרויקטים.</li>
    <li><b>כמה קבצים יחד</b> — ב"קובץ" וב"קרא שטח מתוכנית". ותוקן: PDF מוואטסאפ או מדרייב נשלח כתמונה ונכשל.</li>
    <li><b>מדריך חדש</b> — לפי משימות, עם סרטון קצר לכל משימה.</li>
@@ -4172,6 +4177,46 @@ const Photos=(()=>{let db=null;
   async add(rec){const d=await open();if(!d)return;return new Promise(r=>{const tx=d.transaction('p','readwrite');tx.objectStore('p').put(rec);tx.oncomplete=()=>r();tx.onerror=()=>r();});},
   async list(clientId){const d=await open();if(!d)return[];return new Promise(r=>{const out=[];const tx=d.transaction('p','readonly');const cur=tx.objectStore('p').openCursor();cur.onsuccess=e=>{const c=e.target.result;if(c){if(c.value.clientId===clientId)out.push(c.value);c.continue();}else r(out.sort((a,b)=>a.ts-b.ts));};cur.onerror=()=>r([]);});},
   async del(id){const d=await open();if(!d)return;return new Promise(r=>{const tx=d.transaction('p','readwrite');tx.objectStore('p').delete(id);tx.oncomplete=()=>r();tx.onerror=()=>r();});},
+ };
+})();
+/* ===== IndexedDB — קבצים שמורים (תוכניות, כתבי כמויות) =====
+   כדי לא להעלות את אותם קבצים שוב ושוב. שתי טבלאות: meta (קטנה — לרשימה) ו-data (הקבצים).
+   כך הצגת הרשימה לא טוענת עשרות MB לזיכרון. עד 12 סטים / 150MB — הישן ביותר נמחק. */
+const DocLib=(()=>{let db=null;const MAX_SETS=12,MAX_BYTES=150*1048576;
+ function open(){return new Promise(res=>{if(db)return res(db);try{const rq=indexedDB.open('ys_docs',1);
+   rq.onupgradeneeded=e=>{const d=e.target.result;
+     if(!d.objectStoreNames.contains('meta'))d.createObjectStore('meta',{keyPath:'id'});
+     if(!d.objectStoreNames.contains('data'))d.createObjectStore('data',{keyPath:'id'});};
+   rq.onsuccess=e=>{db=e.target.result;res(db);};rq.onerror=()=>res(null);}catch(e){res(null);}});}
+ const get1=(d,st,id)=>new Promise(r=>{try{const q=d.transaction(st,'readonly').objectStore(st).get(id);q.onsuccess=()=>r(q.result||null);q.onerror=()=>r(null);}catch(e){r(null);}});
+ const put=(d,recs)=>new Promise(r=>{try{const tx=d.transaction(Object.keys(recs),'readwrite');
+   Object.keys(recs).forEach(st=>tx.objectStore(st).put(recs[st]));tx.oncomplete=()=>r(true);tx.onerror=()=>r(false);tx.onabort=()=>r(false);}catch(e){r(false);}});
+ const sig=docs=>docs.map(x=>x.name+':'+x.size).sort().join('|');
+ async function list(){const d=await open();if(!d)return [];
+   return new Promise(r=>{try{const q=d.transaction('meta','readonly').objectStore('meta').getAll();
+     q.onsuccess=()=>r((q.result||[]).sort((a,b)=>b.at-a.at));q.onerror=()=>r([]);}catch(e){r([]);}});}
+ async function del(id){const d=await open();if(!d)return false;
+   return new Promise(r=>{try{const tx=d.transaction(['meta','data'],'readwrite');tx.objectStore('meta').delete(id);tx.objectStore('data').delete(id);
+     tx.oncomplete=()=>r(true);tx.onerror=()=>r(false);}catch(e){r(false);}});}
+ return {list:list,del:del,sig:sig,
+  /** שומר סט קבצים. אותם קבצים (שם+גודל) — אותו סט, רק מתעדכן התאריך. מחזיר id או null. */
+  async save(docs,name){
+   docs=(docs||[]).filter(x=>x&&x.data);if(!docs.length)return null;const d=await open();if(!d)return null;
+   const s=sig(docs);const L=await list();const ex=L.find(m=>m.sig===s);
+   const id=ex?ex.id:('d'+Date.now().toString(36)+Math.random().toString(36).slice(2,6));
+   const bytes=docs.reduce((a,x)=>a+x.data.length,0);if(bytes>MAX_BYTES)return null;
+   const meta={id:id,sig:s,name:(ex&&ex.named)?ex.name:(name||(ex&&ex.name)||docs[0].name),named:!!(ex&&ex.named),
+     at:Date.now(),n:docs.length,bytes:bytes,names:docs.map(x=>x.name).slice(0,12)};
+   let rest=L.filter(m=>m.id!==id);let tot=bytes+rest.reduce((a,m)=>a+(m.bytes||0),0);
+   while(rest.length&&(rest.length+1>MAX_SETS||tot>MAX_BYTES)){const o=rest.pop();tot-=(o.bytes||0);await del(o.id);}
+   if(!ex){const ok=await put(d,{meta:meta,data:{id:id,docs:docs}});return ok?id:null;}
+   return (await put(d,{meta:meta}))?id:null;},
+  /** הקבצים + עדכון "שימוש אחרון" */
+  async get(id){const d=await open();if(!d)return null;const m=await get1(d,'meta',id),x=await get1(d,'data',id);
+   if(!m||!x)return null;m.at=Date.now();await put(d,{meta:m});return {meta:m,docs:x.docs};},
+  /** שם מהמסמך (פרויקט · כתובת) — מחליף את השם האוטומטי */
+  async rename(id,name){const d=await open();if(!d||!id||!name)return false;const m=await get1(d,'meta',id);if(!m)return false;
+   m.name=String(name).slice(0,80);m.named=true;return put(d,{meta:m});}
  };
 })();
 function compressImage(file){return new Promise(res=>{const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const max=900;let{width:w,height:h}=img;if(w>h&&w>max){h=h*max/w;w=max;}else if(h>max){w=w*max/h;h=max;}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);res(cv.toDataURL('image/jpeg',0.6));};img.src=rd.result;};rd.readAsDataURL(file);});}
@@ -4958,6 +5003,7 @@ const App={
      (D.length?'<ul class="tk-facts doc-list">'+D.map((d,i)=>'<li class="doc-row">'+ico(d.kind==='pdf'?'file-text':'image',16)+'<span class="doc-n">'+esc(d.name)+'</span><small>'+this.fmtMB(d.size)+'</small>'+
        '<button class="tk-ib doc-x" data-boqrm="'+i+'" aria-label="הסר את '+esc(d.name)+'">'+ico('x',15)+'</button></li>').join('')+'</ul>':'')+
      '<label class="tk-btn ghost doc-add" for="boq-in">'+ico('file-text',16)+(D.length?'הוסף עוד קבצים':'בחר את כתב הכמויות')+'</label>'+
+     (D.length?'':this.libRows('boq','השתמש'))+
      '<input id="boq-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>'+
      (D.length?'<button class="tk-btn pri ait-run" id="boq-go">'+ico('sparkles',16)+'קרא את כתב הכמויות</button>':'')+
      '<p class="tk-hint start">תוכניות בלי כמויות לא נחוצות — רק המפרט עם עמודות הכמות. עד '+L.count+' קבצים.</p>';
@@ -5091,8 +5137,10 @@ const App={
    ...this.docProjPrompt(),
    'החזר JSON בלבד.'].join(NL);
   try{
+   const libP=this.libSave(D);
    const o=await AI.json(this.docParts(D).concat([{t:'text',v:P}]),S,this.docOpts(D,{maxTokens:12000,catalog:true}));
    const p=this.boqFromAI(o,D);
+   libP.then(id=>this.libName(id,p.client));
    if(!p.sections.length){this.idle();this.toast('לא נמצאו סעיפים עם כמויות — האם זה כתב הכמויות?');return;}
    this.boqSave(p);this._boqDocs=[];this.idle();this.render();
    this.toast(p.sections.reduce((a,s)=>a+s.items.length,0)+' סעיפים נקראו ✓');
@@ -5191,6 +5239,89 @@ const App={
  docBadMsg(bad){const L=this.docLimits();
   const W={count:'עד '+L.count+' קבצים',big:'גדול מ-'+this.fmtMB(L.file),total:'חורג מ-'+this.fmtMB(L.total)+' יחד',kind:'לא PDF ולא תמונה',read:'לא נקרא'};
   return 'לא נוספו: '+bad.slice(0,2).map(b=>b.n+' — '+(W[b.why]||'')).join(' · ')+(bad.length>2?' ועוד '+(bad.length-2):'');},
+ /* ═══ קבצים שמורים ═══ */
+ /** שם אוטומטי לסט — עד שה-AI מזהה את שם הפרויקט */
+ libAutoName(D){const n=String((D[0]&&D[0].name)||'קבצים').replace(/\.[a-z0-9]+$/i,'').slice(0,40);return D.length>1?n+' +'+(D.length-1):n;},
+ /** שמירה ברקע — כשל בשמירה לא עוצר את הקריאה */
+ async libSave(D,name){try{const id=await DocLib.save(D,name||this.libAutoName(D));this.libLoad();return id;}catch(e){return null;}},
+ async libName(id,c){try{if(!id||!c)return;const nm=[c.project||c.name,c.address].filter(Boolean).join(' · ');
+   if(nm){await DocLib.rename(id,nm);this.libLoad();}}catch(e){}},
+ /** טוען את רשימת הסטים. render רק כשהרשימה השתנתה ורק במסכים שמציגים אותה */
+ async libLoad(){let L=[];try{L=await DocLib.list();}catch(e){}
+  const k=JSON.stringify(L.map(m=>[m.id,m.name,m.at]));if(k===this._libKey&&this._lib)return;
+  this._lib=L;this._libKey=k;
+  if(['aihub','boq','aipdf'].indexOf(this.state.modal)>=0&&!this._libBusy)this.render();},
+ /** שורות הקבצים השמורים. act: plan | boq | doc */
+ libRows(act,label){const L=this._lib||[];if(!L.length)return '';
+  const dt=t=>new Date(t).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});
+  return '<h3 class="tk-sec"><span>קבצים שמורים</span><b>'+L.length+'</b></h3><ul class="tk-facts doc-list lib-list" aria-label="קבצים שמורים">'+
+   L.slice(0,6).map(m=>'<li class="doc-row lib-row">'+ico('file-text',16)+
+     '<span class="doc-n" title="'+esc((m.names||[]).join(', '))+'">'+esc(m.name)+'</span>'+
+     '<small>'+(m.n===1?'קובץ':m.n+' קבצים')+' · '+dt(m.at)+'</small>'+
+     '<button class="tk-btn sm" data-lib'+act+'="'+esc(m.id)+'">'+label+'</button>'+
+     '<button class="tk-ib doc-x" data-libdel="'+esc(m.id)+'" aria-label="מחק את '+esc(m.name)+'" title="מחק">'+ico('trash-2',15)+'</button></li>').join('')+'</ul>';},
+
+ /* ═══ תוכניות בלי שכבת טקסט → חלקים מוגדלים ═══
+    בשרטוט של אדריכל האותיות הן קווים, ובקריאת PDF רגילה העמוד מוקטן — טקסט דק
+    ("שטח המתחם 82 מ\"ר") נהיה לא קריא. מרנדרים כל עמוד ב-3000px ומחלקים לחלקים
+    של ~1100px, עם חפיפה. רק לעמודים בלי טקסט מובנה. כשל → ממשיכים עם ה-PDF בלבד. */
+ pdfJs(){if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  if(this._pdfJsP)return this._pdfJsP;
+  const B='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  this._pdfJsP=new Promise((res,rej)=>{const s=document.createElement('script');s.src=B+'pdf.min.js';s.async=true;
+    s.onload=()=>{try{window.pdfjsLib.GlobalWorkerOptions.workerSrc=B+'pdf.worker.min.js';res(window.pdfjsLib);}catch(e){rej(e);}};
+    s.onerror=()=>{this._pdfJsP=null;rej(new Error('pdfjs'));};document.head.appendChild(s);});
+  return this._pdfJsP;},
+ async planTiles(D,opt){
+  opt=Object.assign({long:3000,tile:1100,ov:70,maxTiles:60,maxPages:3,q:0.8},opt||{});
+  const out=[];if(!D.some(d=>d.kind==='pdf'))return out;
+  const lib=await this.pdfJs();
+  // worker אחד לכל הקבצים — בלי זה הוא נטען מחדש לכל קובץ
+  let wk=null;try{wk=new lib.PDFWorker();}catch(e){wk=null;}
+  const np=D.filter(d=>d.kind==='pdf').length;let k0=0;
+  try{
+  for(let i=0;i<D.length&&out.length<opt.maxTiles;i++){const d=D[i];if(d.kind!=='pdf')continue;
+   if(opt.stop&&opt.stop())break;
+   k0++;if(opt.progress)try{opt.progress(k0,np);}catch(e){}
+   let doc=null;
+   try{const bin=atob(d.data);const u8=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)u8[j]=bin.charCodeAt(j);
+    // isEvalSupported:false — סוגר את CVE-2024-4367 בגרסה 3.x
+    doc=await lib.getDocument(Object.assign({data:u8,isEvalSupported:false},wk?{worker:wk}:{})).promise;
+    for(let pn=1;pn<=Math.min(doc.numPages,opt.maxPages)&&out.length<opt.maxTiles;pn++){
+     const page=await doc.getPage(pn);
+     const tc=await page.getTextContent();
+     if((tc.items||[]).filter(t=>String(t.str||'').trim()).length>40)continue;   // יש טקסט מובנה — ה-PDF מספיק
+     const v1=page.getViewport({scale:1});const k=opt.long/Math.max(v1.width,v1.height);const vp=page.getViewport({scale:k});
+     const W=Math.round(vp.width),H=Math.round(vp.height);
+     const cv=document.createElement('canvas');cv.width=W;cv.height=H;const cx=cv.getContext('2d');
+     cx.fillStyle='#fff';cx.fillRect(0,0,W,H);
+     await page.render({canvasContext:cx,viewport:vp}).promise;
+     const cols=Math.max(1,Math.ceil(W/opt.tile)),rows=Math.max(1,Math.ceil(H/opt.tile));
+     const tw=Math.ceil(W/cols),th=Math.ceil(H/rows);
+     for(let r=0;r<rows&&out.length<opt.maxTiles;r++)for(let c=0;c<cols&&out.length<opt.maxTiles;c++){
+      // RTL: חלק 1 = ימין למעלה, כמו שקוראים
+      const x0=Math.max(0,(cols-1-c)*tw-opt.ov),y0=Math.max(0,r*th-opt.ov);
+      const x1=Math.min(W,(cols-c)*tw+opt.ov),y1=Math.min(H,(r+1)*th+opt.ov);
+      const t=document.createElement('canvas');t.width=x1-x0;t.height=y1-y0;
+      t.getContext('2d').drawImage(cv,x0,y0,x1-x0,y1-y0,0,0,x1-x0,y1-y0);
+      const u=t.toDataURL('image/jpeg',opt.q);const m=u.indexOf(',');
+      out.push({doc:i,page:pn,n:r*cols+c+1,of:rows*cols,mime:'image/jpeg',data:u.slice(m+1),size:Math.round((u.length-m)*0.75)});}
+     cv.width=cv.height=0;
+    }
+   }catch(e){try{Store.logErr&&Store.logErr('planTiles',String(e&&e.message||e));}catch(x){}}
+   finally{try{doc&&doc.destroy();}catch(e){}}
+  }
+  }finally{try{wk&&wk.destroy();}catch(e){}}
+  return out;},
+ /** ה-PDF המקורי (תמונת המצב: איפה כל חדר) + החלקים המוגדלים שלו (הטקסט הקטן) */
+ planParts(D,tiles){const out=[];D.forEach((d,i)=>{
+   out.push({t:'text',v:'קובץ '+(i+1)+': '+d.name});
+   out.push(d.kind==='pdf'?{t:'pdf',data:d.data}:{t:'image',mime:d.mime,data:d.data});
+   tiles.filter(x=>x.doc===i).forEach(x=>{
+     out.push({t:'text',v:'קובץ '+(i+1)+' · עמוד '+x.page+' · הגדלה '+x.n+'/'+x.of});
+     out.push({t:'image',mime:x.mime,data:x.data});});});
+  return out;},
+
  /** הרשימה → חלקי בקשה. בכמה קבצים — תווית לפני כל אחד, כדי שה-AI ידע מה מאיפה. */
  docParts(list){const out=[];list.forEach((d,i)=>{
    if(list.length>1)out.push({t:'text',v:'קובץ '+(i+1)+': '+d.name});
@@ -5224,21 +5355,32 @@ const App={
   const total=(t>0&&t<20000)?Math.round(t*10)/10:sum;
   const DC=this.docClient(o&&o.project);
   return {rooms:rooms,total:total,sum:sum,source:String((o&&o.source)||''),
-    note:String((o&&o.note)||'').slice(0,160),file:String(file||'').slice(0,60),
+    note:String((o&&o.note)||'').slice(0,300),file:String(file||'').slice(0,60),
     client:DC.client,arch:DC.arch,docRef:DC.docRef,docDate:DC.docDate};
  },
  /** @param {File} f */
  /** @param {File|FileList|Array<File>} files — אחד או כמה: קומות או עמודים של אותה דירה */
- async planScan(files){
+ async planScan(files,opt){
+  opt=opt||{};
   const fs=(files&&typeof files.length==='number')?Array.from(files):(files?[files]:[]);
-  if(!fs.length)return;
+  const pre=Array.isArray(opt.docs)?opt.docs:null;
+  if(!fs.length&&!(pre&&pre.length))return;
   if(!AI.anyKey()){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
-  this.busy(fs.length>1?'קורא '+fs.length+' תוכניות…':'קורא את התוכנית…',true);this.haptic(15);
+  const cnt=pre?pre.length:fs.length;
+  this.busy(cnt>1?'קורא '+cnt+' תוכניות…':'קורא את התוכנית…',true);this.haptic(15);
   try{
-    const D=[];const bad=await this.addDocs(D,fs);
+    const D=pre?pre.slice():[];const bad=pre?[]:await this.addDocs(D,fs);
     if(!D.length){this.idle();
       this.toast(bad.length&&bad.every(b=>b.why==='kind')?'צריך תמונה או PDF של התוכנית':(bad.length&&bad[0].why==='big'?'הקובץ גדול מדי — עד '+this.fmtMB(this.docLimits().file):this.docBadMsg(bad)));return;}
     if(bad.length)this.toast(this.docBadMsg(bad));
+    // שמירה לקבצים השמורים — ברקע, במקביל לקריאה
+    const libP=opt.libId?Promise.resolve(opt.libId):this.libSave(D);
+    // הכנת החלקים לוקחת כמה שניות לתוכנית — התקדמות על המסך, ו"ביטול" עוצר גם אותה
+    let stop=false;const bx=document.querySelector('#busy-ov .busy-x');if(bx)bx.addEventListener('click',()=>{stop=true;},{once:true});
+    const bt=document.querySelector('#busy-ov .busy-txt');
+    let tiles=[];try{tiles=await this.planTiles(D,{stop:()=>stop,progress:(k,n)=>{if(bt)bt.textContent='מגדיל את התוכניות לקריאה… '+k+'/'+n;}});}catch(e){tiles=[];}
+    if(stop){this.idle();this.toast('הפעולה בוטלה');return;}
+    if(bt)bt.textContent=D.length>1?'ה-AI קורא '+D.length+' תוכניות…':'ה-AI קורא את התוכנית…';
     const S={type:'object',properties:{
       rooms:{type:'array',items:{type:'object',properties:{name:{type:'string'},sqm:{type:'number'}},required:['name','sqm']}},
       total_sqm:{type:'number'},
@@ -5252,12 +5394,17 @@ const App={
       '3. אין שום שטח כתוב, אבל לחדר כתובים אורך ורוחב (בס"מ או במטרים) — חשב אורך×רוחב (source=computed_from_dimensions). אל תחשב משרשראות מידה מורכבות או מצורה לא מלבנית.',
       '4. אין שום שטח ושום אורך×רוחב — אל תעריך ואל תמציא: rooms ריק, total_sqm=0, source=none.',
       D.length>1?'מצורפים '+D.length+' קבצים של אותו נכס. תוכנית בנייה / אדריכלות / העמדה — המקור לחדרים. תוכניות חשמל, תקרות, אינסטלציה, מיזוג, חתכים ומבטים — אינן מקור לשטח: התעלם מהן, אלא אם כתוב בהן שטח כולל. כתב כמויות / מפרט — מקור טוב לשטח כולל. אל תספור אותו חדר פעמיים.':'',
+      tiles.length?'מצורפים גם חלקים מוגדלים של העמודים ("הגדלה"), כי הטקסט בשרטוט דק וקטן. קרא את המספרים והכיתוב מהחלקים המוגדלים, ואת מיקום החדרים מהעמוד המלא. החלקים חופפים מעט — אותו כיתוב יכול להופיע בשני חלקים: אל תספור פעמיים. חפש במיוחד מסגרות עם "שטח".':'',
       'note — חובה, משפט קצר בעברית: מאיפה השטח (שם הקובץ או המסגרת), או למה לא נמצא.',
       ...this.docProjPrompt(),
       'החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
-    const o=await AI.json(this.docParts(D).concat([{t:'text',v:P}]),S,this.docOpts(D,{maxTokens:2000}));
+    const tb=tiles.reduce((a,x)=>a+x.size,0);
+    const op=this.docOpts(D.concat(tiles.length?[{size:tb}]:[]),{maxTokens:2000});
+    if(tiles.length)op.timeout=Math.min(300000,op.timeout+60000);
+    const o=await AI.json((tiles.length?this.planParts(D,tiles):this.docParts(D)).concat([{t:'text',v:P}]),S,op);
     const r=this.planResult(o,D.length>1?D.length+' קבצים':D[0].name);
     this.idle();
+    libP.then(id=>this.libName(id,r.client));
     if(!r.rooms.length&&!(r.total>0)){this.toast(r.note||'לא נמצא שטח כתוב בתוכנית');return;}
     this.state.planScan=r;
     // מתוך עוזר ההצעות: עוברים לפרטי ההצעה, ליד שדה השטח — שם מאשרים
@@ -5447,6 +5594,7 @@ const App={
   if(!AI.anyKey()){this.toast('הגדר קודם מפתח AI בהגדרות');return;}
   const many=D.length>1,NL=String.fromCharCode(10);
   this.busy(many?'ה-AI קורא '+D.length+' קבצים…':'ה-AI קורא את הקובץ…',true);this.haptic(15);
+  this.libSave(D);
   const P=['אתה עוזר לקבלן שיפוצים ישראלי. '+(many?'מצורפים '+D.length+' קבצים מאותו פרויקט (כתב כמויות, תוכניות, הצעות).':'במסמך המצורף יש תיאור עבודות שיפוץ (כתב כמויות/הצעה).')+' קרא בעיון והפק רשימת סעיפי עבודה אחת מסודרת.',
     many?'אחד את הקבצים: סעיף שמופיע בכמה קבצים — פעם אחת בלבד, עם הכמות המפורטת ביותר. תוכנית בלי כמויות כתובות — רק להבנת ההקשר; אל תמציא ממנה כמויות.':'',
     this._itemFmt(many?90:60),
@@ -8234,14 +8382,14 @@ const App={
        ${qt==='plan'?'<div class="qt-v">✓</div>':''}
      </button>
    </div>
-   ${qt==='plan'?`<div class="ah-sec">שטח הדירה</div>
+   ${qt==='plan'?`<div class="ah-sec">שטח הנכס</div>
    <div class="aihub-grid">
      <button class="aihub-card" id="hub-plan-scan">
        <div class="ah-icon">📏</div>
        <div class="ah-txt"><div class="ah-t">קרא שטח מתוכנית<span class="ah-badge">חדש</span></div><div class="ah-d">תמונה או PDF — גם כמה קבצים · חדרים ושטח כולל</div></div>
        <div class="ah-arrow">‹</div></button>
      <input id="hub-plan-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>
-   </div>`:''}
+   </div>${this.libRows('plan','קרא שטח')}`:''}
    <div class="ah-sec">מאיפה הסעיפים</div>
    <div class="aihub-grid">
      ${card('v2q','🎤','לדבר או להדביק','הכתבה בקול · הדבקת טקסט מוואטסאפ','')}
@@ -8287,6 +8435,7 @@ const App={
      '<button class="tk-ib doc-x" data-docrm="'+i+'" aria-label="הסר את '+esc(d.name)+'">'+ico('x',15)+'</button></li>').join('')+'</ul>'+
      '<p class="tk-count-line">'+D.length+(D.length===1?' קובץ':' קבצים')+' · '+this.fmtMB(tot)+' מתוך '+this.fmtMB(L.total)+'</p>':'')+
    '<label class="tk-btn ghost doc-add" for="aipdf-in">'+ico('file-text',16)+(D.length?'הוסף עוד קבצים':'בחר קבצים — PDF או תמונות')+'</label>'+
+   (D.length?'':this.libRows('doc','השתמש'))+
    '<input id="aipdf-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>'+
    (D.length?'<button class="tk-btn pri ait-run" id="aipdf-go">'+ico('sparkles',16)+(D.length>1?'נתח את '+D.length+' הקבצים יחד':'נתח והמר להצעה')+'</button>'+
      '<button class="tk-btn sm ghost" id="aipdf-clear">נקה הכל</button>':'')+
@@ -9084,6 +9233,20 @@ const App={
       it[el.dataset.boqf]=el.value===''?null:+el.value;this.boqSave(p);this.boqUpdate();};
       if(el.dataset.boqf==='qty')el.onchange=()=>this.render();});})();
   on('[data-boqrm]','click',e=>{(this._boqDocs||[]).splice(+e.currentTarget.dataset.boqrm,1);this.render();});
+  // קבצים שמורים
+  if(['aihub','boq','aipdf'].indexOf(this.state.modal)>=0&&this._lib===undefined){this._lib=null;this.libLoad();}
+  const libGet=async id=>{this._libBusy=true;try{const x=await DocLib.get(id);
+    if(!x||!x.docs||!x.docs.length){this.toast('הקבצים לא נמצאו — אולי נמחקו');this.libLoad();return null;}return x;}
+    finally{this._libBusy=false;}};
+  on('[data-libplan]','click',async e=>{const id=e.currentTarget.dataset.libplan;try{this.captureQuote();}catch(x){}
+    const x=await libGet(id);if(x)this.planScan(null,{docs:x.docs,libId:id});});
+  on('[data-libboq]','click',async e=>{const x=await libGet(e.currentTarget.dataset.libboq);if(!x)return;
+    this._boqDocs=x.docs.slice();this.render();this.toast(x.docs.length+(x.docs.length===1?' קובץ נטען':' קבצים נטענו')+' ✓');this.libLoad();});
+  on('[data-libdoc]','click',async e=>{const x=await libGet(e.currentTarget.dataset.libdoc);if(!x)return;
+    this._docs=x.docs.slice();this.render();this.toast(x.docs.length+(x.docs.length===1?' קובץ נטען':' קבצים נטענו')+' ✓');this.libLoad();});
+  on('[data-libdel]','click',async e=>{const id=e.currentTarget.dataset.libdel;const m=(this._lib||[]).find(x=>x.id===id);
+    if(!confirm('למחוק את "'+((m&&m.name)||'הקבצים')+'" מהקבצים השמורים?\n\nהקבצים המקוריים בטלפון לא נמחקים.'))return;
+    await DocLib.del(id);this.toast('נמחק ✓');this.libLoad();});
   // קרא שטח מתוכנית — מתוך עוזר ההצעות
   (()=>{const b=document.getElementById('hub-plan-scan'),inp=document.getElementById('hub-plan-in');
     if(b&&inp){b.onclick=()=>inp.click();
