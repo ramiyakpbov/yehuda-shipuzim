@@ -3286,7 +3286,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='22.8';
+const VERSION='22.9';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3608,7 +3608,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>שם לקבצים השמורים</b> — לחיצה על השם (✏️) משנה אותו, למשל לשם הלקוח. שם שהוקלד לא מוחלף אוטומטית. ואם ה-AI נכשל — ההודעה מציגה את הסיבה, ונעשה ניסיון שני קל יותר.</li>
+   b:`<ul class="g-ul"><li><b>קרא שטח בשני שלבים</b> — קודם קריאה מהירה של כל התוכניות; רק אם השטח לא נמצא, ה-AI בוחר עד 2 תוכניות ומגדיל רק אותן. על המסך: השלב והזמן שעבר.</li>
+   <li><b>שם לקבצים השמורים</b> — לחיצה על השם (✏️) משנה אותו, למשל לשם הלקוח. שם שהוקלד לא מוחלף אוטומטית. ואם ה-AI נכשל — ההודעה מציגה את הסיבה, ונעשה ניסיון שני קל יותר.</li>
    <li><b>קבצים שמורים</b> — תוכניות וכתבי כמויות נשמרים בטלפון בשם הפרויקט, ולא צריך להעלות שוב. ותוכניות של אדריכל (אותיות כקווים) נקראות מוגדלות, כדי שטקסט קטן ייקרא.</li>
    <li><b>קרא שטח מתוכנית</b> — ממלא גם את פרטי הלקוח מהתוכנית, מזהה שטח כולל כתוב ("שטח המתחם"), ומסביר תמיד למה לא נמצא שטח. ותוקן: "החל" לא עדכן את השטח.</li>
    <li><b>כתב כמויות של אדריכל</b> — בעוזר ההצעות: הסעיפים, המספור והכמויות כמו במפרט, ומזינים רק עלות חומר ועבודה. פרטי הלקוח מזוהים ונרשמים אוטומטית, ואפשר לעבוד על כמה פרויקטים.</li>
@@ -5285,10 +5286,13 @@ const App={
   const B='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
   this._pdfJsP=new Promise((res,rej)=>{const s=document.createElement('script');s.src=B+'pdf.min.js';s.async=true;
     s.onload=()=>{try{window.pdfjsLib.GlobalWorkerOptions.workerSrc=B+'pdf.worker.min.js';res(window.pdfjsLib);}catch(e){rej(e);}};
-    s.onerror=()=>{this._pdfJsP=null;rej(new Error('pdfjs'));};document.head.appendChild(s);});
+    s.onerror=()=>{this._pdfJsP=null;rej(new Error('pdfjs'));};document.head.appendChild(s);
+    // רשת איטית — לא מחכים לנצח: אחרי 20 שנ' ממשיכים בלי הגדלה
+    setTimeout(()=>{if(!window.pdfjsLib){this._pdfJsP=null;rej(new Error('pdfjs-timeout'));}},20000);});
   return this._pdfJsP;},
  async planTiles(D,opt){
-  opt=Object.assign({long:3000,tile:1100,ov:70,maxTiles:60,maxPages:3,q:0.8},opt||{});
+  opt=Object.assign({long:3000,tile:1100,ov:70,maxTiles:60,maxPages:3,q:0.8,budgetMs:0},opt||{});
+  const tStart=Date.now();const over=()=>opt.budgetMs>0&&Date.now()-tStart>opt.budgetMs;
   const out=[];if(!D.some(d=>d.kind==='pdf'))return out;
   const lib=await this.pdfJs();
   // worker אחד לכל הקבצים — בלי זה הוא נטען מחדש לכל קובץ
@@ -5296,13 +5300,13 @@ const App={
   const np=D.filter(d=>d.kind==='pdf').length;let k0=0;
   try{
   for(let i=0;i<D.length&&out.length<opt.maxTiles;i++){const d=D[i];if(d.kind!=='pdf')continue;
-   if(opt.stop&&opt.stop())break;
+   if((opt.stop&&opt.stop())||over())break;
    k0++;if(opt.progress)try{opt.progress(k0,np);}catch(e){}
    let doc=null;
    try{const bin=atob(d.data);const u8=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)u8[j]=bin.charCodeAt(j);
     // isEvalSupported:false — סוגר את CVE-2024-4367 בגרסה 3.x
     doc=await lib.getDocument(Object.assign({data:u8,isEvalSupported:false},wk?{worker:wk}:{})).promise;
-    for(let pn=1;pn<=Math.min(doc.numPages,opt.maxPages)&&out.length<opt.maxTiles;pn++){
+    for(let pn=1;pn<=Math.min(doc.numPages,opt.maxPages)&&out.length<opt.maxTiles&&!over();pn++){
      const page=await doc.getPage(pn);
      const tc=await page.getTextContent();
      if((tc.items||[]).filter(t=>String(t.str||'').trim()).length>40)continue;   // יש טקסט מובנה — ה-PDF מספיק
@@ -5394,39 +5398,72 @@ const App={
     // הכנת החלקים לוקחת כמה שניות לתוכנית — התקדמות על המסך, ו"ביטול" עוצר גם אותה
     let stop=false;const bx=document.querySelector('#busy-ov .busy-x');if(bx)bx.addEventListener('click',()=>{stop=true;},{once:true});
     const bt=document.querySelector('#busy-ov .busy-txt');
-    let tiles=[];try{tiles=await this.planTiles(D,{stop:()=>stop,progress:(k,n)=>{if(bt)bt.textContent='מגדיל את התוכניות לקריאה… '+k+'/'+n;}});}catch(e){tiles=[];}
-    if(stop){this.idle();this.toast('הפעולה בוטלה');return;}
-    if(bt)bt.textContent=D.length>1?'ה-AI קורא '+D.length+' תוכניות…':'ה-AI קורא את התוכנית…';
+    /* ═══ שני שלבים ═══
+       בקשה אחת עם 8 תוכניות + 48 חלקים מוגדלים (~12MB) לא חזרה בטלפון גם אחרי 4–5 דקות (v22.8).
+       שלב 1: רק ה-PDF (כמו v22.6 — חזר בזמן). נמצא שטח — סיימנו, בלי הגדלה בכלל.
+       שלב 2: לא נמצא — ה-AI בוחר עד 2 קבצים להגדלה, ורק הם נשלחים, מוגדלים. בקשה קטנה.
+       על המסך כל שנייה: השלב והזמן שעבר. */
+    const t0=Date.now();let phase='';
+    const mmss=ms=>{const s=Math.floor(ms/1000);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+    const tick=()=>{if(bt)bt.textContent=phase+' · '+mmss(Date.now()-t0);};
+    const setPh=x=>{phase=x;tick();};
+    const tm=setInterval(tick,1000);
     const S={type:'object',properties:{
       rooms:{type:'array',items:{type:'object',properties:{name:{type:'string'},sqm:{type:'number'}},required:['name','sqm']}},
       total_sqm:{type:'number'},
       source:{type:'string',enum:['written_areas','computed_from_dimensions','written_total','none']},
+      zoom_files:{type:'array',items:{type:'integer'}},
       note:{type:'string'},project:this.docProjSchema()},required:['rooms','total_sqm','source','note']};
-    const P=['אתה קורא תוכניות של נכס (דירה, מרפאה, משרד, חנות) עבור קבלן שיפוצים בישראל. מטרה: שטח הנכס במ"ר, ואם אפשר — גם לפי חדרים.',
+    const P=(pass,Dx,hasTiles)=>['אתה קורא תוכניות של נכס (דירה, מרפאה, משרד, חנות) עבור קבלן שיפוצים בישראל. מטרה: שטח הנכס במ"ר, ואם אפשר — גם לפי חדרים.',
       'האותיות במסמכים יכולות להיות מצוירות (בלי שכבת טקסט). קרא אותן מהתמונה, מספר-מספר.',
       'סדר עדיפויות:',
       '1. שטח כתוב לכל חדר — העתק כמו שהוא (source=written_areas). total_sqm = השטח הכולל אם כתוב, אחרת סכום החדרים.',
       '2. אין שטחי חדרים, אבל כתוב שטח כולל (למשל "שטח המתחם", "שטח נטו", "שטח הדירה", או ריצוף בכתב כמויות) — total_sqm = אותו שטח, rooms ריק, source=written_total. גם בלי שטחי חדרים — חובה להחזיר אותו.',
       '3. אין שום שטח כתוב, אבל לחדר כתובים אורך ורוחב (בס"מ או במטרים) — חשב אורך×רוחב (source=computed_from_dimensions). אל תחשב משרשראות מידה מורכבות או מצורה לא מלבנית.',
       '4. אין שום שטח ושום אורך×רוחב — אל תעריך ואל תמציא: rooms ריק, total_sqm=0, source=none.',
-      D.length>1?'מצורפים '+D.length+' קבצים של אותו נכס. תוכנית בנייה / אדריכלות / העמדה — המקור לחדרים. תוכניות חשמל, תקרות, אינסטלציה, מיזוג, חתכים ומבטים — אינן מקור לשטח: התעלם מהן, אלא אם כתוב בהן שטח כולל. כתב כמויות / מפרט — מקור טוב לשטח כולל. אל תספור אותו חדר פעמיים.':'',
-      tiles.length?'מצורפים גם חלקים מוגדלים של העמודים ("הגדלה"), כי הטקסט בשרטוט דק וקטן. קרא את המספרים והכיתוב מהחלקים המוגדלים, ואת מיקום החדרים מהעמוד המלא. החלקים חופפים מעט — אותו כיתוב יכול להופיע בשני חלקים: אל תספור פעמיים. חפש במיוחד מסגרות עם "שטח".':'',
+      Dx.length>1?'מצורפים '+Dx.length+' קבצים של אותו נכס. תוכנית בנייה / אדריכלות / העמדה — המקור לחדרים. תוכניות חשמל, תקרות, אינסטלציה, מיזוג, חתכים ומבטים — אינן מקור לשטח: התעלם מהן, אלא אם כתוב בהן שטח כולל. כתב כמויות / מפרט — מקור טוב לשטח כולל. אל תספור אותו חדר פעמיים.':'',
+      hasTiles?'מצורפים גם חלקים מוגדלים של העמודים ("הגדלה"), כי הטקסט בשרטוט דק וקטן. קרא את המספרים והכיתוב מהחלקים המוגדלים, ואת מיקום החדרים מהעמוד המלא. החלקים חופפים מעט — אותו כיתוב יכול להופיע בשני חלקים: אל תספור פעמיים. חפש במיוחד מסגרות עם "שטח".':'',
+      pass===1?'zoom_files — רק אם לא מצאת שטח (source=none): מספרי הקבצים ("קובץ N", מ-1) שבהם כנראה כתוב שטח או שמות חדרים בטקסט קטן מדי לקריאה — קודם תוכנית בנייה/אדריכלות, אחר כך כתב כמויות/מפרט. עד 2. אם מצאת שטח — מערך ריק.':'',
+      pass===2?'זהו שלב שני: הקבצים האלה נבחרו להגדלה כי בקריאה הראשונה הטקסט היה קטן מדי. חפש בחלקים המוגדלים מסגרת עם שטח, או שמות חדרים עם מידות.':'',
       'note — חובה, משפט קצר בעברית: מאיפה השטח (שם הקובץ או המסגרת), או למה לא נמצא.',
       ...this.docProjPrompt(),
       'החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
-    const tb=tiles.reduce((a,x)=>a+x.size,0);
-    const op=this.docOpts(D.concat(tiles.length?[{size:tb}]:[]),{maxTokens:2000});
-    if(tiles.length)op.timeout=Math.min(300000,op.timeout+60000);
-    let o;
-    try{o=await AI.json((tiles.length?this.planParts(D,tiles):this.docParts(D)).concat([{t:'text',v:P}]),S,op);}
-    catch(e){
-      // ניסיון שני, קל יותר: בלי ה-PDF המקוריים של תוכניות שהוגדלו — רק החלקים המוגדלים
-      if(!tiles.length||stop||['ai-error','too-big','bad-json','busy'].indexOf(e&&e.message)<0)throw e;
-      if(bt)bt.textContent='מנסה שוב בבקשה קלה יותר…';
-      try{o=await AI.json(this.planParts(D,tiles,true).concat([{t:'text',v:P}]),S,op);}
-      catch(e2){if(e2&&!e2.detail&&e&&e.detail)e2.detail=e.detail;throw e2;}
-    }
-    const r=this.planResult(o,D.length>1?D.length+' קבצים':D[0].name);
+    const ask=(parts,prompt,sizeList)=>{const op=this.docOpts(sizeList,{maxTokens:2000});op.timeout=Math.min(op.timeout,150000);
+      return AI.json(parts.concat([{t:'text',v:prompt}]),S,op);};
+    const fname=D.length>1?D.length+' קבצים':D[0].name;
+    let o,r0;
+    try{
+      setPh(D.length>1?'שלב 1 · ה-AI קורא '+D.length+' תוכניות…':'שלב 1 · ה-AI קורא את התוכנית…');
+      o=await ask(this.docParts(D),P(1,D,false),D);
+      r0=this.planResult(o,fname);
+      if(!r0.rooms.length&&!(r0.total>0)&&!stop){
+        let z=(Array.isArray(o&&o.zoom_files)?o.zoom_files:[]).map(n=>Math.round(+n)-1)
+          .filter(i=>i>=0&&i<D.length&&D[i].kind==='pdf');
+        z=z.filter((x,k)=>z.indexOf(x)===k).slice(0,2);
+        if(!z.length&&D.length===1&&D[0].kind==='pdf')z=[0];
+        if(z.length){
+          const Dz=z.map(i=>D[i]);
+          setPh('שלב 2 · מגדיל '+(Dz.length>1?Dz.length+' תוכניות':'את התוכנית')+'…');
+          let tiles=[];try{tiles=await this.planTiles(Dz,{stop:()=>stop,budgetMs:60000});}catch(x){tiles=[];}
+          if(stop)throw Object.assign(new Error('cancelled'),{soft:false});
+          if(tiles.length){
+            setPh('שלב 2 · ה-AI קורא את ההגדלה…');
+            const sz=Dz.concat([{size:tiles.reduce((a,x)=>a+x.size,0)}]);
+            try{o=await ask(this.planParts(Dz,tiles),P(2,Dz,true),sz);}
+            catch(x){
+              if(stop||['ai-error','too-big','bad-json','busy'].indexOf(x&&x.message)<0)throw x;
+              setPh('שלב 2 · מנסה שוב בבקשה קלה יותר…');
+              try{o=await ask(this.planParts(Dz,tiles,true),P(2,Dz,true),sz);}
+              catch(x2){if(x2&&!x2.detail&&x&&x.detail)x2.detail=x.detail;throw x2;}
+            }
+          }
+        }
+      }
+    }catch(x){x._phase=phase;x._ms=Date.now()-t0;throw x;}
+    finally{clearInterval(tm);}
+    const r=this.planResult(o,fname);
+    // פרטי הלקוח משלב 1 (כל הקבצים, כולל בלוק החותמת) — אם בשלב 2 לא זוהו
+    if(r0&&r!==r0&&!(r.client.name||r.client.project||r.client.address)){r.client=r0.client;r.arch=r0.arch;r.docRef=r0.docRef;r.docDate=r0.docDate;}
     this.idle();
     libP.then(id=>this.libName(id,r.client));
     if(!r.rooms.length&&!(r.total>0)){this.toast(r.note||'לא נמצא שטח כתוב בתוכנית');return;}
@@ -5434,7 +5471,12 @@ const App={
     // מתוך עוזר ההצעות: עוברים לפרטי ההצעה, ליד שדה השטח — שם מאשרים
     if(this.state.modal!=='quote'){this.state.planMode=true;Store.set('planMode',true);this._aiQuoteType='plan';this.state.modal='quote';}
     this.render();
-  }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
+  }catch(e){this.idle();
+    let m=this.aiErrMsg(e);
+    if(e&&e._phase){const s=Math.floor((e._ms||0)/1000);const at=e._phase.split(' · ')[0]+', אחרי '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+      try{Store.logErr('plan',(e.message||'')+' · '+e._phase+' · '+s+'s');}catch(x){}
+      if(e.message==='timeout')m='ה-AI לא ענה בזמן ('+at+') — נסה שוב';}
+    this.toast(m);}
  },
  /** אילו פרטי לקוח ייכתבו — רק לשדות ריקים בפרטי ההצעה, כדי לא לדרוס מה שיהודה הקליד. */
  planClientFill(p){
