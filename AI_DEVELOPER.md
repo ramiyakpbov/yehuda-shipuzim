@@ -1,8 +1,8 @@
 # AI_DEVELOPER.md
-## יהודה שיפוצים — PWA הצעות מחיר · v23.1
+## יהודה שיפוצים — PWA הצעות מחיר · v23.2
 
 > מסמך העברה מלא. מודל AI חדש שקורא רק אותו יכול להמשיך את הפיתוח בלי אובדן מידע.
-> **עודכן:** v23.1 · אוקטובר 2026
+> **עודכן:** v23.2 · אוקטובר 2026
 
 ---
 
@@ -320,7 +320,7 @@ invalidate(what){
 
 ```
 index.html            719 KB   הכל
-sw.js                   3 KB   מטמון: ys-cache-v23.1
+sw.js                   3 KB   מטמון: ys-cache-v23.2
 version.json                   {"version":"18.2"}
 manifest.webmanifest
 _headers
@@ -1053,4 +1053,16 @@ Gemini 1.5 ו-2.0 הושבתו. Google ממליצה לפרויקטים חדשי�
 - `classify`: 400 עם "credit balance / insufficient credit / purchase credits" → `credit` (רך — עוברים לספק השני). `aiErrMsg`: "נגמר הקרדיט בחשבון ה-AI — צריך לטעון קרדיט אצל הספק (…)".
 - `AI.check()`: כל שורה עם `detail`. `aiCheckHtml`: הסיבה מתחת לשורה (`.ai-chk-why`, LTR, מוגן). התווית `ai-error` → "שגיאה" (בלי הניחוש), ונוספו `credit`, `too-big`.
 - בדיקות: `t_ai_err.js` 12/12 · `t_chk.py` 8/8. רגרסיה: `t_guide` 15 · `t_lib` 47 · `t_err` 21 · `t_plan` 50 · `t_docs` 23 · `t_boq` 33 · `t_boq2` 22 · `t_boq3` 12 · `t_hires` 11 · `t_ai_mod` 7.
+
+# 44 · v23.2 — סרטוני המדריך בשורש האתר
+
+**אומת (צילום מאגר GitHub של רמי):** רמי מעלה עדכונים ל-GitHub מהטלפון (Netlify בונה מהמאגר). כל 24 קובצי המדריך (`ai.mp4`, `ai.jpg`… `track.jpg`) נמצאים **בשורש המאגר**, ליד `index.html` — התיקייה `guide/` לא נשמרה בהעלאה. לכן `/guide/overview.jpg` → 404 (סעיף 43), והנגן שחור.
+
+**התיקון — הקוד מתאים את עצמו לדרך ההעלאה, לא להפך:**
+- `const GV=''` (ליד `VERSION`) — תיקיית הסרטונים. ריק = שורש. `poster`/`src` של `overview` ושל הנושאים — `GV+name`.
+- `sw.js`: בנוסף ל-`/guide/` — כל `.mp4/.webm` עוקף את ה-service worker (בלי מטמון, בקשות Range עוברות לשרת). נבדק עם SW אמיתי: 206, לא במטמון.
+- **ה-ZIP:** בלי תיקיית `guide/` — 24 הקבצים בשורש, כמו במאגר.
+- הודעת `guideVidDiag` לקובץ חסר: "צריך להעלות את קובצי הסרטונים (mp4 + jpg) ל-GitHub, ליד index.html".
+- **חוק:** בלי תיקיות משנה בחבילה — ההעלאה מהטלפון ל-GitHub משטחת אותן.
+- בדיקות: `t_guide` 18/18 · `t_sw` 4/4. רגרסיה: `t_chk` 8 · `t_lib` 47 · `t_err` 21 · `t_plan` 50 · `t_docs` 23 · `t_boq` 33 · `t_boq2` 22 · `t_boq3` 12 · `t_ai_err` 12 · `t_hires` 11 · `t_ai_mod` 7.
 

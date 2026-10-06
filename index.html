@@ -3288,7 +3288,11 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.1';
+const VERSION='23.2';
+/* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
+   v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
+   לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
+const GV='';
 /* ===== i18n for PDF (labels only; item text stays as typed) ===== */
 const I18N={
  ru:{sub:'К О М М Е Р Ч Е С К О Е   П Р Е Д Л О Ж Е Н И Е',quote:'Смета',order:'Заказ на работы',no:'№ сметы',date:'Дата',valid:'Действительно до',contractor:'Подрядчик',to:'Заказчик',desc:'Описание работ',qty:'Кол-во',unit:'Ед.',price:'Цена за ед.',total:'Итого',subtotal:'Промежуточный итог',discount:'Скидка',vat:'НДС',grand:'ИТОГО К ОПЛАТЕ',terms:'Условия оплаты',white:'Белый материал',black:'Черный материал',incl:'включено',notincl:'не включено',signc:'Подпись подрядчика',signk:'Подпись заказчика',cta:'Хотите увидеть больше наших работ?',ctas:'Отсканируйте код или зайдите на сайт · Yehuda Shipuzim',foot:'Документ подготовлен Yehuda Shipuzim · Иегуда Яковов · тел. 054-5718316',orderclause:'Настоящий документ является обязывающим заказом на выполнение работ в соответствии с указанными выше условиями.'},
@@ -3432,7 +3436,7 @@ function initLiveUI(id,d){
 /* ===== Voice helpers (Hebrew) ===== */
 /* ═══════════════ מדריך שימוש — נתונים ═══════════════ */
 /* ═══ מדריך שימוש · v22.0 ═══
-   מסודר לפי משימות, לא לפי גרסאות. v = שם הסרטון בתיקיית guide/ (בלי סיומת).
+   מסודר לפי משימות, לא לפי גרסאות. v = שם הסרטון (בלי סיומת), בשורש האתר — ראו GV.
    ic = אייקון קו מ-ICO. "מה חדש" — נושא אחד, בסוף, רק הגרסאות האחרונות. */
 const GUIDE=[
  {c:'התחלה',items:[
@@ -3610,7 +3614,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>בדיקת חיבור AI</b> — מתחת לכל מודל מופיעה הסיבה המדויקת מהשרת (מכסה, קרדיט, מפתח), במקום "ייתכן ששם המודל לא קיים".</li>
+   b:`<ul class="g-ul"><li><b>סרטוני המדריך עובדים</b> — הקבצים נטענים מהמקום שבו הם נמצאים באתר, ליד האפליקציה.</li>
+   <li><b>בדיקת חיבור AI</b> — מתחת לכל מודל מופיעה הסיבה המדויקת מהשרת (מכסה, קרדיט, מפתח), במקום "ייתכן ששם המודל לא קיים".</li>
    <li><b>סרטוני המדריך</b> — סרטון שלא מתנגן מציג מתחת לנגן את הסיבה: הקובץ חסר באתר, אין רשת, או שהטלפון לא מצליח לנגן.</li>
    <li><b>קרא שטח בשני שלבים</b> — קודם קריאה מהירה של כל התוכניות; רק אם השטח לא נמצא, ה-AI בוחר עד 2 תוכניות ומגדיל רק אותן. על המסך: השלב והזמן שעבר.</li>
    <li><b>שם לקבצים השמורים</b> — לחיצה על השם (✏️) משנה אותו, למשל לשם הלקוח. שם שהוקלד לא מוחלף אוטומטית. ואם ה-AI נכשל — ההודעה מציגה את הסיבה, ונעשה ניסיון שני קל יותר.</li>
@@ -5494,7 +5499,7 @@ const App={
   catch(e){st=-1;}
   const code=(v.error&&v.error.code)||0;
   let why;
-  if(st===404||(st>=200&&st<300&&/text\/html/i.test(ct)))why='הסרטון לא נמצא באתר ('+src+'). כנראה התיקייה guide לא הועלתה ל-Netlify יחד עם האפליקציה.';
+  if(st===404||(st>=200&&st<300&&/text\/html/i.test(ct)))why='הסרטון לא נמצא באתר ('+src+'). צריך להעלות את קובצי הסרטונים (mp4 + jpg) ל-GitHub, ליד index.html.';
   else if(st===-1)why='אין חיבור לרשת — הסרטונים נטענים מהאינטרנט.';
   else if(st>=400)why='האתר החזיר שגיאה '+st+' לסרטון ('+src+').';
   else if(st>=200&&st<300&&!code)return;   // הקובץ קיים ואין שגיאת ניגון — רק תמונת הפתיחה חסרה
@@ -8974,7 +8979,7 @@ const App={
   });
   if(!html)html='<div class="tk-empty">'+ico('search',22)+'<p>לא נמצא נושא מתאים</p><p class="tk-hint">נסה מילה אחרת</p></div>';
   return '<h2>'+ico('book-open',20)+' מדריך שימוש <button class="x" data-close>✕</button></h2>'+
-   (q?'':'<figure class="g-fig"><video class="g-vid g-wide" controls playsinline preload="none" poster="guide/overview.jpg" src="guide/overview.mp4" aria-label="סרטון סקירה — דקה על כל האפליקציה"></video>'+
+   (q?'':'<figure class="g-fig"><video class="g-vid g-wide" controls playsinline preload="none" poster="'+GV+'overview.jpg" src="'+GV+'overview.mp4" aria-label="סרטון סקירה — דקה על כל האפליקציה"></video>'+
      '<figcaption>'+ico('play',12)+' דקה על כל האפליקציה · בהמשך — סרטון קצר לכל משימה</figcaption></figure>')+
    '<div class="tk-search">'+ico('search',17)+'<input id="g-search" type="text" enterkeyhint="search" autocomplete="off" placeholder="חיפוש בכל המדריך" aria-label="חיפוש במדריך" value="'+esc(q)+'"/></div>'+
    '<p class="tk-count-line">'+n+' נושאים · '+GUIDE.reduce((a,g)=>a+g.items.filter(x=>x.v).length,0)+' עם סרטון</p>'+html;
@@ -8987,7 +8992,7 @@ const App={
   const idx=flat.findIndex(it=>it.id===id);const found=flat[idx];
   if(!found)return '<h2>מדריך <button class="x" data-close>✕</button></h2><div class="tk-empty"><p>לא נמצא</p></div>';
   const prev=idx>0?flat[idx-1]:null,next=idx<flat.length-1?flat[idx+1]:null;
-  const vid=found.v?'<figure class="g-fig"><video class="g-vid" controls playsinline preload="metadata" poster="guide/'+found.v+'.jpg" src="guide/'+found.v+'.mp4" aria-label="סרטון: '+found.t+'"></video>'+
+  const vid=found.v?'<figure class="g-fig"><video class="g-vid" controls playsinline preload="metadata" poster="'+GV+found.v+'.jpg" src="'+GV+found.v+'.mp4" aria-label="סרטון: '+found.t+'"></video>'+
     '<figcaption>'+ico('play',12)+' סרטון קצר עם כיתוביות · נתוני הדגמה</figcaption></figure>':'';
   return '<h2>'+ico(found.ic||'file-text',20)+' '+found.t+' <button class="x" data-close>✕</button></h2>'+vid+
    '<div class="g-body">'+found.b+'</div>'+

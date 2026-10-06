@@ -2,7 +2,7 @@
    מטרה: עבודה אופליין + עדכון אוטומטי.
    בכל שדרוג: העלה את מספר הגרסה כאן (CACHE) והאפליקציה תתעדכן לבד אצל כל המשתמשים.
 */
-const CACHE = 'ys-cache-v23.1';
+const CACHE = 'ys-cache-v23.2';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './version.json'];
 
 self.addEventListener('message', e => { if (e.data === 'SKIP_WAITING') self.skipWaiting(); });
@@ -26,7 +26,7 @@ self.addEventListener('fetch', e => {
   let url;
   try { url = new URL(req.url); } catch (_) { return; }
   // סרטוני המדריך — ישר מהרשת, בלי לשמור: אחרת הטלפון שומר עותק של כל סרטון שנצפה
-  if (url.pathname.indexOf('/guide/') >= 0) return;
+  if (url.pathname.indexOf('/guide/') >= 0 || /\.(mp4|webm)$/i.test(url.pathname)) return;
 
   const isDoc = req.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('/');
   const isVersion = url.pathname.endsWith('version.json');
