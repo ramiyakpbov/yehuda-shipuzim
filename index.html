@@ -3288,7 +3288,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.4';
+const VERSION='23.5';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3614,7 +3614,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>מודלי Gemini חינמיים כגיבוי</b> — בהגדרות: "טען מודלים זמינים למפתח שלי". כשמודל מגיע למכסה או עמוס, עוברים לבד למודל Gemini חינמי אחר, ורק אחר כך ל-Claude. בקריאת שטח מופיע איזה מודל קרא.</li>
+   b:`<ul class="g-ul"><li><b>קרא שטח — מהיר יותר ועם הסיבה הנכונה</b> — שלב 1 נשלח ברזולוציה רגילה (ההגדלה בשלב 2). ספק שחשבונו חסום עד תאריך לא מקבל בקשות עד אז, וההודעה מציגה את הסיבה האמיתית.</li>
+   <li><b>מודלי Gemini חינמיים כגיבוי</b> — בהגדרות: "טען מודלים זמינים למפתח שלי". כשמודל מגיע למכסה או עמוס, עוברים לבד למודל Gemini חינמי אחר, ורק אחר כך ל-Claude. בקריאת שטח מופיע איזה מודל קרא.</li>
    <li><b>מגבלת שימוש בחשבון AI</b> — כשהחשבון הגיע למגבלה שהוגדרה בו, ההודעה אומרת זאת ומתי הוא נפתח שוב.</li>
    <li><b>סרטוני המדריך עובדים</b> — הקבצים נטענים מהמקום שבו הם נמצאים באתר, ליד האפליקציה.</li>
    <li><b>בדיקת חיבור AI</b> — מתחת לכל מודל מופיעה הסיבה המדויקת מהשרת (מכסה, קרדיט, מפתח), במקום "ייתכן ששם המודל לא קיים".</li>
@@ -3811,6 +3812,13 @@ const AI=(()=>{
   return {all:all.sort(),free:gSort(all.filter(gFreeName))};
  }
  let LAST=null;   // מי ענה בבקשה האחרונה: {p, model}
+ /** ספקים חסומים: {claude: עד-מתי}. "limit" עם תאריך — עד התאריך; "credit" — 6 שעות. */
+ function pBlocked(){const s=Store.get('aiBlocked',{})||{};const now=Date.now();const o={};Object.keys(s).forEach(k=>{if(+s[k]>now)o[k]=+s[k];});return o;}
+ function pBlock(p,e){
+  let until=0;const m=String((e&&e.detail)||'').match(/regain access on (\d{4}-\d{2}-\d{2})(?:[ T]at)? ?(\d{2}:\d{2})?/i);
+  if(e&&e.message==='limit'&&m){until=Date.parse(m[1]+'T'+(m[2]||'00:00')+':00Z');}
+  if(!until||isNaN(until))until=Date.now()+6*3600000;
+  const s=pBlocked();s[p]=until;Store.set('aiBlocked',s);}
  const AV='2023-06-01';
  const keyOf=p=>String((p==='claude'?Store.get('claudeKey',''):Store.get('geminiKey',''))||'').trim();
  const has=p=>!!keyOf(p);
@@ -4030,9 +4038,12 @@ const AI=(()=>{
    if(has(pri))chain.push(pri);
    if(Store.get('aiFallback',true)&&has(sec))chain.push(sec);
   }
+  // ספק שחסום עד תאריך (מגבלת הוצאה / קרדיט) — לא שולחים אליו, כל עוד יש ספק אחר.
+  // v23.5: Claude חסום עד 1.11 — 8 התוכניות נשלחו אליו בכל כשל של Gemini, וההודעה הציגה את החסימה שלו במקום את הסיבה האמיתית.
+  {const bl=pBlocked();const live=chain.filter(p=>!bl[p]);if(live.length)chain=live;}
   if(!chain.length)throw E('no-key',false);
   let last=null;const t0=Date.now();const why=[];
-  const ROT=['quota','busy','limit'];
+  const ROT=['quota','busy','limit'];const errs=[];
   for(let i=0;i<chain.length;i++){
    const p=chain[i];
    const models=p==='gemini'?gChain():[null];
@@ -4045,7 +4056,8 @@ const AI=(()=>{
       LAST={p:p,model:p==='claude'?(opts.smart?M.cSmart:M.cFast):mdl};
       if((i>0||j>0)&&typeof opts.onFallback==='function'){try{opts.onFallback(p==='gemini'?'Gemini '+mdl:nameOf(p));}catch(e){}}
       return txt;
-     }catch(e){last=e;if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
+     }catch(e){last=e;errs.push({p:p,e:e});if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
+      if(p==='claude'&&e&&(e.message==='limit'||e.message==='credit'))pBlock(p,e);   // ב-Gemini — הרוטציה מטפלת
       // עומס רגעי בשרת: עוד ניסיון אחד באותו מודל אחרי שנייה וחצי — רק כשאין מודל אחר לעבור אליו
       if(k===0&&e&&e.message==='busy'&&j===models.length-1&&cancelAt<t0){await new Promise(r=>setTimeout(r,opts.retryMs!=null?opts.retryMs:1500));if(cancelAt<t0)continue;}
       // מכסה / עומס / מגבלה — המודל הבא ברשימה. מכסה: מדלגים עליו 20 דק', כדי לא לבזבז ניסיון בכל בקשה.
@@ -4056,7 +4068,9 @@ const AI=(()=>{
    }
    if(last&&last.soft===false&&last.message!=='no-key')break;
   }
-  if(last&&why.length>1)last.detail=why.join(' · ').slice(0,240);
+  // השגיאה שמוצגת: לא "חשבון חסום" של ספק הגיבוי — הסיבה האמיתית מהספק הראשי (למשל "לא ענה בזמן")
+  {const real=errs.filter(x=>x.e&&['limit','credit','no-key'].indexOf(x.e.message)<0);if(real.length)last=real[real.length-1].e;}
+  if(last&&why.length&&(why.length>1||!last.detail))last.detail=why.join(' · ').slice(0,240);
   throw last||E('ai-error');
  }
 
@@ -4076,7 +4090,8 @@ const AI=(()=>{
    const t0=Date.now();
    try{const o=parse(await fn());
      rows.push({label:label,model:model,state:(o&&o.ok===true)?'ok':'odd',ms:Date.now()-t0});}
-   catch(e){rows.push({label:label,model:model,state:'err',code:(e&&e.message)||'?',detail:(e&&e.detail)||'',ms:Date.now()-t0});}
+   catch(e){rows.push({label:label,model:model,state:'err',code:(e&&e.message)||'?',detail:(e&&e.detail)||'',ms:Date.now()-t0});
+     if(/^claude/.test(model)&&e&&(e.message==='limit'||e.message==='credit'))pBlock('claude',e);}
   };
   if(has('gemini')){
    // כל מודל ברשימה — גם אלה שנחסמו לאחרונה, כדי לראות את המצב האמיתי
@@ -4086,6 +4101,7 @@ const AI=(()=>{
   }
   else rows.push({label:'Gemini',model:gPrimary(),state:'no-key'});
   if(has('claude')){
+   {const s=Store.get('aiBlocked',{})||{};delete s.claude;Store.set('aiBlocked',s);}   // הבדיקה קובעת מחדש
    await one('Claude מהיר',M.cFast,()=>claude([{t:'text',v:'Return exactly this JSON and nothing else: {"ok":true}'}],40,false,false,20000));
    await one('Claude חכם',M.cSmart,()=>claude([{t:'text',v:'Return exactly this JSON and nothing else: {"ok":true}'}],40,true,false,20000));
   }else rows.push({label:'Claude',model:M.cFast,state:'no-key'});
@@ -4100,7 +4116,7 @@ const AI=(()=>{
  }
 
  return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES,
-  listModels,gChain,gPrimary,gFreeName,last:()=>LAST};
+  listModels,gChain,gPrimary,gFreeName,last:()=>LAST,blocked:pBlocked};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -5505,13 +5521,15 @@ const App={
       'note — חובה, משפט קצר בעברית: מאיפה השטח (שם הקובץ או המסגרת), או למה לא נמצא.',
       ...this.docProjPrompt(),
       'החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
-    const ask=(parts,prompt,sizeList)=>{const op=this.docOpts(sizeList,{maxTokens:2000});op.timeout=Math.min(op.timeout,150000);
+    const ask=(parts,prompt,sizeList,ex)=>{const op=Object.assign(this.docOpts(sizeList,{maxTokens:2000}),ex||{});op.timeout=Math.min(op.timeout,150000);
       return AI.json(parts.concat([{t:'text',v:prompt}]),S,op);};
     const fname=D.length>1?D.length+' קבצים':D[0].name;
     let o,r0;
     try{
       setPh(D.length>1?'שלב 1 · ה-AI קורא '+D.length+' תוכניות…':'שלב 1 · ה-AI קורא את התוכנית…');
-      o=await ask(this.docParts(D),P(1,D,false),D);
+      // שלב 1 ברזולוציה רגילה — סקירה מהירה. קריאת טקסט קטן היא תפקיד שלב 2 (הגדלה).
+      // v23.5: 8 תוכניות ברזולוציה גבוהה לא חזרו מ-gemini-3.6-flash תוך 2.5 דקות.
+      o=await ask(this.docParts(D),P(1,D,false),D,{hires:false});
       r0=this.planResult(o,fname);
       if(!r0.rooms.length&&!(r0.total>0)&&!stop){
         let z=(Array.isArray(o&&o.zoom_files)?o.zoom_files:[]).map(n=>Math.round(+n)-1)
