@@ -1789,10 +1789,10 @@ div.tk-f:active{transform:none;}
 .ai-chk-why{margin:-4px 0 8px;font-size:var(--fs-xxs);color:var(--muted);line-height:1.45;word-break:break-word;text-align:left;}
 .g-vid-err{margin:8px 0 0;padding:10px 12px;border-radius:10px;border:1px solid rgba(237,28,36,.45);background:rgba(237,28,36,.08);color:var(--txt);font-size:var(--fs-xs);line-height:1.5;}
 .g-vid{display:block;margin:0 auto;object-fit:contain;
-  /* v23.6: הקופסה בצורת הסרטון (360×778 — מסך טלפון), בלי פסים שחורים: הגובה לפי המסך, הרוחב נגזר ממנו */
-  aspect-ratio:360/778;width:auto;max-width:100%;height:min(68vh,calc((100vw - 48px) * 2.161));height:min(68svh,calc((100vw - 48px) * 2.161));
+  /* הקופסה בצורת הסרטון (390×844 — מסך טלפון; הסרטון 780×1688), בלי פסים שחורים: הגובה לפי המסך, הרוחב נגזר ממנו */
+  aspect-ratio:390/844;width:auto;max-width:100%;height:min(68vh,calc((100vw - 48px) * 2.164));height:min(68svh,calc((100vw - 48px) * 2.164));
   background:#000;border:1px solid var(--hair);border-radius:var(--r-l);}
-.g-vid.g-wide{height:min(56vh,calc((100vw - 48px) * 2.161));height:min(56svh,calc((100vw - 48px) * 2.161));}
+.g-vid.g-wide{height:min(56vh,calc((100vw - 48px) * 2.164));height:min(56svh,calc((100vw - 48px) * 2.164));}
 .g-fig>figcaption{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;font-size:var(--fs-xs);color:var(--muted);}
 .g-vbadge{flex:none;display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
   background:rgba(237,28,36,.14);color:#ff6b70;}
@@ -3290,7 +3290,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.6';
+const VERSION='23.7';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3616,7 +3616,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>סרטוני המדריך במסך מלא</b> — הסרטונים תוקנו: האפליקציה ממלאת את כל המסגרת, בגודל מסך הטלפון.</li>
+   b:`<ul class="g-ul"><li><b>סרטוני מדריך חדשים</b> — חדים פי 2, עם פתיחה שמראה מה בסרטון, הסבר מפורט לכל שלב, מסגרת סביב הכפתור שמדברים עליו, וסיכום בסוף.</li>
+   <li><b>סרטוני המדריך במסך מלא</b> — הסרטונים תוקנו: האפליקציה ממלאת את כל המסגרת, בגודל מסך הטלפון.</li>
    <li><b>קרא שטח — מהיר יותר ועם הסיבה הנכונה</b> — שלב 1 נשלח ברזולוציה רגילה (ההגדלה בשלב 2). ספק שחשבונו חסום עד תאריך לא מקבל בקשות עד אז, וההודעה מציגה את הסיבה האמיתית.</li>
    <li><b>מודלי Gemini חינמיים כגיבוי</b> — בהגדרות: "טען מודלים זמינים למפתח שלי". כשמודל מגיע למכסה או עמוס, עוברים לבד למודל Gemini חינמי אחר, ורק אחר כך ל-Claude. בקריאת שטח מופיע איזה מודל קרא.</li>
    <li><b>מגבלת שימוש בחשבון AI</b> — כשהחשבון הגיע למגבלה שהוגדרה בו, ההודעה אומרת זאת ומתי הוא נפתח שוב.</li>
