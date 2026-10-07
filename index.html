@@ -3288,7 +3288,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.2';
+const VERSION='23.4';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3614,7 +3614,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>סרטוני המדריך עובדים</b> — הקבצים נטענים מהמקום שבו הם נמצאים באתר, ליד האפליקציה.</li>
+   b:`<ul class="g-ul"><li><b>מודלי Gemini חינמיים כגיבוי</b> — בהגדרות: "טען מודלים זמינים למפתח שלי". כשמודל מגיע למכסה או עמוס, עוברים לבד למודל Gemini חינמי אחר, ורק אחר כך ל-Claude. בקריאת שטח מופיע איזה מודל קרא.</li>
+   <li><b>מגבלת שימוש בחשבון AI</b> — כשהחשבון הגיע למגבלה שהוגדרה בו, ההודעה אומרת זאת ומתי הוא נפתח שוב.</li>
+   <li><b>סרטוני המדריך עובדים</b> — הקבצים נטענים מהמקום שבו הם נמצאים באתר, ליד האפליקציה.</li>
    <li><b>בדיקת חיבור AI</b> — מתחת לכל מודל מופיעה הסיבה המדויקת מהשרת (מכסה, קרדיט, מפתח), במקום "ייתכן ששם המודל לא קיים".</li>
    <li><b>סרטוני המדריך</b> — סרטון שלא מתנגן מציג מתחת לנגן את הסיבה: הקובץ חסר באתר, אין רשת, או שהטלפון לא מצליח לנגן.</li>
    <li><b>קרא שטח בשני שלבים</b> — קודם קריאה מהירה של כל התוכניות; רק אם השטח לא נמצא, ה-AI בוחר עד 2 תוכניות ומגדיל רק אותן. על המסך: השלב והזמן שעבר.</li>
@@ -3754,7 +3756,7 @@ try{
    if(L.length>30)L.length=30;
    // K — עם הקידומת, כמו Store.get. בלי זה היומן נכתב למפתח אחר ומסך ההגדרות תמיד הראה ריק.
    const s=JSON.stringify(L);try{if(ok)localStorage.setItem(K('errLog'),s);else mem[K('errLog')]=s;}catch(x){}}catch(x){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','gModel','gModels','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
 })();
 
 
@@ -3768,6 +3770,47 @@ try{
 */
 const AI=(()=>{
  const M={cFast:'claude-haiku-4-5-20251001',cSmart:'claude-sonnet-5-5',g:'gemini-flash-latest'};
+ /* ═══ מודלי Gemini חינמיים — רוטציה (v23.4) ═══
+    המכסה החינמית נספרת לכל מודל בנפרד (ai.google.dev/gemini-api/docs/rate-limits: "per project",
+    "Limits vary depending on the specific model"). כשמודל מחזיר מכסה/עומס — עוברים למודל החינמי הבא
+    לפני Claude. הרשימה נטענת מהמפתח עצמו (ListModels) — כמו באפליקציית איתור חשבוניות. */
+ const G_ROT=4;                      // עד כמה מודלי Gemini בבקשה אחת
+ const gPrimary=()=>String(Store.get('gModel','')||M.g);
+ // רק Flash / Flash-Lite יציבים או "latest" — פלט מובנה ו-PDF. בלי preview (מכסה קטנה ומשתנה), בלי תמונה/קול/רובוטיקה.
+ const gFreeName=n=>/^gemini-\d+(?:\.\d+)?-flash(?:-lite)?$/.test(String(n||''))||/^gemini-flash(?:-lite)?-latest$/.test(String(n||''));
+ // סדר: Flash לפני Lite (קריאת שרטוטים), חדש לפני ישן, "latest" ראשון בכל קבוצה
+ const gRank=n=>{const lite=/-lite/.test(n)?1:0;const m=n.match(/^gemini-(\d+(?:\.\d+)?)-/);const v=m?parseFloat(m[1]):99;return lite*1000-v;};
+ const gSort=a=>a.slice().sort((x,y)=>gRank(x)-gRank(y)||(x<y?-1:1));
+ function gSkip(){const s=Store.get('gSkip',{})||{};const now=Date.now();const o={};Object.keys(s).forEach(k=>{if(+s[k]>now)o[k]=s[k];});return o;}
+ function gMark(model,ms){const s=gSkip();s[model]=Date.now()+ms;Store.set('gSkip',s);}
+ /** רשימת המודלים לבקשה: הראשי, ואחריו החינמיים שנטענו — בלי אלה שנחסמו לאחרונה. */
+ function gChain(){
+  const pri=gPrimary();const sk=gSkip();
+  const L=[pri].concat(gSort((Store.get('gModels',[])||[]).filter(gFreeName)));
+  const u=L.filter((x,i)=>x&&L.indexOf(x)===i);
+  const ok=u.filter(x=>!sk[x]);
+  return (ok.length?ok:[pri]).slice(0,G_ROT);
+ }
+ /** ListModels למפתח הזה. מחזיר {all:[שמות], free:[חינמיים לפי סדר]} */
+ async function listModels(){
+  const k=keyOf('gemini');if(!k)throw E('no-key',false);
+  const all=[];let pt='';
+  for(let i=0;i<5;i++){
+   const u='https://generativelanguage.googleapis.com/v1beta/models?pageSize=200'+(pt?'&pageToken='+encodeURIComponent(pt):'');
+   let rd;try{rd=await fetchJ(u,{method:'GET',headers:{'x-goog-api-key':k}},15000);}
+   catch(e){if(e&&e.message==='timeout')throw e;rd=await fetchJ(u+'&key='+encodeURIComponent(k),{method:'GET'},15000);}
+   const r=rd.r,d=rd.d;
+   if(d&&d.error)throw EX(classify(d.error.code||r.status,d.error.message),'Gemini '+(d.error.code||r.status)+': '+(d.error.message||''));
+   if(!r.ok)throw EX(classify(r.status,''),'Gemini HTTP '+r.status);
+   ((d&&d.models)||[]).forEach(m=>{
+     if((m.supportedGenerationMethods||[]).indexOf('generateContent')<0)return;
+     if(/deprecat|retir|no longer|discontinu/i.test(String(m.description||'')))return;
+     const n=String(m.name||'').replace(/^models\//,'');if(n&&all.indexOf(n)<0)all.push(n);});
+   pt=(d&&d.nextPageToken)||'';if(!pt)break;
+  }
+  return {all:all.sort(),free:gSort(all.filter(gFreeName))};
+ }
+ let LAST=null;   // מי ענה בבקשה האחרונה: {p, model}
  const AV='2023-06-01';
  const keyOf=p=>String((p==='claude'?Store.get('claudeKey',''):Store.get('geminiKey',''))||'').trim();
  const has=p=>!!keyOf(p);
@@ -3789,6 +3832,9 @@ const AI=(()=>{
   if(status===413||/payload|too large|exceeds the (?:maximum|limit)|request size/i.test(m))return 'too-big';
   // נגמר הקרדיט בחשבון (Anthropic מחזירה 400 עם ההודעה הזו) — קודם נפל ל"ייתכן ששם המודל לא קיים"
   if(/credit balance|insufficient.{0,12}credit|purchase credits/i.test(m))return 'credit';
+  // מגבלת הוצאה שהוגדרה בחשבון (Anthropic: "You have reached your specified API usage limits.
+  // You will regain access on …") — לא תקלה ולא מכסה יומית: נפתח רק בתאריך, או כשמעלים את המגבלה
+  if(/specified api usage limit|usage limits?\b.*regain access|spend(?:ing)? limit/i.test(m))return 'limit';
   return 'ai-error';
  }
 
@@ -3904,7 +3950,7 @@ const AI=(()=>{
     אם השרת דוחה את הסכמה (400) והקריאה בלעדיה מצליחה — זוכרים לשבוע ולא
     מנסים שוב. בכוונה בלי maxOutputTokens: במודל שחושב, החשיבה נספרת במגבלה
     והתשובה נחתכת. ובלי temperature — הוצא משימוש (יולי 2026). */
- async function gemini(parts,maxTokens,useCat,schema,to,hires){
+ async function gemini(parts,maxTokens,useCat,schema,to,hires,model){
   const k=keyOf('gemini');if(!k)throw E('no-key',false);
   const gp=[];
   if(useCat)gp.push({text:catalogText()});
@@ -3915,7 +3961,8 @@ const AI=(()=>{
    else if(p.t==='audio')gp.push({inline_data:{mime_type:p.mime,data:p.data}});
   });
   if(!gp.length)throw E('ai-error',false);
-  const base='https://generativelanguage.googleapis.com/v1beta/models/'+M.g+':generateContent';
+  const mdl=model||gPrimary();
+  const base='https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent';
   // רזולוציה גבוהה ל-PDF: ברירת המחדל 560 טוקנים לעמוד מספיקה למסמך עם טקסט אמיתי,
   // אבל שרטוט של אדריכל (אותיות כציור, בלי טקסט) הוא רק תמונה — והיא מוקטנת מדי.
   // "מרפאת שיניים" נקראה "מרפסת שיפוצים". HIGH = 1120 טוקנים לעמוד.
@@ -3955,13 +4002,14 @@ const AI=(()=>{
    const why=msgOf(d);({r,d}=await send(wsNow,false));
    if(r.status!==400)caps({gMedia:false,gMediaErr:why});
   }
-  if(d&&d.error)throw EX(classify(d.error.code||r.status,d.error.message),'Gemini '+(d.error.code||r.status)+': '+(d.error.message||''));
-  if(!r.ok)throw EX(classify(r.status,''),'Gemini HTTP '+r.status);
+  const gTag=mdl===M.g?'Gemini':'Gemini '+mdl;
+  if(d&&d.error)throw EX(classify(d.error.code||r.status,d.error.message),gTag+' '+(d.error.code||r.status)+': '+(d.error.message||''));
+  if(!r.ok)throw EX(classify(r.status,''),gTag+' HTTP '+r.status);
   const u=(d&&d.usageMetadata)||{};bump('gemini',u.promptTokenCount,u.candidatesTokenCount);
   const c0=((d&&d.candidates)||[])[0]||{};
   const pr=(c0.content||{}).parts||[];
   const txt=pr.map(x=>x&&x.text||'').join('');
-  if(!txt)throw EX('ai-error','Gemini: '+(c0.finishReason||(d&&d.promptFeedback&&d.promptFeedback.blockReason)||'תשובה ריקה'));
+  if(!txt)throw EX('ai-error',gTag+': '+(c0.finishReason||(d&&d.promptFeedback&&d.promptFeedback.blockReason)||'תשובה ריקה'));
   return txt;
  }
 
@@ -3984,18 +4032,27 @@ const AI=(()=>{
   }
   if(!chain.length)throw E('no-key',false);
   let last=null;const t0=Date.now();const why=[];
+  const ROT=['quota','busy','limit'];
   for(let i=0;i<chain.length;i++){
    const p=chain[i];
-   for(let k=0;k<2;k++){
-    try{
-     const to=opts.timeout||(audio?90000:45000);
-     const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to,opts.hires);
-     if(i>0&&typeof opts.onFallback==='function'){try{opts.onFallback(nameOf(p));}catch(e){}}
-     return txt;
-    }catch(e){last=e;if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
-     // עומס רגעי בשרת: עוד ניסיון אחד באותו ספק אחרי שנייה וחצי, לפני שעוברים לגיבוי
-     if(k===0&&e&&e.message==='busy'&&cancelAt<t0){await new Promise(r=>setTimeout(r,opts.retryMs!=null?opts.retryMs:1500));if(cancelAt<t0)continue;}
-     break;}
+   const models=p==='gemini'?gChain():[null];
+   for(let j=0;j<models.length;j++){
+    const mdl=models[j];let moved=false;
+    for(let k=0;k<2;k++){
+     try{
+      const to=opts.timeout||(audio?90000:45000);
+      const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to,opts.hires,mdl);
+      LAST={p:p,model:p==='claude'?(opts.smart?M.cSmart:M.cFast):mdl};
+      if((i>0||j>0)&&typeof opts.onFallback==='function'){try{opts.onFallback(p==='gemini'?'Gemini '+mdl:nameOf(p));}catch(e){}}
+      return txt;
+     }catch(e){last=e;if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
+      // עומס רגעי בשרת: עוד ניסיון אחד באותו מודל אחרי שנייה וחצי — רק כשאין מודל אחר לעבור אליו
+      if(k===0&&e&&e.message==='busy'&&j===models.length-1&&cancelAt<t0){await new Promise(r=>setTimeout(r,opts.retryMs!=null?opts.retryMs:1500));if(cancelAt<t0)continue;}
+      // מכסה / עומס / מגבלה — המודל הבא ברשימה. מכסה: מדלגים עליו 20 דק', כדי לא לבזבז ניסיון בכל בקשה.
+      if(p==='gemini'&&e&&ROT.indexOf(e.message)>=0&&cancelAt<t0){if(e.message!=='busy')gMark(mdl,20*60000);moved=true;}
+      break;}
+    }
+    if(!moved)break;
    }
    if(last&&last.soft===false&&last.message!=='no-key')break;
   }
@@ -4021,8 +4078,13 @@ const AI=(()=>{
      rows.push({label:label,model:model,state:(o&&o.ok===true)?'ok':'odd',ms:Date.now()-t0});}
    catch(e){rows.push({label:label,model:model,state:'err',code:(e&&e.message)||'?',detail:(e&&e.detail)||'',ms:Date.now()-t0});}
   };
-  if(has('gemini'))await one('Gemini',M.g,()=>gemini([{t:'text',v:'Return exactly this JSON: {"ok":true}'}],0,false,S,20000));
-  else rows.push({label:'Gemini',model:M.g,state:'no-key'});
+  if(has('gemini')){
+   // כל מודל ברשימה — גם אלה שנחסמו לאחרונה, כדי לראות את המצב האמיתי
+   const pri=gPrimary();const L=[pri].concat(gSort((Store.get('gModels',[])||[]).filter(gFreeName)));
+   const u=L.filter((x,i)=>x&&L.indexOf(x)===i).slice(0,G_ROT);
+   for(let i=0;i<u.length;i++)await one(i===0?'Gemini ראשי':'Gemini גיבוי '+i,u[i],()=>gemini([{t:'text',v:'Return exactly this JSON: {"ok":true}'}],0,false,S,20000,false,u[i]));
+  }
+  else rows.push({label:'Gemini',model:gPrimary(),state:'no-key'});
   if(has('claude')){
    await one('Claude מהיר',M.cFast,()=>claude([{t:'text',v:'Return exactly this JSON and nothing else: {"ok":true}'}],40,false,false,20000));
    await one('Claude חכם',M.cSmart,()=>claude([{t:'text',v:'Return exactly this JSON and nothing else: {"ok":true}'}],40,true,false,20000));
@@ -4037,7 +4099,8 @@ const AI=(()=>{
   return out.length?out.join(' | '):'אין שימוש החודש';
  }
 
- return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES};
+ return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES,
+  listModels,gChain,gPrimary,gFreeName,last:()=>LAST};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -4609,6 +4672,8 @@ const App={
   if(k==='busy')return 'שירות ה-AI עמוס כרגע — נסה שוב בעוד דקה';
   if(k==='timeout')return 'ה-AI לא ענה בזמן — נסה שוב, או קובץ קצר יותר';
   if(k==='bad-key')return 'המפתח לא תקין — בדוק בהגדרות מפתח';
+  if(k==='limit'){const d=String((e&&e.detail)||'').match(/regain access on (\d{4})-(\d{2})-(\d{2})/i);
+    return 'הגעת למגבלת השימוש שהוגדרה בחשבון ה-AI'+(d?' — נפתח שוב ב-'+(+d[3])+'.'+(+d[2])+'.'+d[1]:'')+'. אפשר להעלות את המגבלה בהגדרות החשבון אצל הספק';}
   if(k==='credit')return 'נגמר הקרדיט בחשבון ה-AI — צריך לטעון קרדיט אצל הספק'+(e&&e.detail?' ('+e.detail.slice(0,90)+')':'');
   if(k==='bad-json')return 'ה-AI החזיר תשובה לא מובנת — נסה שוב';
   if(k==='ai-error')return 'ה-AI החזיר שגיאה — נסה שוב'+(e&&e.detail?' ('+e.detail.slice(0,110)+')':'');
@@ -5474,6 +5539,7 @@ const App={
     }catch(x){x._phase=phase;x._ms=Date.now()-t0;throw x;}
     finally{clearInterval(tm);}
     const r=this.planResult(o,fname);
+    try{const L=AI.last();r.by=L?L.model:'';}catch(x){}
     // פרטי הלקוח משלב 1 (כל הקבצים, כולל בלוק החותמת) — אם בשלב 2 לא זוהו
     if(r0&&r!==r0&&!(r.client.name||r.client.project||r.client.address)){r.client=r0.client;r.arch=r0.arch;r.docRef=r0.docRef;r.docDate=r0.docDate;}
     this.idle();
@@ -5536,7 +5602,8 @@ const App={
     '<li>'+ico('file-text',14)+'<span>'+esc(p.file||'תוכנית')+(SRC[p.source]?' · '+SRC[p.source]:'')+'</span></li>'+
     p.rooms.map(r=>'<li class="pr"><span>'+esc(r.name)+'</span><b>'+n(r.sqm)+' מ"ר</b></li>').join('')+
     (off?'<li class="cut">'+ico('ruler',14)+'<span>סכום החדרים '+n(p.sum)+' מ"ר — שונה מהשטח הכולל שבתוכנית</span></li>':'')+
-    (p.note?'<li>'+ico('message-circle',14)+'<span>'+esc(p.note)+'</span></li>':'')+'</ul>'+
+    (p.note?'<li>'+ico('message-circle',14)+'<span>'+esc(p.note)+'</span></li>':'')+
+    (p.by?'<li>'+ico('sparkles',14)+'<span>נקרא ע״י <span dir="ltr">'+esc(p.by)+'</span></span></li>':'')+'</ul>'+
     (fill.length?'<ul class="tk-facts plan-scan plan-cl" aria-label="פרטי לקוח מהמסמך">'+
       '<li>'+ico('users',14)+'<span><b>יירשם בפרטי הלקוח</b> (שדות ריקים בלבד)</span></li>'+
       fill.map(x=>'<li class="pr"><span>'+x[0]+'</span><b>'+esc(x[1])+'</b></li>').join('')+
@@ -7627,7 +7694,14 @@ const App={
    <button class="btn-ghost" id="grev-save">💾 שמור קישור ביקורת</button>
    <div class="sec-title" style="margin-top:16px">🤖 עוזר AI</div>
    <div class="field"><label>בחר עוזר פעיל</label><select id="ai-provider">${[['gemini','Gemini (Google) — ראשי'],['claude','Claude (Anthropic)']].map(o=>`<option value="${o[0]}" ${Store.get('aiProvider','gemini')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
-   <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="ai-fallback" ${Store.get('aiFallback',true)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>גיבוי אוטומטי — כשנגמרת מכסת Gemini, Claude נכנס לבד</span></label></div>
+   <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="ai-fallback" ${Store.get('aiFallback',true)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>גיבוי אוטומטי — כשכל מודלי Gemini במכסה, Claude נכנס לבד</span></label></div>
+   <div class="field"><label>מודל Gemini ראשי</label>
+     ${(()=>{const fr=(Store.get('gModels',[])||[]).filter(n=>AI.gFreeName(n));const pri=AI.gPrimary();
+       const L=[AI.models.g].concat(fr).concat([pri]).filter((x,i,a)=>x&&a.indexOf(x)===i);
+       return `<select id="g-model" dir="ltr">${L.map(n=>`<option value="${esc(n)}" ${n===pri?'selected':''}>${esc(n)}${n===AI.models.g?' (ברירת מחדל)':''}</option>`).join('')}</select>`;})()}
+     <button class="tk-btn" id="g-models-load" style="width:100%;margin-top:8px">${ico('refresh-cw',16)}טען מודלים זמינים למפתח שלי</button>
+     <p class="tk-hint start" id="g-models-out" aria-live="polite" style="margin-top:6px">${(()=>{const fr=(Store.get('gModels',[])||[]).filter(n=>AI.gFreeName(n));
+       return fr.length?'גיבוי חינמי לפי הסדר: <span dir="ltr">'+esc(AI.gChain().slice(1).join(' → ')||'—')+'</span>':'כשמודל מגיע למכסה, האפליקציה עוברת למודל Gemini חינמי אחר לפני Claude. לחץ כדי לטעון את הרשימה.';})()}</p></div>
    <div class="field"><label>שימוש החודש</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${AI.report()}</div></div>
    <div class="field"><label>בדיקת חיבור</label>
      <button class="tk-btn" id="ai-check" style="width:100%">${ico('check',16)}בדוק את כל המודלים</button>
@@ -8152,7 +8226,7 @@ const App={
   */
  aiCheckHtml(res){
   const why={'bad-key':'המפתח לא תקין','quota':'המכסה נגמרה','busy':'השירות עמוס','timeout':'לא ענה בזמן',
-    'network':'אין רשת','ai-error':'שגיאה','bad-json':'תשובה לא מובנת','credit':'נגמר הקרדיט בחשבון','too-big':'בקשה גדולה מדי'};
+    'network':'אין רשת','ai-error':'שגיאה','bad-json':'תשובה לא מובנת','credit':'נגמר הקרדיט בחשבון','too-big':'בקשה גדולה מדי','limit':'מגבלת שימוש בחשבון'};
   const rows=(res.rows||[]).map(r=>{
     const ok=r.state==='ok',none=r.state==='no-key';
     const tn=ok?'ok':(none?'neutral':'red');
@@ -9874,6 +9948,18 @@ const App={
      if(v>0)setIn('q_totsqm',v);
      [['c_name','name'],['c_project','project'],['c_address','address'],['c_phone','phone'],['c_notes','notes']].forEach(([id,f])=>setIn(id,c[f]));}
     this.state.planScan=null;this.haptic(20);this.toast('השטח עודכן: '+v.toLocaleString('he-IL')+' מ"ר'+(k?' · '+k+' פרטי לקוח':'')+' ✓');this.render();});
+  // מודל Gemini ראשי + טעינת המודלים למפתח
+  (()=>{const sel=document.getElementById('g-model');if(sel)sel.onchange=()=>{Store.set('gModel',sel.value===AI.models.g?'':sel.value);this.toast('מודל ראשי: '+sel.value);};
+    const b=document.getElementById('g-models-load');if(!b)return;
+    b.onclick=async()=>{const out=document.getElementById('g-models-out');
+      if(!AI.has('gemini')){this.toast('הכנס קודם מפתח Gemini');return;}
+      b.disabled=true;b.setAttribute('aria-busy','true');if(out)out.textContent='טוען…';
+      try{const r=await AI.listModels();Store.set('gModels',r.free);Store.set('gSkip',{});
+        this.render();
+        const o2=document.getElementById('g-models-out');
+        if(o2)o2.innerHTML='✓ נטענו '+r.all.length+' מודלים · '+r.free.length+' מתאימים לגיבוי חינמי. לפי הסדר: <span dir="ltr">'+esc(AI.gChain().slice(1).join(' → ')||'—')+'</span>';}
+      catch(e){if(out)out.textContent='✗ '+this.aiErrMsg(e);}
+      finally{const bb=document.getElementById('g-models-load');if(bb){bb.disabled=false;bb.removeAttribute('aria-busy');}}};})();
   // בדיקת AI — בלי render, כדי שהתוצאה לא תיעלם
   (()=>{const b=document.getElementById('ai-check');if(!b)return;
     b.onclick=async()=>{

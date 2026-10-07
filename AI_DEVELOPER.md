@@ -1,8 +1,8 @@
 # AI_DEVELOPER.md
-## יהודה שיפוצים — PWA הצעות מחיר · v23.2
+## יהודה שיפוצים — PWA הצעות מחיר · v23.4
 
 > מסמך העברה מלא. מודל AI חדש שקורא רק אותו יכול להמשיך את הפיתוח בלי אובדן מידע.
-> **עודכן:** v23.2 · אוקטובר 2026
+> **עודכן:** v23.4 · אוקטובר 2026
 
 ---
 
@@ -320,7 +320,7 @@ invalidate(what){
 
 ```
 index.html            719 KB   הכל
-sw.js                   3 KB   מטמון: ys-cache-v23.2
+sw.js                   3 KB   מטמון: ys-cache-v23.4
 version.json                   {"version":"18.2"}
 manifest.webmanifest
 _headers
@@ -1065,4 +1065,34 @@ Gemini 1.5 ו-2.0 הושבתו. Google ממליצה לפרויקטים חדשי�
 - הודעת `guideVidDiag` לקובץ חסר: "צריך להעלות את קובצי הסרטונים (mp4 + jpg) ל-GitHub, ליד index.html".
 - **חוק:** בלי תיקיות משנה בחבילה — ההעלאה מהטלפון ל-GitHub משטחת אותן.
 - בדיקות: `t_guide` 18/18 · `t_sw` 4/4. רגרסיה: `t_chk` 8 · `t_lib` 47 · `t_err` 21 · `t_plan` 50 · `t_docs` 23 · `t_boq` 33 · `t_boq2` 22 · `t_boq3` 12 · `t_ai_err` 12 · `t_hires` 11 · `t_ai_mod` 7.
+
+# 45 · v23.3 — הסיבות האמיתיות של כשל ה-AI (מבדיקת החיבור של v23.1)
+
+**אומת (צילום ההגדרות של רמי, 6.10.2026):**
+- **Gemini** `gemini-flash-latest`: "503: This model is currently experiencing high demand… temporary" (בבדיקה), וביומן גם "429: You exceeded your current quota, please check your plan and billing details". עומס + מכסה — בצד Google.
+- **Claude** מהיר + חכם: "400: You have reached your specified API usage limits. You will regain access on 2026-11-01 at 00:00 UTC." — **מגבלת הוצאה חודשית שהוגדרה בחשבון Anthropic.** לא שם מודל, לא קרדיט.
+- מסקנה: כשל קריאת התוכניות מאז v22.7 — **שני הספקים לא זמינים**. הקוד לא יכול לעקוף את זה.
+
+**התיקון:** `classify` — "specified api usage limit / usage limits … regain access / spend limit" → `limit` (רך). `aiErrMsg`: "הגעת למגבלת השימוש שהוגדרה בחשבון ה-AI — נפתח שוב ב-1.11.2026. אפשר להעלות את המגבלה בהגדרות החשבון אצל הספק". `aiCheckHtml`: "מגבלת שימוש בחשבון".
+- **עוד ממצא מאותו צילום (לא תוקן — החלטה של רמי):** בשדה "Google OAuth Client ID" כתוב `yuda090581@gmail.com` — כתובת מייל, לא Client ID. לפי הניתוח הקודם, בלי Client ID תקין מנגנון הגיבוי ל-Drive לא פעיל.
+- בדיקות: `t_ai_err` 14/14 · `t_chk` 10/10. רגרסיה: `t_guide` 18 · `t_sw` 4 · `t_lib` 47 · `t_err` 21 · `t_plan` 50 · `t_docs` 23 · `t_boq` 33 · `t_boq2` 22 · `t_boq3` 12 · `t_hires` 11 · `t_ai_mod` 7.
+
+# 46 · v23.4 — רוטציה בין מודלי Gemini חינמיים
+
+**הרקע:** Gemini `gemini-flash-latest` — 429 מכסה / 503 עומס; Claude — מגבלת הוצאה עד 1.11 (סעיף 45). לפי התיעוד של Google, מגבלות הקצב נספרות **לפרויקט** (לא למפתח) ו**משתנות לפי מודל** — כלומר כל מודל Flash/Flash-Lite מביא מכסה משלו. רמי הראה את המנגנון באפליקציית "איתור חשבוניות": "טען מודלים זמינים למפתח שלי" (ListModels) — 34 מודלים, 14 חינמיים.
+
+**מה נבנה (במודול ה-AI):**
+- `gPrimary()` — `Store 'gModel'` (ריק = `M.g`). `gModels` — רשימת החינמיים שנטענו. שניהם בגיבוי (`keys()`), לא בסנכרון.
+- `gFreeName(n)` — רק `gemini-<גרסה>-flash`, `gemini-<גרסה>-flash-lite`, `gemini-flash-latest`, `gemini-flash-lite-latest`. **בלי** preview (מכסה קטנה ומשתנה), Pro (בתשלום), omni, transcribe, gemma, תמונה/קול/רובוטיקה. זה כלל לפי שם — **לא אימות שהמודל באמת חינמי**; מודל שאינו חינמי יחזיר 429 מהר ויידלג.
+- `gSort` — Flash לפני Lite (קריאת שרטוטים), חדש לפני ישן. `gChain()` — הראשי + החינמיים, עד 4 (`G_ROT`), בלי מסומנים.
+- `run()`: ב-Gemini — לולאה על `gChain()`. `quota`/`limit`/`busy` → המודל הבא; `quota`/`limit` מסמנים את המודל ב-`gSkip` ל-20 דק'. עומס — ניסיון חוזר באותו מודל רק כשהוא האחרון ברשימה. כל שגיאה אחרת (מפתח, 400, זמן) — לא מחליפה מודל. רק אחרי כל ה-Gemini — Claude (אם `aiFallback`).
+- `onFallback('Gemini <model>')` במעבר מודל. `AI.last()` — `{p, model}` של מי שענה. `planScan` → `r.by`, ובפאנל "נקרא ע״י …".
+- `listModels()` — `GET /v1beta/models?pageSize=200` (עמודים, עד 5), המפתח בכותרת; רק `generateContent`, בלי "deprecated/retired" בתיאור. מחזיר `{all, free}`.
+- `check()` — שורה לכל מודל ב-`gChain` ("Gemini ראשי", "Gemini גיבוי N"), כולל מסומנים.
+- הגדרות: "מודל Gemini ראשי" (select, LTR), "טען מודלים זמינים למפתח שלי", והסדר שנבחר. טעינה מנקה `gSkip`.
+- **לא ידוע:** האם `gemini-flash-latest` חולק מכסה עם המודל שהוא מצביע עליו; האם כל המודלים ברשימה של רמי באמת בשכבה החינמית; איכות קריאת השרטוטים ב-Lite.
+- בדיקות: `t_ai_rot.js` 27/27 · `t_gmodels.py` 14/14. רגרסיה: `t_ai_err` 14 · `t_hires` 11 · `t_ai_mod` 7 · `t_chk` 10 · `t_guide` 18 · `t_sw` 4 · `t_lib` 47 · `t_err` 21 · `t_plan` 50 · `t_docs` 23 · `t_boq` 33 · `t_boq2` 22 · `t_boq3` 12 — כולן עברו.
+- **⚠️ `t_boq.py` לא יציב בסביבת הבדיקה:** בשלב "הקלדה" הלחיצה על שדה העבודה נתקעת לפעמים (Playwright מחכה ל"יציבות"). אותו דבר קורה גם ב-v23.3 המקורית (2 ריצות לכל גרסה: עבר/נתקע בשתיהן) — לא רגרסיה. לא תוקן.
+- הבדיקות מחפשות את 8 התוכניות ב-`PLAN_DIR` (ברירת מחדל `/mnt/user-data/uploads`); `t_boq*` — `/home/claude/plans/0_HYMV…pdf`.
+- **בסיס:** v23.3 (נמצאה בתיקיית הפלט — נבנתה מחוץ לשיחה הזו; נסקרה: 12 שורות, סיווג `limit` + הודעה; תקינה).
 
