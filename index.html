@@ -763,6 +763,15 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .photos .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);}
 .photos .ph img{width:100%;height:100%;}
 .photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
+.err-panel{position:fixed;inset:0;z-index:650;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;}
+.err-panel-card{background:var(--bg2);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:16px;width:100%;max-width:420px;max-height:86vh;max-height:86svh;overflow:auto;box-shadow:0 14px 40px rgba(0,0,0,.5);}
+.err-panel-t{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:15px;margin-bottom:8px;}
+.err-panel-m{font-size:13.5px;line-height:1.5;margin:0 0 6px;}
+.err-panel-at,.err-panel-h{font-size:12px;color:var(--muted);margin:0 0 8px;}
+.err-panel-l{font-size:12px;font-weight:700;margin:4px 0;}
+.err-panel-tr{font-size:12px;line-height:1.6;margin:0 0 10px;padding-inline-start:20px;}
+.err-panel-b{display:flex;gap:8px;justify-content:flex-start;}
+.err-panel-b .tk-btn{flex:1;}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:11px 18px;border-radius:10px;font-size:12.5px;z-index:600;border:1px solid var(--line);max-width:88%;text-align:center;}
 .busy-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
 /* שדות קלט בערכה כהה — אחרת הדפדפן מצייר את אייקון היומן בשחור על
@@ -3290,7 +3299,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.7';
+const VERSION='23.8';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3616,7 +3625,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>סרטוני מדריך חדשים</b> — חדים פי 2, עם פתיחה שמראה מה בסרטון, הסבר מפורט לכל שלב, מסגרת סביב הכפתור שמדברים עליו, וסיכום בסוף.</li>
+   b:`<ul class="g-ul"><li><b>קרא שטח — כשמשהו נכשל, רואים מה קרה</b> — במקום הודעה שנעלמת אחרי 2 שניות, נפתח חלון שנשאר עד "סגור": השלב, הזמן, וכל מודל שנוסה — כמה שניות ומה קרה. אפשר להעתיק. מודל שלא ענה בזמן — עוברים למודל הבא, והמודלים שענו בבדיקת החיבור מנוסים קודם. בשלב 1 ה-AI "חושב" פחות, כדי לענות מהר יותר על הרבה תוכניות.</li>
+   <li><b>סרטוני מדריך חדשים</b> — חדים פי 2, עם פתיחה שמראה מה בסרטון, הסבר מפורט לכל שלב, מסגרת סביב הכפתור שמדברים עליו, וסיכום בסוף.</li>
    <li><b>סרטוני המדריך במסך מלא</b> — הסרטונים תוקנו: האפליקציה ממלאת את כל המסגרת, בגודל מסך הטלפון.</li>
    <li><b>קרא שטח — מהיר יותר ועם הסיבה הנכונה</b> — שלב 1 נשלח ברזולוציה רגילה (ההגדלה בשלב 2). ספק שחשבונו חסום עד תאריך לא מקבל בקשות עד אז, וההודעה מציגה את הסיבה האמיתית.</li>
    <li><b>מודלי Gemini חינמיים כגיבוי</b> — בהגדרות: "טען מודלים זמינים למפתח שלי". כשמודל מגיע למכסה או עמוס, עוברים לבד למודל Gemini חינמי אחר, ורק אחר כך ל-Claude. בקריאת שטח מופיע איזה מודל קרא.</li>
@@ -3757,7 +3767,7 @@ try{
  lastError(){return Store._lastErr;},
  // יומן שגיאות קצר — כדי ששגיאה שנבלעה לא תיעלם בלי זכר
  logErr(where,e){try{const L=Store.get('errLog',[])||[];
-   L.unshift({t:Date.now(),w:String(where||''),m:String((e&&e.message)||e||'').slice(0,140)});
+   L.unshift({t:Date.now(),w:String(where||''),m:String((e&&e.message)||e||'').slice(0,320)});
    if(L.length>30)L.length=30;
    // K — עם הקידומת, כמו Store.get. בלי זה היומן נכתב למפתח אחר ומסך ההגדרות תמיד הראה ריק.
    const s=JSON.stringify(L);try{if(ok)localStorage.setItem(K('errLog'),s);else mem[K('errLog')]=s;}catch(x){}}catch(x){}},
@@ -3788,13 +3798,21 @@ const AI=(()=>{
  const gSort=a=>a.slice().sort((x,y)=>gRank(x)-gRank(y)||(x<y?-1:1));
  function gSkip(){const s=Store.get('gSkip',{})||{};const now=Date.now();const o={};Object.keys(s).forEach(k=>{if(+s[k]>now)o[k]=s[k];});return o;}
  function gMark(model,ms){const s=gSkip();s[model]=Date.now()+ms;Store.set('gSkip',s);}
+ /* v23.8 — מצב אחרון לכל מודל (בקשה אמיתית או "בדוק את כל המודלים"). מודל שלא ענה בזמן / נכשל
+    ב-30 הדקות האחרונות יורד לסוף הרשימה — לא נחסם. בבדיקה של רמי: flash-latest "לא ענה בזמן"
+    ו-3.8 "עמוס", בזמן ש-3.6 ו-3.7 ענו — ובכל זאת כל קריאת תוכנית התחילה ב-flash-latest. */
+ const G_BAD_MS=30*60000;
+ function gHealth(){return Store.get('gHealth',{})||{};}
+ function gNote(model,s){if(!model||s==='cancelled'||s==='no-key'||s==='network')return;const h=gHealth();h[model]={s:String(s),t:Date.now()};Store.set('gHealth',h);}
+ const gBad=m=>{const x=gHealth()[m];return !!(x&&x.s!=='ok'&&Date.now()-(+x.t||0)<G_BAD_MS);};
  /** רשימת המודלים לבקשה: הראשי, ואחריו החינמיים שנטענו — בלי אלה שנחסמו לאחרונה. */
  function gChain(){
   const pri=gPrimary();const sk=gSkip();
   const L=[pri].concat(gSort((Store.get('gModels',[])||[]).filter(gFreeName)));
   const u=L.filter((x,i)=>x&&L.indexOf(x)===i);
   const ok=u.filter(x=>!sk[x]);
-  return (ok.length?ok:[pri]).slice(0,G_ROT);
+  const ord=ok.filter(x=>!gBad(x)).concat(ok.filter(gBad));   // תקינים קודם, בלי לשנות את הסדר ביניהם
+  return (ord.length?ord:[pri]).slice(0,G_ROT);
  }
  /** ListModels למפתח הזה. מחזיר {all:[שמות], free:[חינמיים לפי סדר]} */
  async function listModels(){
@@ -3816,6 +3834,7 @@ const AI=(()=>{
   return {all:all.sort(),free:gSort(all.filter(gFreeName))};
  }
  let LAST=null;   // מי ענה בבקשה האחרונה: {p, model}
+ let TRACE=[];    // v23.8 — הניסיונות של הבקשה האחרונה: [{m, ms, r}]
  /** ספקים חסומים: {claude: עד-מתי}. "limit" עם תאריך — עד התאריך; "credit" — 6 שעות. */
  function pBlocked(){const s=Store.get('aiBlocked',{})||{};const now=Date.now();const o={};Object.keys(s).forEach(k=>{if(+s[k]>now)o[k]=+s[k];});return o;}
  function pBlock(p,e){
@@ -3962,7 +3981,7 @@ const AI=(()=>{
     אם השרת דוחה את הסכמה (400) והקריאה בלעדיה מצליחה — זוכרים לשבוע ולא
     מנסים שוב. בכוונה בלי maxOutputTokens: במודל שחושב, החשיבה נספרת במגבלה
     והתשובה נחתכת. ובלי temperature — הוצא משימוש (יולי 2026). */
- async function gemini(parts,maxTokens,useCat,schema,to,hires,model){
+ async function gemini(parts,maxTokens,useCat,schema,to,hires,model,think){
   const k=keyOf('gemini');if(!k)throw E('no-key',false);
   const gp=[];
   if(useCat)gp.push({text:catalogText()});
@@ -3979,8 +3998,13 @@ const AI=(()=>{
   // אבל שרטוט של אדריכל (אותיות כציור, בלי טקסט) הוא רק תמונה — והיא מוקטנת מדי.
   // "מרפאת שיניים" נקראה "מרפסת שיפוצים". HIGH = 1120 טוקנים לעמוד.
   const gpHi=gp.map(x=>(x.inline_data&&x.inline_data.mime_type==='application/pdf')?Object.assign({},x,{media_resolution:{level:'MEDIA_RESOLUTION_HIGH'}}):x);
-  const bodyOf=(ws,hr)=>JSON.stringify(Object.assign({contents:[{parts:hr?gpHi:gp}]},
-    ws?{generationConfig:{responseMimeType:'application/json',responseJsonSchema:schema}}:{}));
+  // v23.8 — רמת חשיבה (thinkingLevel). ב-Gemini 3 ברירת המחדל היא חשיבה, ובשרטוטים צפופים היא לוקחת דקות.
+  // נשלחת רק כשמבקשים (שלב 1 של "קרא שטח"). מודל שלא מכיר את השדה מחזיר 400 — שולחים שוב בלעדיו.
+  let th=(think&&(/^gemini-([3-9]|\d\d)/.test(mdl)||/-latest$/.test(mdl)))?String(think):'';
+  const bodyOf=(ws,hr)=>{const gc={};
+    if(ws){gc.responseMimeType='application/json';gc.responseJsonSchema=schema;}
+    if(th)gc.thinkingConfig={thinkingLevel:th};
+    return JSON.stringify(Object.assign({contents:[{parts:hr?gpHi:gp}]},Object.keys(gc).length?{generationConfig:gc}:{}));};
   // אם הכותרת נחסמה פעם והכתובת עבדה — זוכרים לשבוע, בלי ניסיון מבוזבז בכל קריאה
   const viaQuery=()=>{const c=caps();return c.gHdr===false&&Date.now()-(+c.at||0)<7*864e5;};
   const byQuery=(ws,hr)=>fetchJ(base+'?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:bodyOf(ws,hr)},to);
@@ -3999,6 +4023,7 @@ const AI=(()=>{
   let hr=!!hires&&gpHi.some((x,i)=>x!==gp[i])&&mediaOn();
   let {r,d}=await send(ws,hr);
   const msgOf=x=>String((x&&x.error&&x.error.message)||'400').slice(0,160);
+  if(th&&r.status===400&&/think/i.test(msgOf(d))){th='';({r,d}=await send(ws,hr));}
   // 400 — מי גרם? לפי הודעת השגיאה. רזולוציה ("media") — מוותרים עליה; אחרת קודם על הסכמה,
   // ורק בסוף גם על הרזולוציה. כך דחיית סכמה לא מורידה בטעות את הרזולוציה בשרטוטים.
   if(hr&&r.status===400&&/media/i.test(msgOf(d))){
@@ -4048,24 +4073,40 @@ const AI=(()=>{
   if(!chain.length)throw E('no-key',false);
   let last=null;const t0=Date.now();const why=[];
   const ROT=['quota','busy','limit'];const errs=[];
+  /* v23.8 — מסלול הניסיונות: לכל ניסיון — מודל, כמה זמן, מה קרה. מוצמד לשגיאה (e.trace) ונשמר ב-AI.trace().
+     קודם "לא ענה בזמן" הגיע בלי שם מודל, ואחרי 4:35 לא היה אפשר לדעת מי נתקע ולכמה זמן.
+     budget (מ"ש, לכל הבקשה): מאפשר מעבר למודל הבא גם כשמודל לא ענה בזמן, בלי לחרוג מהזמן הכולל. */
+  const budget=+opts.budget||0;const tr=[];TRACE=tr;
+  outer:
   for(let i=0;i<chain.length;i++){
    const p=chain[i];
    const models=p==='gemini'?gChain():[null];
    for(let j=0;j<models.length;j++){
     const mdl=models[j];let moved=false;
     for(let k=0;k<2;k++){
+     let to=opts.timeout||(audio?90000:45000);
+     if(budget){const left=budget-(Date.now()-t0);
+       if(tr.length&&left<45000){tr.push({m:p==='gemini'?mdl:nameOf(p),ms:0,r:'skip'});break outer;}   // לא מתחילים ניסיון שאין לו זמן לענות
+       to=Math.min(to,left);}
+     const ta=Date.now();
+     const tag=p==='gemini'?mdl:(opts.smart?M.cSmart:M.cFast);
      try{
-      const to=opts.timeout||(audio?90000:45000);
-      const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to,opts.hires,mdl);
+      const txt=p==='claude'?await claude(parts,opts.maxTokens,opts.smart,opts.catalog,to):await gemini(parts,opts.maxTokens,opts.catalog,opts.schema,to,opts.hires,mdl,opts.think);
+      tr.push({m:tag,ms:Date.now()-ta,r:'ok'});if(p==='gemini')gNote(mdl,'ok');
       LAST={p:p,model:p==='claude'?(opts.smart?M.cSmart:M.cFast):mdl};
       if((i>0||j>0)&&typeof opts.onFallback==='function'){try{opts.onFallback(p==='gemini'?'Gemini '+mdl:nameOf(p));}catch(e){}}
       return txt;
-     }catch(e){last=e;errs.push({p:p,e:e});if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
+     }catch(e){last=e;errs.push({p:p,e:e});
+      const ms=Date.now()-ta;tr.push({m:tag,ms:ms,r:(e&&e.message)||'?'});
+      if(p==='gemini'&&e)gNote(mdl,e.message);
+      if(e&&e.message==='timeout'&&!e.detail)e.detail=(p==='gemini'?'Gemini '+mdl:nameOf(p))+' לא ענה תוך '+Math.round(ms/1000)+' שנ\'';
+      if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
       if(p==='claude'&&e&&(e.message==='limit'||e.message==='credit'))pBlock(p,e);   // ב-Gemini — הרוטציה מטפלת
       // עומס רגעי בשרת: עוד ניסיון אחד באותו מודל אחרי שנייה וחצי — רק כשאין מודל אחר לעבור אליו
       if(k===0&&e&&e.message==='busy'&&j===models.length-1&&cancelAt<t0){await new Promise(r=>setTimeout(r,opts.retryMs!=null?opts.retryMs:1500));if(cancelAt<t0)continue;}
       // מכסה / עומס / מגבלה — המודל הבא ברשימה. מכסה: מדלגים עליו 20 דק', כדי לא לבזבז ניסיון בכל בקשה.
-      if(p==='gemini'&&e&&ROT.indexOf(e.message)>=0&&cancelAt<t0){if(e.message!=='busy')gMark(mdl,20*60000);moved=true;}
+      // לא ענה בזמן — גם כן המודל הבא, אבל רק בבקשה עם תקציב זמן (budget), אחרת ההמתנה מוכפלת.
+      if(p==='gemini'&&e&&(ROT.indexOf(e.message)>=0||(budget&&e.message==='timeout'))&&cancelAt<t0){if(e.message==='quota'||e.message==='limit')gMark(mdl,20*60000);moved=true;}
       break;}
     }
     if(!moved)break;
@@ -4075,6 +4116,7 @@ const AI=(()=>{
   // השגיאה שמוצגת: לא "חשבון חסום" של ספק הגיבוי — הסיבה האמיתית מהספק הראשי (למשל "לא ענה בזמן")
   {const real=errs.filter(x=>x.e&&['limit','credit','no-key'].indexOf(x.e.message)<0);if(real.length)last=real[real.length-1].e;}
   if(last&&why.length&&(why.length>1||!last.detail))last.detail=why.join(' · ').slice(0,240);
+  if(last)last.trace=tr.slice();
   throw last||E('ai-error');
  }
 
@@ -4093,8 +4135,10 @@ const AI=(()=>{
   const one=async(label,model,fn)=>{
    const t0=Date.now();
    try{const o=parse(await fn());
-     rows.push({label:label,model:model,state:(o&&o.ok===true)?'ok':'odd',ms:Date.now()-t0});}
+     rows.push({label:label,model:model,state:(o&&o.ok===true)?'ok':'odd',ms:Date.now()-t0});
+     if(/^Gemini/.test(label))gNote(model,'ok');}
    catch(e){rows.push({label:label,model:model,state:'err',code:(e&&e.message)||'?',detail:(e&&e.detail)||'',ms:Date.now()-t0});
+     if(/^Gemini/.test(label)&&e)gNote(model,e.message);
      if(/^claude/.test(model)&&e&&(e.message==='limit'||e.message==='credit'))pBlock('claude',e);}
   };
   if(has('gemini')){
@@ -4120,7 +4164,7 @@ const AI=(()=>{
  }
 
  return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES,
-  listModels,gChain,gPrimary,gFreeName,last:()=>LAST,blocked:pBlocked};
+  listModels,gChain,gPrimary,gFreeName,last:()=>LAST,blocked:pBlocked,trace:()=>TRACE.slice(),health:gHealth};
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
@@ -4354,6 +4398,7 @@ const nisR=n=>Math.round(+n||0).toLocaleString('en-US')+'\u00a0₪';
  *   'book-open'|'play'|'download'|'map'|'mic'|'headphones'|'smartphone'|'image'|'save'|'lock'|'wrench'} IconName
  */
 const ICO={
+ 'alert-triangle':'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
  'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
  'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
  'check':'<path d="M20 6 9 17l-5-5"/>',
@@ -5525,7 +5570,7 @@ const App={
       'note — חובה, משפט קצר בעברית: מאיפה השטח (שם הקובץ או המסגרת), או למה לא נמצא.',
       ...this.docProjPrompt(),
       'החזר JSON בלבד.'].filter(Boolean).join(String.fromCharCode(10));
-    const ask=(parts,prompt,sizeList,ex)=>{const op=Object.assign(this.docOpts(sizeList,{maxTokens:2000}),ex||{});op.timeout=Math.min(op.timeout,150000);
+    const ask=(parts,prompt,sizeList,ex)=>{const op=Object.assign(this.docOpts(sizeList,{maxTokens:2000}),ex||{});op.timeout=Math.min(op.timeout,op.cap||150000);
       return AI.json(parts.concat([{t:'text',v:prompt}]),S,op);};
     const fname=D.length>1?D.length+' קבצים':D[0].name;
     let o,r0;
@@ -5533,7 +5578,9 @@ const App={
       setPh(D.length>1?'שלב 1 · ה-AI קורא '+D.length+' תוכניות…':'שלב 1 · ה-AI קורא את התוכנית…');
       // שלב 1 ברזולוציה רגילה — סקירה מהירה. קריאת טקסט קטן היא תפקיד שלב 2 (הגדלה).
       // v23.5: 8 תוכניות ברזולוציה גבוהה לא חזרו מ-gemini-3.6-flash תוך 2.5 דקות.
-      o=await ask(this.docParts(D),P(1,D,false),D,{hires:false});
+      // v23.8: חשיבה "low" — ב-Gemini 3 ברירת המחדל חושבת על כל שרטוט, ו-8 תוכניות לא חזרו תוך 4:35.
+      // עד 2 דקות למודל, ומודל שלא ענה — עוברים לבא (הכי תקין לפי הבדיקה האחרונה), עד 5 דקות בסך הכול.
+      o=await ask(this.docParts(D),P(1,D,false),D,{hires:false,think:'low',cap:120000,budget:300000});
       r0=this.planResult(o,fname);
       if(!r0.rooms.length&&!(r0.total>0)&&!stop){
         let z=(Array.isArray(o&&o.zoom_files)?o.zoom_files:[]).map(n=>Math.round(+n)-1)
@@ -5548,17 +5595,17 @@ const App={
           if(tiles.length){
             setPh('שלב 2 · ה-AI קורא את ההגדלה…');
             const sz=Dz.concat([{size:tiles.reduce((a,x)=>a+x.size,0)}]);
-            try{o=await ask(this.planParts(Dz,tiles),P(2,Dz,true),sz);}
+            try{o=await ask(this.planParts(Dz,tiles),P(2,Dz,true),sz,{budget:240000});}
             catch(x){
               if(stop||['ai-error','too-big','bad-json','busy'].indexOf(x&&x.message)<0)throw x;
               setPh('שלב 2 · מנסה שוב בבקשה קלה יותר…');
-              try{o=await ask(this.planParts(Dz,tiles,true),P(2,Dz,true),sz);}
+              try{o=await ask(this.planParts(Dz,tiles,true),P(2,Dz,true),sz,{budget:150000});}
               catch(x2){if(x2&&!x2.detail&&x&&x.detail)x2.detail=x.detail;throw x2;}
             }
           }
         }
       }
-    }catch(x){x._phase=phase;x._ms=Date.now()-t0;throw x;}
+    }catch(x){if(x&&typeof x==='object'){x._phase=phase;x._ms=Date.now()-t0;}throw x;}
     finally{clearInterval(tm);}
     const r=this.planResult(o,fname);
     try{const L=AI.last();r.by=L?L.model:'';}catch(x){}
@@ -5573,10 +5620,37 @@ const App={
     this.render();
   }catch(e){this.idle();
     let m=this.aiErrMsg(e);
-    if(e&&e._phase){const s=Math.floor((e._ms||0)/1000);const at=e._phase.split(' · ')[0]+', אחרי '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
-      try{Store.logErr('plan',(e.message||'')+' · '+e._phase+' · '+s+'s');}catch(x){}
-      if(e.message==='timeout')m='ה-AI לא ענה בזמן ('+at+') — נסה שוב';}
-    this.toast(m);}
+    if(e&&e.message==='cancelled'){this.toast(m);return;}
+    const tr=(e&&e.trace)||[];
+    let at='';
+    if(e&&e._phase){const s=Math.floor((e._ms||0)/1000);at=e._phase.split(' · ')[0]+', אחרי '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+      // ביומן: גם מסלול הניסיונות — מודל, שניות, תוצאה
+      const tl=tr.map(x=>String(x.m||'').replace(/^gemini-/,'')+' '+Math.round((x.ms||0)/1000)+'s '+x.r).join(' → ');
+      try{Store.logErr('plan',(e.message||'')+' · '+e._phase+' · '+s+'s'+(tl?' · '+tl:''));}catch(x){}
+      if(e.message==='timeout')m='ה-AI לא ענה בזמן ('+at+')';}
+    // v23.8: חלון שנשאר עד שסוגרים — הודעה של 2.4 שניות נעלמה לפני שרמי הספיק לצלם
+    this.errPanel('קריאת התוכנית נכשלה',m,tr,at);}
+ },
+ /** חלון שגיאה שנשאר על המסך עד "סגור": ההודעה, השלב, וכל ניסיון — מודל, זמן, מה קרה. */
+ errPanel(title,msg,trace,at){
+  document.querySelectorAll('.err-panel').forEach(x=>x.remove());
+  const he={'ok':'ענה','bad-key':'מפתח לא תקין','quota':'מכסה נגמרה','busy':'עמוס','timeout':'לא ענה בזמן','network':'אין רשת',
+    'ai-error':'שגיאה','bad-json':'תשובה לא מובנת','credit':'נגמר הקרדיט','too-big':'בקשה גדולה מדי','limit':'מגבלת שימוש','skip':'לא נוסה — נגמר הזמן'};
+  const T=(trace||[]).map(x=>({m:String(x.m||''),s:Math.round((x.ms||0)/1000),r:he[x.r]||String(x.r||'')}));
+  const rows=T.map(x=>'<li><bdi dir="ltr">'+esc(x.m)+'</bdi> · '+(x.r==='לא נוסה — נגמר הזמן'?'':x.s+' שנ׳ · ')+esc(x.r)+'</li>').join('');
+  const txt=[title,msg,at?'שלב: '+at:''].concat(T.map(x=>x.m+' · '+x.s+'s · '+x.r)).concat(['v'+VERSION]).filter(Boolean).join('\n');
+  const d=document.createElement('div');d.className='err-panel';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');
+  d.innerHTML='<div class="err-panel-card"><div class="err-panel-t">'+ico('alert-triangle',18)+'<b>'+esc(title)+'</b></div>'+
+    '<p class="err-panel-m">'+esc(msg)+'</p>'+(at&&String(msg).indexOf(at)<0?'<p class="err-panel-at">'+esc(at)+'</p>':'')+
+    (rows?'<div class="err-panel-l">ניסיונות:</div><ol class="err-panel-tr">'+rows+'</ol>':'')+
+    '<p class="err-panel-h">נשמר גם בהגדרות ← יומן תקלות</p>'+
+    '<div class="err-panel-b"><button type="button" class="mini" data-x="copy">העתק</button><button type="button" class="tk-btn" data-x="close">סגור</button></div></div>';
+  d.addEventListener('click',ev=>{const b=ev.target.closest('[data-x]');
+    if(ev.target===d||(b&&b.dataset.x==='close')){d.remove();return;}
+    if(b&&b.dataset.x==='copy'){try{navigator.clipboard.writeText(txt).then(()=>this.toast('הועתק'),()=>this.toast('ההעתקה נכשלה'));}catch(x){this.toast('ההעתקה נכשלה');}}});
+  document.body.appendChild(d);
+  try{d.querySelector('[data-x="close"]').focus();}catch(x){}
+  return d;
  },
  /** סרטון מדריך שלא מתנגן — בודק את הקובץ באתר ומציג את הסיבה מתחת לנגן */
  async guideVidDiag(v){
