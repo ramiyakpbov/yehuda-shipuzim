@@ -763,6 +763,14 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .photos .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);}
 .photos .ph img{width:100%;height:100%;}
 .photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
+.noitems{background:var(--bg3);border:1px dashed var(--warn);border-radius:12px;padding:12px;margin-top:14px;}
+.noitems-t{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:14px;}
+.noitems-d{font-size:12.5px;color:var(--muted);margin:6px 0 10px;line-height:1.5;}
+.noitems-b{display:flex;gap:8px;}
+.noitems-b .btn-ghost{flex:1;margin:0;display:flex;align-items:center;justify-content:center;gap:6px;}
+.noitems.flash{animation:noitemsFlash 1.2s ease-out 1;}
+@keyframes noitemsFlash{0%{box-shadow:0 0 0 0 rgba(245,166,35,.7);}100%{box-shadow:0 0 0 14px rgba(245,166,35,0);}}
+@media (prefers-reduced-motion:reduce){.noitems.flash{animation:none;}}
 .err-panel{position:fixed;inset:0;z-index:650;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px;}
 .err-panel-card{background:var(--bg2);color:var(--txt);border:1px solid var(--line);border-radius:14px;padding:16px;width:100%;max-width:420px;max-height:86vh;max-height:86svh;overflow:auto;box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .err-panel-t{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:15px;margin-bottom:8px;}
@@ -3300,7 +3308,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.9';
+const VERSION='24.0';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3545,7 +3553,8 @@ const GUIDE=[
    <li>ה-AI מעתיק את הסעיפים, היחידות והכמויות. "קומפלט" נכנס כ"גלובלי".</li>
    <li><b>למעלה, פעם אחת:</b> אחוז הוצאות כלליות ואחוז רווח.</li>
    <li><b>לכל סעיף, שני מספרים:</b> עלות חומר ועלות עבודה (או קבלן משנה) ליחידה. המחיר, הסה״כ, המע״מ והרווח מחושבים לבד.</li>
-   <li><b>העבר להצעה</b> ← מסך האישור הרגיל ← PDF, לינק ומעקב כרגיל.</li></ol>
+   <li><b>העבר כמחשבון (עם מחירים)</b> ← מסך האישור הרגיל ← PDF, לינק ומעקב כרגיל.</li>
+   <li><b>או: העבר כהצעת תכנון (למ"ר)</b> — בלי להזין עלויות. כל סעיף עם כמות עובר, והשטח שכתוב במפרט (למשל "שטח המתחם 82 מ"ר") נכנס לשדה השטח. את המחיר למ"ר מקלידים בפרטי ההצעה.</li></ol>
    <ul class="g-ul"><li><b>"מחירון X"</b> ליד סעיף — המחיר שלך במחירון, להשוואה. סטייה של יותר מ-30% מסומנת באדום — כדי לתפוס טעות הקלדה.</li>
    <li><b>"לא כלול"</b> ו<b>"לבירור"</b> — מה שהמפרט מגדיר אופציונלי, ומה שלא ברור בכמויות.</li>
    <li><b>פרטי הלקוח מזוהים מהמסמך</b> — שם, טלפון, פרויקט וכתובת מופיעים בראש המסך לבדיקה, ונרשמים אוטומטית בפרטי ההצעה בהעברה. האדריכל ומספר המסמך נכנסים להערות הפנימיות.</li>
@@ -3626,7 +3635,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>חיבור ל-AI שנקטע באמצע</b> — ההודעה אומרת "החיבור לשרת ה-AI נקטע" (ולא "אין חיבור לרשת" כשהאינטרנט בטלפון עובד), בקריאת שטח עוברים למודל הבא, ובחלון השגיאה מופיעה גם ההודעה המקורית.</li>
+   b:`<ul class="g-ul"><li><b>איפה מוסיפים סעיפים</b> — בפרטי ההצעה, כשאין סעיפים, מופיעה תיבה עם שני כפתורים: <b>מהמחירון</b> ו<b>מקובץ (AI)</b>. ולחיצה על PDF בלי סעיפים מובילה אליה.</li>
+   <li><b>כתב כמויות → הצעת תכנון</b> — "העבר כהצעת תכנון (למ"ר)" מעביר את הסעיפים והכמויות של האדריכל בלי להזין עלויות, עם השטח שכתוב במפרט.</li>
+   <li><b>חיבור ל-AI שנקטע באמצע</b> — ההודעה אומרת "החיבור לשרת ה-AI נקטע" (ולא "אין חיבור לרשת" כשהאינטרנט בטלפון עובד), בקריאת שטח עוברים למודל הבא, ובחלון השגיאה מופיעה גם ההודעה המקורית.</li>
    <li><b>קרא שטח — כשמשהו נכשל, רואים מה קרה</b> — במקום הודעה שנעלמת אחרי 2 שניות, נפתח חלון שנשאר עד "סגור": השלב, הזמן, וכל מודל שנוסה — כמה שניות ומה קרה. אפשר להעתיק. מודל שלא ענה בזמן — עוברים למודל הבא, והמודלים שענו בבדיקת החיבור מנוסים קודם. בשלב 1 ה-AI "חושב" פחות, כדי לענות מהר יותר על הרבה תוכניות.</li>
    <li><b>סרטוני מדריך חדשים</b> — חדים פי 2, עם פתיחה שמראה מה בסרטון, הסבר מפורט לכל שלב, מסגרת סביב הכפתור שמדברים עליו, וסיכום בסוף.</li>
    <li><b>סרטוני המדריך במסך מלא</b> — הסרטונים תוקנו: האפליקציה ממלאת את כל המסגרת, בגודל מסך הטלפון.</li>
@@ -5207,7 +5218,9 @@ const App={
    ((p.excluded||[]).length?'<h3 class="tk-sec"><span>לא כלול / אופציונלי — מחוץ לסה״כ</span></h3><ul class="tk-facts">'+p.excluded.map(x=>'<li>'+ico('x',14)+'<span><b>'+esc(x.desc)+'</b> — '+esc(x.why||'')+'</span></li>').join('')+'</ul>':'')+
    ((p.questions||[]).length?'<h3 class="tk-sec"><span>לבירור מול האדריכל</span><b>'+p.questions.length+'</b></h3><ul class="tk-facts">'+p.questions.map(x=>'<li>'+ico('circle-help',14)+'<span>'+esc(x)+'</span></li>').join('')+'</ul>'+
      '<button class="tk-btn sm ghost" id="boq-copyq">'+ico('copy',15)+'העתק את השאלות</button>':'')+
-   '<div class="tk-acts boq-acts"><button class="tk-btn pri" id="boq-apply">'+ico('check',16)+'העבר להצעה</button>'+
+   '<div class="tk-acts boq-acts"><button class="tk-btn pri" id="boq-apply">'+ico('check',16)+'העבר כמחשבון (עם מחירים)</button>'+
+     // v24.0 — הצעת תכנון: הסעיפים והכמויות בלי עלויות; המחיר למ"ר נקבע בפרטי ההצעה
+     '<button class="tk-btn" id="boq-apply-plan">'+ico('ruler',16)+'העבר כהצעת תכנון (למ"ר) — בלי עלויות'+(+p.area>0?' · '+(+p.area).toLocaleString('he-IL')+' מ"ר':'')+'</button>'+
      '<button class="tk-btn" id="boq-new">'+ico('file-text',16)+'כתב כמויות חדש</button></div>';
  },
  /** עדכון המספרים במקום — בלי render, כדי שהמקלדת לא תיסגר אחרי כל ספרה. */
@@ -5270,7 +5283,8 @@ const App={
    docRef:DC.docRef,docDate:DC.docDate,
    files:(files||[]).map(d=>d.name),at:Date.now(),oh:null,pr:null,vat:+Store.get('vatPct',18)||18,sections:sections,
    excluded:(Array.isArray(o&&o.excluded)?o.excluded:[]).filter(x=>x&&x.desc).slice(0,30).map(x=>({desc:S(x.desc).slice(0,200),why:S(x.why).slice(0,80)})),
-   questions:(Array.isArray(o&&o.questions)?o.questions:[]).map(S).filter(Boolean).slice(0,20)};
+   questions:(Array.isArray(o&&o.questions)?o.questions:[]).map(S).filter(Boolean).slice(0,20),
+   area:(isFinite(+(o&&o.area_sqm))&&+o.area_sqm>0&&+o.area_sqm<100000)?Math.round(+o.area_sqm*100)/100:0};
  },
  async boqAnalyze(){
   const D=this._boqDocs||[];if(!D.length){this.toast('לא נבחר קובץ');return;}
@@ -5284,7 +5298,7 @@ const App={
     sections:{type:'array',items:{type:'object',properties:{title:str,cat:str,
       items:{type:'array',items:{type:'object',properties:{num:str,desc:str,unit:str,qty:{type:'number'},qty_note:str,ref:str},required:['desc','unit']}}},required:['title','items']}},
     excluded:{type:'array',items:{type:'object',properties:{desc:str,why:str},required:['desc','why']}},
-    questions:{type:'array',items:str}},required:['sections']};
+    questions:{type:'array',items:str},area_sqm:{type:'number'}},required:['sections']};
   const P=['אתה מהנדס כמויות. מצורף כתב כמויות / מפרט טכני של אדריכל — טופס מכרז. העתק את הסעיפים לתמחור בדיוק כמו שהם.',
    '1. desc — הניסוח של האדריכל, כמעט מילה במילה. מותר רק לקצר רשימה ארוכה בסוגריים. אל תנסח מחדש.',
    '2. פרקים וסדר — כמו במסמך. title = שם הפרק (למשל "בניה — תקרות").',
@@ -5299,6 +5313,7 @@ const App={
    '11. המסמך יכול להיות בכל פורמט: טבלה (מס׳ סעיף, תיאור, יח׳, כמות, מחיר, סה״כ), כמה עמודים, פרקים ותתי-פרקים, מפרט עם עמודת כמות, או PDF שיוצא מאקסל. עמודות מחיר ריקות — התעלם מהן.',
    '12. num — מספר הסעיף כמו במסמך (למשל 01.02.030 או 3.4), אם יש. אחרת ריק.',
    '13. כמה קבצים: רק טבלה / מפרט עם עמודת כמות הוא מקור לסעיפים. שרטוטים (תוכנית בנייה, חשמל, תקרות, אינסטלציה, מבטים) — לא מקור לסעיפים ולא לכמויות; השתמש בהם רק לפרטי הפרויקט מבלוק החותמת.',
+   '14. area_sqm — שטח הנכס הכולל במ"ר, רק אם כתוב במסמך במפורש (למשל "שטח המתחם 82 מ"ר נטו"). לא כתוב — השמט. אל תחשב ואל תסכם סעיפים.',
    ...this.docProjPrompt(),
    'החזר JSON בלבד.'].join(NL);
   try{
@@ -5311,16 +5326,18 @@ const App={
    this.toast(p.sections.reduce((a,s)=>a+s.items.length,0)+' סעיפים נקראו ✓');
   }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
  },
- boqToQuote(){
+ boqToQuote(mode){
   const p=this.boqGet();if(!p)return;const R=this.boqCalc(p);
+  // plan: הצעת תכנון — כל סעיף עם כמות עובר, גם בלי עלות (ב-PDF של תכנון אין מחיר לשורה)
+  const plan=mode==='plan';
   const items=[];let skip=0;
   p.sections.forEach((s,si)=>s.items.forEach((it,ii)=>{const c=R.secs[si].items[ii];
-    if(c.q===null||!c.price){skip++;return;}
+    if(c.q===null||(!plan&&!c.price)){skip++;return;}
     // מספור האדריכל בתחילת השורה — כדי שההשוואה תהיה שורה מול שורה
     const nm=(it.num?String(it.num).trim()+' — ':'')+it.desc;
     // temp: סעיף של הפרויקט הזה בלבד — לא נשמר לצמיתות במחירון של יהודה
-    items.push({name:nm,qty:c.q,unit:it.unit,price:c.price,cat:s.cat||'custom',ref:'',ok:true,temp:true});}));
-  if(!items.length){this.toast('אין עדיין סעיפים עם עלות וכמות');return;}
+    items.push({name:nm,qty:c.q,unit:it.unit,price:c.price||0,cat:s.cat||'custom',ref:'',ok:true,temp:true});}));
+  if(!items.length){this.toast(plan?'אין סעיפים עם כמות':'אין עדיין סעיפים עם עלות וכמות');return;}
   // פרטי הלקוח שזוהו — אישור אנושי לפני שהם נרשמים בהצעה. ה-AI יכול לטעות בקריאה
   // ("מרפאת שיניים" נקראה "מרפסת שיפוצים"), והפרטים האלה נשלחים ללקוח.
   const pc=p.client;
@@ -5330,7 +5347,8 @@ const App={
       const el=document.querySelector('.boq-cl');if(el)el.scrollIntoView({block:'start',behavior:'smooth'});return;}
     pc.ok=true;this.boqSave(p);
   }
-  if(skip&&!confirm(skip+' סעיפים בלי עלות או כמות לא יועברו.\n\nלהעביר את '+items.length+' המתומחרים?'))return;
+  if(skip&&!confirm(plan?(skip+' סעיפים בלי כמות לא יועברו.\n\nלהעביר את '+items.length+' הסעיפים עם כמות?')
+    :(skip+' סעיפים בלי עלות או כמות לא יועברו.\n\nלהעביר את '+items.length+' המתומחרים?')))return;
   // הצעה פתוחה עם סעיפים — נשמרת כטיוטה ב"כל ההצעות", ומתחילה הצעה חדשה לפרויקט.
   // resetCurrentQuote לבדה לא שומרת — הצעה נשמרת להיסטוריה רק ב-PDF או לינק.
   let had=0;try{had=this.chosen().reduce((a,g)=>a+g.lines.length,0);}catch(e){}
@@ -5349,7 +5367,9 @@ const App={
   this.state.client=Object.assign({},cur,{name:c.name||cur.name||'',phone:c.phone||cur.phone||'',
     project:c.project||cur.project||'',address:c.address||cur.address||'',
     notes:curN.indexOf(note)>=0?curN:[curN,note].filter(Boolean).join(NL)});
-  this._aiQuoteType='calc';this._v2qResult=items;this.state.modal='v2qreview';this.render();
+  // שטח שכתוב במפרט → שדה השטח, אם עוד ריק (לא דורס שטח שהוזן או נקרא מתוכנית)
+  if(plan&&+p.area>0&&!(+this.state.planTotalSqm>0)){this.state.planTotalSqm=+p.area;Store.set('planTotalSqm',+p.area);}
+  this._aiQuoteType=plan?'plan':'calc';this._v2qResult=items;this.state.modal='v2qreview';this.render();
  },
 
  /* ═══ קבצים ל-AI — PDF ותמונות, אחד או כמה ═══
@@ -7753,6 +7773,11 @@ const App={
    <div class="sec-title">גלריית עבודות בהצעה 🖼️</div>
    <label style="display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14px"><span>כלול גלריית "עבודות אחרונות" בתחתית ה-PDF</span><input type="checkbox" id="q_gallery" ${s.includeGallery?'checked':''} style="width:22px;height:22px"/></label>
    <button class="btn-ghost" id="open-portfolio" style="margin-top:8px">🖼️ נהל תמונות עבודה</button>
+   ${this.chosen().length?'':`<div class="noitems" id="noitems" role="note">
+     <div class="noitems-t">${ico('clipboard-list',18)}<b>אין עדיין סעיפים בהצעה</b></div>
+     <div class="noitems-d">${s.planMode?'גם בהצעת תכנון צריך סעיפים וכמויות — ה-PDF מציג אותם בלי מחיר לשורה, ובסוף את המחיר למ"ר.':'מוסיפים סעיפים מהמחירון, או נותנים ל-AI לקרוא אותם מקובץ.'}</div>
+     <div class="noitems-b"><button type="button" class="btn-ghost" id="noitems-cat">${ico('calculator',16)} מהמחירון</button>
+       <button type="button" class="btn-ghost" id="noitems-ai">${ico('sparkles',16)} מקובץ (AI)</button></div></div>`}
    <div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:14px;">
      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>סכום ביניים</span><b style="color:var(--txt)">${nis(this.subtotal())}</b></div>
      ${(+s.discount>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--red);margin-top:6px"><span>הנחה (${s.discount}%)</span><b>- ${nis(this.discountAmt())}</b></div>`:''}
@@ -9472,6 +9497,9 @@ const App={
   const syt=document.getElementById('sync-toggle');if(syt)syt.onclick=async()=>{const on=!Store.get('syncOn',true);Store.set('syncOn',on);if(on){this.toast('מפעיל סנכרון…');await Sync.init(()=>{this.render();});await Sync.push(true);this.toast(Sync.status==='on'?'סנכרון פעיל ✓':'סנכרון נכשל');}else{Sync.stop();this.toast('סנכרון כובה');}this.render();};
   const syn=document.getElementById('sync-now');if(syn)syn.onclick=async()=>{if(!Sync.enabled()){this.toast('הפעל סנכרון קודם');return;}this.toast('מסנכרן…');const ok=await Sync.push(true);await Sync.init(()=>this.render());this.toast(ok||Sync.status==='on'?'סונכרן ✓':'סנכרון נכשל');this.render();};
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{if(!confirm('לאפס את המחירון למחירי ברירת המחדל 2026?\nהכמויות יתאפסו · תתי-הסעיפים שהוספת יישארו (עם איפוס כמות).'))return;this.state.catalog=JSON.parse(JSON.stringify(CATALOG));const clr=arr=>{if(arr)arr.forEach(it=>{it.selected=false;it.qty='';});};Object.values(this.state.subItems||{}).forEach(clr);clr(this.state.custom);Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);this.save();this.toast('המחירון אופס · הכמויות אופסו · תתי-הסעיפים נשמרו ✓');this.render();};
+  // v24.0 — "אין עדיין סעיפים": מהמחירון (לשונית הצעה) / מקובץ (עוזר ההצעות)
+  {const nc=document.getElementById('noitems-cat');if(nc)nc.onclick=()=>{try{this.captureQuote();}catch(e){}this._navStack=[];this.state.modal=null;this.state.tab='build';this.haptic(8);try{window.scrollTo(0,0);}catch(x){}this.render();this.toast('נגיעה בקטגוריה ← מסמנים סעיף ← כמות');};
+   const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();}
   const obk=document.getElementById('open-backup');if(obk)obk.onclick=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='backup';this.render();};
   const cpr=document.getElementById('check-prices');if(cpr)cpr.onclick=()=>this.checkPriceFreshness();
   const hcp=document.getElementById('hub-check-prices');if(hcp)hcp.onclick=()=>this.checkPriceFreshness();
@@ -9496,6 +9524,7 @@ const App={
       if(bad.length)this.toast(this.docBadMsg(bad));};
     const go=document.getElementById('boq-go');if(go)go.onclick=()=>this.boqAnalyze();
     const ap=document.getElementById('boq-apply');if(ap)ap.onclick=()=>this.boqToQuote();
+    const app=document.getElementById('boq-apply-plan');if(app)app.onclick=()=>this.boqToQuote('plan');
     // "כתב כמויות חדש" ו"כל הפרויקטים" — לא מוחקים כלום; הפרויקט נשמר ברשימה
     ['boq-new','boq-list'].forEach(id=>{const b=document.getElementById(id);if(b)b.onclick=()=>{Store.set('boqActive',null);this._boqDocs=[];this.render();};});
     on('[data-boqopen]','click',e=>{Store.set('boqActive',e.currentTarget.dataset.boqopen);this.render();});
@@ -10980,8 +11009,8 @@ const App={
   }catch(e){this.idle();this.toast('\u05d9\u05e6\u05d9\u05e8\u05ea \u05d4\u05dc\u05d9\u05e0\u05e7 \u05e0\u05db\u05e9\u05dc\u05d4');}
  },
  async makeProposalLink(){this.captureQuote();
-  if(this.preflightBlock('link'))return;if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.trName(l),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
-  if(!items.length){this.toast('בחר לפחות פריט אחד');return;}
+  if(this.preflightBlock('link'))return;if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');return;}if(!this.chosen().length){this.noItems();return;}if(!confirm('לשלוח הצעה ל'+this.state.client.name+'?\nסה"כ: '+nis(this.grand())))return;this.busy('יוצר לינק…');this.saveClient();const s=this.state,c=s.client;const groups=this.chosen();const items=[];groups.forEach(g=>g.lines.forEach(l=>items.push({n:this.trName(l),q:l.qty,p:l.price,u:l.unit||'',c:g.cat.title})));
+  if(!items.length){this.noItems();return;}
   // materials as real rows inside the items table
   const matRow=(on,inc,price,items,label)=>{if(!on)return null;
     const names=(items&&items.length)?items.join(', '):'כלול';
@@ -11188,7 +11217,19 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   }
   this.idle();
  },
- async generatePDF(share){if(!this.chosen().length){this.toast('בחר לפחות פריט אחד');return;}
+ /** v24.0 — אין סעיפים: בחלון פרטי ההצעה — גוללים לתיבה "אין עדיין סעיפים" (מהמחירון / מקובץ), במקום הודעה שלא אומרת איפה מוסיפים. */
+ noItems(){const b=document.getElementById('noitems');
+  if(b){try{b.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){}b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash');
+    this.toast('אין סעיפים בהצעה — הוסף מהמחירון או מקובץ');return;}
+  this.toast('אין סעיפים בהצעה — לשונית "הצעה" למטה: מסמנים סעיף ומקלידים כמות');},
+ /** עוזר ההצעות (מוגן בקוד, כמו מהתפריט) */
+ openAiHub(){
+  if(!this._aiUnlocked){const code=prompt('🔒 עוזר ה-AI מוגן בקוד.\nהזן קוד גישה:');if(code===null)return;
+    if(!this.gateOk(code)){this.gateDenied();return;}this._aiUnlocked=true;}
+  try{this.captureQuote();}catch(e){}
+  if(this.state.modal)this._navStack.push(this.state.modal);
+  this._aiQuoteType=this.state.planMode?'plan':'calc';this.state.modal='aihub';this.render();},
+ async generatePDF(share){if(!this.chosen().length){this.noItems();return;}
   this.captureQuote();
   if(this.preflightBlock(share?'pdfshare':'pdf'))return;
   if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
