@@ -771,6 +771,7 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .err-panel-l{font-size:12px;font-weight:700;margin:4px 0;}
 .err-panel-tr{font-size:12px;line-height:1.6;margin:0 0 10px;padding-inline-start:20px;}
 .err-panel-b{display:flex;gap:8px;justify-content:flex-start;}
+.err-panel-d{font-size:11px;color:var(--muted);text-align:left;word-break:break-word;}
 .err-panel-b .tk-btn{flex:1;}
 .toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#000;color:#fff;padding:11px 18px;border-radius:10px;font-size:12.5px;z-index:600;border:1px solid var(--line);max-width:88%;text-align:center;}
 .busy-ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
@@ -3299,7 +3300,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='23.8';
+const VERSION='23.9';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3625,7 +3626,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>קרא שטח — כשמשהו נכשל, רואים מה קרה</b> — במקום הודעה שנעלמת אחרי 2 שניות, נפתח חלון שנשאר עד "סגור": השלב, הזמן, וכל מודל שנוסה — כמה שניות ומה קרה. אפשר להעתיק. מודל שלא ענה בזמן — עוברים למודל הבא, והמודלים שענו בבדיקת החיבור מנוסים קודם. בשלב 1 ה-AI "חושב" פחות, כדי לענות מהר יותר על הרבה תוכניות.</li>
+   b:`<ul class="g-ul"><li><b>חיבור ל-AI שנקטע באמצע</b> — ההודעה אומרת "החיבור לשרת ה-AI נקטע" (ולא "אין חיבור לרשת" כשהאינטרנט בטלפון עובד), בקריאת שטח עוברים למודל הבא, ובחלון השגיאה מופיעה גם ההודעה המקורית.</li>
+   <li><b>קרא שטח — כשמשהו נכשל, רואים מה קרה</b> — במקום הודעה שנעלמת אחרי 2 שניות, נפתח חלון שנשאר עד "סגור": השלב, הזמן, וכל מודל שנוסה — כמה שניות ומה קרה. אפשר להעתיק. מודל שלא ענה בזמן — עוברים למודל הבא, והמודלים שענו בבדיקת החיבור מנוסים קודם. בשלב 1 ה-AI "חושב" פחות, כדי לענות מהר יותר על הרבה תוכניות.</li>
    <li><b>סרטוני מדריך חדשים</b> — חדים פי 2, עם פתיחה שמראה מה בסרטון, הסבר מפורט לכל שלב, מסגרת סביב הכפתור שמדברים עליו, וסיכום בסוף.</li>
    <li><b>סרטוני המדריך במסך מלא</b> — הסרטונים תוקנו: האפליקציה ממלאת את כל המסגרת, בגודל מסך הטלפון.</li>
    <li><b>קרא שטח — מהיר יותר ועם הסיבה הנכונה</b> — שלב 1 נשלח ברזולוציה רגילה (ההגדלה בשלב 2). ספק שחשבונו חסום עד תאריך לא מקבל בקשות עד אז, וההודעה מציגה את הסיבה האמיתית.</li>
@@ -3882,7 +3884,8 @@ const AI=(()=>{
    const r=await fetch(url,Object.assign({},init,ac?{signal:ac.signal}:{}));
    let d=null;try{d=await r.json();}catch(e){if(e&&e.name==='AbortError')throw e;}
    return {r:r,d:d};
-  }catch(e){if(e&&e.name==='AbortError')throw (ac&&ac._cancel)?E('cancelled',false):E('timeout');throw e;}
+  // v23.9: כל כשל אחרי שהטיימר שלנו ביטל — "לא ענה בזמן", גם אם הדפדפן מחזיר שגיאה בשם אחר
+  }catch(e){if((e&&e.name==='AbortError')||(ac&&ac.signal&&ac.signal.aborted))throw (ac&&ac._cancel)?E('cancelled',false):E('timeout');throw e;}
   finally{if(t)clearTimeout(t);if(ac)LIVE.delete(ac);}
  }
  // מה שנלמד על השרת: האם פלט מובנה נתמך. נבדק מחדש אחרי שבוע.
@@ -4008,15 +4011,18 @@ const AI=(()=>{
   // אם הכותרת נחסמה פעם והכתובת עבדה — זוכרים לשבוע, בלי ניסיון מבוזבז בכל קריאה
   const viaQuery=()=>{const c=caps();return c.gHdr===false&&Date.now()-(+c.at||0)<7*864e5;};
   const byQuery=(ws,hr)=>fetchJ(base+'?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:bodyOf(ws,hr)},to);
-  const send=async (ws,hr)=>{
+  // v23.9: חיבור שנקטע — השגיאה המקורית של הדפדפן נשמרת (detail), כדי שיהיה ברור מה קרה.
+  const net=x=>{try{Store.logErr('ai',x);}catch(_){}const n=E('network');n.detail='Gemini '+mdl+': '+String((x&&x.message)||x||'').slice(0,100);return n;};
+  const send=async (ws,hr)=>{const ts=Date.now();
    try{
     if(viaQuery())return await byQuery(ws,hr);
     return await fetchJ(base,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:bodyOf(ws,hr)},to);
    }catch(e){
     if(e&&(e.message==='timeout'||e.message==='cancelled'))throw e;
-    if(viaQuery()){try{Store.logErr('ai',e);}catch(x){} throw E('network');}
+    // ניסיון בכתובת עם המפתח — רק כשהכשל היה מיידי (כותרת חסומה). חיבור שנקטע אחרי דקות — לא שולחים שוב את כל הבקשה.
+    if(viaQuery()||Date.now()-ts>15000)throw net(e);
     try{const out=await byQuery(ws,hr);caps({gHdr:false});return out;}
-    catch(e2){if(e2&&(e2.message==='timeout'||e2.message==='cancelled'))throw e2;try{Store.logErr('ai',e2);}catch(x){} throw E('network');}
+    catch(e2){if(e2&&(e2.message==='timeout'||e2.message==='cancelled'))throw e2;throw net(e2);}
    }};
   const ws=!!schema&&schemaOn();
   const mediaOn=()=>{const c=caps();return !(c.gMedia===false&&Date.now()-(+c.at||0)<7*864e5);};
@@ -4097,16 +4103,19 @@ const AI=(()=>{
       if((i>0||j>0)&&typeof opts.onFallback==='function'){try{opts.onFallback(p==='gemini'?'Gemini '+mdl:nameOf(p));}catch(e){}}
       return txt;
      }catch(e){last=e;errs.push({p:p,e:e});
-      const ms=Date.now()-ta;tr.push({m:tag,ms:ms,r:(e&&e.message)||'?'});
+      const ms=Date.now()-ta;
       if(p==='gemini'&&e)gNote(mdl,e.message);
       if(e&&e.message==='timeout'&&!e.detail)e.detail=(p==='gemini'?'Gemini '+mdl:nameOf(p))+' לא ענה תוך '+Math.round(ms/1000)+' שנ\'';
+      tr.push({m:tag,ms:ms,r:(e&&e.message)||'?',d:String((e&&e.detail)||'').slice(0,120)});
       if(e&&e.detail&&why.indexOf(e.detail)<0)why.push(e.detail);
       if(p==='claude'&&e&&(e.message==='limit'||e.message==='credit'))pBlock(p,e);   // ב-Gemini — הרוטציה מטפלת
       // עומס רגעי בשרת: עוד ניסיון אחד באותו מודל אחרי שנייה וחצי — רק כשאין מודל אחר לעבור אליו
       if(k===0&&e&&e.message==='busy'&&j===models.length-1&&cancelAt<t0){await new Promise(r=>setTimeout(r,opts.retryMs!=null?opts.retryMs:1500));if(cancelAt<t0)continue;}
       // מכסה / עומס / מגבלה — המודל הבא ברשימה. מכסה: מדלגים עליו 20 דק', כדי לא לבזבז ניסיון בכל בקשה.
       // לא ענה בזמן — גם כן המודל הבא, אבל רק בבקשה עם תקציב זמן (budget), אחרת ההמתנה מוכפלת.
-      if(p==='gemini'&&e&&(ROT.indexOf(e.message)>=0||(budget&&e.message==='timeout'))&&cancelAt<t0){if(e.message==='quota'||e.message==='limit')gMark(mdl,20*60000);moved=true;}
+      // v23.9: וגם חיבור שנקטע באמצע (הטלפון עדיין מחובר) — בבקשה עם budget.
+      const offline=typeof navigator!=='undefined'&&navigator.onLine===false;
+      if(p==='gemini'&&e&&(ROT.indexOf(e.message)>=0||(budget&&(e.message==='timeout'||(e.message==='network'&&!offline))))&&cancelAt<t0){if(e.message==='quota'||e.message==='limit')gMark(mdl,20*60000);moved=true;}
       break;}
     }
     if(!moved)break;
@@ -4742,7 +4751,8 @@ const App={
   if(k==='credit')return 'נגמר הקרדיט בחשבון ה-AI — צריך לטעון קרדיט אצל הספק'+(e&&e.detail?' ('+e.detail.slice(0,90)+')':'');
   if(k==='bad-json')return 'ה-AI החזיר תשובה לא מובנת — נסה שוב';
   if(k==='ai-error')return 'ה-AI החזיר שגיאה — נסה שוב'+(e&&e.detail?' ('+e.detail.slice(0,110)+')':'');
-  if(k==='network')return 'אין חיבור לרשת — בדוק אינטרנט';
+  // v23.9: "אין חיבור" רק כשהטלפון באמת לא מחובר. אחרת — החיבור לשרת נקטע (לרמי: אחרי 1:59, כשהאינטרנט עבד)
+  if(k==='network')return (typeof navigator!=='undefined'&&navigator.onLine===false)?'אין חיבור לרשת — בדוק אינטרנט':'החיבור לשרת ה-AI נקטע באמצע — נסה שוב';
   // שגיאות קובץ — לא חיבור. קודם נפלו לברירת המחדל, ויהודה בדק את האינטרנט.
   if(k==='cancelled')return 'הפעולה בוטלה';
   if(k==='too-big')return 'הקבצים גדולים מדי לשליחה — הסר קובץ או שלח פחות עמודים';
@@ -5636,9 +5646,13 @@ const App={
   document.querySelectorAll('.err-panel').forEach(x=>x.remove());
   const he={'ok':'ענה','bad-key':'מפתח לא תקין','quota':'מכסה נגמרה','busy':'עמוס','timeout':'לא ענה בזמן','network':'אין רשת',
     'ai-error':'שגיאה','bad-json':'תשובה לא מובנת','credit':'נגמר הקרדיט','too-big':'בקשה גדולה מדי','limit':'מגבלת שימוש','skip':'לא נוסה — נגמר הזמן'};
-  const T=(trace||[]).map(x=>({m:String(x.m||''),s:Math.round((x.ms||0)/1000),r:he[x.r]||String(x.r||'')}));
-  const rows=T.map(x=>'<li><bdi dir="ltr">'+esc(x.m)+'</bdi> · '+(x.r==='לא נוסה — נגמר הזמן'?'':x.s+' שנ׳ · ')+esc(x.r)+'</li>').join('');
-  const txt=[title,msg,at?'שלב: '+at:''].concat(T.map(x=>x.m+' · '+x.s+'s · '+x.r)).concat(['v'+VERSION]).filter(Boolean).join('\n');
+  if(!(typeof navigator!=='undefined'&&navigator.onLine===false))he.network='החיבור נקטע';
+  // הודעת השרת / הדפדפן — רק כשהיא מוסיפה מידע (לא "לא ענה תוך…", שכבר בשורה)
+  const raw=x=>{const d=String(x.d||'').replace(/^(Gemini|Claude)\s+\S*?:\s*/,'').replace(/^Gemini\s+/,'');return (x.r==='timeout'||!d)?'':d;};
+  const T=(trace||[]).map(x=>({m:String(x.m||''),s:Math.round((x.ms||0)/1000),r:he[x.r]||String(x.r||''),d:raw(x)}));
+  const rows=T.map(x=>'<li><bdi dir="ltr">'+esc(x.m)+'</bdi> · '+(x.r==='לא נוסה — נגמר הזמן'?'':x.s+' שנ׳ · ')+esc(x.r)+
+    (x.d?'<div class="err-panel-d" dir="ltr">'+esc(x.d)+'</div>':'')+'</li>').join('');
+  const txt=[title,msg,at?'שלב: '+at:''].concat(T.map(x=>x.m+' · '+x.s+'s · '+x.r+(x.d?' · '+x.d:''))).concat(['v'+VERSION]).filter(Boolean).join('\n');
   const d=document.createElement('div');d.className='err-panel';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');
   d.innerHTML='<div class="err-panel-card"><div class="err-panel-t">'+ico('alert-triangle',18)+'<b>'+esc(title)+'</b></div>'+
     '<p class="err-panel-m">'+esc(msg)+'</p>'+(at&&String(msg).indexOf(at)<0?'<p class="err-panel-at">'+esc(at)+'</p>':'')+
@@ -8322,7 +8336,7 @@ const App={
   */
  aiCheckHtml(res){
   const why={'bad-key':'המפתח לא תקין','quota':'המכסה נגמרה','busy':'השירות עמוס','timeout':'לא ענה בזמן',
-    'network':'אין רשת','ai-error':'שגיאה','bad-json':'תשובה לא מובנת','credit':'נגמר הקרדיט בחשבון','too-big':'בקשה גדולה מדי','limit':'מגבלת שימוש בחשבון'};
+    'network':(navigator.onLine===false?'אין רשת':'החיבור נקטע'),'ai-error':'שגיאה','bad-json':'תשובה לא מובנת','credit':'נגמר הקרדיט בחשבון','too-big':'בקשה גדולה מדי','limit':'מגבלת שימוש בחשבון'};
   const rows=(res.rows||[]).map(r=>{
     const ok=r.state==='ok',none=r.state==='no-key';
     const tn=ok?'ok':(none?'neutral':'red');
