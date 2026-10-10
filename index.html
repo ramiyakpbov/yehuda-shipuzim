@@ -763,6 +763,12 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .photos .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);}
 .photos .ph img{width:100%;height:100%;}
 .photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
+.code-dlg{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;}
+.code-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 16px 14px;width:100%;max-width:320px;box-shadow:0 14px 40px rgba(0,0,0,.5);}
+.code-card label{display:block;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:12px;}
+.code-card input{width:100%;font-size:22px;letter-spacing:.3em;text-align:center;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--bg3);color:var(--txt);}
+.code-b{display:flex;gap:8px;margin-top:14px;}
+.code-b button{flex:1;margin:0;}
 .ai-tab{padding:4px 16px calc(var(--dock-h,150px) + 12px);}
 .ai-tab-h{font-size:19px;margin:6px 0 10px;}
 .ai-lock{text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:22px 16px;margin-top:18px;}
@@ -3313,7 +3319,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.1';
+const VERSION='24.2';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3641,7 +3647,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>לשונית AI</b> — עוזר ההצעות בלשונית משלו בסרגל התחתון, ליד מעקב. מוגן באותו קוד.</li>
+   b:`<ul class="g-ul"><li><b>חלון קוד חדש</b> — בכניסה לעוזר ה-AI כתוב רק "הזן קוד", בחלון של האפליקציה, עם מקלדת מספרים.</li>
+   <li><b>לשונית AI</b> — עוזר ההצעות בלשונית משלו בסרגל התחתון, ליד מעקב. מוגן באותו קוד.</li>
    <li><b>איפה מוסיפים סעיפים</b> — בפרטי ההצעה, כשאין סעיפים, מופיעה תיבה עם שני כפתורים: <b>מהמחירון</b> ו<b>מקובץ (AI)</b>. ולחיצה על PDF בלי סעיפים מובילה אליה.</li>
    <li><b>כתב כמויות → הצעת תכנון</b> — "העבר כהצעת תכנון (למ"ר)" מעביר את הסעיפים והכמויות של האדריכל בלי להזין עלויות, עם השטח שכתוב במפרט.</li>
    <li><b>חיבור ל-AI שנקטע באמצע</b> — ההודעה אומרת "החיבור לשרת ה-AI נקטע" (ולא "אין חיבור לרשת" כשהאינטרנט בטלפון עובד), בקריאת שטח עוברים למודל הבא, ובחלון השגיאה מופיעה גם ההודעה המקורית.</li>
@@ -7664,14 +7671,31 @@ const App={
  },
  /* עוזר ה-AI נעול בקוד המנהל. נפתח פעם אחת לכל הפעלה של האפליקציה,
     כדי שלא יידרש קוד בכל לחיצה. הקוד עצמו לא מופיע בקוד המקור. */
+ // v24.2 — חלון קוד של האפליקציה (prompt של הדפדפן הוסיף "האתר … אומר" ושני משפטים). כל הכניסות לעוזר עוברות כאן.
  aiGate(then){
-  if(this._aiUnlocked){then();return;}
-  const c=prompt('🔐 עוזר ה-AI מוגן\n\nהזן קוד מנהל:');
-  if(c===null||String(c).trim()===''){this.toast('בוטל');return;}
-  if(!this.gateOk(c)){this.gateDenied();return;}
-  this._aiUnlocked=true;this.haptic(15);
-  this.toast('🔓 עוזר ה-AI נפתח להפעלה זו');
-  then();
+  if(this._aiUnlocked){if(then)then();return Promise.resolve(true);}
+  return this.askCode().then(c=>{
+   if(c===null||String(c).trim()==='')return false;
+   if(!this.gateOk(c)){this.gateDenied();return false;}
+   this._aiUnlocked=true;this.haptic(15);this.toast('נפתח ✓');
+   if(then)then();return true;});
+ },
+ /** חלון "הזן קוד" — שדה, ביטול, אישור. Promise: הקוד, או null בביטול. */
+ askCode(){
+  return new Promise(res=>{
+   document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
+   const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','code-t');
+   d.innerHTML='<form class="code-card" autocomplete="off"><label id="code-t" for="code-in">הזן קוד</label>'+
+     '<input id="code-in" type="password" inputmode="numeric" autocomplete="off" maxlength="12" dir="ltr"/>'+
+     '<div class="code-b"><button type="button" class="btn-ghost" id="code-no">ביטול</button><button type="submit" class="tk-btn pri" id="code-ok">אישור</button></div></form>';
+   let done=false;const end=v=>{if(done)return;done=true;d.remove();res(v);};
+   d.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();end(d.querySelector('#code-in').value);});
+   d.querySelector('#code-no').addEventListener('click',()=>end(null));
+   d.addEventListener('click',ev=>{if(ev.target===d)end(null);});
+   d.addEventListener('keydown',ev=>{if(ev.key==='Escape')end(null);});
+   document.body.appendChild(d);
+   setTimeout(()=>{try{d.querySelector('#code-in').focus();}catch(e){}},30);
+  });
  },
  gateOk(code){
   const c=String(code==null?'':code).trim();
@@ -8686,14 +8710,6 @@ const App={
      <button type="button" class="btn-block" id="ai-tab-unlock">הזן קוד</button></div></div>`;
   return `<div class="ai-tab"><h2 class="ai-tab-h">✨ עוזר ההצעות</h2>${this.aiHubBody()}</div>`;
  },
- /** פתיחת הנעילה (אותו קוד, פעם אחת לכל הפעלה). מחזיר true אם פתוח. */
- aiGate(){
-  if(this._aiUnlocked)return true;
-  const code=prompt('🔒 עוזר ה-AI מוגן בקוד.\nהזן קוד גישה:');
-  if(code===null)return false;
-  if(!this.gateOk(code)){this.gateDenied();return false;}
-  this._aiUnlocked=true;this.toast('נפתח ✓');return true;
- },
  aiHubModal(){return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>`+this.aiHubBody();},
  aiHubBody(){
   // נפתח על סוג ההצעה הנוכחית — קודם תמיד על "מחשבון", גם כשההצעה כבר תכנון
@@ -9526,7 +9542,7 @@ const App={
   // v24.0 — "אין עדיין סעיפים": מהמחירון (לשונית הצעה) / מקובץ (עוזר ההצעות)
   {const nc=document.getElementById('noitems-cat');if(nc)nc.onclick=()=>{try{this.captureQuote();}catch(e){}this._navStack=[];this.state.modal=null;this.state.tab='build';this.haptic(8);try{window.scrollTo(0,0);}catch(x){}this.render();this.toast('נגיעה בקטגוריה ← מסמנים סעיף ← כמות');};
    const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();}
-  {const au=document.getElementById('ai-tab-unlock');if(au)au.onclick=()=>{if(this.aiGate())this.render();};}
+  {const au=document.getElementById('ai-tab-unlock');if(au)au.onclick=()=>this.aiGate(()=>this.render());}
   const obk=document.getElementById('open-backup');if(obk)obk.onclick=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='backup';this.render();};
   const cpr=document.getElementById('check-prices');if(cpr)cpr.onclick=()=>this.checkPriceFreshness();
   const hcp=document.getElementById('hub-check-prices');if(hcp)hcp.onclick=()=>this.checkPriceFreshness();
@@ -9886,7 +9902,8 @@ const App={
   on('[data-gotab]','click',e=>{
     const t=e.currentTarget.dataset.gotab;
     if(!t)return;
-    if(t==='ai'&&!this.aiGate())return;   // v24.1 — קוד, כמו מהתפריט
+    // v24.1 — קוד, כמו מהתפריט. v24.2: החלון של האפליקציה — המעבר קורה אחרי האישור
+    if(t==='ai'&&!this._aiUnlocked){this.aiGate(()=>{this.state.tab='ai';this.state.modal=null;try{window.scrollTo(0,0);}catch(x){}this.render();});return;}
     this.state.tab=t;this.state.modal=null;this.haptic(8);
     try{window.scrollTo(0,0);}catch(x){}
     this.render();
@@ -10214,15 +10231,10 @@ const App={
   const calIcs=document.getElementById('cal-ics');if(calIcs)calIcs.onclick=()=>{const cc=this._calChoice||{};if(!cc.ics)return;const blob=new Blob([cc.ics],{type:'text/calendar'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(cc.name||'event')+'.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);this.haptic(15);this.toast('הקובץ הורד — פתח אותו כדי להוסיף ליומן');};
   on('[data-kbmove]','click',e=>{e.stopPropagation();const[id,col]=e.currentTarget.dataset.kbmove.split('|');this.kbMove(id,col);});
   on('[data-menuitem]','click',e=>{const modal=e.currentTarget.dataset.menuitem;const locked=e.currentTarget.dataset.locked==='1';
-    if(locked&&!this._aiUnlocked){
-      const code=prompt('🔒 עוזר ה-AI מוגן בקוד.\nהזן קוד גישה:');
-      if(code===null)return;
-      if(!this.gateOk(code)){this.gateDenied();return;}
-      this._aiUnlocked=true;this.toast('נפתח ✓');
-    }
     // דחיפת המסך הנוכחי למחסנית — כדי שכפתור חזור יחזור לתפריט
-    if(this.state.modal)this._navStack.push(this.state.modal);
-    this.haptic(15);this.state.modal=modal;this.render();
+    const go=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.haptic(15);this.state.modal=modal;this.render();};
+    if(locked&&!this._aiUnlocked){this.aiGate(go);return;}
+    go();
   });
   on('[data-qtype]','click',e=>{this._aiQuoteType=e.currentTarget.dataset.qtype;this.haptic(10);this.render();});
   on('[data-setplan]','click',e=>{this.captureQuote();this.state.planMode=e.currentTarget.dataset.setplan==='1';Store.set('planMode',this.state.planMode);this.haptic(10);this.render();});
@@ -11252,11 +11264,9 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   this.toast('אין סעיפים בהצעה — לשונית "הצעה" למטה: מסמנים סעיף ומקלידים כמות');},
  /** עוזר ההצעות (מוגן בקוד, כמו מהתפריט) */
  openAiHub(){
-  if(!this._aiUnlocked){const code=prompt('🔒 עוזר ה-AI מוגן בקוד.\nהזן קוד גישה:');if(code===null)return;
-    if(!this.gateOk(code)){this.gateDenied();return;}this._aiUnlocked=true;}
   try{this.captureQuote();}catch(e){}
-  if(this.state.modal)this._navStack.push(this.state.modal);
-  this._aiQuoteType=this.state.planMode?'plan':'calc';this.state.modal='aihub';this.render();},
+  this.aiGate(()=>{if(this.state.modal)this._navStack.push(this.state.modal);
+    this._aiQuoteType=this.state.planMode?'plan':'calc';this.state.modal='aihub';this.render();});},
  async generatePDF(share){if(!this.chosen().length){this.noItems();return;}
   this.captureQuote();
   if(this.preflightBlock(share?'pdfshare':'pdf'))return;
