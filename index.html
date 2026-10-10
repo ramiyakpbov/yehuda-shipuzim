@@ -763,6 +763,11 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .photos .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);}
 .photos .ph img{width:100%;height:100%;}
 .photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
+.ai-tab{padding:4px 16px calc(var(--dock-h,150px) + 12px);}
+.ai-tab-h{font-size:19px;margin:6px 0 10px;}
+.ai-lock{text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:22px 16px;margin-top:18px;}
+.ai-lock-i{display:inline-flex;width:58px;height:58px;border-radius:50%;align-items:center;justify-content:center;background:var(--bg3);color:var(--warn);margin-bottom:10px;}
+.ai-lock p{font-size:13px;color:var(--muted);margin:6px 0 14px;line-height:1.5;}
 .noitems{background:var(--bg3);border:1px dashed var(--warn);border-radius:12px;padding:12px;margin-top:14px;}
 .noitems-t{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:14px;}
 .noitems-d{font-size:12.5px;color:var(--muted);margin:6px 0 10px;line-height:1.5;}
@@ -3308,7 +3313,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.0';
+const VERSION='24.1';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3471,8 +3476,9 @@ const GUIDE=[
    <p><b>אייפון — רק בספארי</b></p><ol class="g-ol"><li>פותחים בספארי, לא בכרום.</li><li>כפתור השיתוף בתחתית ← גוללים ← <b>הוסף למסך הבית</b>.</li></ol>
    <div class="g-note ok"><b>איך יודעים שהצליח</b><br>יש אייקון על מסך הבית, והאפליקציה נפתחת בלי שורת כתובת.</div>`},
   {id:'g3',ic:'map',t:'מפת המסכים',d:'איפה נמצא כל דבר',v:'start',
-   b:`<p><b>שלוש לשוניות למטה</b></p><ul class="g-ul"><li><b>בית</b> — מה קורה עכשיו: סכום ההצעות הפתוחות, מונים, הצעות אחרונות וקיצורים.</li>
-   <li><b>הצעה</b> — בונים את ההצעה מהמחירון.</li><li><b>מעקב</b> — מה קרה עם כל הצעה שנשלחה, וכל ההצעות שנשמרו.</li></ul>
+   b:`<p><b>ארבע לשוניות למטה</b></p><ul class="g-ul"><li><b>בית</b> — מה קורה עכשיו: סכום ההצעות הפתוחות, מונים, הצעות אחרונות וקיצורים.</li>
+   <li><b>הצעה</b> — בונים את ההצעה מהמחירון.</li><li><b>מעקב</b> — מה קרה עם כל הצעה שנשלחה, וכל ההצעות שנשמרו.</li>
+   <li><b>AI</b> — עוזר ההצעות: קרא שטח מתוכנית, כתב כמויות, קובץ, צילום והקלטה. מוגן בקוד, פעם אחת בכל פתיחה של האפליקציה.</li></ul>
    <p><b>שלושה כפתורים למעלה</b></p><ul class="g-ul"><li><b>פעמון</b> — מעקב ותזכורות.</li><li><b>אנשים</b> — לקוחות.</li><li><b>גלגל שיניים</b> — התפריט: עוזר ה-AI, הסגנון שלי, תבניות, המדריך והגדרות.</li></ul>`}]},
  {c:'הצעת מחיר',items:[
   {id:'g4',ic:'calculator',t:'בניית הצעה',d:'מהמחירון — בלי להקליד',v:'build',
@@ -3635,7 +3641,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>איפה מוסיפים סעיפים</b> — בפרטי ההצעה, כשאין סעיפים, מופיעה תיבה עם שני כפתורים: <b>מהמחירון</b> ו<b>מקובץ (AI)</b>. ולחיצה על PDF בלי סעיפים מובילה אליה.</li>
+   b:`<ul class="g-ul"><li><b>לשונית AI</b> — עוזר ההצעות בלשונית משלו בסרגל התחתון, ליד מעקב. מוגן באותו קוד.</li>
+   <li><b>איפה מוסיפים סעיפים</b> — בפרטי ההצעה, כשאין סעיפים, מופיעה תיבה עם שני כפתורים: <b>מהמחירון</b> ו<b>מקובץ (AI)</b>. ולחיצה על PDF בלי סעיפים מובילה אליה.</li>
    <li><b>כתב כמויות → הצעת תכנון</b> — "העבר כהצעת תכנון (למ"ר)" מעביר את הסעיפים והכמויות של האדריכל בלי להזין עלויות, עם השטח שכתוב במפרט.</li>
    <li><b>חיבור ל-AI שנקטע באמצע</b> — ההודעה אומרת "החיבור לשרת ה-AI נקטע" (ולא "אין חיבור לרשת" כשהאינטרנט בטלפון עובד), בקריאת שטח עוברים למודל הבא, ובחלון השגיאה מופיעה גם ההודעה המקורית.</li>
    <li><b>קרא שטח — כשמשהו נכשל, רואים מה קרה</b> — במקום הודעה שנעלמת אחרי 2 שניות, נפתח חלון שנשאר עד "סגור": השלב, הזמן, וכל מודל שנוסה — כמה שניות ומה קרה. אפשר להעתיק. מודל שלא ענה בזמן — עוברים למודל הבא, והמודלים שענו בבדיקת החיבור מנוסים קודם. בשלב 1 ה-AI "חושב" פחות, כדי לענות מהר יותר על הרבה תוכניות.</li>
@@ -6701,6 +6708,7 @@ const App={
     ${T('home',ico('house',22),'בית',badge)}
     ${T('build',ico('calculator',22),'הצעה',st.openQuote)}
     ${T('track',ico('send',22),'מעקב',0)}
+    ${T('ai',ico('sparkles',22),'AI',0)}
   </div>`;
  },
 
@@ -7198,6 +7206,8 @@ const App={
 
  view(){
   const tab=this.state.tab||'home';
+  // v24.1 — בלשונית AI העוזר כבר על המסך: לא פותחים אותו שוב כחלון (מזהים כפולים)
+  if(tab==='ai'&&this.state.modal==='aihub')this.state.modal=null;
   if(tab!=='build')return this.shellView(tab);
   return this.buildView();
  },
@@ -7206,14 +7216,14 @@ const App={
  shellView(tab){
   const rem=this.reminders().length;
   return `<div class="topbar"><div class="brand"><div class="lg"><img src="${LOGO_APP}" alt="לוגו" style="width:100%;height:auto;display:block"/></div>
-      <div><div class="name">יהודה שיפוצים</div><div class="sub">קבלן רשום 134094 · ${tab==='track'?'מעקב':'מרכז הבית'}</div></div>
+      <div><div class="name">יהודה שיפוצים</div><div class="sub">קבלן רשום 134094 · ${tab==='track'?'מעקב':(tab==='ai'?'עוזר AI':'מרכז הבית')}</div></div>
       <div class="spacer"></div>
       <button class="icon-btn" data-modal="reminders" aria-label="מעקב ותזכורות">${ico('bell',20)}${rem?`<span class="dot">${rem}</span>`:''}</button>
       <button class="icon-btn" data-modal="clients" aria-label="לקוחות">${ico('users',20)}</button>
       <button class="icon-btn" data-modal="menu" aria-label="תפריט והגדרות">${ico('settings',20)}</button></div>${tab==='track'?this.liveIsland():''}</div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.offlineBanner()}
-  ${tab==='track'?this.trackShell():this.homeView()}
+  ${tab==='track'?this.trackShell():(tab==='ai'?this.aiTabView():this.homeView())}
   <div class="dockwrap">${this.tabBar()}</div>
   ${this.state.modal?this.modalView():''}`;
  },
@@ -8668,15 +8678,31 @@ const App={
      ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
  },
- aiHubModal(){
+ /** v24.1 — לשונית AI: אותו עוזר הצעות, כמסך. נעול באותו קוד כמו מהתפריט (החלטת רמי, 10.10). */
+ aiTabView(){
+  if(!this._aiUnlocked)return `<div class="ai-tab"><div class="ai-lock">
+     <div class="ai-lock-i">${ico('lock',30)}</div><b>עוזר ה-AI מוגן בקוד</b>
+     <p>קרא שטח מתוכנית, כתב כמויות, קובץ, צילום והקלטה.</p>
+     <button type="button" class="btn-block" id="ai-tab-unlock">הזן קוד</button></div></div>`;
+  return `<div class="ai-tab"><h2 class="ai-tab-h">✨ עוזר ההצעות</h2>${this.aiHubBody()}</div>`;
+ },
+ /** פתיחת הנעילה (אותו קוד, פעם אחת לכל הפעלה). מחזיר true אם פתוח. */
+ aiGate(){
+  if(this._aiUnlocked)return true;
+  const code=prompt('🔒 עוזר ה-AI מוגן בקוד.\nהזן קוד גישה:');
+  if(code===null)return false;
+  if(!this.gateOk(code)){this.gateDenied();return false;}
+  this._aiUnlocked=true;this.toast('נפתח ✓');return true;
+ },
+ aiHubModal(){return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>`+this.aiHubBody();},
+ aiHubBody(){
   // נפתח על סוג ההצעה הנוכחית — קודם תמיד על "מחשבון", גם כשההצעה כבר תכנון
   const qt=this._aiQuoteType||(this.state.planMode?'plan':'calc');
   const card=(modal,icon,title,desc,badge)=>`<button class="aihub-card" data-modal="${modal}">
      <div class="ah-icon">${icon}</div>
      <div class="ah-txt"><div class="ah-t">${title}${badge?`<span class="ah-badge">${badge}</span>`:''}</div><div class="ah-d">${desc}</div></div>
      <div class="ah-arrow">‹</div></button>`;
-  return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>
-   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">כלי עזר להזנת סעיפים ממקור קיים — הקלטה, צילום, קובץ או טקסט. הסעיפים והמחירים נבדקים ידנית לפני שליחה.</div>
+  return `   <div style="font-size:12.5px;color:var(--muted);margin-bottom:14px">כלי עזר להזנת סעיפים ממקור קיים — הקלטה, צילום, קובץ או טקסט. הסעיפים והמחירים נבדקים ידנית לפני שליחה.</div>
    <div class="ah-sec">סוג ההצעה</div>
    <div class="qtype-row">
      <button class="qtype-btn ${qt==='calc'?'on':''}" data-qtype="calc">
@@ -9500,6 +9526,7 @@ const App={
   // v24.0 — "אין עדיין סעיפים": מהמחירון (לשונית הצעה) / מקובץ (עוזר ההצעות)
   {const nc=document.getElementById('noitems-cat');if(nc)nc.onclick=()=>{try{this.captureQuote();}catch(e){}this._navStack=[];this.state.modal=null;this.state.tab='build';this.haptic(8);try{window.scrollTo(0,0);}catch(x){}this.render();this.toast('נגיעה בקטגוריה ← מסמנים סעיף ← כמות');};
    const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();}
+  {const au=document.getElementById('ai-tab-unlock');if(au)au.onclick=()=>{if(this.aiGate())this.render();};}
   const obk=document.getElementById('open-backup');if(obk)obk.onclick=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='backup';this.render();};
   const cpr=document.getElementById('check-prices');if(cpr)cpr.onclick=()=>this.checkPriceFreshness();
   const hcp=document.getElementById('hub-check-prices');if(hcp)hcp.onclick=()=>this.checkPriceFreshness();
@@ -9859,6 +9886,7 @@ const App={
   on('[data-gotab]','click',e=>{
     const t=e.currentTarget.dataset.gotab;
     if(!t)return;
+    if(t==='ai'&&!this.aiGate())return;   // v24.1 — קוד, כמו מהתפריט
     this.state.tab=t;this.state.modal=null;this.haptic(8);
     try{window.scrollTo(0,0);}catch(x){}
     this.render();
