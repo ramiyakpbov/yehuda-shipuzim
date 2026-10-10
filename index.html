@@ -763,6 +763,12 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .photos .ph{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--bg3);border:1px solid var(--line);}
 .photos .ph img{width:100%;height:100%;}
 .photos .ph .del{position:absolute;top:3px;inset-inline-end:3px;background:rgba(0,0,0,.6);border:none;color:#fff;border-radius:8px;width:26px;height:26px;font-size:14px;}
+.set-tabs{display:flex;gap:4px;background:var(--bg3);border:1px solid var(--line);border-radius:14px;padding:4px;margin:0 0 14px;overflow-x:auto;scrollbar-width:none;}
+.set-tabs::-webkit-scrollbar{display:none;}
+.set-tab{flex:1 0 auto;min-width:58px;background:none;border:0;border-radius:10px;color:var(--muted);font:inherit;font-size:13px;font-weight:700;padding:9px 8px;white-space:nowrap;cursor:pointer;}
+.set-tab.on{background:linear-gradient(160deg,rgba(237,28,36,.32),rgba(237,28,36,.16));box-shadow:inset 0 0 0 1px rgba(237,28,36,.4);color:#fff;}
+.set-lock{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:14px;margin:4px 0 10px;}
+.sec-title.set-danger{color:var(--red);margin-top:22px;}
 .code-dlg{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;}
 .code-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 16px 14px;width:100%;max-width:320px;box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .code-card label{display:block;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:12px;}
@@ -3319,7 +3325,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.2';
+const VERSION='24.3';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3541,8 +3547,8 @@ const GUIDE=[
    <li>חיוג · תזכורת (וואטסאפ עם הודעה מוכנה) · בוצע.</li></ul>
    <p><b>"לחזור היום" — קיצור במסך הבית.</b> מתי לחזור לכל לקוח. היעד מתרחק עם כל ניסיון: יום · 3 ימים · שבוע · שבועיים · חודש. "חייגתי" מזיז אותו קדימה.</p>`}]},
  {c:'עוזר ה-AI',items:[
-  {id:'g34',ic:'lock',t:'איך נכנסים לעוזר',d:'תפריט ← כלי מנהל 🔐',v:'ai',
-   b:`<ol class="g-ol"><li>גלגל השיניים למעלה ← <b>כלי מנהל 🔐</b>.</li><li>קוד גישה — פעם אחת בכל פתיחה של האפליקציה.</li>
+  {id:'g34',ic:'lock',t:'איך נכנסים לעוזר',d:'לשונית AI למטה 🔐',v:'ai',
+   b:`<ol class="g-ol"><li>לשונית <b>AI</b> בסרגל התחתון (או "מקובץ (AI)" בפרטי ההצעה).</li><li><b>הזן קוד</b> — פעם אחת בכל פתיחה של האפליקציה.</li>
    <li>בוחרים <b>סוג הצעה</b> (מחשבון או תכנון), ואז מאיפה הסעיפים.</li></ol>
    <div class="g-note"><b>כל מה שה-AI מחזיר — טיוטה.</b> סעיפים חדשים נכנסים רק דרך מסך אישור, ואפשר לתקן כל דבר לפני שליחה.</div>`},
   {id:'g8',ic:'mic',t:'לדבר או להדביק',d:'הכתבה בקול או טקסט מוואטסאפ',v:'ai',
@@ -3622,12 +3628,12 @@ const GUIDE=[
   {id:'g22',ic:'calendar-days',t:'יומן ודוחות',d:'פרויקטים לפי תאריך, וסיכום חודשי',
    b:`<ul class="g-ul"><li><b>יומן</b> — פרויקטים לפי תאריך יעד. אפשר להוסיף ליומן של הטלפון.</li><li><b>דוחות</b> — כמה נשלחו, כמה אושרו, ואילו עבודות נפוצות.</li></ul>`}]},
  {c:'מערכת',items:[
-  {id:'g23',ic:'settings',t:'הגדרות',d:'פרטי עסק, תנאים, סנכרון',
-   b:`<ul class="g-ul"><li><b>פרטי עסק</b> — שם, טלפון, ח.פ, מייל, לוגו וחתימה.</li><li><b>תנאי תשלום</b> — הטקסט בתחתית כל הצעה.</li>
+  {id:'g23',ic:'settings',t:'הגדרות',d:'חמש לשוניות: עסק · AI · מחירון · גיבוי · מערכת',
+   b:`<p>גלגל השיניים ← <b>הגדרות</b>: כל נושא נפתח ישר בלשונית שלו. <b>עסק</b>, <b>AI</b> ו<b>מחירון</b> מוגנים בקוד; ב<b>גיבוי</b> וב<b>מערכת</b> — רק החלקים הרגישים.</p><ul class="g-ul"><li><b>פרטי עסק</b> — שם, טלפון, ח.פ, מייל, לוגו וחתימה.</li><li><b>תנאי תשלום</b> — הטקסט בתחתית כל הצעה.</li>
    <li><b>סנכרון</b> — בין כל המכשירים. דלוק כברירת מחדל.</li><li><b>גרסה</b> — הגרסה הנוכחית ובדיקת עדכון.</li></ul>`},
   {id:'g24',ic:'lock',t:'הגדרות מפתח ובדיקת AI',d:'מע״מ, מפתחות AI, גוגל, גיבוי',v:'settings',
-   b:`<p>הגדרות ← גלילה לתחתית ← קוד גישה.</p><ul class="g-ul"><li><b>מע״מ</b> — הפעלה ואחוז.</li><li><b>מפתחות AI</b> — Gemini (ראשי) ו-Claude (גיבוי אוטומטי).</li>
-   <li><b>קישור גוגל</b> לאיסוף ביקורות.</li></ul>
+   b:`<p>הגדרות ← לשונית ← קוד גישה (פעם אחת).</p><ul class="g-ul"><li><b>עסק</b> — מע״מ (הפעלה ואחוז), קישור גוגל לאיסוף ביקורות, צלילים.</li><li><b>AI</b> — מפתחות Gemini (ראשי) ו-Claude (גיבוי אוטומטי), מודלים, בדיקת חיבור.</li>
+   <li><b>מערכת</b> — אחסון, יומן תקלות, שינוי קוד, ומעבר לפרודקשן.</li></ul>
    <div class="g-note ok"><b>בדיקת AI</b> — לוחצים אחרי כל עדכון. ✅ לכל מודל שעובד. ❌ — צלמו את המסך ושלחו: ההודעה שם היא בדיוק מה שצריך לתיקון.</div>`},
   {id:'g25',ic:'save',t:'גיבוי ושחזור',d:'ענן, קובץ, ושחזור ממכשיר אחר',
    b:`<ul class="g-ul"><li><b>ענן</b> — שחזור לפי תאריך, אוטומטי.</li><li><b>ייצוא לקובץ</b> — למייל או לדרייב. <b>שחזור</b> — גם ממכשיר אחר.</li></ul>
@@ -3647,7 +3653,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>חלון קוד חדש</b> — בכניסה לעוזר ה-AI כתוב רק "הזן קוד", בחלון של האפליקציה, עם מקלדת מספרים.</li>
+   b:`<ul class="g-ul"><li><b>הגדרות בלשוניות</b> — עסק · AI · מחירון · גיבוי · מערכת, וכל אחת נפתחת ישר מגלגל השיניים. "כלי מנהל" הוסר מהתפריט ומלשונית ההצעה — העוזר בלשונית AI.</li>
+   <li><b>אחורה מלשונית</b> — חוזר לבית, לא יוצא מהאפליקציה.</li>
+   <li><b>חלון קוד חדש</b> — בכניסה לעוזר ה-AI כתוב רק "הזן קוד", בחלון של האפליקציה, עם מקלדת מספרים.</li>
    <li><b>לשונית AI</b> — עוזר ההצעות בלשונית משלו בסרגל התחתון, ליד מעקב. מוגן באותו קוד.</li>
    <li><b>איפה מוסיפים סעיפים</b> — בפרטי ההצעה, כשאין סעיפים, מופיעה תיבה עם שני כפתורים: <b>מהמחירון</b> ו<b>מקובץ (AI)</b>. ולחיצה על PDF בלי סעיפים מובילה אליה.</li>
    <li><b>כתב כמויות → הצעת תכנון</b> — "העבר כהצעת תכנון (למ"ר)" מעביר את הסעיפים והכמויות של האדריכל בלי להזין עלויות, עם השטח שכתוב במפרט.</li>
@@ -5691,7 +5699,7 @@ const App={
   d.innerHTML='<div class="err-panel-card"><div class="err-panel-t">'+ico('alert-triangle',18)+'<b>'+esc(title)+'</b></div>'+
     '<p class="err-panel-m">'+esc(msg)+'</p>'+(at&&String(msg).indexOf(at)<0?'<p class="err-panel-at">'+esc(at)+'</p>':'')+
     (rows?'<div class="err-panel-l">ניסיונות:</div><ol class="err-panel-tr">'+rows+'</ol>':'')+
-    '<p class="err-panel-h">נשמר גם בהגדרות ← יומן תקלות</p>'+
+    '<p class="err-panel-h">נשמר גם בהגדרות ← מערכת ← יומן תקלות</p>'+
     '<div class="err-panel-b"><button type="button" class="mini" data-x="copy">העתק</button><button type="button" class="tk-btn" data-x="close">סגור</button></div></div>';
   d.addEventListener('click',ev=>{const b=ev.target.closest('[data-x]');
     if(ev.target===d||(b&&b.dataset.x==='close')){d.remove();return;}
@@ -7327,7 +7335,6 @@ const App={
     <button class="chip" data-modal="templates">⚡ הצעות מהירות</button>
     ${(()=>{const n=this.laborCount();const tot=this.chosen().reduce((k,g)=>k+g.lines.length,0);
       return tot?`<button class="chip ${n&&n===tot?'lb-on':''}" id="chip-labor">⚙️ ${n&&n===tot?'הכל התקנה בלבד':(n?'התקנה בלבד ('+n+')':'התקנה בלבד')}</button>`:'';})()}
-    <button class="chip" data-modal="aihub">${this._aiUnlocked?'🔓':'🔐'} כלי מנהל</button>
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       /* איפוס — אחרון בשורה ומסומן כפעולה מוחקת, כדי שלא ייראה
          כמו עוד כפתור סינון. חלון האישור נשאר. */
@@ -7849,21 +7856,40 @@ const App={
    </div>`;
  },
 
+ /* v24.3 — ההגדרות בלשוניות. עד v24.2: "הגדרות מפתח" היה רצף אחד של 20 נושאים (מע"מ, מעבר לפרודקשן, משוב, AI,
+    יומן, צלילים, מחירון, מגבלות, אחסון, מפתחות, Drive, קוד) — רמי: "המסך נראה בלגן".
+    כל לשונית: נושא אחד. מה שהיה מוגן בקוד — נשאר מוגן (אותו secureUnlocked), מה שהיה פתוח — נשאר פתוח. */
  settingsModal(){const s=this.state;const hasPin=true; /* תמיד נעול — יש קוד ברירת מחדל עד שנקבע קוד אישי */const unlocked=s.secureUnlocked;
-  const gaBlock=`
+  const TABS=[['biz','עסק'],['ai','AI'],['cat','מחירון'],['data','גיבוי'],['sys','מערכת']];
+  const tab=TABS.some(x=>x[0]===s.setTab)?s.setTab:'biz';
+  const lockCard=hasPin
+   ? `<div class="field"><label>קוד גישה</label><input id="pin-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div>
+     <button class="btn-block" id="pin-open">🔓 פתח אזור מאובטח</button>
+     <button class="btn-ghost" id="pin-call" style="margin-top:8px">📞 אין לך קוד? התקשר לרמי 054-3013389</button>
+     <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">${this.hasOwnPin()?'🔐 מוגן בקוד אישי':'⚠️ עדיין בקוד ברירת מחדל — מומלץ לקבוע קוד משלך'}</div>`
+   : `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">הגדר קוד גישה שיגן על המפתחות והנתונים הרגישים מפני צפייה.</div><div class="field"><label>קוד חדש (4–6 ספרות)</label><input id="pin-set" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div><button class="btn-block" id="pin-create">צור קוד והמשך</button>`;
+  const locked=x=>unlocked?x:`<div class="set-lock">${ico('lock',18)}<b>מוגן בקוד</b></div>`+lockCard;
+  const body={
+   biz:()=>locked(`
    <div class="sec-title" style="margin-top:4px">💰 אחוז מע"מ</div>
    <div class="toggle"><div><div style="font-weight:700">חישוב מע"מ</div></div><button class="switch ${s.vatOn?'on':''}" id="vat-toggle"><span class="knob"></span></button></div>
    <div class="field"><label>אחוז מע"מ (%) — משתנה לעיתים רחוקות</label><input id="vat-pct" type="number" inputmode="decimal" value="${s.vatPct}"/></div>
-   <div class="sec-title" style="margin-top:16px">🚀 מעבר לפרודקשן</div>
-   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">מוחק את כל נתוני הטסטים מהענן ומהמכשיר: לקוחות, הצעות, מעקב ומשובים. המחירון וההגדרות נשמרים.</div>
-   <button class="btn-ghost" id="go-production" style="color:var(--red);border-color:var(--red)">🧹 נקה הכל ועבור לפרודקשן</button>
    <div class="sec-title" style="margin-top:16px">⭐ משוב לקוחות</div>
    <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
    <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
    <button class="btn-ghost" id="grev-save">💾 שמור קישור ביקורת</button>
-   <div class="sec-title" style="margin-top:16px">🤖 עוזר AI</div>
+   <div class="sec-title">🔔 צלילים</div>
+   <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="snd-off" ${Store.get('soundOff',0)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>השתק צלילי סימון סעיפים</span></label></div>`),
+   ai:()=>locked(`
+   <div class="sec-title" style="margin-top:4px">🤖 עוזר AI</div>
    <div class="field"><label>בחר עוזר פעיל</label><select id="ai-provider">${[['gemini','Gemini (Google) — ראשי'],['claude','Claude (Anthropic)']].map(o=>`<option value="${o[0]}" ${Store.get('aiProvider','gemini')===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div>
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="ai-fallback" ${Store.get('aiFallback',true)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>גיבוי אוטומטי — כשכל מודלי Gemini במכסה, Claude נכנס לבד</span></label></div>
+   <div class="sec-title">🔑 מפתחות</div>
+   <div class="field"><label>Gemini API Key</label><div style="display:flex;gap:8px"><input id="gem-key" type="password" value="${Store.get('geminiKey','')}" placeholder="AIza…" style="flex:1"/><button class="mini2" id="gem-eye" type="button">👁</button></div></div>
+   <div class="field"><label>Claude API Key (Anthropic · בתשלום)</label><div style="display:flex;gap:8px"><input id="cla-key" type="password" value="${Store.get('claudeKey','')}" placeholder="sk-ant-…" style="flex:1"/><button class="mini2" id="cla-eye" type="button">👁</button></div></div>
+   <button class="btn-ghost" id="gem-save">💾 שמור מפתחות AI</button>
+   <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6">Gemini — מפתח חינמי מ-Google AI Studio (מוגבל במכסה). Claude — דורש חשבון Anthropic בתשלום. בחר למעלה מול מי לעבוד.</div>
+   <div class="sec-title">🧠 מודלים</div>
    <div class="field"><label>מודל Gemini ראשי</label>
      ${(()=>{const fr=(Store.get('gModels',[])||[]).filter(n=>AI.gFreeName(n));const pri=AI.gPrimary();
        const L=[AI.models.g].concat(fr).concat([pri]).filter((x,i,a)=>x&&a.indexOf(x)===i);
@@ -7871,17 +7897,15 @@ const App={
      <button class="tk-btn" id="g-models-load" style="width:100%;margin-top:8px">${ico('refresh-cw',16)}טען מודלים זמינים למפתח שלי</button>
      <p class="tk-hint start" id="g-models-out" aria-live="polite" style="margin-top:6px">${(()=>{const fr=(Store.get('gModels',[])||[]).filter(n=>AI.gFreeName(n));
        return fr.length?'גיבוי חינמי לפי הסדר: <span dir="ltr">'+esc(AI.gChain().slice(1).join(' → ')||'—')+'</span>':'כשמודל מגיע למכסה, האפליקציה עוברת למודל Gemini חינמי אחר לפני Claude. לחץ כדי לטעון את הרשימה.';})()}</p></div>
-   <div class="field"><label>שימוש החודש</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${AI.report()}</div></div>
    <div class="field"><label>בדיקת חיבור</label>
      <button class="tk-btn" id="ai-check" style="width:100%">${ico('check',16)}בדוק את כל המודלים</button>
      <div id="ai-check-out" aria-live="polite">${this._aiCheckHtml||''}</div></div>
-   ${(()=>{const L=Store.get('errLog',[])||[];if(!L.length)return '';
-     const rows=L.slice(0,6).map(x=>`<div style="font-size:11px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line)">
-       <b style="color:var(--warn)">${esc(x.w)}</b> · ${new Date(x.t).toLocaleString('he-IL')}<br>${esc(x.m)}</div>`).join('');
-     return `<div class="field"><label>יומן תקלות (${L.length})</label>
-       <div style="max-height:150px;overflow:auto;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:8px 10px">${rows}</div>
-       <button class="mini" id="err-clear" style="margin-top:6px">נקה יומן</button></div>`;})()}
-   <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="snd-off" ${Store.get('soundOff',0)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>השתק צלילי סימון סעיפים</span></label></div>
+   <div class="field"><label>שימוש החודש</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${AI.report()}</div></div>
+   <div class="field"><label>מחירון שנשלח ל-AI</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${(()=>{try{const s=AI.catalogStats();return s.items+' סעיפים · ~'+s.tokens.toLocaleString()+' טוקנים';}catch(e){return '—';}})()}</div></div>`),
+   cat:()=>locked(`
+   <div class="field"><label>עדכון מחירים מרוכז</label>
+     <button class="mini" id="open-pximport" style="width:100%;padding:11px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px">📥 הדבק רשימת מחירים מ-AI</button>
+     <div style="font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.5">מזהה|מחיר בכל שורה · תצוגה מקדימה לפני שמשהו משתנה</div></div>
    ${(()=>{const st=this.catStructState();
      if(!st.missing.length&&!st.stray)return '';
      return `<div class="field"><label>מבנה המחירון</label>
@@ -7889,12 +7913,26 @@ const App={
          המחירון מסודר ב-<b>${st.cats}</b> קטגוריות במקום <b>${st.want}</b>.
          כל ${st.items} הסעיפים קיימים — הם רק מקובצים במבנה ישן.</div>
        <button class="mini" id="fix-catstruct" style="width:100%;padding:11px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--warn)!important;border-radius:10px">🔧 החזר ל-${st.want} קטגוריות</button>
-       <div style="font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.5">המחירים והסעיפים שהוספת נשמרים</div></div>`;})()}
-   <div class="field"><label>עדכון מחירים מרוכז</label>
-     <button class="mini" id="open-pximport" style="width:100%;padding:11px;background:var(--bg2)!important;color:var(--txt)!important;border:1px solid var(--line)!important;border-radius:10px">📥 הדבק רשימת מחירים מ-AI</button>
-     <div style="font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.5">מזהה|מחיר בכל שורה · תצוגה מקדימה לפני שמשהו משתנה</div></div>
+       <div style="font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.5">המחירים והסעיפים שהוספת נשמרים</div></div>`;})()}`),
+   data:()=>`
+   <div class="sec-title">☁️ סנכרון בין מכשירים</div>
+   <div class="toggle"><div><div style="font-weight:700">סנכרון ענן</div><div style="font-size:12px;color:var(--muted)">לקוחות · מחירון · הצעות · הגדרות — בכל המכשירים</div></div><button class="switch ${Store.get('syncOn',true)?'on':''}" id="sync-toggle"><span class="knob"></span></button></div>
+   <div style="font-size:12px;color:var(--muted);margin:6px 2px 8px">מצב: <b style="color:${Sync.status==='on'?'var(--ok)':(Sync.status==='err'?'var(--red)':'var(--muted)')}">${Sync.status==='on'?'מסונכרן ✓':(Sync.status==='err'?'שגיאת חיבור':'כבוי')}</b>${Store.get('syncLocalAt',0)?' · עודכן: '+new Date(Store.get('syncLocalAt',0)).toLocaleString('he-IL'):''}</div>
+   <button class="btn-ghost" id="sync-now">🔄 סנכרן עכשיו</button>
+   <button class="btn-ghost" id="open-backup" style="margin-top:6px">💾 גיבוי ושחזור »</button>
+   <div class="sec-title" style="margin-top:16px">Google Drive</div>
+   ${locked(`
+   <div class="field"><label>Google OAuth Client ID</label><input id="g-cid" value="${Store.get('gClientId','')}" placeholder="xxxx.apps.googleusercontent.com"/></div>
+   <button class="btn-ghost" id="g-save">💾 שמור Client ID</button>
+   <button class="btn-ghost" id="g-connect">🔗 התחבר ל-Google Drive</button>
+   <button class="btn-ghost" id="g-backup">☁️ גבה עכשיו ל-Drive</button>`)}`,
+   sys:()=>`
+   ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
+   <div class="sec-title">גרסה ועדכונים</div>
+   <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
    <div class="field"><label>מגבלות המערכת</label>
      <div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:4px 12px 8px">${this.limitsCard()}</div></div>
+   ${locked(`
    <div class="field"><label>מה תופס מקום</label>
      <div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:8px 12px">
        ${(()=>{const u=Store.usage();
@@ -7902,42 +7940,25 @@ const App={
            u.top.map(x=>`<div style="display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);padding:3px 0"><span>${esc(x.k)}</span><b style="direction:ltr">${x.kb} KB</b></div>`).join('');})()}
      </div>
      <button class="mini" id="stg-clean" style="margin-top:8px;width:100%;padding:9px">🧹 פנה מקום עכשיו</button></div>
-   <div class="field"><label>מחירון שנשלח ל-AI</label><div style="font-size:12px;color:var(--muted);padding:6px 0">${(()=>{try{const s=AI.catalogStats();return s.items+' סעיפים · ~'+s.tokens.toLocaleString()+' טוקנים';}catch(e){return '—';}})()}</div></div>
-   <div class="field"><label>Gemini API Key</label><div style="display:flex;gap:8px"><input id="gem-key" type="password" value="${Store.get('geminiKey','')}" placeholder="AIza…" style="flex:1"/><button class="mini2" id="gem-eye" type="button">👁</button></div></div>
-   <div class="field"><label>Claude API Key (Anthropic · בתשלום)</label><div style="display:flex;gap:8px"><input id="cla-key" type="password" value="${Store.get('claudeKey','')}" placeholder="sk-ant-…" style="flex:1"/><button class="mini2" id="cla-eye" type="button">👁</button></div></div>
-   <button class="btn-ghost" id="gem-save">💾 שמור מפתחות AI</button>
-   <div style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.6">Gemini — מפתח חינמי מ-Google AI Studio (מוגבל במכסה). Claude — דורש חשבון Anthropic בתשלום. בחר למעלה מול מי לעבוד.</div>
-   <div class="sec-title" style="margin-top:16px">Google Drive</div>
-   <div class="field"><label>Google OAuth Client ID</label><input id="g-cid" value="${Store.get('gClientId','')}" placeholder="xxxx.apps.googleusercontent.com"/></div>
-   <button class="btn-ghost" id="g-save">💾 שמור Client ID</button>
-   <button class="btn-ghost" id="g-connect">🔗 התחבר ל-Google Drive</button>
-   <button class="btn-ghost" id="g-backup">☁️ גבה עכשיו ל-Drive</button>
-   <button class="btn-ghost" id="change-pin" style="margin-top:14px">🔑 שנה קוד גישה</button>
+   ${(()=>{const L=Store.get('errLog',[])||[];if(!L.length)return '';
+     const rows=L.slice(0,6).map(x=>`<div style="font-size:11px;color:var(--muted);padding:4px 0;border-bottom:1px solid var(--line)">
+       <b style="color:var(--warn)">${esc(x.w)}</b> · ${new Date(x.t).toLocaleString('he-IL')}<br>${esc(x.m)}</div>`).join('');
+     return `<div class="field"><label>יומן תקלות (${L.length})</label>
+       <div style="max-height:150px;overflow:auto;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:8px 10px">${rows}</div>
+       <button class="mini" id="err-clear" style="margin-top:6px">נקה יומן</button></div>`;})()}
+   <div class="sec-title">🔐 קוד גישה</div>
+   <button class="btn-ghost" id="change-pin">🔑 שנה קוד גישה</button>
    <button class="btn-ghost" id="lock-secure">🔒 נעל אזור מאובטח</button>
-   <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">🔒 המפתחות שמורים רק במכשיר ומוגנים בקוד. אל תשתף את קובץ האפליקציה אחרי הזנת טוקן.</div>`;
-  const lockCard=hasPin
-   ? `<div class="field"><label>קוד גישה</label><input id="pin-in" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div>
-     <button class="btn-block" id="pin-open">🔓 פתח אזור מאובטח</button>
-     <button class="btn-ghost" id="pin-call" style="margin-top:8px">📞 אין לך קוד? התקשר לרמי 054-3013389</button>
-     <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">${this.hasOwnPin()?'🔐 מוגן בקוד אישי':'⚠️ עדיין בקוד ברירת מחדל — מומלץ לקבוע קוד משלך'}</div>`
-   : `<div style="font-size:12px;color:var(--muted);margin-bottom:8px">הגדר קוד גישה שיגן על המפתחות והנתונים הרגישים מפני צפייה.</div><div class="field"><label>קוד חדש (4–6 ספרות)</label><input id="pin-set" type="password" inputmode="numeric" maxlength="6" placeholder="••••"/></div><button class="btn-block" id="pin-create">צור קוד והמשך</button>`;
-  return `<h2>הגדרות <button class="x" data-close>✕</button></h2><div id="set-root">
-   ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
-   <div class="sec-title">גרסה ועדכונים</div>
-   <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
-
-   <div class="sec-title">☁️ סנכרון בין מכשירים</div>
-   <div class="toggle"><div><div style="font-weight:700">סנכרון ענן</div><div style="font-size:12px;color:var(--muted)">לקוחות · מחירון · הצעות · הגדרות — בכל המכשירים</div></div><button class="switch ${Store.get('syncOn',true)?'on':''}" id="sync-toggle"><span class="knob"></span></button></div>
-   <div style="font-size:12px;color:var(--muted);margin:6px 2px 8px">מצב: <b style="color:${Sync.status==='on'?'var(--ok)':(Sync.status==='err'?'var(--red)':'var(--muted)')}">${Sync.status==='on'?'מסונכרן ✓':(Sync.status==='err'?'שגיאת חיבור':'כבוי')}</b>${Store.get('syncLocalAt',0)?' · עודכן: '+new Date(Store.get('syncLocalAt',0)).toLocaleString('he-IL'):''}</div>
-   <button class="btn-ghost" id="sync-now">🔄 סנכרן עכשיו</button>
-   <button class="btn-ghost" id="open-backup" style="margin-top:6px">💾 גיבוי ושחזור »</button>
-   <div class="sec-title" style="margin-top:16px">🔐 הגדרות מפתח</div>
-   ${unlocked?gaBlock:lockCard}
+   <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">🔒 המפתחות שמורים רק במכשיר ומוגנים בקוד. אל תשתף את קובץ האפליקציה אחרי הזנת טוקן.</div>
+   <div class="sec-title set-danger">⚠️ אזור מסוכן — מעבר לפרודקשן</div>
+   <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px">מוחק את כל נתוני הטסטים מהענן ומהמכשיר: לקוחות, הצעות, מעקב ומשובים. המחירון וההגדרות נשמרים.</div>
+   <button class="btn-ghost" id="go-production" style="color:var(--red);border-color:var(--red)">🧹 נקה הכל ועבור לפרודקשן</button>`)}
    <div style="margin-top:16px;text-align:center">${logoBlock(true,.8)}</div>
-   <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · קבלן רשום 134094<br>054-5718316<br>yehuda-shipuzim.netlify.app</div></div>`;
+   <div style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.7;text-align:center">ח.פ 311834998 · קבלן רשום 134094<br>054-5718316<br>yehuda-shipuzim.netlify.app</div>`};
+  return `<h2>הגדרות <button class="x" data-close>✕</button></h2>
+   <div class="set-tabs" role="tablist">${TABS.map(x=>`<button type="button" role="tab" class="set-tab ${x[0]===tab?'on':''}" aria-selected="${x[0]===tab}" data-settab="${x[0]}">${x[1]}${(!unlocked&&x[0]!=='data'&&x[0]!=='sys')?' 🔒':''}</button>`).join('')}</div>
+   <div id="set-root">${body[tab]()}</div>`;
  },
-
-
  addCustomModal(){const tgt=this.state.addTarget;const cat=tgt&&tgt!=='custom'?this.state.catalog.find(c=>c.id===tgt):null;
   return `<h2>${cat?'תת-סעיף · '+cat.title:'פריט מותאם חדש'} <button class="x" data-close>✕</button></h2>
    <div class="field"><label>תיאור העבודה</label><input id="cu_name" placeholder="לדוגמה: פירוק מטבח ישן"/></div>
@@ -8685,21 +8706,27 @@ const App={
    <div style="font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6">💡 מומלץ לייצא גיבוי לקובץ מדי פעם ולשמור אותו במקום בטוח (מייל/דרייב).</div>`;
  },
  menuModal(){
-  const item=(modal,icon,title,desc,locked)=>`<button class="aihub-card" data-menuitem="${modal}"${locked?' data-locked="1"':''}>
+  const item=(modal,icon,title,desc,locked,mset)=>`<button class="aihub-card" data-menuitem="${modal}"${locked?' data-locked="1"':''}${mset?' data-mset="'+mset+'"':''}>
      <div class="ah-icon">${icon}</div>
      <div class="ah-txt"><div class="ah-t">${title}${locked?' <span style="font-size:12px">🔒</span>':''}</div><div class="ah-d">${desc}</div></div>
      <div class="ah-arrow">‹</div></button>`;
   return `<h2>⚙️ תפריט ראשי <button class="x" data-close>✕</button></h2>
    <div class="mn-sec">כלים</div>
    <div class="aihub-grid">
-     ${item('aihub','🔐','כלי מנהל','הזנת סעיפים מקובץ, צילום או הקלטה',true)}
      ${item('mystyle','✍️','הסגנון שלי','נוסח אישי להצעות ולהודעות',false)}
      ${item('templates','⚡','הצעות מהירות','תבניות שמורות לשימוש חוזר',false)}
    </div>
-   <div class="mn-sec">מערכת</div>
+   <div class="mn-sec">הגדרות</div>
+   <div class="aihub-grid">
+     ${item('settings','💼','עסק','מע"מ · קישור לביקורת בגוגל · צלילים',false,'biz')}
+     ${item('settings','🤖','AI','מפתחות · מודלים · בדיקת חיבור',false,'ai')}
+     ${item('settings','📋','מחירון','עדכון מחירים מרוכז · מבנה המחירון',false,'cat')}
+     ${item('settings','☁️','גיבוי וסנכרון','סנכרון ענן · גיבוי ושחזור · Google Drive',false,'data')}
+     ${item('settings','🛠️','מערכת','גרסה ועדכון · אחסון · יומן תקלות · קוד גישה',false,'sys')}
+   </div>
+   <div class="mn-sec">עזרה</div>
    <div class="aihub-grid">
      ${item('guide','📘','מדריך שימוש','הכל על האפליקציה — עם סרטונים',true)}
-     ${item('settings','⚙️','הגדרות','פרטי עסק, מיתוג, גיבוי ואבטחה',false)}
    </div>`;
  },
  /** v24.1 — לשונית AI: אותו עוזר הצעות, כמסך. נעול באותו קוד כמו מהתפריט (החלטת רמי, 10.10). */
@@ -9540,8 +9567,10 @@ const App={
   const syn=document.getElementById('sync-now');if(syn)syn.onclick=async()=>{if(!Sync.enabled()){this.toast('הפעל סנכרון קודם');return;}this.toast('מסנכרן…');const ok=await Sync.push(true);await Sync.init(()=>this.render());this.toast(ok||Sync.status==='on'?'סונכרן ✓':'סנכרון נכשל');this.render();};
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{if(!confirm('לאפס את המחירון למחירי ברירת המחדל 2026?\nהכמויות יתאפסו · תתי-הסעיפים שהוספת יישארו (עם איפוס כמות).'))return;this.state.catalog=JSON.parse(JSON.stringify(CATALOG));const clr=arr=>{if(arr)arr.forEach(it=>{it.selected=false;it.qty='';});};Object.values(this.state.subItems||{}).forEach(clr);clr(this.state.custom);Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);this.save();this.toast('המחירון אופס · הכמויות אופסו · תתי-הסעיפים נשמרו ✓');this.render();};
   // v24.0 — "אין עדיין סעיפים": מהמחירון (לשונית הצעה) / מקובץ (עוזר ההצעות)
-  {const nc=document.getElementById('noitems-cat');if(nc)nc.onclick=()=>{try{this.captureQuote();}catch(e){}this._navStack=[];this.state.modal=null;this.state.tab='build';this.haptic(8);try{window.scrollTo(0,0);}catch(x){}this.render();this.toast('נגיעה בקטגוריה ← מסמנים סעיף ← כמות');};
+  {const nc=document.getElementById('noitems-cat');if(nc)nc.onclick=()=>{try{this.captureQuote();}catch(e){}this._navStack=[];this.goTab('build');this.toast('נגיעה בקטגוריה ← מסמנים סעיף ← כמות');};
    const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();}
+  on('[data-settab]','click',e=>{this.state.setTab=e.currentTarget.dataset.settab;this.haptic(8);this.render();
+    try{const m=document.querySelector('.modal-scroll,.qm-scroll,.sheet,.modal');if(m)m.scrollTop=0;}catch(x){}});
   {const au=document.getElementById('ai-tab-unlock');if(au)au.onclick=()=>this.aiGate(()=>this.render());}
   const obk=document.getElementById('open-backup');if(obk)obk.onclick=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='backup';this.render();};
   const cpr=document.getElementById('check-prices');if(cpr)cpr.onclick=()=>this.checkPriceFreshness();
@@ -9895,18 +9924,14 @@ const App={
   })();
   on('[data-hmgo]','click',e=>{
     if(e.target.closest('button'))return;   // חיוג ותזכורת — לא מעבר מסך
-    this.state.tab=e.currentTarget.dataset.hmgo;this.state.modal=null;this.haptic(8);
-    try{window.scrollTo(0,0);}catch(x){}
-    this.render();
+    this.goTab(e.currentTarget.dataset.hmgo);
   });
   on('[data-gotab]','click',e=>{
     const t=e.currentTarget.dataset.gotab;
     if(!t)return;
     // v24.1 — קוד, כמו מהתפריט. v24.2: החלון של האפליקציה — המעבר קורה אחרי האישור
-    if(t==='ai'&&!this._aiUnlocked){this.aiGate(()=>{this.state.tab='ai';this.state.modal=null;try{window.scrollTo(0,0);}catch(x){}this.render();});return;}
-    this.state.tab=t;this.state.modal=null;this.haptic(8);
-    try{window.scrollTo(0,0);}catch(x){}
-    this.render();
+    if(t==='ai'&&!this._aiUnlocked){this.aiGate(()=>this.goTab('ai'));return;}
+    this.goTab(t);
   });
   try{document.body.classList.toggle('cart-on',
     !!this.chosen().reduce((a,g)=>a+g.lines.length,0)&&(this.state.tab||'home')==='build');}catch(e){}
@@ -10231,6 +10256,7 @@ const App={
   const calIcs=document.getElementById('cal-ics');if(calIcs)calIcs.onclick=()=>{const cc=this._calChoice||{};if(!cc.ics)return;const blob=new Blob([cc.ics],{type:'text/calendar'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=(cc.name||'event')+'.ics';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);this.haptic(15);this.toast('הקובץ הורד — פתח אותו כדי להוסיף ליומן');};
   on('[data-kbmove]','click',e=>{e.stopPropagation();const[id,col]=e.currentTarget.dataset.kbmove.split('|');this.kbMove(id,col);});
   on('[data-menuitem]','click',e=>{const modal=e.currentTarget.dataset.menuitem;const locked=e.currentTarget.dataset.locked==='1';
+    const mset=e.currentTarget.dataset.mset;if(mset)this.state.setTab=mset;   // v24.3 — הגדרות: ישר ללשונית
     // דחיפת המסך הנוכחי למחסנית — כדי שכפתור חזור יחזור לתפריט
     const go=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.haptic(15);this.state.modal=modal;this.render();};
     if(locked&&!this._aiUnlocked){this.aiGate(go);return;}
@@ -11262,6 +11288,21 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   if(b){try{b.scrollIntoView({block:'center',behavior:'smooth'});}catch(e){}b.classList.remove('flash');void b.offsetWidth;b.classList.add('flash');
     this.toast('אין סעיפים בהצעה — הוסף מהמחירון או מקובץ');return;}
   this.toast('אין סעיפים בהצעה — לשונית "הצעה" למטה: מסמנים סעיף ומקלידים כמות');},
+ /* v24.3 — מעבר לשונית עם רשומה בהיסטוריה, בזמן הנגיעה עצמה.
+    כרום באנדרואיד מדלג ב"אחורה" על רשומות שנוספו בלי נגיעה של המשתמש (history manipulation intervention:
+    chromium.googlesource.com/…/history_manipulation_intervention.md) — keepAlive() שנדחף בתוך popstate הוא כזה,
+    ולכן "אחורה" מלשונית יצא מהאפליקציה. רשומת לשונית שנוצרת בנגיעה לא מדולגת, ו"אחורה" צורך אותה וחוזר לבית. */
+ goTab(t){
+  const was=this.state.tab||'home';const hadModal=!!this.state.modal;
+  this.state.tab=t;this.state.modal=null;this.haptic(8);
+  try{window.scrollTo(0,0);}catch(x){}
+  // עם חלון פתוח render מחזיר את רשומת החלון (history.back) — לא דוחפים באותו רגע
+  if(!hadModal){
+    if(t!=='home'&&!this._tabEntry){try{history.pushState({ystab:1},'');this._tabEntry=true;}catch(e){}}
+    else if(t==='home'&&this._tabEntry&&was!=='home'){this._tabEntry=false;this._ignorePop=true;try{history.back();}catch(e){}}
+  }
+  this.render();
+ },
  /** עוזר ההצעות (מוגן בקוד, כמו מהתפריט) */
  openAiHub(){
   try{this.captureQuote();}catch(e){}
@@ -11338,7 +11379,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   const okS=isNew?Store.set('qseq',Store.get('qseq',0)+1):true;
   if(!okQ||!okS){
     try{Store.logErr('recordQuote','שמירה נכשלה — '+(Store.usage().total)+'KB בשימוש');}catch(e){}
-    setTimeout(()=>{try{this.toast('⚠️ ההצעה לא נשמרה — האחסון מלא. הגדרות ← מגבלות ← נקה אחסון');}catch(e){}},400);
+    setTimeout(()=>{try{this.toast('⚠️ ההצעה לא נשמרה — האחסון מלא. הגדרות ← מערכת ← פנה מקום');}catch(e){}},400);
   }else if(Store._trimmed){
     Store._trimmed=false;
     setTimeout(()=>{try{this.toast('פונה מקום באחסון — נתונים ישנים נגזמו');}catch(e){}},400);
@@ -11424,6 +11465,9 @@ keepAlive();
 window.addEventListener('popstate',()=>{
   if(App._ignorePop){App._ignorePop=false;return;}
 
+  // 0. חלון "הזן קוד" פתוח — "אחורה" סוגר אותו (כמו ביטול)
+  {const cd=document.querySelector('.code-dlg');if(cd){const no=cd.querySelector('#code-no');if(no)no.click();else cd.remove();keepAlive();return;}}
+
   // 1. מסך בתוך מסך — שלב אחד אחורה (הענף דוחף בעצמו)
   if(App._navStack&&App._navStack.length){
     const prev=App._navStack.pop();
@@ -11451,11 +11495,13 @@ window.addEventListener('popstate',()=>{
     keepAlive();return;
   }
 
-  // 5. לשונית שאינה הבית — חוזרים לבית לפני שמציעים לצאת
+  // 5. לשונית שאינה הבית — חוזרים לבית לפני שמציעים לצאת.
+  //    v24.3: אם נצרכה רשומת הלשונית (נוצרה בנגיעה) — לא דוחפים רשומה חדשה; רשומת keepAlive של הבית עדיין קיימת.
   if((App.state.tab||'home')!=='home'){
     App.state.tab='home';App.render();
     try{window.scrollTo(0,0);}catch(e){}
-    keepAlive();return;
+    if(App._tabEntry)App._tabEntry=false;else keepAlive();
+    return;
   }
 
   // 5. מסך ראשי — לחיצה שנייה תוך 2.5 שניות יוצאת
