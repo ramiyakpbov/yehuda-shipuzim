@@ -769,6 +769,18 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .set-tab.on{background:linear-gradient(160deg,rgba(237,28,36,.32),rgba(237,28,36,.16));box-shadow:inset 0 0 0 1px rgba(237,28,36,.4);color:#fff;}
 .set-lock{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:14px;margin:4px 0 10px;}
 .sec-title.set-danger{color:var(--red);margin-top:22px;}
+.lib-pick{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;}
+.lp-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 16px 14px;width:100%;max-width:400px;max-height:86vh;max-height:86svh;display:flex;flex-direction:column;box-shadow:0 14px 40px rgba(0,0,0,.5);}
+.lp-h{font-size:16px;color:var(--txt);}
+.lp-s{font-size:12.5px;color:var(--muted);margin:6px 0 10px;line-height:1.5;}
+.lp-all{display:flex;gap:8px;margin-bottom:8px;}
+.lp-ul{list-style:none;margin:0;padding:0;overflow:auto;min-height:0;flex:1 1 auto;border:1px solid var(--line);border-radius:12px;}
+.lp-ul li+li{border-top:1px solid var(--line);}
+.lp-ul label{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;font-size:inherit;font-weight:400;margin:0;color:inherit;}
+.lp-ul input{width:20px;height:20px;flex:0 0 auto;accent-color:var(--red);}
+.lp-n{flex:1;min-width:0;font-size:12px;color:var(--txt);word-break:break-all;text-align:left;}
+.lp-ul small{flex:0 0 auto;font-size:11px;color:var(--muted);direction:ltr;unicode-bidi:isolate;}
+#lp-ok:disabled{opacity:.45;}
 .code-dlg{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;}
 .code-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 16px 14px;width:100%;max-width:320px;box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .code-card label{display:block;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:12px;}
@@ -3325,7 +3337,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.3';
+const VERSION='24.4';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3653,7 +3665,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>הגדרות בלשוניות</b> — עסק · AI · מחירון · גיבוי · מערכת, וכל אחת נפתחת ישר מגלגל השיניים. "כלי מנהל" הוסר מהתפריט ומלשונית ההצעה — העוזר בלשונית AI.</li>
+   b:`<ul class="g-ul"><li><b>הצעת תכנון — הסכום במסך</b> — שטח × מחיר למ"ר, מע"מ וסה"כ לתשלום מופיעים בפרטי ההצעה ובסרגל התחתון, כמו ב-PDF. בלי שטח — רק המחיר למ"ר. בבדיקה לפני שליחה: סעיף בלי מחיר תקין בתכנון; חסר מחיר למ"ר — מסומן.</li>
+   <li><b>בחירת קבצים מתוך קבצים שמורים</b> — "קרא שטח" על סט עם כמה קבצים שואל אילו לשלוח, וזוכר את הבחירה. פחות קבצים — תשובה מהירה יותר.</li>
+   <li><b>הגדרות בלשוניות</b> — עסק · AI · מחירון · גיבוי · מערכת, וכל אחת נפתחת ישר מגלגל השיניים. "כלי מנהל" הוסר מהתפריט ומלשונית ההצעה — העוזר בלשונית AI.</li>
    <li><b>אחורה מלשונית</b> — חוזר לבית, לא יוצא מהאפליקציה.</li>
    <li><b>חלון קוד חדש</b> — בכניסה לעוזר ה-AI כתוב רק "הזן קוד", בחלון של האפליקציה, עם מקלדת מספרים.</li>
    <li><b>לשונית AI</b> — עוזר ההצעות בלשונית משלו בסרגל התחתון, ליד מעקב. מוגן באותו קוד.</li>
@@ -5460,7 +5474,36 @@ const App={
  async libLoad(){let L=[];try{L=await DocLib.list();}catch(e){}
   const k=JSON.stringify(L.map(m=>[m.id,m.name,m.at]));if(k===this._libKey&&this._lib)return;
   this._lib=L;this._libKey=k;
-  if(['aihub','boq','aipdf'].indexOf(this.state.modal)>=0&&!this._libBusy)this.render();},
+  if((['aihub','boq','aipdf'].indexOf(this.state.modal)>=0||(this.state.tab==='ai'&&!this.state.modal))&&!this._libBusy)this.render();},
+ /** v24.4 — בחירת קבצים מסט שמור. Promise: הקבצים שנבחרו, או null בביטול. הבחירה נזכרת לכל סט ('libPick'). */
+ libPick(x,id,label){
+  return new Promise(res=>{
+   document.querySelectorAll('.lib-pick').forEach(e=>e.remove());
+   const docs=x.docs||[];const all=Store.get('libPick',{})||{};const mem=all[id];
+   const on=i=>(Array.isArray(mem)&&mem.length)?mem.indexOf(docs[i].name)>=0:true;
+   const kb=n=>(+n>=1048576)?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round((+n||0)/1024))+' KB';
+   const d=document.createElement('div');d.className='lib-pick';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','lp-h');
+   d.innerHTML='<form class="lp-card"><b class="lp-h" id="lp-h">'+esc((x.meta&&x.meta.name)||'קבצים שמורים')+'</b>'+
+     '<p class="lp-s">אילו קבצים לשלוח? פחות קבצים — תשובה מהירה יותר. לשטח מספיקה בדרך כלל תוכנית הבנייה / האדריכלות.</p>'+
+     '<div class="lp-all"><button type="button" class="mini" data-lpall="1">הכל</button><button type="button" class="mini" data-lpall="0">נקה</button></div>'+
+     '<ul class="lp-ul">'+docs.map((f,i)=>'<li><label><input type="checkbox" value="'+i+'"'+(on(i)?' checked':'')+'/><span class="lp-n" dir="ltr">'+esc(f.name)+'</span><small>'+kb(f.size)+'</small></label></li>').join('')+'</ul>'+
+     '<div class="code-b"><button type="button" class="btn-ghost" id="lp-no">ביטול</button><button type="submit" class="tk-btn pri" id="lp-ok">'+esc(label)+' · <span id="lp-c">0</span></button></div></form>';
+   const boxes=()=>Array.from(d.querySelectorAll('.lp-ul input'));
+   const count=()=>{const n=boxes().filter(b=>b.checked).length;d.querySelector('#lp-c').textContent=n;d.querySelector('#lp-ok').disabled=!n;};
+   let done=false;const end=v=>{if(done)return;done=true;d.remove();res(v);};
+   d.addEventListener('change',count);
+   d.querySelectorAll('[data-lpall]').forEach(b=>b.addEventListener('click',()=>{const v=b.dataset.lpall==='1';boxes().forEach(x=>{x.checked=v;});count();}));
+   d.querySelector('form').addEventListener('submit',ev=>{ev.preventDefault();
+     const pick=boxes().filter(b=>b.checked).map(b=>docs[+b.value]);if(!pick.length)return;
+     try{const A=Store.get('libPick',{})||{};A[id]=pick.map(f=>f.name);const K=Object.keys(A);if(K.length>30)delete A[K[0]];Store.set('libPick',A);}catch(e){}
+     end(pick);});
+   d.querySelector('#lp-no').addEventListener('click',()=>end(null));
+   d.addEventListener('click',ev=>{if(ev.target===d)end(null);});
+   d.addEventListener('keydown',ev=>{if(ev.key==='Escape')end(null);});
+   document.body.appendChild(d);count();
+   setTimeout(()=>{try{d.querySelector('#lp-ok').focus();}catch(e){}},30);
+  });
+ },
  /** שורות הקבצים השמורים. act: plan | boq | doc */
  libRows(act,label){const L=this._lib||[];if(!L.length)return '';
   const dt=t=>new Date(t).toLocaleDateString('he-IL',{day:'numeric',month:'numeric'});
@@ -6991,7 +7034,21 @@ const App={
  discountAmt(){return this.subtotal()*(+this.state.discount||0)/100;},
  afterDiscount(){return this.subtotal()-this.discountAmt();},
  vat(){return this.state.vatOn?this.afterDiscount()*this.state.vatPct/100:0;},
- grand(){return this.afterDiscount()+this.vat();},
+ /* v24.4 — הצעת תכנון: הסכום הוא שטח × מחיר למ"ר (+ מע"מ), כמו ב-PDF (buildPDFHtml — בלי הנחה). עד v24.3
+    הסיכום במסך, הסרגל התחתון והרישום במעקב הראו את סכום הסעיפים — 0 ₪ כשלסעיפים אין מחיר. */
+ planTot(){const s=this.state;if(!s.planMode)return null;const a=+s.planTotalSqm||0,p=+s.planPerSqm||0;if(!(a>0&&p>0))return null;
+  const sub=a*p;const g=s.vatOn?Math.round(sub*(1+s.vatPct/100)):sub;return {sqm:a,psqm:p,sub:sub,vat:g-sub,grand:g};},
+ grand(){const pt=this.planTot();if(pt)return pt.grand;return this.afterDiscount()+this.vat();},
+ /** הסיכום בפרטי ההצעה — הצעת תכנון */
+ planSumHtml(){const s=this.state;const pt=this.planTot();const row=(a,b,st)=>`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px${st||''}"><span>${a}</span><b style="color:var(--txt)">${b}</b></div>`;
+  const box=x=>`<div class="field plan-sum" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:14px;">${x}</div>`;
+  if(!pt)return box(`${row('מחיר למ"ר',(+s.planPerSqm>0)?nis(+s.planPerSqm):'—',';margin-top:0')}
+     <div style="font-size:12px;color:var(--warn);margin-top:8px;line-height:1.5">${+s.planPerSqm>0?'הזן שטח כולל כדי לראות את הסכום (ב-PDF: "לפי כתב כמויות ותוכניות").':'הזן מחיר למ"ר ושטח כולל כדי לראות את הסכום.'}</div>`);
+  return box(`${row('שטח כולל',pt.sqm.toLocaleString('he-IL')+' מ"ר',';margin-top:0')}${row('מחיר למ"ר',nis(pt.psqm))}
+     ${row('סכום ביניים',nis(pt.sub))}${s.vatOn?row('מע"מ ('+s.vatPct+'%)',nis(pt.vat)):''}
+     <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"><span style="font-weight:800">סה"כ לתשלום</span><b style="color:var(--red);font-size:19px">${nis(pt.grand)}</b></div>
+     ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(pt.grand*(+s.advance)/100))}</b></div>`:''}
+     ${(+s.discount>0)?`<div style="font-size:11.5px;color:var(--muted);margin-top:6px">הנחה לא חלה בהצעת תכנון — המחיר למ"ר הוא המחיר.</div>`:''}`);},
  reminders(){return Store.get('clients',[]).filter(c=>{
    if(!c||c.approvedAt)return false;
    const st=c.status||'q';   // סטטוס חסר נחשב "הצעה פתוחה" במקום להיעלם
@@ -7519,9 +7576,16 @@ const App={
 
   // ── הסעיפים ──
   if(!lines.length){R('red','אין סעיפים בהצעה','');return out;}
+  // v24.4 — בהצעת תכנון אין מחיר לשורה (ה-PDF מציג סעיפים וכמויות, והמחיר הוא למ"ר) — מחיר 0 בסעיף תקין.
+  //         מה שחייב להיות: מחיר למ"ר. (בלי זה, סעיפים מכתב כמויות בלי עלויות נחסמו בשליחת לינק.)
+  if(s.planMode){
+    if(!(+s.planPerSqm>0))R('red','חסר מחיר למ"ר','בהצעת תכנון המחיר ללקוח הוא המחיר למ"ר','מלא בפרטי ההצעה');
+    else if(!(+s.planTotalSqm>0))R('yellow','חסר שטח כולל','ההצעה תציג רק מחיר למ"ר, בלי סכום','"קרא שטח" או הקלדה');
+  }else{
   const zero=lines.filter(x=>!(+x.it.price>0));
   if(zero.length)R('red',zero.length+' סעיפים במחיר 0',
     zero.slice(0,3).map(x=>x.it.name).join(' · '),'מלא מחיר או הסר');
+  }
 
   // כמות 1 בסעיף שנמדד בשטח/אורך — כמעט תמיד שכחה
   const AREA=['מ"ר','מ"א','מ"ק'];
@@ -7793,8 +7857,8 @@ const App={
      <button class="qtype-mini ${s.planMode?'on':''}" data-setplan="1">📐 תכנון (למ"ר)</button>
    </div>
    ${s.planMode?`<div class="row2" style="margin-top:10px">
-     <div class="field"><label>מחיר למ"ר (₪)</label><input id="q_persqm" type="number" inputmode="decimal" value="${s.planPerSqm||''}" placeholder="3200"/></div>
-     <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="475"/></div>
+     <div class="field"><label>מחיר למ"ר (₪)</label><input id="q_persqm" type="number" inputmode="decimal" value="${s.planPerSqm||''}" placeholder="₪ למ״ר"/></div>
+     <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="מ״ר"/></div>
    </div>
    <button class="tk-btn sm ghost plan-scan-btn" id="plan-scan-btn">${ico('ruler',15)}קרא שטח מתוכנית — תמונה או PDF, גם כמה</button>
    <input id="plan-scan-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>
@@ -7819,12 +7883,13 @@ const App={
      <div class="noitems-d">${s.planMode?'גם בהצעת תכנון צריך סעיפים וכמויות — ה-PDF מציג אותם בלי מחיר לשורה, ובסוף את המחיר למ"ר.':'מוסיפים סעיפים מהמחירון, או נותנים ל-AI לקרוא אותם מקובץ.'}</div>
      <div class="noitems-b"><button type="button" class="btn-ghost" id="noitems-cat">${ico('calculator',16)} מהמחירון</button>
        <button type="button" class="btn-ghost" id="noitems-ai">${ico('sparkles',16)} מקובץ (AI)</button></div></div>`}
+   ${s.planMode?this.planSumHtml():`
    <div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:14px;">
      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>סכום ביניים</span><b style="color:var(--txt)">${nis(this.subtotal())}</b></div>
      ${(+s.discount>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--red);margin-top:6px"><span>הנחה (${s.discount}%)</span><b>- ${nis(this.discountAmt())}</b></div>`:''}
      ${s.vatOn?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px"><span>מע"מ (${s.vatPct}%)</span><b style="color:var(--txt)">${nis(this.vat())}</b></div>`:''}
      <div style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px;border-top:1px solid var(--line);padding-top:8px"><span style="font-weight:800">סה"כ לתשלום</span><b style="color:var(--red);font-size:19px">${nis(this.grand())}</b></div>
-     ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>
+     ${(+s.advance>0)?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--blue);margin-top:6px"><span>מקדמה (${s.advance}%)</span><b>${nis(Math.round(this.grand()*(+s.advance)/100))}</b></div>`:''}</div>`}
    <div class="sec-title">שפת המסמך</div>
    <div class="chips" style="padding:0 0 4px">${[['he','עברית'],['ar','ערבית'],['en','English'],['ru','Русский']].map(l=>`<button class="chip ${s.lang===l[0]?'on':''}" data-lang="${l[0]}">${l[1]}</button>`).join('')}</div>
    ${(s.lang&&s.lang!=='he')?`<button class="btn-ghost" id="tr-run" style="margin:4px 0 8px;font-size:12.5px">🌐 תרגם סעיפים ב-AI</button>`:''}
@@ -9571,6 +9636,8 @@ const App={
    const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();}
   on('[data-settab]','click',e=>{this.state.setTab=e.currentTarget.dataset.settab;this.haptic(8);this.render();
     try{const m=document.querySelector('.modal-scroll,.qm-scroll,.sheet,.modal');if(m)m.scrollTop=0;}catch(x){}});
+  // v24.4 — שטח / מחיר למ"ר: הסיכום מתעדכן כשיוצאים מהשדה
+  ['q_persqm','q_totsqm'].forEach(k=>{const el=document.getElementById(k);if(el)el.addEventListener('change',()=>{try{this.captureQuote();}catch(e){}this.render();});});
   {const au=document.getElementById('ai-tab-unlock');if(au)au.onclick=()=>this.aiGate(()=>this.render());}
   const obk=document.getElementById('open-backup');if(obk)obk.onclick=()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='backup';this.render();};
   const cpr=document.getElementById('check-prices');if(cpr)cpr.onclick=()=>this.checkPriceFreshness();
@@ -9621,12 +9688,16 @@ const App={
     // תמונת הפתיחה לא נטענת — כנראה כל התיקייה חסרה. בודקים מיד, בלי לחכות ללחיצה.
     const ps=v.getAttribute('poster');if(ps){const im=new Image();im.onerror=()=>this.guideVidDiag(v);im.src=ps;}});
   // קבצים שמורים
-  if(['aihub','boq','aipdf'].indexOf(this.state.modal)>=0&&this._lib===undefined){this._lib=null;this.libLoad();}
+  // v24.4: גם בלשונית AI (עד עכשיו הקבצים השמורים נטענו רק כשהעוזר נפתח כחלון)
+  if((['aihub','boq','aipdf'].indexOf(this.state.modal)>=0||(this.state.tab==='ai'&&!this.state.modal&&this._aiUnlocked))&&this._lib===undefined){this._lib=null;this.libLoad();}
   const libGet=async id=>{this._libBusy=true;try{const x=await DocLib.get(id);
     if(!x||!x.docs||!x.docs.length){this.toast('הקבצים לא נמצאו — אולי נמחקו');this.libLoad();return null;}return x;}
     finally{this._libBusy=false;}};
   on('[data-libplan]','click',async e=>{const id=e.currentTarget.dataset.libplan;try{this.captureQuote();}catch(x){}
-    const x=await libGet(id);if(x)this.planScan(null,{docs:x.docs,libId:id});});
+    const x=await libGet(id);if(!x)return;
+    // v24.4 — כמה קבצים: בוחרים מה לשלוח (8 תוכניות בבקשה אחת לא חזרו כש-Gemini עמוס; תוכנית הבנייה לבד — חזרה)
+    const docs=x.docs.length>1?await this.libPick(x,id,'קרא שטח'):x.docs;
+    if(docs&&docs.length)this.planScan(null,{docs:docs,libId:id});});
   on('[data-libboq]','click',async e=>{const x=await libGet(e.currentTarget.dataset.libboq);if(!x)return;
     this._boqDocs=x.docs.slice();this.render();this.toast(x.docs.length+(x.docs.length===1?' קובץ נטען':' קבצים נטענו')+' ✓');this.libLoad();});
   on('[data-libdoc]','click',async e=>{const x=await libGet(e.currentTarget.dataset.libdoc);if(!x)return;
@@ -11466,6 +11537,7 @@ window.addEventListener('popstate',()=>{
   if(App._ignorePop){App._ignorePop=false;return;}
 
   // 0. חלון "הזן קוד" פתוח — "אחורה" סוגר אותו (כמו ביטול)
+  {const lp=document.querySelector('.lib-pick');if(lp){const no=lp.querySelector('#lp-no');if(no)no.click();else lp.remove();keepAlive();return;}}
   {const cd=document.querySelector('.code-dlg');if(cd){const no=cd.querySelector('#code-no');if(no)no.click();else cd.remove();keepAlive();return;}}
 
   // 1. מסך בתוך מסך — שלב אחד אחורה (הענף דוחף בעצמו)
