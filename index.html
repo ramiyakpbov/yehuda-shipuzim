@@ -771,6 +771,8 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .sec-title.set-danger{color:var(--red);margin-top:22px;}
 /* v24.5 — שורת השבבים בלשונית הצעה ממלאת את רוחב המסך (אחרי הסרת "כלי מנהל" נשארו 2–3) */
 /* v24.6 — לשונית הצעה: הלוגו, החיפוש והשבבים נשארים למעלה בגלילה (רמי: "תקפיא כך שיראה את אזור הלוגו וחיפוש גלובלי") */
+.boq-picked{display:flex;gap:6px;align-items:flex-start;font-size:12px;color:var(--muted);margin:8px 0 0;line-height:1.5;}
+.boq-picked [dir="ltr"]{word-break:break-all;}
 .buildhead{position:sticky;top:0;z-index:45;background:var(--bg);}
 .buildhead .chips{position:static;}
 .cat,.item{scroll-margin-top:calc(var(--bh-h,0px) + 8px);}
@@ -3351,7 +3353,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.6';
+const VERSION='24.7';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3593,7 +3595,7 @@ const GUIDE=[
    <div class="g-note">קבצים מוואטסאפ ומדרייב מזוהים גם כשהטלפון לא מסמן אותם כ-PDF.</div>`},
   {id:'g37',ic:'clipboard-list',t:'כתב כמויות של אדריכל',d:'הסעיפים כמו שהם · מזינים רק עלויות',
    b:`<p>לפרויקט עם כתב כמויות של אדריכל — טופס מכרז. ההצעה נשארת בניסוח, בסדר ובכמויות של האדריכל, כדי שיוכל להשוות הצעות שורה מול שורה.</p>
-   <ol class="g-ol"><li>עוזר ההצעות ← <b>כתב כמויות של אדריכל</b> ← בוחרים את הקובץ (אפשר כמה). בדרך כלל מספיק המפרט עם הכמויות — לא צריך את כל התוכניות.</li>
+   <ol class="g-ol"><li>עוזר ההצעות ← <b>כתב כמויות של אדריכל</b> ← בוחרים את הקבצים — אפשר את כל קבצי הפרויקט: ה-AI מזהה לבד איזה מהם כתב הכמויות, וקורא רק אותו.</li>
    <li>ה-AI מעתיק את הסעיפים, היחידות והכמויות. "קומפלט" נכנס כ"גלובלי".</li>
    <li><b>למעלה, פעם אחת:</b> אחוז הוצאות כלליות ואחוז רווח.</li>
    <li><b>לכל סעיף, שני מספרים:</b> עלות חומר ועלות עבודה (או קבלן משנה) ליחידה. המחיר, הסה״כ, המע״מ והרווח מחושבים לבד.</li>
@@ -3679,7 +3681,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
+   b:`<ul class="g-ul"><li><b>כתב כמויות מכל הקבצים</b> — מעלים את כל קבצי הפרויקט, וה-AI מזהה לבד איזה מהם כתב הכמויות וקורא רק אותו. על המסך: השלב והזמן; אם נכשל — חלון עם הסיבה.</li>
+   <li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
    <li><b>קרא שטח — "החל"</b> — כתוב שהשטח ופרטי הלקוח נכנסים להצעה רק אחרי "החל", והכפתור ברוחב מלא.</li>
    <li><b>אין עדיין סעיפים</b> — הסבר מה זה סעיף, וכפתור ישיר "מכתב כמויות (AI)".</li>
    <li><b>קוד שגוי</b> — הודעה בחלון של האפליקציה, עם "התקשר לרמי" ו"סגור".</li>
@@ -5256,6 +5259,7 @@ const App={
        (p.docRef?'<p class="boq-arch">'+ico('file-text',14)+'<span>מסמך: '+esc(p.docRef)+(p.docDate?' · '+esc(p.docDate):'')+'</span></p>':'')+'</section>';})()+
    '<div class="boq-gs">'+pct('boq-oh',p.oh,'הוצאות כלליות')+pct('boq-pr',p.pr,'רווח')+'</div>'+
    '<p class="boq-warn" id="boq-warn"'+((+p.pr||0)>0?' hidden':'')+'>'+ico('circle-help',14)+' רווח 0% — המחיר יוצא במחיר עלות</p>'+
+   (p.picked&&p.picked.length?'<p class="boq-picked">'+ico('file-text',14)+'<span>נקרא מתוך: <span dir="ltr">'+esc(p.picked.join(' · '))+'</span>'+(p.skipped?' — '+p.skipped+' הקבצים האחרים זוהו כתוכניות ולא נשלחו.':'')+'</span></p>':'')+
    '<div class="boq-sum" id="boq-sum" aria-live="polite">'+this.boqSumHtml(R,p)+'</div>'+
    '<p class="tk-hint start">לכל סעיף: עלות חומר ועלות עבודה (או קבלן משנה) ליחידה. המחיר מחושב לבד.</p>'+
    p.sections.map((s,si)=>'<h3 class="tk-sec"><span>'+esc(s.title)+'</span><b id="boq-st-'+si+'">'+nisR(R.secs[si].total)+'</b></h3>'+
@@ -5371,15 +5375,51 @@ const App={
    '14. area_sqm — שטח הנכס הכולל במ"ר, רק אם כתוב במסמך במפורש (למשל "שטח המתחם 82 מ"ר נטו"). לא כתוב — השמט. אל תחשב ואל תסכם סעיפים.',
    ...this.docProjPrompt(),
    'החזר JSON בלבד.'].join(NL);
+  /* v24.7 — שני שלבים, כמו "קרא שטח".
+     רמי (11.10): "אתה יודע שקובץ 0 זה כתב כמויות — מחר אני לא אדע". 8 קבצים + המחירון (~12K טוקנים) + פלט של עד 12K
+     בבקשה אחת — נתקע ("Failed to fetch" ביומן, 22:33 ו-22:36).
+     שלב 1 (רק כשיש יותר מקובץ אחד): ה-AI מסווג כל קובץ — כתב כמויות / תוכנית / אחר. בקשה קטנה, בלי המחירון.
+     שלב 2: רק הקבצים שסווגו ככתב כמויות — עם המחירון וכל ההנחיות. על המסך: השלב והזמן; כשל — חלון שגיאה עם הניסיונות. */
+  const bt=document.querySelector('#busy-ov .busy-txt');const t0=Date.now();let phase='';
+  const mmss=ms=>{const x=Math.floor(ms/1000);return Math.floor(x/60)+':'+String(x%60).padStart(2,'0');};
+  const tick=()=>{if(bt)bt.textContent=phase+' · '+mmss(Date.now()-t0);};
+  const setPh=x=>{phase=x;tick();};const tm=setInterval(tick,1000);
   try{
    const libP=this.libSave(D,this.libClientName());
-   const o=await AI.json(this.docParts(D).concat([{t:'text',v:P}]),S,this.docOpts(D,{maxTokens:12000,catalog:true}));
-   const p=this.boqFromAI(o,D);
+   let Dq=D,picked=null;
+   if(D.length>1){
+    setPh('שלב 1 · מזהה איזה קובץ הוא כתב הכמויות ('+D.length+' קבצים)…');
+    const SC={type:'object',properties:{files:{type:'array',items:{type:'object',properties:{
+      n:{type:'integer'},kind:{type:'string',enum:['boq','plan','other']},why:str},required:['n','kind']}}},required:['files']};
+    const P0=['מצורפים '+D.length+' קבצים של פרויקט שיפוץ, כל אחד מסומן "קובץ N". לכל קובץ קבע kind:',
+     'boq — כתב כמויות / מפרט טכני עם עמודת כמות: טבלה או רשימה של סעיפי עבודה עם כמויות ויחידות (גם אם עמודת המחיר ריקה).',
+     'plan — שרטוט או תוכנית (בנייה, חשמל, תקרות, אינסטלציה, ריצוף, חתכים, פרטים), גם אם יש בה הערות או טבלת מקרא.',
+     'other — כל השאר.',
+     'n — מספר הקובץ (מ-1). why — עד 5 מילים. החזר JSON בלבד.'].join(NL);
+    const o0=await AI.json(this.docParts(D).concat([{t:'text',v:P0}]),SC,
+      Object.assign(this.docOpts(D,{maxTokens:800}),{hires:false,think:'low',timeout:90000,budget:200000}));
+    const idx=((o0&&o0.files)||[]).filter(f=>f&&f.kind==='boq').map(f=>Math.round(+f.n)-1).filter((i,k,a)=>i>=0&&i<D.length&&a.indexOf(i)===k);
+    if(!idx.length){this.idle();
+      this.errPanel('לא נמצא כתב כמויות','ה-AI עבר על '+D.length+' הקבצים ולא מצא כתב כמויות או מפרט עם עמודת כמויות — רק תוכניות. אם יש קובץ כזה, השאר רק אותו (✕ ליד השאר) ונסה שוב.',[],'');
+      return;}
+    if(idx.length<D.length){Dq=idx.map(i=>D[i]);picked=Dq.map(d=>d.name);}
+   }
+   setPh((picked?'שלב 2 · ':'')+'ה-AI מעתיק את הסעיפים והכמויות'+(picked?' מ'+(picked.length===1?'קובץ אחד':picked.length+' קבצים'):'')+'…');
+   const op=Object.assign(this.docOpts(Dq,{maxTokens:12000,catalog:true}),{budget:300000});op.timeout=Math.min(op.timeout,150000);
+   const o=await AI.json(this.docParts(Dq).concat([{t:'text',v:P}]),S,op);
+   const p=this.boqFromAI(o,Dq);
+   if(picked){p.picked=picked;p.skipped=D.length-picked.length;}
    libP.then(id=>this.libName(id,p.client));
    if(!p.sections.length){this.idle();this.toast('לא נמצאו סעיפים עם כמויות — האם זה כתב הכמויות?');return;}
    this.boqSave(p);this._boqDocs=[];this.idle();this.render();
-   this.toast(p.sections.reduce((a,s)=>a+s.items.length,0)+' סעיפים נקראו ✓');
-  }catch(e){this.idle();this.toast(this.aiErrMsg(e));}
+   this.toast(p.sections.reduce((a,s)=>a+s.items.length,0)+' סעיפים נקראו'+(picked?' מתוך '+(picked.length===1?'קובץ אחד':picked.length+' קבצים'):'')+' ✓');
+  }catch(e){this.idle();
+   if(e&&e.message==='cancelled'){this.toast(this.aiErrMsg(e));return;}
+   const sec=Math.floor((Date.now()-t0)/1000);const at=phase.split(' · ')[0]+', אחרי '+mmss(Date.now()-t0);
+   const tl=((e&&e.trace)||[]).map(x=>String(x.m||'').replace(/^gemini-/,'')+' '+Math.round((x.ms||0)/1000)+'s '+x.r).join(' → ');
+   try{Store.logErr('boq',((e&&e.message)||'')+' · '+phase+' · '+sec+'s'+(tl?' · '+tl:''));}catch(x){}
+   this.errPanel('קריאת כתב הכמויות נכשלה',this.aiErrMsg(e),(e&&e.trace)||[],at);}
+  finally{clearInterval(tm);}
  },
  boqToQuote(mode){
   const p=this.boqGet();if(!p)return;const R=this.boqCalc(p);
