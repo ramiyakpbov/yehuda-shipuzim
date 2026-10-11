@@ -770,6 +770,16 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .set-lock{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:14px;margin:4px 0 10px;}
 .sec-title.set-danger{color:var(--red);margin-top:22px;}
 /* v24.5 — שורת השבבים בלשונית הצעה ממלאת את רוחב המסך (אחרי הסרת "כלי מנהל" נשארו 2–3) */
+/* v24.6 — לשונית הצעה: הלוגו, החיפוש והשבבים נשארים למעלה בגלילה (רמי: "תקפיא כך שיראה את אזור הלוגו וחיפוש גלובלי") */
+.buildhead{position:sticky;top:0;z-index:45;background:var(--bg);}
+.buildhead .chips{position:static;}
+.cat,.item{scroll-margin-top:calc(var(--bh-h,0px) + 8px);}
+.plan-scan-h{font-size:12px;color:var(--warn);margin:10px 0 0;line-height:1.5;}
+.plan-scan-acts{flex-wrap:wrap;}
+.plan-scan-acts .tk-btn{flex:1 1 auto;}
+.plan-scan-acts .tk-btn.pri{flex:1 1 100%;justify-content:center;}
+.noitems-h{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.55;}
+.noitems-more{display:block;margin-top:6px;background:none;border:0;padding:0;color:var(--txt);text-decoration:underline;font:inherit;font-size:12.5px;cursor:pointer;}
 .chips-fill .chip{flex:1 1 auto;text-align:center;justify-content:center;}
 .code-card .code-msg{font-size:14px;color:var(--muted);margin:0 0 4px;line-height:1.5;}
 .code-card .code-tel{font-size:13px;color:var(--muted);margin-top:10px;text-align:center;direction:ltr;user-select:all;}
@@ -3341,7 +3351,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.5';
+const VERSION='24.6';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3669,7 +3679,10 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>קוד שגוי</b> — הודעה בחלון של האפליקציה, עם "התקשר לרמי" ו"סגור".</li>
+   b:`<ul class="g-ul"><li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
+   <li><b>קרא שטח — "החל"</b> — כתוב שהשטח ופרטי הלקוח נכנסים להצעה רק אחרי "החל", והכפתור ברוחב מלא.</li>
+   <li><b>אין עדיין סעיפים</b> — הסבר מה זה סעיף, וכפתור ישיר "מכתב כמויות (AI)".</li>
+   <li><b>קוד שגוי</b> — הודעה בחלון של האפליקציה, עם "התקשר לרמי" ו"סגור".</li>
    <li><b>שבבי לשונית הצעה</b> — קטגוריות והצעות מהירות ממלאים את רוחב המסך.</li>
    <li><b>הצעת תכנון — הסכום במסך</b> — שטח × מחיר למ"ר, מע"מ וסה"כ לתשלום מופיעים בפרטי ההצעה ובסרגל התחתון, כמו ב-PDF. בלי שטח — רק המחיר למ"ר. בבדיקה לפני שליחה: סעיף בלי מחיר תקין בתכנון; חסר מחיר למ"ר — מסומן.</li>
    <li><b>בחירת קבצים מתוך קבצים שמורים</b> — "קרא שטח" על סט עם כמה קבצים שואל אילו לשלוח, וזוכר את הבחירה. פחות קבצים — תשובה מהירה יותר.</li>
@@ -5809,6 +5822,7 @@ const App={
       '<li>'+ico('users',14)+'<span><b>יירשם בפרטי הלקוח</b> (שדות ריקים בלבד)</span></li>'+
       fill.map(x=>'<li class="pr"><span>'+x[0]+'</span><b>'+esc(x[1])+'</b></li>').join('')+
       (p.client.conf!=='high'&&p.client.lines.length?'<li class="cut">'+ico('eye',14)+'<span>בדוק את האיות — כך נקרא: '+esc(p.client.lines.join(' · '))+'</span></li>':'')+'</ul>':'')+
+    '<p class="plan-scan-h">השטח'+(fill.length?' ופרטי הלקוח':'')+' נכנסים להצעה רק אחרי "החל" — כדי שתבדוק קודם מה ה-AI קרא.</p>'+
     '<div class="tk-acts plan-scan-acts">'+
       '<button class="tk-btn pri" data-planapply="'+p.total+'" data-plancl="1">'+ico('check',16)+'החל '+n(p.total)+' מ"ר'+(fill.length?' + פרטים':'')+'</button>'+
       (fill.length?'<button class="tk-btn" data-planapply="'+p.total+'">רק השטח</button>':'')+
@@ -6760,6 +6774,9 @@ const App={
    const d=document.querySelector('.dockwrap');
    const px=d?Math.ceil(d.getBoundingClientRect().height)+10:150;
    document.documentElement.style.setProperty('--dock-h',px+'px');
+   // v24.6 — גובה הכותרת הקבועה בלשונית הצעה: גלילה לסעיף לא תסתיר אותו מתחתיה
+   const bh=document.querySelector('.buildhead');
+   document.documentElement.style.setProperty('--bh-h',(bh?Math.ceil(bh.getBoundingClientRect().height):0)+'px');
   }catch(e){}
  },
  tabBar(){
@@ -7378,7 +7395,7 @@ const App={
         ${c.custom&&!items.length?'<div class="empty" style="padding:10px">אין עדיין פריטים מותאמים</div>':''}</div>`:''}</div>`;
   }).join('');
   const rem=this.reminders().length;
-  return `<div class="topbar"><div class="brand"><div class="lg"><img src="${LOGO_APP}" alt="לוגו" style="width:100%;height:auto;display:block"/></div>
+  return `<div class="buildhead"><div class="topbar"><div class="brand"><div class="lg"><img src="${LOGO_APP}" alt="לוגו" style="width:100%;height:auto;display:block"/></div>
       <div><div class="name">יהודה שיפוצים</div><div class="sub">קבלן רשום 134094 · דירות · משרדים · מרפאות</div></div>
       <div class="spacer"></div>
       <button class="icon-btn" data-modal="reminders" aria-label="מעקב ותזכורות">${ico('bell',20)}${rem?`<span class="dot">${rem}</span>`:''}</button>
@@ -7388,8 +7405,6 @@ const App={
     <div class="searchwrap"><span class="mag">🔍</span>
       <input id="search" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
-  ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
-  ${this.summaryBanner()}
   <div class="chips chips-fill">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       if(!n&&!onlySel)return '';
@@ -7401,7 +7416,9 @@ const App={
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       /* איפוס — אחרון בשורה ומסומן כפעולה מוחקת, כדי שלא ייראה
          כמו עוד כפתור סינון. חלון האישור נשאר. */
-      return n?`<button class="chip chip-danger" id="chip-reset">🔄 איפוס</button>`:'';})()}</div>
+      return n?`<button class="chip chip-danger" id="chip-reset">🔄 איפוס</button>`:'';})()}</div></div>
+  ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
+  ${this.summaryBanner()}
   <div class="wrap">${(()=>{
       if(onlySel){const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
         return `<div class="srch-info"><span>מציג <b>${n}</b> סעיפים שבחרת</span><button id="srch-clear">✕ הצג הכל</button></div>`;}
@@ -7417,7 +7434,7 @@ const App={
       const n=this.chosen().reduce((k,g)=>k+g.lines.length,0);const op=!!this.state.cartOpen;
       return `<button class="tot" id="cart-toggle" ${n?'':'disabled'} aria-label="מה בחרתי">
         <span class="tot-n">${n}</span>
-        <span class="tot-m"><span class="b">${nis(this.afterDiscount())}</span><span class="a">${this.vatLine()}</span></span>
+        <span class="tot-m"><span class="b">${nis(this.dockNet())}</span><span class="a">${this.vatLine()}</span></span>
         <span class="tot-c">${op?'⌄':'⌃'}</span></button>`;})()}
     <button class="btn-primary${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       const was=this._hadLines;this._hadLines=n>0;
@@ -7898,9 +7915,11 @@ const App={
    <button class="btn-ghost" id="open-portfolio" style="margin-top:8px">🖼️ נהל תמונות עבודה</button>
    ${this.chosen().length?'':`<div class="noitems" id="noitems" role="note">
      <div class="noitems-t">${ico('clipboard-list',18)}<b>אין עדיין סעיפים בהצעה</b></div>
-     <div class="noitems-d">${s.planMode?'גם בהצעת תכנון צריך סעיפים וכמויות — ה-PDF מציג אותם בלי מחיר לשורה, ובסוף את המחיר למ"ר.':'מוסיפים סעיפים מהמחירון, או נותנים ל-AI לקרוא אותם מקובץ.'}</div>
-     <div class="noitems-b"><button type="button" class="btn-ghost" id="noitems-cat">${ico('calculator',16)} מהמחירון</button>
-       <button type="button" class="btn-ghost" id="noitems-ai">${ico('sparkles',16)} מקובץ (AI)</button></div></div>`}
+     <div class="noitems-d">סעיף = שורת עבודה בהצעה, עם כמות (למשל: קיר גבס · 96 מ"ר).${s.planMode?' גם בהצעת תכנון — ה-PDF מציג את הסעיפים בלי מחיר לשורה, ובסוף את המחיר למ"ר.':''}</div>
+     <div class="noitems-b"><button type="button" class="btn-ghost" id="noitems-boq">${ico('clipboard-list',16)} מכתב כמויות (AI)</button>
+       <button type="button" class="btn-ghost" id="noitems-cat">${ico('calculator',16)} מהמחירון</button></div>
+     <div class="noitems-h"><b>מכתב כמויות</b> — מעלים את המפרט של האדריכל, וה-AI מכניס את הסעיפים והכמויות. <b>מהמחירון</b> — בוחרים בעצמך בלשונית "הצעה".
+       <button type="button" class="noitems-more" id="noitems-ai">דרכים נוספות: צילום, הקלטה, טקסט ←</button></div></div>`}
    ${s.planMode?this.planSumHtml():`
    <div class="field" style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:14px;">
      <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>סכום ביניים</span><b style="color:var(--txt)">${nis(this.subtotal())}</b></div>
@@ -9651,7 +9670,10 @@ const App={
   const rc=document.getElementById('reset-catalog');if(rc)rc.onclick=()=>{if(!confirm('לאפס את המחירון למחירי ברירת המחדל 2026?\nהכמויות יתאפסו · תתי-הסעיפים שהוספת יישארו (עם איפוס כמות).'))return;this.state.catalog=JSON.parse(JSON.stringify(CATALOG));const clr=arr=>{if(arr)arr.forEach(it=>{it.selected=false;it.qty='';});};Object.values(this.state.subItems||{}).forEach(clr);clr(this.state.custom);Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);this.save();this.toast('המחירון אופס · הכמויות אופסו · תתי-הסעיפים נשמרו ✓');this.render();};
   // v24.0 — "אין עדיין סעיפים": מהמחירון (לשונית הצעה) / מקובץ (עוזר ההצעות)
   {const nc=document.getElementById('noitems-cat');if(nc)nc.onclick=()=>{try{this.captureQuote();}catch(e){}this._navStack=[];this.goTab('build');this.toast('נגיעה בקטגוריה ← מסמנים סעיף ← כמות');};
-   const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();}
+   const na=document.getElementById('noitems-ai');if(na)na.onclick=()=>this.openAiHub();
+   // v24.6 — ישר לכתב כמויות (בפרויקט עם מפרט של אדריכל זה המקור לסעיפים)
+   const nb=document.getElementById('noitems-boq');if(nb)nb.onclick=()=>{try{this.captureQuote();}catch(e){}
+     this.aiGate(()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='boq';this.render();});};}
   on('[data-settab]','click',e=>{this.state.setTab=e.currentTarget.dataset.settab;this.haptic(8);this.render();
     try{const m=document.querySelector('.modal-scroll,.qm-scroll,.sheet,.modal');if(m)m.scrollTop=0;}catch(x){}});
   // v24.4 — שטח / מחיר למ"ר: הסיכום מתעדכן כשיוצאים מהשדה
@@ -10644,12 +10666,14 @@ const App={
  async loadPortfolio(){const grid=document.getElementById('pf-grid');if(!grid)return;const list=await Photos.list('__portfolio__');grid.innerHTML=list.length?list.map(p=>`<div class="ph"><img loading="lazy" src="${p.data}"/><button class="del" data-delpf="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין עדיין תמונות עבודה</div>';grid.querySelectorAll('[data-delpf]').forEach(b=>b.addEventListener('click',async e=>{if(!confirm('למחוק תמונת עבודה זו?'))return;await Photos.del(e.currentTarget.dataset.delpf);this.loadPortfolio();}));},
 
  // שורת המע"מ מתחת לסכום
- vatLine(){const s=this.state;const g=this.grand(),a=this.afterDiscount();
+ /** הסכום לפני מע"מ בסרגל התחתון — בהצעת תכנון: שטח × מחיר (v24.6; היה 0 ₪ ליד "כולל 309,632") */
+ dockNet(){const pt=this.planTot();return pt?pt.sub:this.afterDiscount();},
+ vatLine(){const s=this.state;const g=this.grand(),a=this.dockNet();
   return (s.vatOn&&g>a)?('לפני מע"מ · כולל '+nis(g)):'סה"כ לתשלום';},
  // עדכון במקום בזמן הקלדת כמות — בלי לבנות מחדש את המסך
  updateBottom(){
   const n=this.chosen().reduce((k,g)=>k+g.lines.length,0);
-  const b=document.querySelector('.bottombar .tot .b');if(b)b.textContent=nis(this.afterDiscount());
+  const b=document.querySelector('.bottombar .tot .b');if(b)b.textContent=nis(this.dockNet());
   const a=document.querySelector('.bottombar .tot .a');if(a)a.textContent=this.vatLine();
   const c=document.querySelector('.bottombar .tot-n');if(c)c.textContent=n;
   const t=document.getElementById('cart-toggle');if(t)t.disabled=!n;},
