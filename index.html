@@ -769,6 +769,10 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .set-tab.on{background:linear-gradient(160deg,rgba(237,28,36,.32),rgba(237,28,36,.16));box-shadow:inset 0 0 0 1px rgba(237,28,36,.4);color:#fff;}
 .set-lock{display:flex;align-items:center;gap:8px;color:var(--warn);font-size:14px;margin:4px 0 10px;}
 .sec-title.set-danger{color:var(--red);margin-top:22px;}
+/* v24.5 — שורת השבבים בלשונית הצעה ממלאת את רוחב המסך (אחרי הסרת "כלי מנהל" נשארו 2–3) */
+.chips-fill .chip{flex:1 1 auto;text-align:center;justify-content:center;}
+.code-card .code-msg{font-size:14px;color:var(--muted);margin:0 0 4px;line-height:1.5;}
+.code-card .code-tel{font-size:13px;color:var(--muted);margin-top:10px;text-align:center;direction:ltr;user-select:all;}
 .lib-pick{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;}
 .lp-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 16px 14px;width:100%;max-width:400px;max-height:86vh;max-height:86svh;display:flex;flex-direction:column;box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .lp-h{font-size:16px;color:var(--txt);}
@@ -3337,7 +3341,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.4';
+const VERSION='24.5';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3665,7 +3669,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>הצעת תכנון — הסכום במסך</b> — שטח × מחיר למ"ר, מע"מ וסה"כ לתשלום מופיעים בפרטי ההצעה ובסרגל התחתון, כמו ב-PDF. בלי שטח — רק המחיר למ"ר. בבדיקה לפני שליחה: סעיף בלי מחיר תקין בתכנון; חסר מחיר למ"ר — מסומן.</li>
+   b:`<ul class="g-ul"><li><b>קוד שגוי</b> — הודעה בחלון של האפליקציה, עם "התקשר לרמי" ו"סגור".</li>
+   <li><b>שבבי לשונית הצעה</b> — קטגוריות והצעות מהירות ממלאים את רוחב המסך.</li>
+   <li><b>הצעת תכנון — הסכום במסך</b> — שטח × מחיר למ"ר, מע"מ וסה"כ לתשלום מופיעים בפרטי ההצעה ובסרגל התחתון, כמו ב-PDF. בלי שטח — רק המחיר למ"ר. בבדיקה לפני שליחה: סעיף בלי מחיר תקין בתכנון; חסר מחיר למ"ר — מסומן.</li>
    <li><b>בחירת קבצים מתוך קבצים שמורים</b> — "קרא שטח" על סט עם כמה קבצים שואל אילו לשלוח, וזוכר את הבחירה. פחות קבצים — תשובה מהירה יותר.</li>
    <li><b>הגדרות בלשוניות</b> — עסק · AI · מחירון · גיבוי · מערכת, וכל אחת נפתחת ישר מגלגל השיניים. "כלי מנהל" הוסר מהתפריט ומלשונית ההצעה — העוזר בלשונית AI.</li>
    <li><b>אחורה מלשונית</b> — חוזר לבית, לא יוצא מהאפליקציה.</li>
@@ -7384,7 +7390,7 @@ const App={
       <button class="mic" id="mic">🎤</button></div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.summaryBanner()}
-  <div class="chips">
+  <div class="chips chips-fill">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       if(!n&&!onlySel)return '';
       return `<button class="chip ${onlySel?'on':''}" id="chip-onlysel">${onlySel?'✕ הצג הכל':'👁 רק ה-'+n+' שבחרתי'}</button>`;})()}
@@ -7737,8 +7743,20 @@ const App={
  // בדיקת קוד גישה אחת לכל הנעילות באפליקציה
  // מי שנחסם ואין לו קוד — שיחה ישירה, בלי לנחש
  gateCall(){try{location.href='tel:0543013389';}catch(e){}},
+ /* v24.5 — "קוד שגוי" בחלון של האפליקציה. confirm של הדפדפן הוסיף "האתר … אומר" (רמי, 11.10). */
  gateDenied(){
-  if(confirm('קוד שגוי.\n\nהגישה לאזור הזה מוגבלת.\nלהתקשר לרמי לקבלת הרשאה?\n054-3013389'))this.gateCall();
+  document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
+  const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','code-t');
+  d.innerHTML='<div class="code-card"><label id="code-t">קוד שגוי</label><p class="code-msg">הגישה לאזור הזה מוגבלת. לקבלת הרשאה — רמי.</p>'+
+    '<div class="code-b"><button type="button" class="btn-ghost" id="code-no">סגור</button><button type="button" class="tk-btn pri" id="code-call">התקשר לרמי</button></div>'+
+    '<div class="code-tel">054-3013389</div></div>';
+  const end=()=>d.remove();
+  d.querySelector('#code-no').addEventListener('click',end);
+  d.querySelector('#code-call').addEventListener('click',()=>{end();this.gateCall();});
+  d.addEventListener('click',ev=>{if(ev.target===d)end();});
+  d.addEventListener('keydown',ev=>{if(ev.key==='Escape')end();});
+  document.body.appendChild(d);
+  setTimeout(()=>{try{d.querySelector('#code-no').focus();}catch(e){}},30);
  },
  /* עוזר ה-AI נעול בקוד המנהל. נפתח פעם אחת לכל הפעלה של האפליקציה,
     כדי שלא יידרש קוד בכל לחיצה. הקוד עצמו לא מופיע בקוד המקור. */
