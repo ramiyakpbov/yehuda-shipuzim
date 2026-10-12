@@ -3364,7 +3364,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.1';
+const VERSION='25.2';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3692,7 +3692,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>מסך הבית סופר גם הצעות PDF</b> — "בצנרת", "ממתינות", "פג תוקפן" ו"אושרו" כוללים עכשיו גם הצעות שנשלחו כ-PDF (על PDF אין "נצפו"). במעקב לינקים — שורה שמראה כמה הצעות PDF פתוחות, ו"הצג".</li>
+   b:`<ul class="g-ul"><li><b>"ערוך" / "שכפל" בהצעת תכנון</b> — ההצעה נפתחת שוב כהצעת תכנון עם המחיר למ"ר והשטח (בהצעות שנשמרו לפני v25.2 — רק סוג ההצעה; את המחיר והשטח ממלאים מחדש).</li>
+   <li><b>מסך הבית סופר גם הצעות PDF</b> — "בצנרת", "ממתינות", "פג תוקפן" ו"אושרו" כוללים עכשיו גם הצעות שנשלחו כ-PDF (על PDF אין "נצפו"). במעקב לינקים — שורה שמראה כמה הצעות PDF פתוחות, ו"הצג".</li>
    <li><b>אותו טלפון, שם אחר = לקוח חדש</b> — הפקת הצעה בשם אחר עם טלפון קיים כבר לא משנה את השם של הלקוח הקיים.</li>
    <li><b>שליחת PDF ללקוח</b> — "📲 שלח PDF ללקוח" פותח חלון: "שלח ל[לקוח] ב-WhatsApp" פותח ישר את הצ'אט שלו (הקובץ נשמר בטלפון — מצרפים ב-📎 ← מסמך), או "שתף את הקובץ" — הקובץ מצורף ובוחרים איש קשר.</li>
    <li><b>שם הקובץ</b> — "לקוח - פרויקט - הצעת מחיר.pdf" (גם חוזה ונספח). בהצעת תכנון הפס התחתון כבר לא מתריע על "סעיפים ללא מחיר".</li>
@@ -11626,7 +11627,9 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
     lines.push({cid:c.id,id:i.id,name:i.name,price:+i.price||0,qty:+i.qty||1,
       unit:i.unit||'גלובלי',sub:!!i.sub,perm:!!i.perm,
       laborMode:!!i.laborMode,laborPct:+i.laborPct||0,fullPrice:+i.fullPrice||0});}));}catch(e){}
-  const snap={clientSig:this.state.clientSig||'',lines:lines,client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice};
+  const snap={clientSig:this.state.clientSig||'',lines:lines,client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice,
+    // v25.2 — סוג ההצעה ומחיר התכנון. בלי זה "ערוך"/"שכפל" על הצעת תכנון החזיר מחשבון עם 49 סעיפים ב-0 ₪
+    planMode:!!this.state.planMode,planPerSqm:+this.state.planPerSqm||0,planTotalSqm:+this.state.planTotalSqm||0};
   // אותה הצעה נשמרת מכמה מסלולים (לינק חי · לינק דיגיטלי · PDF · חוזה · חתימה).
   // בלי איחוד לפי מספר ההצעה נוצרה רשומה חדשה בכל לחיצה.
   // המספר נקבע כאן, מהמונה שבאחסון — לא מערך שהוקצה מראש.
@@ -11707,13 +11710,28 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,
       showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,
       whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
+    const _pm=this.restorePlan(d,q);
     this.save();Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
-    this.state.modal=null;this.toast('ההצעה נטענה לעריכה ✓');this.render();return;
+    this.state.modal=null;this.toast(_pm||'ההצעה נטענה לעריכה ✓');this.render();return;
   }
   Object.assign(this.state,{clientSig:d.clientSig||null,catalog:JSON.parse(JSON.stringify(d.catalog)),subItems:JSON.parse(JSON.stringify(d.subItems||{})),custom:JSON.parse(JSON.stringify(d.custom||[])),client:{...d.client},quoteNo:q.no,valid:d.valid,discount:d.discount||0,advance:d.advance||0,vatOn:d.vatOn,vatPct:d.vatPct,showTerms:d.showTerms!==false,terms:d.terms||this.state.terms,whiteOn:!!d.whiteOn,whiteItems:d.whiteItems||[],blackOn:!!d.blackOn,blackItems:d.blackItems||[]});
+  const _pm=this.restorePlan(d,q);
   this.save();Store.set('subItems',this.state.subItems);Store.set('customItems',this.state.custom);
-  this.state.modal=null;this.toast('ההצעה נטענה לעריכה ✓');this.render();},
- duplicateQuoteAsNew(id){this.loadQuote(id);this.state.quoteNo=nextQuoteNo();this.toast('נוצר עותק חדש לעריכה ✓');this.render();},
+  this.state.modal=null;this.toast(_pm||'ההצעה נטענה לעריכה ✓');this.render();},
+ /* v25.2 — מחזיר את סוג ההצעה, מחיר למ"ר ושטח מההצעה השמורה.
+    הצעה שנשמרה לפני v25.2 (אין planMode בשמירה): אם כל הסעיפים ב-0 והסכום גדול מ-0 — זו הצעת תכנון;
+    מחיר למ"ר ושטח לא נשמרו בה, ולכן נשארים ריקים (הבדיקה לפני שליחה תעצור באדום, ולא יצא PDF של 0 ₪).
+    מחזיר הודעה למשתמש, או '' כשהכל שוחזר. */
+ restorePlan(d,q){
+  const set=(m,p,a)=>{this.state.planMode=m;this.state.planPerSqm=p||'';this.state.planTotalSqm=a||'';
+    Store.set('planMode',m);Store.set('planPerSqm',p||'');Store.set('planTotalSqm',a||'');};
+  if(d&&d.planMode!==undefined){set(!!d.planMode,+d.planPerSqm||0,+d.planTotalSqm||0);return '';}
+  const ls=(d&&Array.isArray(d.lines))?d.lines:[];
+  const oldPlan=ls.length>0&&ls.every(l=>!(+l.price>0))&&(+(q&&q.grand)||0)>0;
+  if(oldPlan){set(true,0,0);return 'הצעת תכנון ישנה — מלא מחיר למ"ר ושטח בפרטי ההצעה';}
+  set(false,0,0);return '';
+ },
+ duplicateQuoteAsNew(id){this.loadQuote(id);this.state.quoteNo=nextQuoteNo();this.toast(this.state.planMode&&!(+this.state.planPerSqm>0)?'עותק חדש — מלא מחיר למ"ר ושטח בפרטי ההצעה':'נוצר עותק חדש לעריכה ✓');this.render();},
 };
 
 /* ===== התקנת אפליקציה (Install) ===== */
