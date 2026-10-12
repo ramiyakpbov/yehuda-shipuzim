@@ -3364,7 +3364,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.0';
+const VERSION='25.1';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3692,7 +3692,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>שליחת PDF ללקוח</b> — "📲 שלח PDF ללקוח" פותח חלון: "שלח ל[לקוח] ב-WhatsApp" פותח ישר את הצ'אט שלו (הקובץ נשמר בטלפון — מצרפים ב-📎 ← מסמך), או "שתף את הקובץ" — הקובץ מצורף ובוחרים איש קשר.</li>
+   b:`<ul class="g-ul"><li><b>מסך הבית סופר גם הצעות PDF</b> — "בצנרת", "ממתינות", "פג תוקפן" ו"אושרו" כוללים עכשיו גם הצעות שנשלחו כ-PDF (על PDF אין "נצפו"). במעקב לינקים — שורה שמראה כמה הצעות PDF פתוחות, ו"הצג".</li>
+   <li><b>אותו טלפון, שם אחר = לקוח חדש</b> — הפקת הצעה בשם אחר עם טלפון קיים כבר לא משנה את השם של הלקוח הקיים.</li>
+   <li><b>שליחת PDF ללקוח</b> — "📲 שלח PDF ללקוח" פותח חלון: "שלח ל[לקוח] ב-WhatsApp" פותח ישר את הצ'אט שלו (הקובץ נשמר בטלפון — מצרפים ב-📎 ← מסמך), או "שתף את הקובץ" — הקובץ מצורף ובוחרים איש קשר.</li>
    <li><b>שם הקובץ</b> — "לקוח - פרויקט - הצעת מחיר.pdf" (גם חוזה ונספח). בהצעת תכנון הפס התחתון כבר לא מתריע על "סעיפים ללא מחיר".</li>
    <li><b>סוג הצעה — בחירה אחת</b> — "מחשבון" או "תכנון" בעוזר ההצעות ובפרטי ההצעה הם אותה בחירה, ומתחתיה כתוב מה הלקוח יראה. בקריאת שטח: "החל 82 מ"ר + פרטי לקוח", "החל רק את השטח", "התעלם מהתוצאה".</li>
    <li><b>כתב כמויות — כפתורי ההעברה</b> — "העבר כמחשבון" ו"העבר כהצעת תכנון" זה ליד זה בתחתית, ו"כתב כמויות חדש" מעליהם, מחוץ לפס.</li>
@@ -6628,6 +6630,27 @@ const App={
   this._preflight=null;
  },
 
+ /* v25.1 — הצעות שהופקו כ-PDF בלבד (אין לינק עם אותו מספר הצעה).
+    מסך הבית ספר רק לינקים, ולכן הצעות PDF לא הופיעו בכלל ("0 ₪ בצנרת" עם שתי הצעות פתוחות).
+    על PDF אין "נצפה". אושרה: חתימת לקוח בהצעה, או ללקוח approvedAt / "בביצוע" אחרי ההצעה.
+    נסגרה ("בוצע" במעקב אחרי ההצעה) — לא ממתינה ולא נספרת כאושרה. */
+ pdfQuotes(){
+  const links=Store.get('sentLinks',[])||[];
+  const linked={};links.forEach(l=>{if(l&&l.no)linked[l.no]=1;});
+  const clients=Store.get('clients',[])||[];
+  const seen={},out=[];
+  this.realQuotes().forEach(q=>{
+   if(!q||!q.no||linked[q.no]||seen[q.no])return;seen[q.no]=1;
+   const nm=String(q.client||'').trim();
+   const cl=nm?clients.find(c=>c&&String(c.name||'').trim()===nm):null;
+   const ts=+q.ts||0;
+   const won=!!(q.sig||(cl&&cl.approvedAt&&(+cl.approvedAt)>=ts)||(cl&&cl.status==='doing'));
+   const closed=!won&&!!(cl&&cl.status==='done'&&(+cl.doneAt||+cl.approvedAt||0)>=ts);
+   out.push({won:won,closed:closed,cid:cl?cl.id:'',
+     l:{id:'pdf:'+q.no,client:q.client||'',phone:q.phone||'',ts:ts,total:+q.grand||0,no:q.no}});
+  });
+  return out;
+ },
  homeState(){
   const now=Date.now();
   const links=Store.get('sentLinks',[])||[];
@@ -6651,13 +6674,24 @@ const App={
    waiting++;
    if(age>=5)hot.push({l:l,age:age,kind:'stale'});
   });
+  // v25.1 — גם הצעות PDF: ממתינות / פג תוקף / אושרו
+  let pdfOpen=0;
+  this.pdfQuotes().forEach(x=>{
+   if(x.won){approved++;return;}
+   if(x.closed)return;
+   pdfOpen++;
+   const age=Math.floor((now-(x.l.ts||now))/864e5);
+   if(age>14){expired++;hot.push({l:x.l,age:age,kind:'expired',pdf:1,cid:x.cid});return;}
+   waiting++;
+   if(age>=5)hot.push({l:x.l,age:age,kind:'stale',pdf:1,cid:x.cid});
+  });
   Object.keys(td).forEach(k=>{const d=td[k];if(d&&d.live&&(d.views||d.openedAt))liveOpen++;});
   const order=({live:0,expired:1,viewed:2,stale:3});
   hot.sort((a,b)=>(order[a.kind]-order[b.kind])||(b.age-a.age));
   const openQ=this.chosen().reduce((a,g)=>a+g.lines.length,0);
   return {waiting:waiting,viewed:viewed,approved:approved,expired:expired,
     hot:hot.slice(0,4),openQuote:openQ,openTotal:this.grand(),
-    clients:clients.length,links:links.length};
+    clients:clients.length,links:links.length,pdfOpen:pdfOpen};
  },
 
  homeView(){
@@ -6666,14 +6700,14 @@ const App={
   const card=(x)=>{
    const d=(this._trackData||{})[x.l.id]||{};
    const lbl=x.kind==='live'?('🔥 קורא את ההצעה '+(x.mins<2?'עכשיו':('לפני '+x.mins+' דק׳'))):
-     (x.kind==='expired'?'⏰ פג תוקף':(x.kind==='viewed'?'👁 נצפתה ולא אושרה':'🕐 ממתינה'));
+     (x.kind==='expired'?'⏰ פג תוקף':(x.kind==='viewed'?'👁 נצפתה ולא אושרה':'🕐 ממתינה'))+(x.pdf?' · PDF':'');
    const cls=x.kind==='live'?'live':(x.kind==='expired'?'hot':(x.kind==='viewed'?'warn':''));
    const age=this.relTime(+x.l.ts||Date.now());
    const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
    /* כרטיס קומפקטי: חיוג ותזכורת כאייקונים בשורת השם, ולחיצה על
       הכרטיס עצמו פותחת את המעקב. 100 → כ-58 פיקסלים, כך ששני
       דחופים נכנסים במסך הבית בלי גלילה. */
-   return `<div class="hm-card ${cls}" data-hmgo="track">
+   return `<div class="hm-card ${cls}" data-hmgo="track"${x.pdf?' data-hmtab="all"':''}>
      <div class="hm-top">
        ${this.avatar(x.l.client,42)}
        <div style="flex:1;min-width:0">
@@ -6681,7 +6715,7 @@ const App={
          <div class="hm-s">${lbl} · ${age}${x.l.total?' · '+nisR(x.l.total):''}</div>
        </div>
        ${ph?`<button class="hm-ic ${x.kind==='live'?'pri':''}" onclick="location.href='tel:${ph}'" aria-label="חיוג" title="חיוג">${ico('phone',19)}</button>`:''}
-       ${x.l.phone?`<button class="hm-ic ${x.kind==='live'?'':'pri'}" data-trknudge="${esc(x.l.id)}" aria-label="תזכורת בוואטסאפ" title="תזכורת">${ico('message-circle',19)}</button>`:''}
+       ${x.l.phone&&!(x.pdf&&!x.cid)?`<button class="hm-ic ${x.kind==='live'?'':'pri'}" ${x.pdf?`data-nudge="${esc(x.cid)}"`:`data-trknudge="${esc(x.l.id)}"`} aria-label="תזכורת בוואטסאפ" title="תזכורת">${ico('message-circle',19)}</button>`:''}
      </div></div>`;};
 
   // ─── פאנל הגיבור ───
@@ -6693,12 +6727,14 @@ const App={
       if(!l||!l.id)return;const k=l.no||l.id;if(seen[k])return;seen[k]=1;
       const d=td[l.id]||{};if(d.approvedAt)return;
       s+=+l.total||0;});
+    this.pdfQuotes().forEach(x=>{if(!x.won&&!x.closed)s+=x.l.total;});
     return s;}catch(e){return 0;}})();
   const won=(()=>{try{
     const td=this._trackData||{};const seen={};let s=0;
     (Store.get('sentLinks',[])||[]).forEach(l=>{
       if(!l||!l.id)return;const k=l.no||l.id;if(seen[k])return;seen[k]=1;
       const d=td[l.id]||{};if(d.approvedAt)s+=+l.total||0;});
+    this.pdfQuotes().forEach(x=>{if(x.won)s+=x.l.total;});
     return s;}catch(e){return 0;}})();
   const greet=(()=>{const hr=new Date().getHours();
     return hr<11?'בוקר טוב':(hr<16?'צהריים טובים':(hr<19?'אחר צהריים טובים':'ערב טוב'));})();
@@ -6712,7 +6748,7 @@ const App={
         <div class="hero-row">
           <span class="hero-pill ok">✓ נסגר ${won>=10000?this.niceSum(won):nisR(won)}</span>
           ${st.hot.length?`<span class="hero-pill hot">${st.hot.length} דורש טיפול</span>`:
-            `<span class="hero-pill">${st.links?'הכל במעקב':(this.realQuotes().length?'אין הצעות פתוחות':'עוד לא נשלחו הצעות')}</span>`}
+            `<span class="hero-pill">${(st.links||st.pdfOpen)?'הכל במעקב':(this.realQuotes().length?'אין הצעות פתוחות':'עוד לא נשלחו הצעות')}</span>`}
         </div>
       </div>
     </div>
@@ -8191,7 +8227,7 @@ const App={
    ${(()=>{const l=Store.get('clients',[])||[];
      const k=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
      const seen={};let d=0;
-     l.forEach(c=>{if(!c)return;const id=k(c.phone)||String(c.name||'').trim();
+     l.forEach(c=>{if(!c)return;const id=(k(c.phone)?k(c.phone)+'|':'')+String(c.name||'').trim();
        if(!id)return;if(seen[id])d++;else seen[id]=1;});
      return d?`<button class="btn-ghost" id="cli-dedupe" style="margin-bottom:10px;border-color:var(--warn);color:var(--warn)">🧹 אחד ${d} רשומות של אותו לקוח</button>`:'';})()}
    <button class="btn-ghost" id="export-clients" style="margin-bottom:10px">📊 ייצוא לאקסל (CSV)</button>
@@ -8474,6 +8510,9 @@ const App={
   const F=[['all',sent,'נשלחו',''],['viewed',viewed,'נצפו · '+vpct+'%','warn'],['played',played,'התלבטו','red'],['approved',approved,'אושרו · '+pct+'%','ok']];
   return `<h2>📤 הצעות ומעקב <button class="x" data-close>✕</button></h2>
    ${this.trkSeg('track')}
+   ${(()=>{const n=this.pdfQuotes().filter(x=>!x.won&&!x.closed).length;
+     // v25.1 — מסך הבית סופר גם הצעות PDF; כאן מוצגים רק לינקים — אומרים איפה השאר
+     return n?`<div class="tk-banner tk-pdf" role="status">${ico('file-text',16)}<span>${n===1?'הצעה אחת נשלחה':n+' הצעות נשלחו'} כ-PDF — על PDF אין מעקב צפייה</span><button class="tk-btn sm" data-trktab="all">הצג</button></div>`:'';})()}
    <div class="tk-filters" role="group" aria-label="סינון לפי מצב">
      ${F.map(([k,n,lb,tn])=>`<button class="tk-f" data-trkf="${k}" aria-pressed="${f===k}"><span class="tk-f-n">${n}</span><span class="tk-f-l">${tn?`<i class="tk-dot" data-tone="${tn}"></i>`:''}${lb}</span></button>`).join('')}
    </div>
@@ -9100,8 +9139,9 @@ const App={
   // לקוחות שההצעה שלהם אושרה — אלה הפרויקטים האמיתיים
   const approved={};
   links.forEach(l=>{const d=td[l&&l.id]||{};
-    if(d.approvedAt&&l)approved[key(l.phone)||String(l.client||'').trim()]=l;});
-  const isApproved=c=>!!(approved[key(c.phone)]||approved[String(c.name||'').trim()]||c.approvedAt||c.status==='doing'||c.status==='done');
+    if(d.approvedAt&&l)approved[String(l.client||'').trim()||key(l.phone)]=l;});
+  // v25.1 — לפי שם (טלפון משותף לשני לקוחות לא מסמן את שניהם כמאושרים)
+  const isApproved=c=>!!(approved[String(c.name||'').trim()]||(!String(c.name||'').trim()&&approved[key(c.phone)])||c.approvedAt||c.status==='doing'||c.status==='done');
   const dated=cls.filter(c=>c&&c.dueDate).sort((a,b)=>new Date(a.dueDate)-new Date(b.dueDate));
   const waiting=cls.filter(c=>c&&!c.dueDate&&isApproved(c));
   const lbl={q:'הצעה',doing:'בביצוע',sent:'נשלח',done:'בוצע'};
@@ -10143,6 +10183,7 @@ const App={
   })();
   on('[data-hmgo]','click',e=>{
     if(e.target.closest('button'))return;   // חיוג ותזכורת — לא מעבר מסך
+    if(e.currentTarget.dataset.hmtab)this.state.trkTab=e.currentTarget.dataset.hmtab;   // v25.1 — הצעת PDF → "כל ההצעות"
     this.goTab(e.currentTarget.dataset.hmgo);
   });
   on('[data-gotab]','click',e=>{
@@ -10516,11 +10557,11 @@ const App={
     const l=Store.get('clients',[])||[];
     const k=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
     const seen={},names=[];
-    l.forEach(c=>{if(!c)return;const id=k(c.phone)||String(c.name||'').trim();
+    l.forEach(c=>{if(!c)return;const id=(k(c.phone)?k(c.phone)+'|':'')+String(c.name||'').trim();
       if(!id)return;if(seen[id]){if(names.indexOf(c.name)<0)names.push(c.name);}else seen[id]=1;});
     if(!names.length){this.toast('לא נמצאו כפילויות');return;}
     if(!confirm('לאחד רשומות של אותו לקוח?\n\n'+names.slice(0,5).join(' · ')+
-      '\n\nהפרטים מכל הרשומות יצטברו לאחת — שום מידע לא נמחק.\nלקוחות עם טלפון שונה יישארו נפרדים.'))return;
+      '\n\nהפרטים מכל הרשומות יצטברו לאחת — שום מידע לא נמחק.\nלקוחות עם טלפון שונה או שם שונה יישארו נפרדים.'))return;
     const n=this.dedupeClients();
     this.toast(n?('✅ '+n+' רשומות אוחדו'):'לא נמצאו כפילויות');
     try{Sync.push&&Sync.push();}catch(e){}this.render();};
@@ -10826,8 +10867,9 @@ const App={
   const ph=this.clientKey(c&&c.phone);
   const nm=String((c&&c.name)||'').trim();
   if(ph){
-   // טלפון זהה = אותו לקוח
-   const byPh=list.find(x=>x&&this.clientKey(x.phone)===ph);
+   // v25.1 — טלפון זהה **ושם זהה** = אותו לקוח. טלפון זהה בשם אחר = לקוח חדש
+   //         (רמי, 12.10: "מרפאת שיניים" שונתה בשקט ל"רמי יעקובוב" כי הטלפון זהה).
+   const byPh=list.find(x=>x&&this.clientKey(x.phone)===ph&&(!nm||String(x.name||'').trim()===nm));
    if(byPh)return byPh;
    // טלפון חדש מתחבר רק לרשומה שאין לה טלפון. שני "כהן" עם
    // מספרים שונים הם שני אנשים ואסור למזג אותם.
@@ -10934,7 +10976,8 @@ const App={
    const ph=this.clientKey(c.phone);
    const nm=String(c.name||'').trim();
    let at=-1;
-   if(ph){at=(byPh[ph]!==undefined)?byPh[ph]:((nm&&byNm[nm]!==undefined)?byNm[nm]:-1);}
+   const pk=ph?ph+'|'+nm:'';   // v25.1 — אותו טלפון בשם אחר = לקוח אחר
+   if(ph){at=(byPh[pk]!==undefined)?byPh[pk]:((nm&&byNm[nm]!==undefined)?byNm[nm]:-1);}
    else if(nm&&byNm[nm]!==undefined)at=byNm[nm];
    else if(nm){const k=out.findIndex(x=>String(x.name||'').trim()===nm);at=k;}
    if(at>=0){
@@ -10948,11 +10991,11 @@ const App={
     });
     if(+c.createdAt&&(!+t.createdAt||+c.createdAt<+t.createdAt))t.createdAt=c.createdAt;
     // הרשומה קיבלה טלפון מהמיזוג — רושמים אותו כדי שלא ייפול לכפילות
-    const tp=this.clientKey(t.phone);if(tp&&byPh[tp]===undefined)byPh[tp]=at;
+    const tp=this.clientKey(t.phone);const tk=tp?tp+'|'+String(t.name||'').trim():'';if(tk&&byPh[tk]===undefined)byPh[tk]=at;
     return;
    }
    const i=out.push(c)-1;
-   if(ph)byPh[ph]=i;
+   if(ph)byPh[pk]=i;
    else if(nm&&byNm[nm]===undefined)byNm[nm]=i;
   });
   const removed=list.length-out.length;
