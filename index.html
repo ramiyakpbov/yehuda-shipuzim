@@ -776,6 +776,8 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .buildhead{position:sticky;top:0;z-index:45;background:var(--bg);}
 .buildhead .chips{position:static;}
 .cat,.item{scroll-margin-top:calc(var(--bh-h,0px) + 8px);}
+.qtype-help{font-size:12px;color:var(--muted);margin:8px 2px 0;line-height:1.55;}
+.qtype-help b{color:var(--txt);}
 .plan-scan-h{font-size:12px;color:var(--warn);margin:10px 0 0;line-height:1.5;}
 .plan-scan-acts{flex-wrap:wrap;}
 .plan-scan-acts .tk-btn{flex:1 1 auto;}
@@ -3357,7 +3359,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.8';
+const VERSION='24.9';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3685,7 +3687,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>כתב כמויות — כפתורי ההעברה</b> — "העבר כמחשבון" ו"העבר כהצעת תכנון" זה ליד זה בתחתית, ו"כתב כמויות חדש" מעליהם, מחוץ לפס.</li>
+   b:`<ul class="g-ul"><li><b>סוג הצעה — בחירה אחת</b> — "מחשבון" או "תכנון" בעוזר ההצעות ובפרטי ההצעה הם אותה בחירה, ומתחתיה כתוב מה הלקוח יראה. בקריאת שטח: "החל 82 מ"ר + פרטי לקוח", "החל רק את השטח", "התעלם מהתוצאה".</li>
+   <li><b>כתב כמויות — כפתורי ההעברה</b> — "העבר כמחשבון" ו"העבר כהצעת תכנון" זה ליד זה בתחתית, ו"כתב כמויות חדש" מעליהם, מחוץ לפס.</li>
    <li><b>כתב כמויות מכל הקבצים</b> — מעלים את כל קבצי הפרויקט, וה-AI מזהה לבד איזה מהם כתב הכמויות וקורא רק אותו. על המסך: השלב והזמן; אם נכשל — חלון עם הסיבה.</li>
    <li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
    <li><b>קרא שטח — "החל"</b> — כתוב שהשטח ופרטי הלקוח נכנסים להצעה רק אחרי "החל", והכפתור ברוחב מלא.</li>
@@ -5871,10 +5874,10 @@ const App={
       (p.client.conf!=='high'&&p.client.lines.length?'<li class="cut">'+ico('eye',14)+'<span>בדוק את האיות — כך נקרא: '+esc(p.client.lines.join(' · '))+'</span></li>':'')+'</ul>':'')+
     '<p class="plan-scan-h">השטח'+(fill.length?' ופרטי הלקוח':'')+' נכנסים להצעה רק אחרי "החל" — כדי שתבדוק קודם מה ה-AI קרא.</p>'+
     '<div class="tk-acts plan-scan-acts">'+
-      '<button class="tk-btn pri" data-planapply="'+p.total+'" data-plancl="1">'+ico('check',16)+'החל '+n(p.total)+' מ"ר'+(fill.length?' + פרטים':'')+'</button>'+
-      (fill.length?'<button class="tk-btn" data-planapply="'+p.total+'">רק השטח</button>':'')+
+      '<button class="tk-btn pri" data-planapply="'+p.total+'" data-plancl="1">'+ico('check',16)+'החל '+n(p.total)+' מ"ר'+(fill.length?' + פרטי לקוח':'')+'</button>'+
+      (fill.length?'<button class="tk-btn" data-planapply="'+p.total+'">החל רק את השטח</button>':'')+
       (off?'<button class="tk-btn" data-planapply="'+p.sum+'">סכום החדרים</button>':'')+
-      '<button class="tk-btn" id="plan-scan-x">ביטול</button></div>';
+      '<button class="tk-btn" id="plan-scan-x">התעלם מהתוצאה</button></div>';
  },
 
  /**
@@ -7938,6 +7941,7 @@ const App={
      <button class="qtype-mini ${!s.planMode?'on':''}" data-setplan="0">🧮 מחשבון (עם מחירים)</button>
      <button class="qtype-mini ${s.planMode?'on':''}" data-setplan="1">📐 תכנון (למ"ר)</button>
    </div>
+   <div class="qtype-help">${s.planMode?'<b>תכנון:</b> הלקוח רואה סעיפים וכמויות <b>בלי מחיר לשורה</b>. המחיר = מחיר למ"ר × שטח.':'<b>מחשבון:</b> הלקוח רואה <b>מחיר לכל שורה</b>. סה"כ = סכום השורות + מע"מ.'} אפשר לעבור ביניהם בכל רגע — הסעיפים נשארים.</div>
    ${s.planMode?`<div class="row2" style="margin-top:10px">
      <div class="field"><label>מחיר למ"ר (₪)</label><input id="q_persqm" type="number" inputmode="decimal" value="${s.planPerSqm||''}" placeholder="₪ למ״ר"/></div>
      <div class="field"><label>שטח כולל (מ"ר) — לא חובה</label><input id="q_totsqm" type="number" inputmode="decimal" value="${s.planTotalSqm||''}" placeholder="מ״ר"/></div>
@@ -7945,7 +7949,7 @@ const App={
    <button class="tk-btn sm ghost plan-scan-btn" id="plan-scan-btn">${ico('ruler',15)}קרא שטח מתוכנית — תמונה או PDF, גם כמה</button>
    <input id="plan-scan-in" type="file" accept="application/pdf,.pdf,image/*" multiple hidden/>
    ${this.planScanPanel()}
-   <div style="font-size:11px;color:var(--muted);margin-top:4px">💡 בהצעת תכנון ה-PDF יציג סעיפים וכמויות בלבד (בלי מחיר לכל שורה), ובסוף: המחיר למ"ר.</div>`:''}
+`:''}
    <div class="sec-title">הנחת לקוח ומקדמה</div>
    <div class="row2"><div class="field"><label>אחוז הנחה (%)</label><input id="q_disc" type="number" inputmode="decimal" value="${s.discount||''}" placeholder="0"/></div>
      <div class="field"><label>מקדמה (%) — תופיע בהצעה</label><input id="q_adv" type="number" inputmode="decimal" value="${s.advance||''}" placeholder="0"/></div></div>
@@ -8889,7 +8893,8 @@ const App={
  aiHubModal(){return `<h2>✨ עוזר ההצעות <button class="x" data-close>✕</button></h2>`+this.aiHubBody();},
  aiHubBody(){
   // נפתח על סוג ההצעה הנוכחית — קודם תמיד על "מחשבון", גם כשההצעה כבר תכנון
-  const qt=this._aiQuoteType||(this.state.planMode?'plan':'calc');
+  // v24.9 — אותה בחירה כמו "סוג הצעה" בפרטי ההצעה (רמי, 12.10: בעוזר סומן "מחשבון" ובפרטי ההצעה "תכנון").
+  const qt=this.state.planMode?'plan':'calc';this._aiQuoteType=qt;   // v2qApply קובע את סוג ההצעה לפי זה — לא ערך ישן
   const card=(modal,icon,title,desc,badge)=>`<button class="aihub-card" data-modal="${modal}">
      <div class="ah-icon">${icon}</div>
      <div class="ah-txt"><div class="ah-t">${title}${badge?`<span class="ah-badge">${badge}</span>`:''}</div><div class="ah-d">${desc}</div></div>
@@ -8906,6 +8911,7 @@ const App={
        ${qt==='plan'?'<div class="qt-v">✓</div>':''}
      </button>
    </div>
+   <div class="qtype-help">זו אותה בחירה כמו "סוג הצעה" בפרטי ההצעה. ${qt==='plan'?'הלקוח יראה סעיפים וכמויות בלי מחיר לשורה, ובסוף מחיר למ"ר × שטח.':'הלקוח יראה מחיר לכל שורה. ב"תכנון" מופיע כאן גם "קרא שטח מתוכנית".'}</div>
    ${qt==='plan'?`<div class="ah-sec">שטח הנכס</div>
    <div class="aihub-grid">
      <button class="aihub-card" id="hub-plan-scan">
@@ -10420,7 +10426,9 @@ const App={
     if(locked&&!this._aiUnlocked){this.aiGate(go);return;}
     go();
   });
-  on('[data-qtype]','click',e=>{this._aiQuoteType=e.currentTarget.dataset.qtype;this.haptic(10);this.render();});
+  on('[data-qtype]','click',e=>{this._aiQuoteType=e.currentTarget.dataset.qtype;
+    // v24.9 — סוג ההצעה אחד: הבחירה בעוזר היא גם הבחירה בפרטי ההצעה
+    this.state.planMode=this._aiQuoteType==='plan';Store.set('planMode',this.state.planMode);this.haptic(10);this.render();});
   on('[data-setplan]','click',e=>{this.captureQuote();this.state.planMode=e.currentTarget.dataset.setplan==='1';Store.set('planMode',this.state.planMode);this.haptic(10);this.render();});
   // עוזר AI — צילום פתקית
   if(this.state.modal==='aiphoto')this._visionMode='';
