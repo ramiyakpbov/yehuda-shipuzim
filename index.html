@@ -1812,6 +1812,10 @@ div.tk-f:active{transform:none;}
 .boq-dev{margin-inline-start:auto;}
 .boq-dev.hot{color:#ff6b70;font-weight:700;}
 .boq-acts{position:sticky;bottom:0;background:var(--bg);padding-bottom:6px;}
+.boq-acts .tk-btn{flex:1 1 0;min-width:0;justify-content:center;white-space:normal;padding-block:8px;}
+.boq-acts .ba-t{display:flex;flex-direction:column;align-items:center;line-height:1.25;text-align:center;}
+.boq-acts .ba-t small{font-size:11px;font-weight:500;opacity:.8;}
+.boq-new{margin-top:14px;}
 /* כפתור ביטול במסך ההמתנה */
 .busy-x{margin-top:14px;min-height:40px;padding:0 22px;border-radius:var(--r-m);border:1px solid var(--hair-2);
   background:transparent;color:var(--txt);font-family:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer;}
@@ -3353,7 +3357,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.7';
+const VERSION='24.8';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3681,7 +3685,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>כתב כמויות מכל הקבצים</b> — מעלים את כל קבצי הפרויקט, וה-AI מזהה לבד איזה מהם כתב הכמויות וקורא רק אותו. על המסך: השלב והזמן; אם נכשל — חלון עם הסיבה.</li>
+   b:`<ul class="g-ul"><li><b>כתב כמויות — כפתורי ההעברה</b> — "העבר כמחשבון" ו"העבר כהצעת תכנון" זה ליד זה בתחתית, ו"כתב כמויות חדש" מעליהם, מחוץ לפס.</li>
+   <li><b>כתב כמויות מכל הקבצים</b> — מעלים את כל קבצי הפרויקט, וה-AI מזהה לבד איזה מהם כתב הכמויות וקורא רק אותו. על המסך: השלב והזמן; אם נכשל — חלון עם הסיבה.</li>
    <li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
    <li><b>קרא שטח — "החל"</b> — כתוב שהשטח ופרטי הלקוח נכנסים להצעה רק אחרי "החל", והכפתור ברוחב מלא.</li>
    <li><b>אין עדיין סעיפים</b> — הסבר מה זה סעיף, וכפתור ישיר "מכתב כמויות (AI)".</li>
@@ -5277,10 +5282,11 @@ const App={
    ((p.excluded||[]).length?'<h3 class="tk-sec"><span>לא כלול / אופציונלי — מחוץ לסה״כ</span></h3><ul class="tk-facts">'+p.excluded.map(x=>'<li>'+ico('x',14)+'<span><b>'+esc(x.desc)+'</b> — '+esc(x.why||'')+'</span></li>').join('')+'</ul>':'')+
    ((p.questions||[]).length?'<h3 class="tk-sec"><span>לבירור מול האדריכל</span><b>'+p.questions.length+'</b></h3><ul class="tk-facts">'+p.questions.map(x=>'<li>'+ico('circle-help',14)+'<span>'+esc(x)+'</span></li>').join('')+'</ul>'+
      '<button class="tk-btn sm ghost" id="boq-copyq">'+ico('copy',15)+'העתק את השאלות</button>':'')+
-   '<div class="tk-acts boq-acts"><button class="tk-btn pri" id="boq-apply">'+ico('check',16)+'העבר כמחשבון (עם מחירים)</button>'+
+   // v24.8 — "כתב כמויות חדש" יצא מהפס הקבוע: שלושה כפתורים בשורה אחת עלו זה על זה (רמי, 11.10)
+   '<button class="tk-btn sm ghost boq-new" id="boq-new">'+ico('file-text',15)+'כתב כמויות חדש</button>'+
+   '<div class="tk-acts boq-acts"><button class="tk-btn pri" id="boq-apply">'+ico('check',16)+'<span class="ba-t"><b>העבר כמחשבון</b><small>עם מחירים</small></span></button>'+
      // v24.0 — הצעת תכנון: הסעיפים והכמויות בלי עלויות; המחיר למ"ר נקבע בפרטי ההצעה
-     '<button class="tk-btn" id="boq-apply-plan">'+ico('ruler',16)+'העבר כהצעת תכנון (למ"ר) — בלי עלויות'+(+p.area>0?' · '+(+p.area).toLocaleString('he-IL')+' מ"ר':'')+'</button>'+
-     '<button class="tk-btn" id="boq-new">'+ico('file-text',16)+'כתב כמויות חדש</button></div>';
+     '<button class="tk-btn" id="boq-apply-plan">'+ico('ruler',16)+'<span class="ba-t"><b>העבר כהצעת תכנון</b><small>בלי עלויות'+(+p.area>0?' · '+(+p.area).toLocaleString('he-IL')+' מ"ר':' · למ"ר')+'</small></span></button></div>';
  },
  /** עדכון המספרים במקום — בלי render, כדי שהמקלדת לא תיסגר אחרי כל ספרה. */
  boqUpdate(){const p=this.boqGet();if(!p)return;const R=this.boqCalc(p);
@@ -5405,7 +5411,8 @@ const App={
     if(idx.length<D.length){Dq=idx.map(i=>D[i]);picked=Dq.map(d=>d.name);}
    }
    setPh((picked?'שלב 2 · ':'')+'ה-AI מעתיק את הסעיפים והכמויות'+(picked?' מ'+(picked.length===1?'קובץ אחד':picked.length+' קבצים'):'')+'…');
-   const op=Object.assign(this.docOpts(Dq,{maxTokens:12000,catalog:true}),{budget:300000});op.timeout=Math.min(op.timeout,150000);
+   // v24.8: think 'low' — העתקת סעיפים היא קריאה, לא הסקה. ב-v24.7 שלב 2 על קובץ אחד לקח יותר מ-2:38 (צילום רמי).
+   const op=Object.assign(this.docOpts(Dq,{maxTokens:12000,catalog:true}),{budget:300000,think:'low'});op.timeout=Math.min(op.timeout,150000);
    const o=await AI.json(this.docParts(Dq).concat([{t:'text',v:P}]),S,op);
    const p=this.boqFromAI(o,Dq);
    if(picked){p.picked=picked;p.skipped=D.length-picked.length;}
