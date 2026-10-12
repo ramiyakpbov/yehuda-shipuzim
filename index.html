@@ -3364,7 +3364,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.2';
+const VERSION='25.3';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3692,7 +3692,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>"ערוך" / "שכפל" בהצעת תכנון</b> — ההצעה נפתחת שוב כהצעת תכנון עם המחיר למ"ר והשטח (בהצעות שנשמרו לפני v25.2 — רק סוג ההצעה; את המחיר והשטח ממלאים מחדש).</li>
+   b:`<ul class="g-ul"><li><b>כל לקוח בנפרד, גם עם אותו טלפון</b> — מאגר הלקוחות, מעקב ותזכורות והצעות שנשלחו מפרידים לפי שם. כרטיסים שהתמזגו בעבר בגלל טלפון משותף מופרדים אוטומטית בפתיחה.</li>
+   <li><b>"ערוך" / "שכפל" בהצעת תכנון</b> — ההצעה נפתחת שוב כהצעת תכנון עם המחיר למ"ר והשטח (בהצעות שנשמרו לפני v25.2 — רק סוג ההצעה; את המחיר והשטח ממלאים מחדש).</li>
    <li><b>מסך הבית סופר גם הצעות PDF</b> — "בצנרת", "ממתינות", "פג תוקפן" ו"אושרו" כוללים עכשיו גם הצעות שנשלחו כ-PDF (על PDF אין "נצפו"). במעקב לינקים — שורה שמראה כמה הצעות PDF פתוחות, ו"הצג".</li>
    <li><b>אותו טלפון, שם אחר = לקוח חדש</b> — הפקת הצעה בשם אחר עם טלפון קיים כבר לא משנה את השם של הלקוח הקיים.</li>
    <li><b>שליחת PDF ללקוח</b> — "📲 שלח PDF ללקוח" פותח חלון: "שלח ל[לקוח] ב-WhatsApp" פותח ישר את הצ'אט שלו (הקובץ נשמר בטלפון — מצרפים ב-📎 ← מסמך), או "שתף את הקובץ" — הקובץ מצורף ובוחרים איש קשר.</li>
@@ -6098,7 +6099,8 @@ const App={
   const nm=String(cl.name||'').trim();
   const key=s=>String(s||'').replace(/[^0-9]/g,'').replace(/^972/,'0');
   const ph=key(cl.phone);
-  const links=(Store.get('sentLinks',[])||[]).filter(l=>l&&(key(l.phone)===ph||String(l.client||'').trim()===nm));
+  // v25.3 — לפי שם. טלפון משותף לשני לקוחות לא מערבב את הלינקים שלהם (רק כרטיס בלי שם — לפי טלפון)
+  const links=(Store.get('sentLinks',[])||[]).filter(l=>l&&(nm?String(l.client||'').trim()===nm:(ph&&key(l.phone)===ph)));
   const quotes=(Store.get('quotes',[])||[]).filter(q=>q&&String(q.client||'').trim()===nm);
   const td=this._trackData||{};
   const dropped={},total=quotes.reduce((a,q)=>a+(+q.grand||0),0);
@@ -10969,6 +10971,40 @@ const App={
   return out.length;
  },
 
+ /* v25.3 — מפריד כרטיסים שהתמזגו לפני v25.1 (הכלל הישן "טלפון זהה = אותו לקוח" דרס את השם:
+    "מרפאת שיניים" הפכה ל"רמי יעקובוב" והפרויקט/הכתובת נשארו).
+    סימן: הצעה שהשם בה לא קיים ברשימת הלקוחות, ויש כרטיס עם אותו טלפון בשם אחר.
+    מחיקת לקוח מוחקת גם את ההצעות שלו (deleteClientEverywhere), לכן הצעה בלי כרטיס כאן = מיזוג, לא מחיקה.
+    הכרטיס החדש נבנה מפרטי הלקוח ששמורים בהצעה. פרויקט/כתובת/הערות שעברו לכרטיס הממוזג
+    יוסרו ממנו רק אם הם זהים לאלה שבהצעה ואף הצעה של בעל הכרטיס לא כוללת אותם. רץ בכל פתיחה; לא עושה כלום כשאין מה להפריד. */
+ splitMergedClients(){
+  const clients=Store.get('clients',[])||[];
+  const nmOf=x=>String(x==null?'':x).trim();
+  const qs=this.realQuotes().slice().sort((a,b)=>(+a.ts||0)-(+b.ts||0));
+  const byName={};clients.forEach(c=>{if(c&&nmOf(c.name))byName[nmOf(c.name)]=c;});
+  const quotesOf=n=>qs.filter(q=>nmOf(q.client)===n);
+  const val=(q,k)=>{const sc=(q&&q.snap&&q.snap.client)||{};const v=nmOf(sc[k]);return v||(k==='project'?nmOf(q&&q.project):'');};
+  let made=0;
+  qs.forEach(q=>{
+   const n=nmOf(q.client);if(!n||byName[n])return;
+   const sc=(q.snap&&q.snap.client)||{};
+   const ph=this.clientKey(q.phone||sc.phone);if(!ph)return;
+   const host=clients.find(c=>c&&this.clientKey(c.phone)===ph&&nmOf(c.name)&&nmOf(c.name)!==n);
+   if(!host)return;
+   const mine=quotesOf(n),last=mine[mine.length-1]||q;
+   const rec={id:uid(),name:n,phone:q.phone||sc.phone||host.phone,status:'q',createdAt:+mine[0].ts||Date.now(),
+     lastQuoteAt:+last.ts||0,lastQuoteNo:last.no||'',lastTotal:+last.grand||0};
+   ['project','address','notes','source'].forEach(k=>{const v=val(last,k)||val(q,k);if(v)rec[k]=v;});
+   const hostQ=quotesOf(nmOf(host.name));
+   ['project','address','notes'].forEach(k=>{
+     if(!rec[k]||nmOf(host[k])!==rec[k])return;
+     if(!hostQ.some(h=>val(h,k)===rec[k]))delete host[k];
+   });
+   clients.unshift(rec);byName[n]=rec;made++;
+  });
+  if(made)Store.set('clients',clients);
+  return made;
+ },
  dedupeClients(){
   const list=Store.get('clients',[])||[];
   const out=[],byPh={},byNm={};   // byNm מכיל רק רשומות ללא טלפון
@@ -12047,6 +12083,8 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(changed)Store.set('clients',clients);
    Store.set('mig_dueDate_692',true);
  }}catch(e){}
+ // v25.3 — הפרדת כרטיסים שהתמזגו בגלל טלפון משותף
+ try{const _sp=App.splitMergedClients();if(_sp)setTimeout(()=>{try{App.toast(_sp===1?'כרטיס לקוח אחד הופרד (טלפון משותף)':_sp+' כרטיסי לקוחות הופרדו (טלפון משותף)');}catch(e){}},2500);}catch(e){}
  App.render();
  try{setTimeout(()=>{try{Sync.snapshotDaily();}catch(e){}},4000);Sync.init(n=>{try{App.state.catalog=Store.get('catalog',App.state.catalog);App.state.custom=Store.get('customItems',App.state.custom);App.state.subItems=Store.get('subItems',App.state.subItems);// מצב הרשת משפיע על מה שאפשר לעשות — מרעננים בכל שינוי
 try{
@@ -12065,6 +12103,7 @@ try{
     document.body.classList.toggle('bg-idle',document.hidden);
   });
 }catch(e){}
+try{App.splitMergedClients();}catch(e){}
 App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards) + tap fallback
  const sp=document.getElementById('splash');
