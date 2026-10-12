@@ -799,6 +799,11 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .lp-n{flex:1;min-width:0;font-size:12px;color:var(--txt);word-break:break-all;text-align:left;}
 .lp-ul small{flex:0 0 auto;font-size:11px;color:var(--muted);direction:ltr;unicode-bidi:isolate;}
 #lp-ok:disabled{opacity:.45;}
+.sd-card .sd-t{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:6px;}
+.sd-card .sd-f{font-size:13px;color:var(--muted);margin-bottom:12px;word-break:break-word;line-height:1.4;}
+.sd-card .sd-b{display:block;width:100%;margin-bottom:8px;text-align:center;white-space:normal;height:auto;min-height:48px;padding:10px 12px;line-height:1.3;}
+.sd-card .sd-b small{display:block;font-size:11.5px;font-weight:500;opacity:.85;margin-top:3px;line-height:1.35;}
+.sd-card .sd-note{font-size:13px;color:var(--warn,#f59e0b);margin-bottom:10px;line-height:1.45;}
 .code-dlg{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px;}
 .code-card{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:18px 16px 14px;width:100%;max-width:320px;box-shadow:0 14px 40px rgba(0,0,0,.5);}
 .code-card label{display:block;font-size:17px;font-weight:800;color:var(--txt);margin-bottom:12px;}
@@ -3359,7 +3364,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='24.9';
+const VERSION='25.0';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3687,7 +3692,9 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>סוג הצעה — בחירה אחת</b> — "מחשבון" או "תכנון" בעוזר ההצעות ובפרטי ההצעה הם אותה בחירה, ומתחתיה כתוב מה הלקוח יראה. בקריאת שטח: "החל 82 מ"ר + פרטי לקוח", "החל רק את השטח", "התעלם מהתוצאה".</li>
+   b:`<ul class="g-ul"><li><b>שליחת PDF ללקוח</b> — "📲 שלח PDF ללקוח" פותח חלון: "שלח ל[לקוח] ב-WhatsApp" פותח ישר את הצ'אט שלו (הקובץ נשמר בטלפון — מצרפים ב-📎 ← מסמך), או "שתף את הקובץ" — הקובץ מצורף ובוחרים איש קשר.</li>
+   <li><b>שם הקובץ</b> — "לקוח - פרויקט - הצעת מחיר.pdf" (גם חוזה ונספח). בהצעת תכנון הפס התחתון כבר לא מתריע על "סעיפים ללא מחיר".</li>
+   <li><b>סוג הצעה — בחירה אחת</b> — "מחשבון" או "תכנון" בעוזר ההצעות ובפרטי ההצעה הם אותה בחירה, ומתחתיה כתוב מה הלקוח יראה. בקריאת שטח: "החל 82 מ"ר + פרטי לקוח", "החל רק את השטח", "התעלם מהתוצאה".</li>
    <li><b>כתב כמויות — כפתורי ההעברה</b> — "העבר כמחשבון" ו"העבר כהצעת תכנון" זה ליד זה בתחתית, ו"כתב כמויות חדש" מעליהם, מחוץ לפס.</li>
    <li><b>כתב כמויות מכל הקבצים</b> — מעלים את כל קבצי הפרויקט, וה-AI מזהה לבד איזה מהם כתב הכמויות וקורא רק אותו. על המסך: השלב והזמן; אם נכשל — חלון עם הסיבה.</li>
    <li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
@@ -6794,6 +6801,12 @@ const App={
   const c=this.state.client||{};
   const miss=[];
   if(!String(c.name||'').trim())miss.push('חסר שם לקוח');
+  // v25.0 — בהצעת תכנון אין מחיר לשורה; מה שחסר הוא מחיר למ"ר / שטח (כמו בבדיקה לפני שליחה)
+  if(this.state.planMode){
+    if(!(+this.state.planPerSqm>0))miss.push('חסר מחיר למ"ר');
+    else if(!(+this.state.planTotalSqm>0))miss.push('חסר שטח');
+    return miss;
+  }
   let zero=0;this.chosen().forEach(g=>g.lines.forEach(l=>{if(!(+l.price>0))zero++;}));
   if(zero)miss.push(zero+' סעיפים ללא מחיר');
   return miss;
@@ -7811,6 +7824,48 @@ const App={
  // מי שנחסם ואין לו קוד — שיחה ישירה, בלי לנחש
  gateCall(){try{location.href='tel:0543013389';}catch(e){}},
  /* v24.5 — "קוד שגוי" בחלון של האפליקציה. confirm של הדפדפן הוסיף "האתר … אומר" (רמי, 11.10). */
+ /* v25.0 — חלון שליחה אחרי יצירת ה-PDF. כל כפתור הוא לחיצה חדשה של המשתמש,
+    ולכן window.open / navigator.share לא נחסמים (הם דורשים מגע משתמש טרי). */
+ sendDlg(pdf,blob,fname){
+  document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
+  const c=this.state.client||{};
+  const okPh=phoneValid(c.phone);
+  const first=String(c.name||'').trim().split(' ')[0]||'';
+  let canFile=false;
+  try{canFile=!!(navigator.canShare&&navigator.canShare({files:[new File([blob],fname,{type:'application/pdf'})]}));}catch(e){}
+  const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','sd-t');
+  d.innerHTML='<div class="code-card sd-card"><div class="sd-t" id="sd-t">✓ ההצעה מוכנה</div>'+
+    '<div class="sd-f">📄 '+esc(fname.replace(/\.pdf$/i,''))+' · PDF</div>'+
+    (okPh?'<button type="button" class="tk-btn pri sd-b" id="sd-wa">💬 שלח ל'+esc(c.name)+' ב-WhatsApp<small>נפתח הצ\'אט שלו ישירות · הקובץ נשמר בטלפון — בצ\'אט: 📎 ← מסמך ← הקובץ</small></button>'
+         :'<div class="sd-note">⚠️ אין טלפון תקין ללקוח — מלא טלפון בפרטי ההצעה, ואז הצ\'אט שלו ייפתח אוטומטית.</div>')+
+    (canFile?'<button type="button" class="btn-ghost sd-b" id="sd-share">📤 שתף את הקובץ<small>הקובץ מצורף · בוחרים איש קשר בעצמך</small></button>':'')+
+    '<button type="button" class="btn-ghost sd-b" id="sd-save">⬇️ שמור בטלפון בלבד</button>'+
+    '<div class="code-b"><button type="button" class="btn-ghost" id="code-no">סגור</button></div></div>';
+  const end=()=>d.remove();
+  d.querySelector('#code-no').addEventListener('click',end);
+  d.addEventListener('click',ev=>{if(ev.target===d)end();});
+  d.addEventListener('keydown',ev=>{if(ev.key==='Escape')end();});
+  const wa=d.querySelector('#sd-wa');
+  if(wa)wa.addEventListener('click',()=>{
+    try{pdf.save(fname);}catch(e){}
+    const NL=String.fromCharCode(10);
+    const pr=String(c.project||'').trim();
+    const msg='שלום'+(first?' '+first:'')+' 👋'+NL+'מצורפת הצעת המחיר'+(pr?' — '+pr:'')+' 📄'+NL+'לכל שאלה אני זמין 🙏';
+    end();
+    try{window.open(waLink(c.phone,msg),'_blank');}catch(e){}
+    this.toast('הקובץ נשמר · בצ\'אט: 📎 ← מסמך');
+  });
+  const sh=d.querySelector('#sd-share');
+  if(sh)sh.addEventListener('click',async()=>{
+    end();
+    try{const file=new File([blob],fname,{type:'application/pdf'});
+      await navigator.share({files:[file],title:fname.replace(/\.pdf$/,''),text:'הצעת מחיר · יהודה שיפוצים'+(c.name?' · '+c.name:'')});}
+    catch(e){if(!(e&&e.name==='AbortError')){pdf.save(fname);this.toast('השיתוף נכשל — הקובץ נשמר בטלפון');}}
+  });
+  d.querySelector('#sd-save').addEventListener('click',()=>{end();try{pdf.save(fname);}catch(e){}this.toast('ה-PDF נשמר ✓');});
+  document.body.appendChild(d);
+  setTimeout(()=>{try{(wa||d.querySelector('#sd-share')||d.querySelector('#code-no')).focus();}catch(e){}},30);
+ },
  gateDenied(){
   document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
   const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','code-t');
@@ -8000,7 +8055,7 @@ const App={
      <button class="btn-ghost sg-live" id="livelink">⚡ לינק חי<small>הלקוח מסמן ורואה מחיר</small></button>
      <button class="btn-ghost" id="weblink">🔗 לינק הצעה<small>לשליחה ללקוח</small></button>
    </div>
-   <button class="btn-ghost" id="gen-share">📲 צור ושתף · WhatsApp / מייל</button>
+   <button class="btn-ghost" id="gen-share">📲 שלח PDF ללקוח · WhatsApp</button>
    <div class="send-h">מסמכים נוספים</div>
    <div class="send-grid">
      <button class="btn-ghost" id="gen-contract">📑 חוזה<small>הזמנת עבודה · PDF</small></button>
@@ -9520,7 +9575,7 @@ const App={
       pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',0,pos,iw,ih);
       left-=ph; pos-=ph; first=false;
     }
-    const fname='\u05e0\u05e1\u05e4\u05d7_\u05de\u05e9\u05e4\u05d8\u05d9_'+(this.state.client.name||'').replace(/[^\u0590-\u05FF\w]/g,'_')+'.pdf';
+    const fname=this.docFileName('נספח משפטי');
     const blob=pdf.output('blob');
     let shared=false;
     if(navigator.canShare){
@@ -11413,7 +11468,22 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
      pdf.addImage(imgData,'JPEG',0,0,w,hSlice/pxPerMm);
      first=false;y=cut;
    }
-   stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת-מחיר';return{pdf,blob:pdf.output('blob'),fname:`${label}-${this.state.quoteNo}.pdf`};},
+   stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת מחיר';return{pdf,blob:pdf.output('blob'),fname:this.docFileName(label)};},
+ /* v25.0 — שם הקובץ: לקוח - פרויקט - סוג המסמך (בקשת רמי: "תמיד שם לקוח / פרויקט").
+    "/" אסור בשם קובץ, לכן " - ". תווים אסורים (\ / : * ? " < > |) מוסרים. בלי שם לקוח — מספר ההצעה. */
+ docFileName(label){
+  const c=this.state.client||{};
+  const clean=v=>String(v==null?'':v).replace(/[\\/:*?"<>|\u0000-\u001f]+/g,' ').replace(/\s+/g,' ').trim();
+  const nm=clean(c.name),pr=clean(c.project);
+  const parts=[];
+  if(nm)parts.push(nm);
+  if(pr&&pr!==nm)parts.push(pr);
+  if(!parts.length)parts.push(clean(this.state.quoteNo)||'מסמך');
+  parts.push(clean(label));
+  let n=parts.filter(Boolean).join(' - ');
+  if(n.length>110)n=n.slice(0,110).trim();
+  return n+'.pdf';
+ },
 
  async sendSignedConfirmation(){
   if(!this.state.clientSig){this.toast('אין חתימה לשליחה');return;}
@@ -11482,9 +11552,10 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   if(!this.state.client.name||!this.state.client.name.trim()){this.toast('חסר שם לקוח — מלא אותו למעלה');this.state.modal='quote';this.render();return;}
   this.haptic(15);this.busy('מכין PDF…');
   try{const{pdf,blob,fname}=await this.makePdfBlob();this._quoteKind='pdf';this.recordQuote();this.verifySend(this.state.docType==='contract'?'contract':'pdf');
-  let shared=false;
-  if(share&&navigator.canShare){try{const file=new File([blob],fname,{type:'application/pdf'});if(navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'מסמך · יהודה שיפוצים',text:`מ-יהודה שיפוצים · ${nis(this.grand())}`});shared=true;}}catch(e){}}
-  if(!shared){pdf.save(fname);this.toast('ה-PDF נוצר ✓');}this.haptic(20);}
+  // v25.0 — "שלח ללקוח": חלון בחירה. Web Share לא מאפשר לבחור איש קשר מראש (אין שדה נמען ב-API),
+  //         לכן יש גם "פתח צ'אט עם הלקוח" (wa.me עם הטלפון שלו) + הקובץ נשמר בטלפון לצירוף.
+  if(share){this.idle();this.sendDlg(pdf,blob,fname);this.haptic(20);return;}
+  pdf.save(fname);this.toast('ה-PDF נוצר ✓');this.haptic(20);}
   catch(e){this.toast('הפקת ה-PDF נכשלה');}
   finally{this.idle();}
  },
