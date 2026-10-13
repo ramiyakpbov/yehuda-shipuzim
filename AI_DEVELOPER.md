@@ -1434,3 +1434,10 @@ Gemini 1.5 ו-2.0 הושבתו. Google ממליצה לפרויקטים חדשי�
 - `diagQuotes()` + כפתור "📋 העתק אבחון הצעות" בהגדרות ← מערכת: גרסה, אתר, מכשיר, מספר הצעות, מצבות, ולכל הצעה id/מספר/לקוח/סכום/זמן/סוגים/יש-סעיפים.
 - בדיקות: `t_v258.py` 15/15; `t_v254`/`t_v256` עודכנו (`askOk` מדומה + בדיקה שאין חלון דפדפן). רגרסיה: הכל עבר. מתודות כפולות: אין.
 - **להעלאה:** 5 הקבצים הרגילים.
+
+## #71 — כתובת שרת הפונקציות (v25.9)
+- האפליקציה מוגשת מ-GitHub Pages; הפונקציות (`/api/notify`, `/api/invoice`) יושבות באתר Netlify נפרד: `https://silver-donut-6ac12a.netlify.app` (מחובר לריפו yehuda-shipuzim, Functions directory `netlify/functions`). משתני סביבה שם: PUSH_SECRET, INVOICE_TOKEN (סודיים).
+- `YSPUSH_DEFAULT` ב-index.html מצביע לכתובת הזאת. `ysPushBase()`: Store `fnBase` אם הוגדר, אחרת origin אם רצים על `*.netlify.app`, אחרת `YSPUSH_DEFAULT`.
+- `yehuda-shipuzim.netlify.app` הוא האתר העסקי של יהודה (דף שיווקי) — לא לחבר אותו לריפו, זה ידרוס אותו.
+- אומת על שרת אמיתי (14.10.2026): `/api/notify?pk=1` מחזיר `{"publicKey":...}`. עדיין לא נבדקו: משלוח התראה אמיתי ויצירת מסמך בחשבונית ירוקה.
+

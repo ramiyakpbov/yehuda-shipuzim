@@ -1,4 +1,4 @@
-# יהודה שיפוצים — PWA הצעות מחיר · v25.8
+# יהודה שיפוצים — PWA הצעות מחיר · v25.9
 
 יהודה יעקובוב · 054-5718316 · ח.פ 311834998 · yuda090581@gmail.com
 yehuda-shipuzim.netlify.app · Firebase: yehuda-shipuzim · מסמך סנכרון: yehuda
@@ -9,7 +9,7 @@ yehuda-shipuzim.netlify.app · Firebase: yehuda-shipuzim · מסמך סנכרו�
 | `netlify/functions/notify.mjs` | `/api/notify` | `PUSH_SECRET` |
 | `netlify/functions/invoice.mjs` | `/api/invoice` | `GI_KEY_ID`, `GI_KEY_SECRET`, `INVOICE_TOKEN`, (`GI_ENV=sandbox` לניסיון) |
 
-פונקציות נבנות רק כשהאתר ב-Netlify מחובר ל-GitHub (פריסה אוטומטית). בדיקה מהירה: `https://yehuda-shipuzim.netlify.app/api/notify?pk=1` מחזיר JSON.
+פונקציות נבנות רק כשהאתר ב-Netlify מחובר ל-GitHub (פריסה אוטומטית). מ-v25.9: האפליקציה רצה ב-GitHub Pages והפונקציות באתר Netlify נפרד `silver-donut-6ac12a.netlify.app` (מחובר לאותו ריפו; משתני PUSH_SECRET ו-INVOICE_TOKEN מוגדרים שם). האתר העסקי `yehuda-shipuzim.netlify.app` לא מכיל את הפונקציות ואין לחבר אותו לריפו (ידרוס אותו). בדיקה מהירה: `https://silver-donut-6ac12a.netlify.app/api/notify?pk=1` מחזיר JSON עם publicKey.
 
 ## v12.9 — עד 60 סעיפים בכל מסלול AI
 
