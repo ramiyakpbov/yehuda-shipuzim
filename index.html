@@ -1745,6 +1745,12 @@ input:focus,textarea:focus,select:focus{outline:none;}
 .tk-quote>.ico{margin-top:2px;color:var(--muted);}
 .tk-acts{display:flex;align-items:center;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--hair);}
 .tk-acts>.tk-btn{flex:1;min-width:0;}
+/* v25.7 — 5 פעולות בכרטיס הצעה: שתי שורות במקום שורה צפופה. [ערוך][עותק][תוספת] / [חשבונית ×2][מחק] */
+.tk-acts.tk-acts5{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.tk-acts.tk-acts5>.tk-btn{min-width:0;padding:0 8px;white-space:nowrap;font-size:14px;}
+.tk-acts.tk-acts5>[data-invq]{grid-column:span 2;}
+.tk-acts.tk-acts5>.tk-ib{width:auto;justify-self:stretch;}
+.tk-acts.tk-acts5:has(>:nth-child(6))>[data-invq]{grid-column:auto;}
 /* אייקוני קו במסכים היומיים — יורשים צבע מהטקסט */
 .icon-btn .ico{color:var(--txt);}
 .hm-wrap .hm-quick .hm-q .q-ic .ico{color:rgba(255,255,255,.92);}
@@ -3379,7 +3385,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.6';
+const VERSION='25.7';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3709,7 +3715,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>🧾 חשבונית ירוקה</b> — ב"כל ההצעות" ← "חשבונית": חשבונית מס קבלה / חשבונית מס / קבלה / חשבון עסקה, על הסכום המלא, מקדמה או יתרה. המסמך נשמר בכרטיס ההצעה ("התקבל X מתוך Y") ונשלח ללקוח בוואטסאפ. הגדרה: הגדרות ← עסק ← חשבונית ירוקה.</li>
+   b:`<ul class="g-ul"><li><b>כרטיסי "כל ההצעות"</b> — הכפתורים בשתי שורות (ערוך · עותק · תוספת / חשבונית · מחק), והצעה שהופיעה כמה פעמים מוצגת פעם אחת.</li>
+   <li><b>🧾 חשבונית ירוקה</b> — ב"כל ההצעות" ← "חשבונית": חשבונית מס קבלה / חשבונית מס / קבלה / חשבון עסקה, על הסכום המלא, מקדמה או יתרה. המסמך נשמר בכרטיס ההצעה ("התקבל X מתוך Y") ונשלח ללקוח בוואטסאפ. הגדרה: הגדרות ← עסק ← חשבונית ירוקה.</li>
    <li><b>🔔 התראות לטלפון</b> — הגדרות ← מערכת ← "התראות לטלפון": התראה כשלקוח פותח לינק, מאשר או משאיר הערה, גם כשהאפליקציה סגורה. עובד על לינקים שנוצרו אחרי ההפעלה.</li>
    <li><b>➕ תוספת להצעה</b> — ב"כל ההצעות" ← "תוספת" ליד הצעה: בוחרים רק את הסעיפים הנוספים. התוספת מקבלת מספר משלה (YS-…-T1), נשלחת כמו כל הצעה, ובכרטיס ההצעה המקורית רואים "סה"כ כולל תוספות".</li>
    <li><b>כל לקוח בנפרד, גם עם אותו טלפון</b> — מאגר הלקוחות, מעקב ותזכורות והצעות שנשלחו מפרידים לפי שם. כרטיסים שהתמזגו בעבר בגלל טלפון משותף מופרדים אוטומטית בפתיחה.</li>
@@ -4321,7 +4328,7 @@ const Sync=(()=>{
        try{const loc=Store.get(k,null);if(Array.isArray(loc)&&loc.some(dead)){Store.set(k,loc.filter(x=>!dead(x)));changed++;}}catch(e){}
        return;}
      // quotes: לא לדרוס גרסה מקומית מלאה (עם חתימות) בגרסה רזה מהענן. ממזגים לפי id — מקומי מנצח.
-     if(k==='quotes'){try{const loc=(Store.get('quotes',[])||[]).filter(q=>!dead(q));const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(rq&&!locIds[rq.id]&&!dead(rq))merged.push(rq);});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
+     if(k==='quotes'){try{const loc=(Store.get('quotes',[])||[]).filter(q=>!dead(q));const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(rq&&!locIds[rq.id]&&!dead(rq)){merged.push(rq);if(rq.id)locIds[rq.id]=1;}});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
      // רשימות עם מזהה: ממזגים במקום לדרוס. רשומה מקומית מנצחת, רשומה שקיימת רק בענן מתווספת.
      if(k==='clients'||k==='sentLinks'||k==='reviewLinks'||k==='customItems'||k==='userTemplates'){
        try{const loc0=Store.get(k,[])||[];
@@ -8934,7 +8941,7 @@ const App={
         const inf=this.addonInfo(q.no);if(!inf.adds.length)return '';
         return '<p class="ao-rel">'+ico('plus',13)+inf.adds.length+(inf.adds.length===1?' תוספת':' תוספות')+' · '+nisR(inf.addSum)+' · <b>סה"כ כולל תוספות '+nisR((+q.grand||0)+inf.addSum)+'</b></p>';})()+
       this.invLine(q)+
-      '<footer class="tk-acts">'+acts.join('')+'</footer></article>';};
+      '<footer class="tk-acts'+(acts.length>=5?' tk-acts5':'')+'">'+acts.join('')+'</footer></article>';};
   const nLinks=(Store.get('sentLinks',[])||[]).length;
   return (f?'<div class="tk-banner" role="status">'+ico('list',16)+'<span>מסונן: <b>'+esc(f)+'</b></span><button class="tk-btn sm" data-qfilter="">הצג הכל</button></div>':'')+
    ((!all.length&&nLinks)?'<div class="tk-banner warn" role="status">'+ico('copy',16)+'<span>יש '+nLinks+' לינקים במעקב, אבל אף הצעה לא נשמרה כאן. <b>הצעות חדשות נשמרות אוטומטית.</b></span><button class="tk-btn sm" id="q-rebuild">בנה מהלינקים</button></div>':'')+
@@ -11032,6 +11039,35 @@ const App={
   return out.length;
  },
 
+ /* v25.7 — הצעה שמופיעה כמה פעמים ב"כל ההצעות" (רמי, 13.10: YS-20261012-002 שלוש פעמים).
+    כפילות = אותו id, או אותו מספר הצעה + אותו לקוח + אותו סכום (±1 ₪). שומרים רשומה אחת — עם הסעיפים,
+    העדכנית ביותר — ומאחדים אליה סוגי שליחה, חתימה ומסמכי חשבונית. רשומה עם id אחר נרשמת כמחוקה (Tomb)
+    כדי שהסנכרון לא יחזיר אותה. מספר זהה ללקוח אחר או לסכום אחר — לא נוגעים. */
+ dedupeQuotes(){
+  const qs=Store.get('quotes',[])||[];if(qs.length<2)return 0;
+  const nm=x=>String(x==null?'':x).trim();
+  const score=q=>(q&&q.snap&&q.snap.lines&&q.snap.lines.length?2e13:0)+(+(q&&q.ts)||0);
+  const order=qs.slice().sort((a,b)=>score(b)-score(a));
+  const keep=[],byId={},dead=[];
+  order.forEach(q=>{
+   if(!q)return;
+   let t=(q.id&&byId[q.id])||null;
+   if(!t&&nm(q.no))t=keep.find(k=>nm(k.no)===nm(q.no)&&nm(k.client)===nm(q.client)&&Math.abs((+k.grand||0)-(+q.grand||0))<1)||null;
+   if(!t){keep.push(q);if(q.id)byId[q.id]=q;return;}
+   const ks=(t.kinds||[]).slice();(q.kinds||[]).forEach(k=>{if(ks.indexOf(k)<0)ks.push(k);});t.kinds=ks;
+   if(!t.sig&&q.sig)t.sig=q.sig;
+   if(Array.isArray(q.invoices)&&q.invoices.length){const have={};(t.invoices||[]).forEach(x=>{if(x&&x.id)have[x.id]=1;});
+     t.invoices=(t.invoices||[]).concat(q.invoices.filter(x=>x&&!have[x.id]));}
+   if(q.id&&q.id!==t.id)dead.push(q.id);
+  });
+  const removed=qs.length-keep.length;
+  if(!removed)return 0;
+  if(dead.length)Tomb.add(dead);
+  const kept=new Set(keep);
+  Store.set('quotes',qs.filter(q=>kept.has(q)));
+  try{this.invalidate&&this.invalidate('quotes');}catch(e){}
+  return removed;
+ },
  /* v25.3 — מפריד כרטיסים שהתמזגו לפני v25.1 (הכלל הישן "טלפון זהה = אותו לקוח" דרס את השם:
     "מרפאת שיניים" הפכה ל"רמי יעקובוב" והפרויקט/הכתובת נשארו).
     סימן: הצעה שהשם בה לא קיים ברשימת הלקוחות, ויש כרטיס עם אותו טלפון בשם אחר.
@@ -12344,6 +12380,8 @@ document.addEventListener('DOMContentLoaded',()=>{
    if(changed)Store.set('clients',clients);
    Store.set('mig_dueDate_692',true);
  }}catch(e){}
+ // v25.7 — הצעות כפולות ברשימה
+ try{App.dedupeQuotes();}catch(e){}
  // v25.3 — הפרדת כרטיסים שהתמזגו בגלל טלפון משותף
  try{const _sp=App.splitMergedClients();if(_sp)setTimeout(()=>{try{App.toast(_sp===1?'כרטיס לקוח אחד הופרד (טלפון משותף)':_sp+' כרטיסי לקוחות הופרדו (טלפון משותף)');}catch(e){}},2500);}catch(e){}
  App.render();
@@ -12364,7 +12402,7 @@ try{
     document.body.classList.toggle('bg-idle',document.hidden);
   });
 }catch(e){}
-try{App.splitMergedClients();}catch(e){}
+try{App.dedupeQuotes();}catch(e){}try{App.splitMergedClients();}catch(e){}
 App.render();App.toast('סונכרן ממכשיר אחר ✓');}catch(e){}});}catch(e){}
  // splash: slide-to-unlock (RTL: drag knob leftwards) + tap fallback
  const sp=document.getElementById('splash');
