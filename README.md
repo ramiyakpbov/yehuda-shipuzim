@@ -1,7 +1,15 @@
-# יהודה שיפוצים — PWA הצעות מחיר · v25.3
+# יהודה שיפוצים — PWA הצעות מחיר · v25.6
 
 יהודה יעקובוב · 054-5718316 · ח.פ 311834998 · yuda090581@gmail.com
 yehuda-shipuzim.netlify.app · Firebase: yehuda-shipuzim · מסמך סנכרון: yehuda
+
+## פונקציות שרת (Netlify) — מ-v25.5
+| קובץ | כתובת | משתני סביבה ב-Netlify |
+|---|---|---|
+| `netlify/functions/notify.mjs` | `/api/notify` | `PUSH_SECRET` |
+| `netlify/functions/invoice.mjs` | `/api/invoice` | `GI_KEY_ID`, `GI_KEY_SECRET`, `INVOICE_TOKEN`, (`GI_ENV=sandbox` לניסיון) |
+
+פונקציות נבנות רק כשהאתר ב-Netlify מחובר ל-GitHub (פריסה אוטומטית). בדיקה מהירה: `https://yehuda-shipuzim.netlify.app/api/notify?pk=1` מחזיר JSON.
 
 ## v12.9 — עד 60 סעיפים בכל מסלול AI
 

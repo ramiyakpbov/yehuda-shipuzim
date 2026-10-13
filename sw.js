@@ -2,7 +2,7 @@
    מטרה: עבודה אופליין + עדכון אוטומטי.
    בכל שדרוג: העלה את מספר הגרסה כאן (CACHE) והאפליקציה תתעדכן לבד אצל כל המשתמשים.
 */
-const CACHE = 'ys-cache-v25.3';
+const CACHE = 'ys-cache-v25.6';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './version.json'];
 
 self.addEventListener('message', e => { if (e.data === 'SKIP_WAITING') self.skipWaiting(); });
@@ -70,4 +70,24 @@ self.addEventListener('fetch', e => {
       return cached || network;
     })
   );
+});
+
+// v25.5 — התראות לטלפון (Web Push). התוכן מוצפן בשרת (netlify/functions/notify.mjs) ומפוענח כאן ע"י הדפדפן.
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { try { d = { title: e.data.text() }; } catch (__) {} }
+  const title = d.title || 'יהודה שיפוצים';
+  e.waitUntil(self.registration.showNotification(title, {
+    body: d.body || '', tag: d.tag || 'ys', renotify: true,
+    icon: './icon-192.png', badge: './icon-192.png', dir: 'rtl', lang: 'he',
+    data: { url: d.url || './' }
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const url = new URL((e.notification.data && e.notification.data.url) || './', self.registration.scope).href;
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+    for (const c of list) { if (c.url.indexOf(self.registration.scope) === 0 && 'focus' in c) return c.focus(); }
+    return self.clients.openWindow ? self.clients.openWindow(url) : null;
+  }));
 });

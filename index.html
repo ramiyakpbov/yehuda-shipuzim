@@ -799,6 +799,21 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .lp-n{flex:1;min-width:0;font-size:12px;color:var(--txt);word-break:break-all;text-align:left;}
 .lp-ul small{flex:0 0 auto;font-size:11px;color:var(--muted);direction:ltr;unicode-bidi:isolate;}
 #lp-ok:disabled{opacity:.45;}
+.inv-head{font-size:13.5px;color:var(--txt);background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;line-height:1.55;margin-bottom:6px}
+.inv-warn{font-size:12.5px;color:var(--warn);margin:6px 0}
+.inv-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.inv-chip{border:1px solid var(--line);background:var(--bg3);color:var(--txt);border-radius:999px;padding:7px 12px;font-size:13px;font-weight:600}
+.inv-chip.on{border-color:var(--red);background:rgba(237,28,36,.14)}
+.inv-items{display:flex;gap:8px;align-items:center;font-size:13px;margin:4px 2px 10px;color:var(--txt)}
+.inv-ok{font-size:14px;color:var(--ok);margin:4px 0 12px;font-weight:700}
+.inv-rel{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px;align-items:center}
+.inv-doc{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--txt);border:1px solid var(--line);border-radius:999px;padding:4px 9px;text-decoration:none;background:var(--bg3)}
+.inv-paid{font-size:12px;color:var(--ok);font-weight:700}
+.ao-ban{display:flex;align-items:center;gap:8px;margin:8px 0;padding:9px 12px;border-radius:12px;border:1px solid var(--warn);background:rgba(245,166,35,.10);color:var(--txt);font-size:13.5px;line-height:1.35;}
+.ao-ban>span{flex:1;min-width:0}.ao-ban small{color:var(--muted);font-size:12px}.ao-ban svg{color:var(--warn);flex:none}
+.ao-rel{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:6px 0 2px}.ao-rel svg{color:var(--warn)}
+.lv-ao{margin-top:4px;font-size:13px;font-weight:700;color:#b45309}
+.ao-blk{border:1px solid #f5a623;border-radius:6px;padding:6px 8px;background:#fff8ec}
 .sd-card .sd-t{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:6px;}
 .sd-card .sd-f{font-size:13px;color:var(--muted);margin-bottom:12px;word-break:break-word;line-height:1.4;}
 .sd-card .sd-b{display:block;width:100%;margin-bottom:8px;text-align:center;white-space:normal;height:auto;min-height:48px;padding:10px 12px;line-height:1.3;}
@@ -3364,7 +3379,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.3';
+const VERSION='25.6';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3488,6 +3503,7 @@ function initLiveUI(id,d){
     push({t:Date.now(), a:'approve', tot:r.tot, off:r.off.length});
     flush();
     try{window._db.collection('proposals').doc(id).update({approvedAt:Date.now(), curTotal:r.tot});}catch(e){}
+    ysNotify('approve',{tot:r.tot});
     ap.textContent='\u2713 \u05d4\u05d0\u05d9\u05e9\u05d5\u05e8 \u05e0\u05e9\u05dc\u05d7 \u2014 \u05ea\u05d5\u05d3\u05d4!';
     ap.disabled=true; ap.classList.add('done');
     var msg='\u05e9\u05dc\u05d5\u05dd, \u05d0\u05e0\u05d9 \u05de\u05d0\u05e9\u05e8 \u05d0\u05ea \u05d4\u05d4\u05e6\u05e2\u05d4 \u05de\u05e1\u05f3 '+(d.no||'')+' \u05d1\u05e1\u05da '+nf(r.tot)+
@@ -3500,6 +3516,7 @@ function initLiveUI(id,d){
     if(ap2)ap2.onclick=function(){
       push({t:Date.now(), a:'approve'}); flush();
       try{window._db.collection('proposals').doc(id).update({approvedAt:Date.now()});}catch(e){}
+      ysNotify('approve');
       ap2.textContent='\u2713 \u05d4\u05d0\u05d9\u05e9\u05d5\u05e8 \u05e0\u05e9\u05dc\u05d7 \u2014 \u05ea\u05d5\u05d3\u05d4!';
       ap2.disabled=true; ap2.classList.add('done');
     };
@@ -3692,7 +3709,10 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>כל לקוח בנפרד, גם עם אותו טלפון</b> — מאגר הלקוחות, מעקב ותזכורות והצעות שנשלחו מפרידים לפי שם. כרטיסים שהתמזגו בעבר בגלל טלפון משותף מופרדים אוטומטית בפתיחה.</li>
+   b:`<ul class="g-ul"><li><b>🧾 חשבונית ירוקה</b> — ב"כל ההצעות" ← "חשבונית": חשבונית מס קבלה / חשבונית מס / קבלה / חשבון עסקה, על הסכום המלא, מקדמה או יתרה. המסמך נשמר בכרטיס ההצעה ("התקבל X מתוך Y") ונשלח ללקוח בוואטסאפ. הגדרה: הגדרות ← עסק ← חשבונית ירוקה.</li>
+   <li><b>🔔 התראות לטלפון</b> — הגדרות ← מערכת ← "התראות לטלפון": התראה כשלקוח פותח לינק, מאשר או משאיר הערה, גם כשהאפליקציה סגורה. עובד על לינקים שנוצרו אחרי ההפעלה.</li>
+   <li><b>➕ תוספת להצעה</b> — ב"כל ההצעות" ← "תוספת" ליד הצעה: בוחרים רק את הסעיפים הנוספים. התוספת מקבלת מספר משלה (YS-…-T1), נשלחת כמו כל הצעה, ובכרטיס ההצעה המקורית רואים "סה"כ כולל תוספות".</li>
+   <li><b>כל לקוח בנפרד, גם עם אותו טלפון</b> — מאגר הלקוחות, מעקב ותזכורות והצעות שנשלחו מפרידים לפי שם. כרטיסים שהתמזגו בעבר בגלל טלפון משותף מופרדים אוטומטית בפתיחה.</li>
    <li><b>"ערוך" / "שכפל" בהצעת תכנון</b> — ההצעה נפתחת שוב כהצעת תכנון עם המחיר למ"ר והשטח (בהצעות שנשמרו לפני v25.2 — רק סוג ההצעה; את המחיר והשטח ממלאים מחדש).</li>
    <li><b>מסך הבית סופר גם הצעות PDF</b> — "בצנרת", "ממתינות", "פג תוקפן" ו"אושרו" כוללים עכשיו גם הצעות שנשלחו כ-PDF (על PDF אין "נצפו"). במעקב לינקים — שורה שמראה כמה הצעות PDF פתוחות, ו"הצג".</li>
    <li><b>אותו טלפון, שם אחר = לקוח חדש</b> — הפקת הצעה בשם אחר עם טלפון קיים כבר לא משנה את השם של הלקוח הקיים.</li>
@@ -4499,6 +4519,7 @@ const ICO={
  'search':'<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
  'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
  'check':'<path d="M20 6 9 17l-5-5"/>',
+ 'plus':'<path d="M5 12h14"/><path d="M12 5v14"/>',
  'copy':'<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
  'phone':'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
  'message-circle':'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
@@ -4559,6 +4580,21 @@ const addMonth=()=>{const d=new Date();d.setMonth(d.getMonth()+1);return d.toLoc
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const phoneValid=p=>{const d=(p||'').replace(/\D/g,'');return d.length>=9&&d.length<=15;};
 const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith('0'))p='972'+p.slice(1);if(p&&!p.startsWith('972'))p='972'+p;return 'https://wa.me/'+(p||'')+'?text='+encodeURIComponent(text);};
+/* v25.5 — התראות לטלפון (Web Push). הפונקציה בשרת: netlify/functions/notify.mjs (נתיב /api/notify).
+   מנוי ההתראות של המכשיר של יהודה נשמר ב-Store 'pushSub', ונכתב לכל לינק שנוצר (push, pushFn).
+   דף הלקוח שולח לפונקציה "נפתח" / "אושר" / "הערה" — שקט לגמרי כשאין מנוי או כשהשרת לא זמין. */
+const YSPUSH_DEFAULT='https://yehuda-shipuzim.netlify.app';
+function ysPushBase(){try{const o=String(Store.get('fnBase','')||'').trim().replace(/\/+$/,'');if(/^https:\/\//.test(o))return o;
+  return /\.netlify\.app$/.test(location.hostname)?location.origin:YSPUSH_DEFAULT;}catch(e){return YSPUSH_DEFAULT;}}
+function ysNotify(ev,extra){try{
+  const p=window.__ysPush;if(!p||!Array.isArray(p.subs)||!p.subs.length)return false;
+  try{if(localStorage.getItem('ys:pushSub'))return false;}catch(e){}   // המכשיר של יהודה עצמו — לא מתריעים לו על עצמו
+  const k='ysn:'+(p.no||'')+':'+ev;
+  if(ev!=='comment'){try{if(sessionStorage.getItem(k))return false;sessionStorage.setItem(k,'1');}catch(e){}}
+  const body=JSON.stringify(Object.assign({subs:p.subs.slice(0,5),ev:ev,cn:p.cn||'',no:p.no||'',tot:+p.tot||0},extra||{}));
+  fetch(String(p.fn||YSPUSH_DEFAULT).replace(/\/+$/,'')+'/api/notify',{method:'POST',body:body,keepalive:true,headers:{'Content-Type':'text/plain;charset=UTF-8'}}).catch(()=>{});
+  return true;}catch(e){return false;}}
+function ysPushSet(dd){try{const d=(dd&&dd.data)||{};window.__ysPush={subs:Array.isArray(dd&&dd.push)?dd.push:[],fn:(dd&&dd.pushFn)||'',cn:d.cn||'',no:d.no||'',tot:+d.tot||0};}catch(e){}}
 function nextQuoteNo(){let seq=Store.get('qseq',0)+1;const ymd=new Date().toISOString().slice(0,10).replace(/-/g,'');return 'YS-'+ymd+'-'+String(seq).padStart(3,'0');}
 
 const CAT_IDS=(()=>{const o={};try{const T=AI.catTitles;Object.keys(T).forEach(k=>{o[T[k]]=k;o[T[k].replace(/,/g,'')]=k;o[k]=k;});}catch(e){}return o;})();
@@ -4773,7 +4809,7 @@ const App={
    showTerms:true,terms:Store.get('terms','תנאי תשלום: 30% מקדמה עם תחילת העבודה, יתרה בהתאם להתקדמות. ההצעה בתוקף עד התאריך הנקוב.'),
    whiteOn:false,whiteItems:[],whiteCustom:Store.get('whiteCustom',[]),whiteInc:true,whitePrice:0,
    blackOn:false,blackItems:[],blackCustom:Store.get('blackCustom',[]),blackInc:true,blackPrice:0,
-   clientSig:null,modal:null,photoClient:null,includeGallery:Store.get('includeGallery',false),planMode:Store.get('planMode',false),planPerSqm:Store.get('planPerSqm',''),planTotalSqm:Store.get('planTotalSqm',''),
+   clientSig:null,modal:null,photoClient:null,includeGallery:Store.get('includeGallery',false),planMode:Store.get('planMode',false),addonOf:Store.get('addonOf',''),planPerSqm:Store.get('planPerSqm',''),planTotalSqm:Store.get('planTotalSqm',''),
  },
  save(){Store.set('catalog',this.state.catalog);},
  setField(cid,iid,field,val){const it=this.find(cid,iid);if(!it)return;
@@ -7503,7 +7539,7 @@ const App={
       <button class="icon-btn" data-modal="reminders" aria-label="מעקב ותזכורות">${ico('bell',20)}${rem?`<span class="dot">${rem}</span>`:''}</button>
       <button class="icon-btn" data-modal="clients" aria-label="לקוחות">${ico('users',20)}</button>
       <button class="icon-btn" data-modal="menu" aria-label="תפריט והגדרות">${ico('settings',20)}</button></div>
-    ${this.liveIsland()}
+    ${this.liveIsland()}${this.addonBanner()}
     <div class="searchwrap"><span class="mag">🔍</span>
       <input id="search" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
       <button class="mic" id="mic">🎤</button></div></div>
@@ -7889,7 +7925,7 @@ const App={
     try{pdf.save(fname);}catch(e){}
     const NL=String.fromCharCode(10);
     const pr=String(c.project||'').trim();
-    const msg='שלום'+(first?' '+first:'')+' 👋'+NL+'מצורפת הצעת המחיר'+(pr?' — '+pr:'')+' 📄'+NL+'לכל שאלה אני זמין 🙏';
+    const msg='שלום'+(first?' '+first:'')+' 👋'+NL+(this.state.addonOf?'מצורפת תוספת להצעת המחיר '+this.state.addonOf:'מצורפת הצעת המחיר')+(pr?' — '+pr:'')+' 📄'+NL+'לכל שאלה אני זמין 🙏';
     end();
     try{window.open(waLink(c.phone,msg),'_blank');}catch(e){}
     this.toast('הקובץ נשמר · בצ\'אט: 📎 ← מסמך');
@@ -8005,7 +8041,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',aitools:'aiToolsModal',boq:'boqModal',aitool:'aiToolModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal'};
+ modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',aitools:'aiToolsModal',boq:'boqModal',aitool:'aiToolModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal',invoice:'invoiceModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -8020,7 +8056,8 @@ const App={
      <div class="sec-title" style="margin-top:0"><span>בחר פריטים</span><button class="mini2" data-all="${key}">${allSel?'נקה הכל':'בחר הכל'}</button></div>
      <div class="matgrid">${all.map(mt=>`<div class="matchk ${sel.includes(mt)?'on':''}" data-mat="${key}|${mt}"><span class="box">${sel.includes(mt)?'✓':''}</span>${mt}</div>`).join('')}</div>
      <div class="addrow"><input id="add-${key}" placeholder="הוסף פריט אחר…"/><button data-addmat="${key}">＋</button></div>`:''}`;};
-  return `<h2>פרטי ההצעה <button class="x" data-close>✕</button></h2>
+  return `<h2>${this.state.addonOf?'פרטי התוספת':'פרטי ההצעה'} <button class="x" data-close>✕</button></h2>
+   ${this.addonBanner()}
    <div class="field"><label>שם הלקוח</label><input id="c_name" value="${esc(c.name)}" placeholder="שם מלא"/></div>
    <div class="row2"><div class="field"><label>טלפון</label><input id="c_phone" value="${c.phone||''}" placeholder="050-…" inputmode="tel"/></div>
      <div class="field"><label>פרויקט</label><input id="c_project" value="${esc(c.project)}" placeholder="שיפוץ דירה…"/></div></div>
@@ -8125,6 +8162,10 @@ const App={
    <div class="field"><label>קישור לביקורת בגוגל (יוצג ללקוחות מרוצים 4-5 ⭐ בדף המשוב)</label><input id="g-review" value="${Store.get('googleReview','')}" placeholder="https://g.page/r/..."/></div>
    <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px">איך משיגים: גוגל → הפרופיל העסקי → "בקש ביקורות" → העתק קישור.</div>
    <button class="btn-ghost" id="grev-save">💾 שמור קישור ביקורת</button>
+   <div class="sec-title" style="margin-top:16px">🧾 חשבונית ירוקה</div>
+   <div style="font-size:11.5px;color:var(--muted);margin:-2px 2px 8px;line-height:1.55">המפתחות של חשבונית ירוקה שמורים בשרת (Netlify), לא בטלפון. כאן רק <b>קוד החיבור</b> — אותו קוד שהוגדר ב-Netlify בשם INVOICE_TOKEN.</div>
+   <div class="field"><label>קוד חיבור לחשבוניות</label><input id="inv-token" type="password" autocomplete="off" value="${esc(Store.get('invToken',''))}" placeholder="הקוד מ-Netlify"/></div>
+   <div class="row2"><button class="btn-ghost" id="inv-save">💾 שמור</button><button class="btn-ghost" id="inv-ping">🔌 בדוק חיבור</button></div>
    <div class="sec-title">🔔 צלילים</div>
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="snd-off" ${Store.get('soundOff',0)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>השתק צלילי סימון סעיפים</span></label></div>`),
    ai:()=>locked(`
@@ -8174,6 +8215,7 @@ const App={
    <button class="btn-ghost" id="g-connect">🔗 התחבר ל-Google Drive</button>
    <button class="btn-ghost" id="g-backup">☁️ גבה עכשיו ל-Drive</button>`)}`,
    sys:()=>`
+   ${this.pushCard()}
    ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
    <div class="sec-title">גרסה ועדכונים</div>
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
@@ -8302,6 +8344,7 @@ const App={
    this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
    this.state.discount=0;this.state.advance=0;this.state.planMode=false;this.state.planPerSqm='';this.state.planTotalSqm='';this.state.planScan=null;
    Store.set('planMode',false);
+   this.state.addonOf='';Store.set('addonOf','');   // v25.4 — הצעה חדשה אינה תוספת
    this.state.quoteNo=nextQuoteNo();this._aiQuoteType='calc';
    this.haptic(20);this.toast('ההצעה אופסה ✓ — הסעיפים הקבועים נשמרו');this.state.modal=null;this.render();
  },
@@ -8874,7 +8917,9 @@ const App={
     const acts=[];
     if(q.snap){
       acts.push('<button class="tk-btn pri" data-loadq="'+esc(q.id)+'">'+ico('pencil',16)+'ערוך</button>');
-      acts.push('<button class="tk-btn" data-dupq="'+esc(q.id)+'">'+ico('copy',16)+'עותק</button>');}
+      acts.push('<button class="tk-btn" data-dupq="'+esc(q.id)+'">'+ico('copy',16)+'עותק</button>');
+      acts.push('<button class="tk-btn" data-addonq="'+esc(q.id)+'" title="תוספת עבודה להצעה הזו">'+ico('plus',16)+'תוספת</button>');
+      if(+q.grand>0)acts.push('<button class="tk-btn" data-invq="'+esc(q.id)+'" title="חשבונית / קבלה בחשבונית ירוקה">'+ico('file-text',16)+'חשבונית</button>');}
     if(q.sig||(q.snap&&q.snap.clientSig))acts.push('<button class="tk-btn" data-qsig="'+esc(q.id)+'">'+ico('pen-line',16)+'חתימה</button>');
     acts.push('<button class="tk-ib danger" data-delq="'+esc(q.id)+'" aria-label="מחק את ההצעה של '+nm+'" title="מחק מההיסטוריה">'+ico('trash-2',17)+'</button>');
     return '<article class="tk-card" data-tone="'+(signed?'ok':'neutral')+'" aria-label="'+nm+'">'+
@@ -8884,6 +8929,11 @@ const App={
           (q.project?'<span aria-hidden="true">·</span><span>'+esc(q.project)+'</span>':'')+'</p></div>'+
         '<div class="tk-amt">'+nisR(q.grand)+'</div></header>'+
       '<div class="tk-kinds">'+tags+'</div>'+
+      (()=>{// v25.4 — קשר בין הצעה לתוספות שלה
+        if(q.addonOf)return '<p class="ao-rel">'+ico('plus',13)+'תוספת להצעה <b dir="ltr">'+esc(q.addonOf)+'</b></p>';
+        const inf=this.addonInfo(q.no);if(!inf.adds.length)return '';
+        return '<p class="ao-rel">'+ico('plus',13)+inf.adds.length+(inf.adds.length===1?' תוספת':' תוספות')+' · '+nisR(inf.addSum)+' · <b>סה"כ כולל תוספות '+nisR((+q.grand||0)+inf.addSum)+'</b></p>';})()+
+      this.invLine(q)+
       '<footer class="tk-acts">'+acts.join('')+'</footer></article>';};
   const nLinks=(Store.get('sentLinks',[])||[]).length;
   return (f?'<div class="tk-banner" role="status">'+ico('list',16)+'<span>מסונן: <b>'+esc(f)+'</b></span><button class="tk-btn sm" data-qfilter="">הצג הכל</button></div>':'')+
@@ -9825,6 +9875,8 @@ const App={
    // v24.6 — ישר לכתב כמויות (בפרויקט עם מפרט של אדריכל זה המקור לסעיפים)
    const nb=document.getElementById('noitems-boq');if(nb)nb.onclick=()=>{try{this.captureQuote();}catch(e){}
      this.aiGate(()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='boq';this.render();});};}
+  {const pt=document.getElementById('push-toggle');if(pt)pt.onclick=()=>{if((Store.get('pushSub',null)||{}).endpoint)this.pushDisable();else this.pushEnable();};
+   const pte=document.getElementById('push-test');if(pte)pte.onclick=()=>this.pushTest(false);}
   on('[data-settab]','click',e=>{this.state.setTab=e.currentTarget.dataset.settab;this.haptic(8);this.render();
     try{const m=document.querySelector('.modal-scroll,.qm-scroll,.sheet,.modal');if(m)m.scrollTop=0;}catch(x){}});
   // v24.4 — שטח / מחיר למ"ר: הסיכום מתעדכן כשיוצאים מהשדה
@@ -10512,6 +10564,15 @@ const App={
   on('[data-qsig]','click',e=>{const id=e.currentTarget.dataset.qsig;const q=Store.get('quotes',[]).find(x=>x.id===id);if(!q)return;const img=q.sig||(q.snap&&q.snap.clientSig)||'';this._sigView={img:img,client:q.client,no:q.no,at:q.ts,quoteId:id};this.state.modal='sigview';this.render();});
   on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
   on('[data-dupq]','click',e=>this.duplicateQuoteAsNew(e.currentTarget.dataset.dupq));
+  on('[data-addonq]','click',e=>this.startAddon(e.currentTarget.dataset.addonq));
+  on('[data-addonexit]','click',()=>this.addonExit());
+  on('[data-invq]','click',e=>{this._invQ=e.currentTarget.dataset.invq;this._invRes=null;this._invAmt=0;this._invItems=true;if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='invoice';this.render();});
+  {const isv=document.getElementById('inv-save');if(isv)isv.onclick=()=>{Store.set('invToken',(document.getElementById('inv-token').value||'').trim());this.toast('קוד החיבור נשמר ✓');};
+   const ipg=document.getElementById('inv-ping');if(ipg)ipg.onclick=()=>{const v=(document.getElementById('inv-token').value||'').trim();if(v)Store.set('invToken',v);this.invPing();};
+   on('[data-invtype]','click',e=>{this._invType=+e.currentTarget.dataset.invtype;this.invKeep();this.render();});
+   on('[data-invamt]','click',e=>{this.invKeep();this._invAmt=+e.currentTarget.dataset.invamt;this.render();});
+   const igo=document.getElementById('inv-go');if(igo)igo.onclick=()=>this.invIssue();
+   const iwa=document.getElementById('inv-wa');if(iwa)iwa.onclick=()=>this.invShareWa();}
   on('[data-delq]','click',e=>{const id=e.currentTarget.dataset.delq;if(confirm('למחוק את ההצעה מההיסטוריה?')){Tomb.add([id]);const qs=Store.get('quotes',[]).filter(x=>x.id!==id);Store.set('quotes',qs);this.render();}});
   on('[data-qfilter]','click',e=>{this.state.quoteClientFilter=e.currentTarget.dataset.qfilter;this.render();});
   on('[data-cquotes]','click',e=>{this.state.quoteClientFilter=e.currentTarget.dataset.cquotes;this.state.modal='sentquotes';this.render();});
@@ -10977,6 +11038,149 @@ const App={
     מחיקת לקוח מוחקת גם את ההצעות שלו (deleteClientEverywhere), לכן הצעה בלי כרטיס כאן = מיזוג, לא מחיקה.
     הכרטיס החדש נבנה מפרטי הלקוח ששמורים בהצעה. פרויקט/כתובת/הערות שעברו לכרטיס הממוזג
     יוסרו ממנו רק אם הם זהים לאלה שבהצעה ואף הצעה של בעל הכרטיס לא כוללת אותם. רץ בכל פתיחה; לא עושה כלום כשאין מה להפריד. */
+ /* v25.5 — התראות לטלפון (צד יהודה) */
+ pushFields(){try{const s=Store.get('pushSub',null);return (s&&s.endpoint)?{push:[s],pushFn:ysPushBase()}:{};}catch(e){return {};}},
+ pushSupported(){return !!(('serviceWorker' in navigator)&&('PushManager' in window)&&('Notification' in window));},
+ async pushEnable(){
+  if(!this.pushSupported()){this.toast('הדפדפן הזה לא תומך בהתראות. בטלפון: כרום, מהאפליקציה המותקנת');return false;}
+  this.busy('מפעיל התראות…');
+  try{
+   const r=await fetch(ysPushBase()+'/api/notify?pk=1',{cache:'no-store'});
+   let j={};try{j=await r.json();}catch(e){}
+   if(!r.ok||!j.publicKey){this.idle();this.pushErr(j.error||('השרת החזיר '+r.status));return false;}
+   const perm=await Notification.requestPermission();
+   if(perm!=='granted'){this.idle();this.toast('לא אושרו התראות — אפשר לאשר בהגדרות הדפדפן ← התראות');return false;}
+   const reg=await navigator.serviceWorker.ready;
+   let sub=await reg.pushManager.getSubscription();
+   if(sub&&Store.get('pushPk','')!==j.publicKey){try{await sub.unsubscribe();}catch(e){}sub=null;}
+   if(!sub){const raw=atob(j.publicKey.replace(/-/g,'+').replace(/_/g,'/'));const key=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)key[i]=raw.charCodeAt(i);
+     sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:key});}
+   Store.set('pushSub',sub.toJSON());Store.set('pushPk',j.publicKey);
+   this.idle();
+   const ok=await this.pushTest(true);
+   this.toast(ok?'🔔 התראות הופעלו — נשלחה התראת בדיקה':'🔔 ההרשמה הצליחה, אבל התראת הבדיקה לא נשלחה — ראה יומן תקלות');
+   this.render();return true;
+  }catch(e){this.idle();this.pushErr(e&&e.message||String(e));return false;}
+ },
+ pushErr(m){try{Store.logErr('push',String(m).slice(0,200));}catch(e){}
+  this.toast('ההתראות לא הופעלו: '+String(m).slice(0,80));},
+ async pushTest(silent){
+  const s=Store.get('pushSub',null);if(!s){if(!silent)this.toast('ההתראות לא מופעלות במכשיר הזה');return false;}
+  try{const r=await fetch(ysPushBase()+'/api/notify',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({subs:[s],ev:'test'})});
+   let j={};try{j=await r.json();}catch(e){}
+   const ok=r.ok&&j.sent>0;
+   if(!ok)try{Store.logErr('push','בדיקה: '+r.status+' '+JSON.stringify(j).slice(0,150));}catch(e){}
+   if(!silent)this.toast(ok?'נשלחה התראת בדיקה ✓':'התראת הבדיקה לא נשלחה ('+r.status+')');
+   return ok;}catch(e){if(!silent)this.toast('אין חיבור לשרת ההתראות');try{Store.logErr('push',String(e&&e.message||e));}catch(x){}return false;}
+ },
+ async pushDisable(){
+  try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();if(sub)await sub.unsubscribe();}catch(e){}
+  Store.set('pushSub',null);Store.set('pushPk','');this.toast('ההתראות כובו במכשיר הזה');this.render();
+ },
+ pushCard(){
+  const on=!!(Store.get('pushSub',null)||{}).endpoint;
+  return `<div class="sec-title">🔔 התראות לטלפון</div>
+   <div class="toggle"><div><div style="font-weight:700">${on?'מופעל במכשיר הזה':'כבוי'}</div>
+     <div style="font-size:12px;color:var(--muted);line-height:1.5">התראה כשלקוח פותח לינק הצעה, מאשר או משאיר הערה — גם כשהאפליקציה סגורה.${on?' עובד על לינקים שנוצרו מעכשיו.':''}</div></div>
+     <button class="switch ${on?'on':''}" id="push-toggle" aria-label="התראות לטלפון"><span class="knob"></span></button></div>
+   ${on?`<button class="btn-ghost" id="push-test">🔔 שלח התראת בדיקה</button>`:''}`;
+ },
+ /* v25.6 — חשבונית ירוקה. הפונקציה בשרת: netlify/functions/invoice.mjs (/api/invoice).
+    האפליקציה שולחת: קוד חיבור (Store invToken) + פרטי המסמך. המסמכים שהופקו נשמרים בהצעה: q.invoices=[…]. */
+ INV_TYPES:{320:'חשבונית מס קבלה',305:'חשבונית מס',400:'קבלה',300:'חשבון עסקה'},
+ INV_PAY:[[4,'העברה בנקאית'],[10,'ביט / פייבוקס'],[1,'מזומן'],[2,"צ'ק"],[3,'אשראי'],[11,'אחר']],
+ async invCall(body){
+  const tok=Store.get('invToken','');
+  if(!tok){const e=new Error('חסר קוד חיבור — הגדרות ← עסק ← חשבונית ירוקה');e.code='notoken';throw e;}
+  const r=await fetch(ysPushBase()+'/api/invoice',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({token:tok},body))});
+  let j={};try{j=await r.json();}catch(e){}
+  if(!r.ok||!j.ok){const e=new Error(j.error||('השרת החזיר '+r.status));e.code=j.code||r.status;throw e;}
+  return j;
+ },
+ async invPing(){
+  this.busy('בודק חיבור לחשבונית ירוקה…');
+  try{const j=await this.invCall({action:'ping'});this.idle();
+   this.toast('✅ מחובר לחשבונית ירוקה'+(j.env==='sandbox'?' (סביבת ניסיון)':''));}
+  catch(e){this.idle();try{Store.logErr('invoice','בדיקת חיבור: '+e.message);}catch(x){}this.toast('❌ '+String(e.message).slice(0,120));}
+ },
+ invPaid(q){return ((q&&q.invoices)||[]).filter(x=>x&&(x.type===320||x.type===400)).reduce((a,x)=>a+(+x.amount||0),0);},
+ invLine(q){
+  const L=(q&&q.invoices)||[];if(!L.length)return '';
+  const paid=this.invPaid(q);
+  return '<div class="inv-rel">'+L.slice(-3).map(x=>'<a href="'+esc(x.url||'#')+'" target="_blank" rel="noopener" class="inv-doc">'+ico('file-text',13)+esc(x.typeName||'')+' '+esc(String(x.number||''))+' · '+nisR(x.amount)+(x.env==='sandbox'?' · ניסיון':'')+'</a>').join('')+
+   (paid>0?'<span class="inv-paid">התקבל '+nisR(paid)+' מתוך '+nisR(q.grand)+'</span>':'')+'</div>';
+ },
+ invKeep(){const g=id=>{const el=document.getElementById(id);return el?el.value:undefined;};
+  const a=g('inv-amt');if(a!==undefined)this._invAmt=+a||0;const pm=g('inv-pay');if(pm!==undefined)this._invPay=+pm;
+  const em=g('inv-email');if(em!==undefined)this._invEmail=em;const it=document.getElementById('inv-items');if(it)this._invItems=it.checked;},
+ invQuote(){return (Store.get('quotes',[])||[]).find(x=>x&&x.id===this._invQ)||null;},
+ /** שורות מפורטות מההצעה — רק אם הסכום שלהן (אחרי הנחה ומע"מ) שווה לסה"כ ההצעה */
+ invItemized(q){try{const d=q.snap||{};const ls=(d.lines||[]).filter(l=>+l.price>0&&+l.qty>0);if(!ls.length||d.planMode)return null;
+  const sub=ls.reduce((a,l)=>a+(+l.qty)*(+l.price),0);const disc=+d.discount||0;const vat=d.vatOn?(+d.vatPct||0):0;
+  const tot=sub*(1-disc/100)*(1+vat/100);if(Math.abs(tot-(+q.grand||0))>1)return null;
+  return {lines:ls.map(l=>({description:this.trName?this.trName(l):l.name,quantity:+l.qty,price:+l.price,vatType:d.vatOn?0:1})),disc:disc};}catch(e){return null;}},
+ invoiceModal(){
+  const q=this.invQuote();
+  if(!q)return `<h2>חשבונית <button class="x" data-close>✕</button></h2><div class="empty">ההצעה לא נמצאה</div>`;
+  const res=this._invRes;
+  if(res)return `<h2>🧾 ${esc(res.typeName)} ${esc(String(res.number))} <button class="x" data-close>✕</button></h2>
+   <div class="inv-ok">✅ המסמך הופק בחשבונית ירוקה${res.env==='sandbox'?' (סביבת ניסיון)':''} · ${nisR(res.amount)}</div>
+   ${res.url?`<a class="btn-block" href="${esc(res.url)}" target="_blank" rel="noopener" style="display:block;text-align:center;text-decoration:none">📄 פתח את המסמך</a>`:''}
+   ${q.phone?`<button class="btn-ghost" id="inv-wa" style="margin-top:8px">💬 שלח ל${esc(q.client)} בוואטסאפ</button>`:''}`;
+  const T=this.INV_TYPES;const type=T[this._invType]?this._invType:320;
+  const paid=this.invPaid(q),grand=+q.grand||0;const adv=+((q.snap||{}).advance)||0;
+  const amt=this._invAmt>0?this._invAmt:Math.max(0,grand-paid)||grand;
+  const chips=[[grand,'מלא '+nisR(grand)]];
+  if(adv>0)chips.push([Math.round(grand*adv/100),'מקדמה '+adv+'% · '+nisR(Math.round(grand*adv/100))]);
+  if(paid>0&&grand-paid>0)chips.push([grand-paid,'יתרה '+nisR(grand-paid)]);
+  const needPay=type===320||type===400;const item=this.invItemized(q);const canItems=!!item&&(type===305||type===300)&&Math.abs(amt-grand)<1;
+  const hasTok=!!Store.get('invToken','');
+  return `<h2>🧾 חשבונית ירוקה <button class="x" data-close>✕</button></h2>
+   <div class="inv-head"><b>${esc(q.client)||'—'}</b> · <span dir="ltr">${esc(q.no||'')}</span>${q.project?' · '+esc(q.project):''}<br>סה"כ ההצעה ${nisR(grand)}${paid>0?' · התקבל '+nisR(paid):''}</div>
+   ${hasTok?'':`<div class="inv-warn">⚠️ חסר קוד חיבור — הגדרות ← עסק ← חשבונית ירוקה</div>`}
+   ${this.invLine(q)}
+   <div class="sec-title" style="margin-top:10px">סוג המסמך</div>
+   <div class="inv-chips">${[320,305,400,300].map(t=>`<button type="button" class="inv-chip ${t===type?'on':''}" data-invtype="${t}">${T[t]}</button>`).join('')}</div>
+   <div class="sec-title" style="margin-top:10px">סכום (כולל מע"מ)</div>
+   <div class="inv-chips">${chips.map(c=>`<button type="button" class="inv-chip ${Math.abs(c[0]-amt)<1?'on':''}" data-invamt="${c[0]}">${c[1]}</button>`).join('')}</div>
+   <div class="field"><input id="inv-amt" type="number" inputmode="decimal" value="${Math.round(amt*100)/100}"/></div>
+   ${needPay?`<div class="field"><label>אמצעי תשלום</label><select id="inv-pay">${this.INV_PAY.map(p=>`<option value="${p[0]}" ${(this._invPay||4)===p[0]?'selected':''}>${p[1]}</option>`).join('')}</select></div>`:''}
+   ${canItems?`<label class="inv-items"><input type="checkbox" id="inv-items" ${this._invItems!==false?'checked':''}/> פירוט הסעיפים מההצעה (${item.lines.length})</label>`:''}
+   <div class="field"><label>מייל ללקוח (לא חובה — יירשם בכרטיס הלקוח בחשבונית ירוקה)</label><input id="inv-email" type="email" inputmode="email" value="${esc(this._invEmail||'')}" placeholder="name@example.com"/></div>
+   <button class="btn-block" id="inv-go" ${hasTok?'':'disabled'}>🧾 הפק ${T[type]} · ${nisR(amt)}</button>
+   <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">מסמך מס אי אפשר למחוק — רק לבטל במסמך זיכוי בחשבונית ירוקה. המסמך נוצר בחשבון שלך שם, עם המספור וההגדרות שלך.</div>`;
+ },
+ async invIssue(){
+  if(this._invBusy)return;
+  this.invKeep();
+  const q=this.invQuote();if(!q)return;
+  const type=this.INV_TYPES[this._invType]?this._invType:320;
+  const grand=+q.grand||0;const amt=Math.round((+this._invAmt>0?+this._invAmt:Math.max(0,grand-this.invPaid(q))||grand)*100)/100;
+  if(!(amt>0)){this.toast('הסכום חייב להיות גדול מ-0');return;}
+  if(amt>grand+1&&!confirm('הסכום גדול מסה"כ ההצעה ('+nisR(grand)+'). להמשיך?'))return;
+  if(!confirm('להפיק '+this.INV_TYPES[type]+' על '+nisR(amt)+' ל'+(q.client||'')+'?\n\nמסמך מס — אי אפשר למחוק אותו, רק לבטל בחשבונית ירוקה.'))return;
+  const sc=(q.snap&&q.snap.client)||{};
+  const full=Math.abs(amt-grand)<1;const item=this.invItemized(q);
+  const useItems=(type===305||type===300)&&full&&item&&this._invItems!==false;
+  const desc=(full?'עבודות לפי הצעת מחיר ':(amt<grand&&!this.invPaid(q)?'מקדמה עבור הצעת מחיר ':'תשלום עבור הצעת מחיר '))+(q.no||'')+(q.project?' — '+q.project:'');
+  const doc={type:type,description:(q.addonOf?'תוספת להצעה '+q.addonOf:'הצעת מחיר '+(q.no||'')),
+   client:{name:q.client||sc.name||'',phone:q.phone||sc.phone||'',address:sc.address||'',email:(this._invEmail||'').trim()},
+   income:useItems?item.lines:[{description:desc,quantity:1,price:amt,vatType:1}],
+   discountPct:useItems?item.disc:0,remarks:'מס׳ הצעה: '+(q.no||'')};
+  if(type===320||type===400)doc.payment={type:+this._invPay||4,amount:amt};
+  this._invBusy=true;this.busy('מפיק '+this.INV_TYPES[type]+'…');
+  try{
+   const j=await this.invCall({action:'create',doc:doc});
+   const rec={id:j.id,number:j.number,type:j.type,typeName:j.typeName,url:j.url||'',amount:amt,ts:Date.now(),env:j.env};
+   const qs=Store.get('quotes',[])||[];const qq=qs.find(x=>x&&x.id===q.id);
+   if(qq){qq.invoices=(qq.invoices||[]).concat([rec]);Store.set('quotes',qs);this.invalidate&&this.invalidate('quotes');}
+   this._invRes=rec;this._invAmt=0;this.idle();this._invBusy=false;this.haptic(25);this.render();
+  }catch(e){this.idle();this._invBusy=false;try{Store.logErr('invoice',String(e.message).slice(0,200));}catch(x){}
+   this.toast('❌ '+String(e.message).slice(0,140));}
+ },
+ invShareWa(){const q=this.invQuote();const r=this._invRes;if(!q||!r)return;
+  const first=String(q.client||'').trim().split(' ')[0]||'';const NL=String.fromCharCode(10);
+  window.open(waLink(q.phone,'שלום'+(first?' '+first:'')+' 👋'+NL+'מצורפת '+r.typeName+' מס׳ '+r.number+' על סך '+nisR(r.amount)+NL+r.url+NL+'תודה! 🙏'),'_blank');},
  splitMergedClients(){
   const clients=Store.get('clients',[])||[];
   const nmOf=x=>String(x==null?'':x).trim();
@@ -11150,12 +11354,15 @@ const App={
   let extra='';
   if(s.showTerms&&s.terms&&s.terms.trim())extra+=`<div class="blk"><b>${L.terms}:</b> ${this.termsText()}</div>`;
   if(isC)extra+=`<div class="blk"><b>${L.orderclause}</b></div>`;
+  // v25.4 — תוספת: הסכום המעודכן של הפרויקט
+  if(s.addonOf){const inf=this.addonInfo(s.addonOf);const prev=inf.adds.filter(q=>q.no!==s.quoteNo).reduce((a,q)=>a+(+q.grand||0),0);
+    if(inf.parent)extra+=`<div class="blk ao-blk"><b>תוספת להצעה ${esc(s.addonOf)}</b><br>הצעה מקורית: ${nis(inf.parent.grand)}${prev?` · תוספות קודמות: ${nis(prev)}`:''} · תוספת זו: ${nis(this.grand())}<br><b>סה"כ הפרויקט כולל תוספת זו: ${nis((+inf.parent.grand||0)+prev+this.grand())}</b></div>`;}
   return `<div class="page" id="pdf-page" style="direction:${dir};position:relative">
    <div class="p-watermark">${logoBlock(false,2.6)}</div>
    <div class="p-head">
      <div class="p-logo">${logoBlock(false,.85)}</div>
-     <div class="p-title-c"><div class="big">${isC?L.order:L.quote}</div><div class="en">${L.sub}</div></div>
-     <div class="p-meta-l"><b>${L.no}:</b> ${s.quoteNo}<br><b>${L.date}:</b> ${s.date}<br><b>${L.valid}:</b> ${s.valid}</div>
+     <div class="p-title-c"><div class="big">${isC?L.order:(s.addonOf?(s.lang==='en'?'Change Order':'תוספת להצעת מחיר'):L.quote)}</div><div class="en">${s.addonOf?'C H A N G E &nbsp; O R D E R':L.sub}</div></div>
+     <div class="p-meta-l"><b>${L.no}:</b> ${s.quoteNo}<br>${s.addonOf?`<b>תוספת להצעה:</b> ${esc(s.addonOf)}<br>`:''}<b>${L.date}:</b> ${s.date}<br><b>${L.valid}:</b> ${s.valid}</div>
    </div>
    <div class="p-parties">
      <div class="p-party"><div class="h">${L.contractor}</div><div class="n">יהודה שיפוצים</div><div class="l">ח.פ 311834998 · קבלן רשום 134094<br>054-5718316<br>yuda090581@gmail.com</div></div>
@@ -11181,7 +11388,7 @@ const App={
 
 
  shortId(){const a='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=a[Math.floor(Math.random()*a.length)];return s;},
- async saveToCloud(data){if(!window._db)return null;try{const id=this.shortId();await window._db.collection('proposals').doc(id).set({data:data,createdAt:Date.now(),viewedAt:null,owner:'yehuda'});return id;}catch(e){return null;}},
+ async saveToCloud(data){if(!window._db)return null;try{const id=this.shortId();await window._db.collection('proposals').doc(id).set({data:data,createdAt:Date.now(),viewedAt:null,owner:'yehuda',...this.pushFields()});return id;}catch(e){return null;}},
  async makeReviewLink(clientId){const cl=Store.get('clients',[]).find(c=>c.id===clientId);if(!cl){this.toast('לקוח לא נמצא');return;}
   this.toast('יוצר לינק משוב…');
   const base=location.origin+location.pathname;let link=null;
@@ -11256,7 +11463,7 @@ const App={
        '<div class="lv-co">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</div>'+
        '<div class="lv-sub">\u05d4\u05e6\u05e2\u05ea \u05ea\u05db\u05e0\u05d5\u05df \u00b7 \u05dc\u05e4\u05d9 \u05db\u05ea\u05d1 \u05db\u05de\u05d5\u05d9\u05d5\u05ea</div></div>'+
      '<div class="lv-card"><div class="lv-to">\u05dc\u05db\u05d1\u05d5\u05d3 <b>'+esc(d.cn||'')+'</b>'+(d.pr?' \u00b7 '+esc(d.pr):'')+'</div>'+
-       '<div class="lv-meta">\u05de\u05e1\u05f3 '+esc(d.no||'')+' \u00b7 '+esc(d.dt||'')+'</div></div>'+
+       '<div class="lv-meta">\u05de\u05e1\u05f3 '+esc(d.no||'')+' \u00b7 '+esc(d.dt||'')+'</div>'+(d.ao?'<div class="lv-ao">\u2795 \u05ea\u05d5\u05e1\u05e4\u05ea \u05dc\u05d4\u05e6\u05e2\u05d4 '+esc(d.ao)+'</div>':'')+'</div>'+
      '<div class="lv-items">'+pb+'</div>'+
      '<div class="lv-sum">'+
        ((+d.tsqm)?'<div class="r"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><b>'+(+d.tsqm).toLocaleString('he-IL')+' \u05de"\u05e8</b></div>':'')+
@@ -11277,7 +11484,7 @@ const App={
      '<div class="lv-co">\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</div>'+
      '<div class="lv-sub">\u05d4\u05e6\u05e2\u05ea \u05de\u05d7\u05d9\u05e8 \u05d0\u05d9\u05e0\u05d8\u05e8\u05d0\u05e7\u05d8\u05d9\u05d1\u05d9\u05ea</div></div>'+
    '<div class="lv-card"><div class="lv-to">\u05dc\u05db\u05d1\u05d5\u05d3 <b>'+esc(d.cn||'')+'</b>'+(d.pr?' \u00b7 '+esc(d.pr):'')+'</div>'+
-     '<div class="lv-meta">\u05de\u05e1\u05f3 '+esc(d.no||'')+' \u00b7 '+esc(d.dt||'')+'</div></div>'+
+     '<div class="lv-meta">\u05de\u05e1\u05f3 '+esc(d.no||'')+' \u00b7 '+esc(d.dt||'')+'</div>'+(d.ao?'<div class="lv-ao">\u2795 \u05ea\u05d5\u05e1\u05e4\u05ea \u05dc\u05d4\u05e6\u05e2\u05d4 '+esc(d.ao)+'</div>':'')+'</div>'+
    '<div class="lv-tip">\u2728 \u05d0\u05e4\u05e9\u05e8 \u05dc\u05d1\u05d8\u05dc \u05e1\u05e2\u05d9\u05e4\u05d9\u05dd \u05d0\u05d5 \u05dc\u05e9\u05e0\u05d5\u05ea \u05db\u05de\u05d5\u05d9\u05d5\u05ea \u2014 \u05d4\u05de\u05d7\u05d9\u05e8 \u05de\u05ea\u05e2\u05d3\u05db\u05df \u05de\u05d9\u05d3</div>'+
    '<div class="lv-items">'+body+'</div>'+
    '<div class="lv-sum" id="lv-sum">'+
@@ -11350,7 +11557,7 @@ const App={
   const mw=matRow(s.whiteOn,s.whiteInc!==false,s.whitePrice,s.whiteItems,'\u05d7\u05d5\u05de\u05e8 \u05dc\u05d1\u05df');
   const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,'\u05d7\u05d5\u05de\u05e8 \u05e9\u05d7\u05d5\u05e8');
   if(mw)items.push(mw); if(mb)items.push(mb);
-  const data={cn:cl.name||'',pr:cl.project||'',ph:cl.phone||'',ad:cl.address||'',no:s.quoteNo,
+  const data={ao:s.addonOf||'',cn:cl.name||'',pr:cl.project||'',ph:cl.phone||'',ad:cl.address||'',no:s.quoteNo,
     dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,
     sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,
     tot:this.grand(),terms:(s.showTerms?this.termsText():'')||'',
@@ -11358,7 +11565,7 @@ const App={
   try{
     const id='L'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
     await window._db.collection('proposals').doc(id).set({
-      data:data,live:true,createdAt:Date.now(),viewedAt:null,
+      data:data,live:true,createdAt:Date.now(),viewedAt:null,...this.pushFields(),
       events:[],curTotal:this.grand(),owner:'yehuda'
     });
     const link=location.origin+location.pathname+'#L='+id;
@@ -11387,7 +11594,7 @@ const App={
   const mw=matRow(s.whiteOn,s.whiteInc!==false,s.whitePrice,s.whiteItems,'חומר לבן');
   const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,'חומר שחור');
   if(mw)items.push(mw); if(mb)items.push(mb);
-  const data={cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.termsText():'')||'',plan:s.planMode?1:0,psqm:+s.planPerSqm||0,tsqm:+s.planTotalSqm||0};
+  const data={ao:s.addonOf||'',cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.termsText():'')||'',plan:s.planMode?1:0,psqm:+s.planPerSqm||0,tsqm:+s.planTotalSqm||0};
   const base=location.origin+location.pathname;
   this.toast('יוצר לינק…');
   let link,short=false;
@@ -11470,8 +11677,8 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   return `<div class="pv2-wrap"><div class="pv2-page">
     <div class="pv2-top">
       <div class="pv2-logo"><img src="${LOGO_PDF}" alt="יהודה שיפוצים"/></div>
-      <div class="pv2-title"><div class="t">הצעת מחיר</div><div class="e">Q U O T A T I O N</div></div>
-      <div class="pv2-meta"><b>מס׳ הצעה:</b> ${esc(data.no)||''}<br>${data.dt?`<b>תאריך:</b> ${esc(data.dt)}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${esc(data.vd)}`:''}</div>
+      <div class="pv2-title"><div class="t">${data.ao?'תוספת להצעת מחיר':'הצעת מחיר'}</div><div class="e">${data.ao?'C H A N G E &nbsp; O R D E R':'Q U O T A T I O N'}</div></div>
+      <div class="pv2-meta"><b>מס׳ הצעה:</b> ${esc(data.no)||''}<br>${data.ao?`<b>תוספת להצעה:</b> ${esc(data.ao)}<br>`:''}${data.dt?`<b>תאריך:</b> ${esc(data.dt)}<br>`:''}${data.vd?`<b>בתוקף עד:</b> ${esc(data.vd)}`:''}</div>
     </div>
     <div class="pv2-parties">
       <div class="pp"><div class="h">קבלן מבצע</div><div class="n">יהודה שיפוצים</div><div class="s">ח.פ 311834998 · קבלן רשום 134094<br>054-5718316<br>yuda090581@gmail.com</div></div>
@@ -11548,7 +11755,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
      pdf.addImage(imgData,'JPEG',0,0,w,hSlice/pxPerMm);
      first=false;y=cut;
    }
-   stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':'הצעת מחיר';return{pdf,blob:pdf.output('blob'),fname:this.docFileName(label)};},
+   stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':(this.state.addonOf?'תוספת '+String(this.state.quoteNo||'').split('-').pop():'הצעת מחיר');return{pdf,blob:pdf.output('blob'),fname:this.docFileName(label)};},
  /* v25.0 — שם הקובץ: לקוח - פרויקט - סוג המסמך (בקשת רמי: "תמיד שם לקוח / פרויקט").
     "/" אסור בשם קובץ, לכן " - ". תווים אסורים (\ / : * ? " < > |) מוסרים. בלי שם לקוח — מספר ההצעה. */
  docFileName(label){
@@ -11665,7 +11872,8 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
       laborMode:!!i.laborMode,laborPct:+i.laborPct||0,fullPrice:+i.fullPrice||0});}));}catch(e){}
   const snap={clientSig:this.state.clientSig||'',lines:lines,client:{...this.state.client},valid:this.state.valid,discount:this.state.discount,advance:this.state.advance,vatOn:this.state.vatOn,vatPct:this.state.vatPct,showTerms:this.state.showTerms,terms:this.state.terms,whiteOn:this.state.whiteOn,whiteItems:this.state.whiteItems,whiteInc:this.state.whiteInc,whitePrice:this.state.whitePrice,blackOn:this.state.blackOn,blackItems:this.state.blackItems,blackInc:this.state.blackInc,blackPrice:this.state.blackPrice,
     // v25.2 — סוג ההצעה ומחיר התכנון. בלי זה "ערוך"/"שכפל" על הצעת תכנון החזיר מחשבון עם 49 סעיפים ב-0 ₪
-    planMode:!!this.state.planMode,planPerSqm:+this.state.planPerSqm||0,planTotalSqm:+this.state.planTotalSqm||0};
+    planMode:!!this.state.planMode,planPerSqm:+this.state.planPerSqm||0,planTotalSqm:+this.state.planTotalSqm||0,
+    addonOf:this.state.addonOf||''};   // v25.4 — תוספת להצעה
   // אותה הצעה נשמרת מכמה מסלולים (לינק חי · לינק דיגיטלי · PDF · חוזה · חתימה).
   // בלי איחוד לפי מספר ההצעה נוצרה רשומה חדשה בכל לחיצה.
   // המספר נקבע כאן, מהמונה שבאחסון — לא מערך שהוקצה מראש.
@@ -11676,14 +11884,16 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   const kind=this._quoteKind||'';this._quoteKind=null;
   const rec={ts:Date.now(),no:_no,client:this.state.client.name,phone:this.state.client.phone||'',
     project:this.state.client.project||'',grand:this.grand(),sig:this.state.clientSig||'',snap:snap};
+  if(this.state.addonOf)rec.addonOf=this.state.addonOf;   // v25.4
   // איחוד לפי מספר ההצעה. כגיבוי — אותו לקוח, אותו סכום, באותו יום:
   // כמעט תמיד זו אותה הצעה שנשלחה שוב ולא הצעה חדשה.
   const nm=String(this.state.client.name||'').trim();
   const g=this.grand();
   const DAY=864e5;
   let exIdx=qs.findIndex(q=>q&&q.no&&q.no===_no);
-  if(exIdx<0&&nm&&g>0){
-    exIdx=qs.findIndex(q=>q&&String(q.client||'').trim()===nm&&
+  // v25.4 — לתוספות יש מספר מפורש: לא מאחדים אותן לפי "אותו לקוח, אותו סכום, אותו יום"
+  if(exIdx<0&&nm&&g>0&&!this.state.addonOf){
+    exIdx=qs.findIndex(q=>q&&!q.addonOf&&String(q.client||'').trim()===nm&&
       Math.abs((+q.grand||0)-g)<1&&(Date.now()-(+q.ts||0))<DAY);
   }
   let isNew=false;
@@ -11697,7 +11907,8 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   this.invalidate('quotes');
   const okQ=Store.set('quotes',qs.slice(0,200));
   // המונה מתקדם רק כשנוצרה הצעה חדשה
-  const okS=isNew?Store.set('qseq',Store.get('qseq',0)+1):true;
+  // v25.4 — לתוספת יש מספר משלה (YS-…-T1); היא לא מקדמת את המונה של ההצעות
+  const okS=(isNew&&!rec.addonOf)?Store.set('qseq',Store.get('qseq',0)+1):true;
   if(!okQ||!okS){
     try{Store.logErr('recordQuote','שמירה נכשלה — '+(Store.usage().total)+'KB בשימוש');}catch(e){}
     setTimeout(()=>{try{this.toast('⚠️ ההצעה לא נשמרה — האחסון מלא. הגדרות ← מערכת ← פנה מקום');}catch(e){}},400);
@@ -11759,6 +11970,8 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
     מחיר למ"ר ושטח לא נשמרו בה, ולכן נשארים ריקים (הבדיקה לפני שליחה תעצור באדום, ולא יצא PDF של 0 ₪).
     מחזיר הודעה למשתמש, או '' כשהכל שוחזר. */
  restorePlan(d,q){
+  // v25.4 — תוספת להצעה: חוזרת עם הקישור להצעה המקורית
+  const ao=String((d&&d.addonOf)||(q&&q.addonOf)||'');this.state.addonOf=ao;Store.set('addonOf',ao);
   const set=(m,p,a)=>{this.state.planMode=m;this.state.planPerSqm=p||'';this.state.planTotalSqm=a||'';
     Store.set('planMode',m);Store.set('planPerSqm',p||'');Store.set('planTotalSqm',a||'');};
   if(d&&d.planMode!==undefined){set(!!d.planMode,+d.planPerSqm||0,+d.planTotalSqm||0);return '';}
@@ -11767,7 +11980,51 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   if(oldPlan){set(true,0,0);return 'הצעת תכנון ישנה — מלא מחיר למ"ר ושטח בפרטי ההצעה';}
   set(false,0,0);return '';
  },
- duplicateQuoteAsNew(id){this.loadQuote(id);this.state.quoteNo=nextQuoteNo();this.toast(this.state.planMode&&!(+this.state.planPerSqm>0)?'עותק חדש — מלא מחיר למ"ר ושטח בפרטי ההצעה':'נוצר עותק חדש לעריכה ✓');this.render();},
+ /* v25.4 — תוספת להצעה (שינוי/תוספת עבודה באמצע פרויקט).
+    תוספת היא הצעה רגילה עם addonOf = מספר ההצעה המקורית ומספר משלה: <מקורית>-T1, -T2…
+    נשלחת כמו כל הצעה (PDF / לינק חי / לינק), הלקוח מאשר וחותם בלינק, ונשמרת ב"כל ההצעות" ליד המקורית.
+    תמיד במצב מחשבון (מחיר לכל סעיף) — גם כשהמקורית הייתה הצעת תכנון. */
+ addonInfo(root){
+  const qs=this.realQuotes();
+  const parent=qs.find(q=>q&&q.no===root)||null;
+  const adds=qs.filter(q=>q&&q.addonOf===root);
+  return {parent:parent,adds:adds,addSum:adds.reduce((a,q)=>a+(+q.grand||0),0)};
+ },
+ startAddon(id){
+  const qs=Store.get('quotes',[])||[];
+  const q=qs.find(x=>x&&x.id===id);
+  if(!q||!q.snap){this.toast('להצעה הזו אין נתונים שמורים');return;}
+  const root=q.addonOf||q.no;
+  if(!root){this.toast('להצעה אין מספר');return;}
+  const parent=qs.find(x=>x&&x.no===root)||q;
+  const pc=(parent.snap&&parent.snap.client)||{name:parent.client,phone:parent.phone,project:parent.project};
+  if(this.chosen().length&&!confirm('ההצעה שפתוחה עכשיו תתאפס (היא שמורה ב"כל ההצעות" אם נשלחה).\nלהתחיל תוספת להצעה '+root+'?'))return;
+  const hadModal=!!this.state.modal;
+  this.resetCurrentQuote();
+  const n=qs.filter(x=>x&&x.addonOf===root).reduce((m,x)=>{const k=+(String(x.no||'').split('-T')[1]||0);return Math.max(m,k);},0)+1;
+  const ps=parent.snap||{};
+  Object.assign(this.state,{client:Object.assign({name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''},pc),
+    addonOf:root,quoteNo:root+'-T'+n,planMode:false,
+    vatOn:ps.vatOn!==undefined?ps.vatOn:this.state.vatOn,vatPct:ps.vatPct||this.state.vatPct,
+    discount:0,advance:0,modal:null});
+  Store.set('addonOf',root);Store.set('planMode',false);
+  // מעבר ללשונית הצעה — כמו goTab; כשחלון היה פתוח, הסגירה שלו כבר מחזירה את רשומת ההיסטוריה
+  if(hadModal){this.state.tab='build';this.render();}else this.goTab('build');
+  this.toast('➕ תוספת להצעה '+root+' — בחר את הסעיפים הנוספים');
+ },
+ addonExit(){
+  if(!this.state.addonOf)return;
+  this.state.addonOf='';Store.set('addonOf','');this.state.quoteNo=nextQuoteNo();
+  this.toast('זו כבר לא תוספת — הצעה רגילה '+this.state.quoteNo);this.render();
+ },
+ addonBanner(){
+  const root=this.state.addonOf;if(!root)return '';
+  const inf=this.addonInfo(root);
+  return '<div class="ao-ban" role="status">'+ico('plus',16)+'<span><b>תוספת להצעה '+esc(root)+'</b>'+
+    (inf.parent?' · הצעה מקורית '+nisR(inf.parent.grand):'')+'<br><small>מספר התוספת: '+esc(this.state.quoteNo)+'</small></span>'+
+    '<button type="button" class="tk-btn sm" data-addonexit="1">לא תוספת</button></div>';
+ },
+ duplicateQuoteAsNew(id){this.loadQuote(id);this.state.addonOf='';Store.set('addonOf','');this.state.quoteNo=nextQuoteNo();this.toast(this.state.planMode&&!(+this.state.planPerSqm>0)?'עותק חדש — מלא מחיר למ"ר ושטח בפרטי ההצעה':'נוצר עותק חדש לעריכה ✓');this.render();},
 };
 
 /* ===== התקנת אפליקציה (Install) ===== */
@@ -12000,6 +12257,7 @@ function initProposalUI(pid,data){
   if(ap)ap.onclick=async()=>{
     ap.disabled=true;ap.textContent='שולח אישור…';
     try{if(window._db&&pid){const up={approvedAt:Date.now()};if(sigData)up.signature=sigData;await window._db.collection('proposals').doc(pid).update(up);}}catch(e){}
+    ysNotify('approve');
     const msg='שלום, אני מאשר את הצעת המחיר מס\' '+(data.no||'')+(data.cn?' עבור '+data.cn:'')+' בסך '+nf(data.tot)+'.'+(sigData?' (חתמתי דיגיטלית בדף)':'')+' אפשר להתקדם 🙂';
     ap.textContent='✅ ההצעה אושרה — תודה!';ap.style.background='#1e9e55';
     window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
@@ -12010,6 +12268,7 @@ function initProposalUI(pid,data){
     if(!t.trim()){return;}
     sb.disabled=true;sb.textContent='שולח…';
     try{if(window._db&&pid){await window._db.collection('proposals').doc(pid).update({comment:t.trim(),commentAt:Date.now()});}}catch(e){}
+    ysNotify('comment');
     const ok=document.getElementById('pv2-note-ok');if(ok)ok.textContent='✓ ההערה נשלחה ליהודה';
     sb.textContent='נשלח ✓';
     window.open('https://wa.me/'+WA+'?text='+encodeURIComponent('שלום, לגבי הצעה '+(data.no||'')+':\n'+t.trim()),'_blank');
@@ -12042,6 +12301,7 @@ document.addEventListener('DOMContentLoaded',()=>{
          const dd=doc.data();
          document.getElementById('root').innerHTML=App.liveView(dd.data,lid);
          try{initLiveUI(lid,dd.data);}catch(e){}
+         ysPushSet(dd);ysNotify('view');   // v25.5
          try{if(!dd.viewedAt)window._db.collection('proposals').doc(lid).update({viewedAt:Date.now()});}catch(e){}
        }else{
          document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">\u05d4\u05d4\u05e6\u05e2\u05d4 \u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d4.<br>\u05d1\u05e7\u05e9/\u05d9 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d3\u05e9.</div>';
@@ -12057,6 +12317,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;font-size:16px">טוען הצעה…</div>';
    if(window._db){window._db.collection('proposals').doc(id).get().then(doc=>{
      if(doc.exists){const d=doc.data();window.__pid=id;document.getElementById('root').innerHTML=App.proposalView(d.data);try{initProposalUI(id,d.data);}catch(e){}
+       ysPushSet(d);ysNotify('view');   // v25.5
        try{if(!d.viewedAt)window._db.collection('proposals').doc(id).update({viewedAt:Date.now()});}catch(e){}
      }else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">ההצעה לא נמצאה או שפג תוקפה.<br>אנא בקש/י לינק חדש מיהודה שיפוצים.</div>';}
    }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסה/י לרענן את הדף.</div>';});}
