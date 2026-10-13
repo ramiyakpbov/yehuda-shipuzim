@@ -814,7 +814,9 @@ body.offline [data-modal="aihub"]{opacity:.55;}
 .ao-rel{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:6px 0 2px}.ao-rel svg{color:var(--warn)}
 .lv-ao{margin-top:4px;font-size:13px;font-weight:700;color:#b45309}
 .ao-blk{border:1px solid #f5a623;border-radius:6px;padding:6px 8px;background:#fff8ec}
-.sd-card .sd-t{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:6px;}
+.ok-card .ok-msg{white-space:normal;margin:4px 0 12px;}
+.tk-btn.danger{border-color:var(--red);}
+.sd-card .sd-t,.ok-card .sd-t{font-size:17px;font-weight:800;color:var(--txt);margin-bottom:6px;}
 .sd-card .sd-f{font-size:13px;color:var(--muted);margin-bottom:12px;word-break:break-word;line-height:1.4;}
 .sd-card .sd-b{display:block;width:100%;margin-bottom:8px;text-align:center;white-space:normal;height:auto;min-height:48px;padding:10px 12px;line-height:1.3;}
 .sd-card .sd-b small{display:block;font-size:11.5px;font-weight:500;opacity:.85;margin-top:3px;line-height:1.35;}
@@ -3385,7 +3387,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.7';
+const VERSION='25.8';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3715,7 +3717,8 @@ const GUIDE=[
    <tr><td>הפעולה בוטלה</td><td>לחצת "ביטול" — אפשר להתחיל מחדש</td></tr></table>
    <div class="g-note"><b>לא בטוח שה-AI עובד?</b> הגדרות מפתח ← <b>בדיקת AI</b>.</div>`},
   {id:'g30',ic:'sparkles',t:'מה חדש',d:'הגרסאות האחרונות',
-   b:`<ul class="g-ul"><li><b>כרטיסי "כל ההצעות"</b> — הכפתורים בשתי שורות (ערוך · עותק · תוספת / חשבונית · מחק), והצעה שהופיעה כמה פעמים מוצגת פעם אחת.</li>
+   b:`<ul class="g-ul"><li><b>חלונות אישור של האפליקציה</b> — בתוספת ובחשבונית, במקום "האתר … אומר".</li>
+   <li><b>כרטיסי "כל ההצעות"</b> — הכפתורים בשתי שורות (ערוך · עותק · תוספת / חשבונית · מחק), והצעה שהופיעה כמה פעמים מוצגת פעם אחת.</li>
    <li><b>🧾 חשבונית ירוקה</b> — ב"כל ההצעות" ← "חשבונית": חשבונית מס קבלה / חשבונית מס / קבלה / חשבון עסקה, על הסכום המלא, מקדמה או יתרה. המסמך נשמר בכרטיס ההצעה ("התקבל X מתוך Y") ונשלח ללקוח בוואטסאפ. הגדרה: הגדרות ← עסק ← חשבונית ירוקה.</li>
    <li><b>🔔 התראות לטלפון</b> — הגדרות ← מערכת ← "התראות לטלפון": התראה כשלקוח פותח לינק, מאשר או משאיר הערה, גם כשהאפליקציה סגורה. עובד על לינקים שנוצרו אחרי ההפעלה.</li>
    <li><b>➕ תוספת להצעה</b> — ב"כל ההצעות" ← "תוספת" ליד הצעה: בוחרים רק את הסעיפים הנוספים. התוספת מקבלת מספר משלה (YS-…-T1), נשלחת כמו כל הצעה, ובכרטיס ההצעה המקורית רואים "סה"כ כולל תוספות".</li>
@@ -4354,6 +4357,7 @@ const Sync=(()=>{
      }
      const cur=JSON.stringify(Store.get(k,null));const nxt=JSON.stringify(data[k]);if(cur!==nxt){Store.set(k,data[k]);changed++;}
    }});
+   try{if(typeof App!=='undefined'&&App.dedupeQuotes&&App.dedupeQuotes())changed++;}catch(e){}   // v25.8 — אחרי כל סנכרון
    applying=false;return changed;};
  return{
   status:'off',
@@ -7948,6 +7952,22 @@ const App={
   document.body.appendChild(d);
   setTimeout(()=>{try{(wa||d.querySelector('#sd-share')||d.querySelector('#code-no')).focus();}catch(e){}},30);
  },
+ /* v25.8 — חלון אישור של האפליקציה במקום confirm של הדפדפן ("האתר … אומר"). Promise<boolean>. */
+ askOk(title,msg,okLabel,danger){
+  return new Promise(res=>{
+   document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
+   const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','ok-t');
+   d.innerHTML='<div class="code-card ok-card"><div class="sd-t" id="ok-t">'+esc(title)+'</div>'+(msg?'<p class="code-msg ok-msg">'+esc(msg).replace(/\n/g,'<br>')+'</p>':'')+
+     '<div class="code-b"><button type="button" class="btn-ghost" id="code-no">ביטול</button><button type="button" class="tk-btn pri'+(danger?' danger':'')+'" id="ok-yes">'+esc(okLabel||'אישור')+'</button></div></div>';
+   let done=false;const end=v=>{if(done)return;done=true;d.remove();res(v);};
+   d.querySelector('#code-no').addEventListener('click',()=>end(false));
+   d.querySelector('#ok-yes').addEventListener('click',()=>end(true));
+   d.addEventListener('click',ev=>{if(ev.target===d)end(false);});
+   d.addEventListener('keydown',ev=>{if(ev.key==='Escape')end(false);});
+   document.body.appendChild(d);
+   setTimeout(()=>{try{d.querySelector('#ok-yes').focus();}catch(e){}},30);
+  });
+ },
  gateDenied(){
   document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
   const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','alertdialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','code-t');
@@ -8226,6 +8246,7 @@ const App={
    ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
    <div class="sec-title">גרסה ועדכונים</div>
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
+   <button class="btn-ghost" id="diag-copy" style="margin-bottom:10px">📋 העתק אבחון הצעות (לשליחה לרמי)</button>
    <div class="field"><label>מגבלות המערכת</label>
      <div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:4px 12px 8px">${this.limitsCard()}</div></div>
    ${locked(`
@@ -8876,7 +8897,7 @@ const App={
  sentQuotesModal(){return `<h2>📤 הצעות שנשלחו <button class="x" data-close>✕</button></h2>${this.sentQuotesBody()}`;},
  /* חיפוש וסינון בהצעות. עם עשרות הצעות לא הייתה דרך למצוא
     הצעה ישנה חוץ מגלילה — לא לפי שם, לא לפי סעיף ולא לפי סכום. */
- sentQuotesBody(){const all=Store.get('quotes',[]);const f=this.state.quoteClientFilter||'';
+ sentQuotesBody(){const all=this.uniqQuotes(Store.get('quotes',[])||[]);const f=this.state.quoteClientFilter||'';
   const q0=String(this.state.qSearch||'').trim().toLowerCase();
   const rng=this.state.qRange||'';
   // רשומות מלפני v14.1 נשמרו בלי הסעיפים ואי אפשר לפתוח או לשכפל
@@ -9882,6 +9903,8 @@ const App={
    // v24.6 — ישר לכתב כמויות (בפרויקט עם מפרט של אדריכל זה המקור לסעיפים)
    const nb=document.getElementById('noitems-boq');if(nb)nb.onclick=()=>{try{this.captureQuote();}catch(e){}
      this.aiGate(()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='boq';this.render();});};}
+  {const dg=document.getElementById('diag-copy');if(dg)dg.onclick=async()=>{const t=this.diagQuotes();
+     try{await navigator.clipboard.writeText(t);this.toast('הועתק ✓ — הדבק לרמי בצ\'אט');}catch(e){prompt('העתק את הטקסט:',t);}};}
   {const pt=document.getElementById('push-toggle');if(pt)pt.onclick=()=>{if((Store.get('pushSub',null)||{}).endpoint)this.pushDisable();else this.pushEnable();};
    const pte=document.getElementById('push-test');if(pte)pte.onclick=()=>this.pushTest(false);}
   on('[data-settab]','click',e=>{this.state.setTab=e.currentTarget.dataset.settab;this.haptic(8);this.render();
@@ -11043,16 +11066,28 @@ const App={
     כפילות = אותו id, או אותו מספר הצעה + אותו לקוח + אותו סכום (±1 ₪). שומרים רשומה אחת — עם הסעיפים,
     העדכנית ביותר — ומאחדים אליה סוגי שליחה, חתימה ומסמכי חשבונית. רשומה עם id אחר נרשמת כמחוקה (Tomb)
     כדי שהסנכרון לא יחזיר אותה. מספר זהה ללקוח אחר או לסכום אחר — לא נוגעים. */
+ /** v25.8 — רשת ביטחון בתצוגה: אותה הצעה (מספר + לקוח + סכום) מוצגת פעם אחת, גם אם באחסון יש כפילות */
+ uniqQuotes(list){const nm=x=>String(x==null?'':x).replace(/\s+/g,' ').trim(),nn=x=>String(x==null?'':x).replace(/\s+/g,'');
+  const score=q=>(q&&q.snap&&q.snap.lines&&q.snap.lines.length?2e13:0)+(q&&q.kinds&&q.kinds.length?1e13:0)+(+(q&&q.ts)||0);
+  const seen={},keep=[];list.slice().sort((a,b)=>score(b)-score(a)).forEach(q=>{if(!q)return;
+   const k=q.id&&seen['i:'+q.id]?'i:'+q.id:(nn(q.no)?'n:'+nn(q.no)+'|'+nm(q.client)+'|'+Math.round(+q.grand||0):'i:'+q.id);
+   if(seen[k]||(q.id&&seen['i:'+q.id]))return;seen[k]=1;if(q.id)seen['i:'+q.id]=1;keep.push(q);});
+  const set=new Set(keep);return list.filter(q=>set.has(q));},
+ /** v25.8 — אבחון: מה יש באחסון (בלי סעיפים ובלי פרטים אישיים מעבר לשם) — להעתקה לרמי */
+ diagQuotes(){const qs=Store.get('quotes',[])||[];
+  return JSON.stringify({v:VERSION,o:location.host,dev:(Sync.deviceId?Sync.deviceId():''),n:qs.length,tombs:Object.keys(Store.get('tombs',{})||{}).length,
+   q:qs.slice(0,40).map(q=>({id:q&&q.id,no:q&&q.no,c:q&&q.client,g:q&&q.grand,ts:q&&q.ts,k:q&&q.kinds,s:!!(q&&q.snap),a:q&&q.addonOf||undefined}))});},
  dedupeQuotes(){
   const qs=Store.get('quotes',[])||[];if(qs.length<2)return 0;
-  const nm=x=>String(x==null?'':x).trim();
-  const score=q=>(q&&q.snap&&q.snap.lines&&q.snap.lines.length?2e13:0)+(+(q&&q.ts)||0);
+  const nm=x=>String(x==null?'':x).replace(/\s+/g,' ').trim();
+  const nn=x=>String(x==null?'':x).replace(/\s+/g,'');
+  const score=q=>(q&&q.snap&&q.snap.lines&&q.snap.lines.length?2e13:0)+(q&&q.kinds&&q.kinds.length?1e13:0)+(+(q&&q.ts)||0);
   const order=qs.slice().sort((a,b)=>score(b)-score(a));
   const keep=[],byId={},dead=[];
   order.forEach(q=>{
    if(!q)return;
    let t=(q.id&&byId[q.id])||null;
-   if(!t&&nm(q.no))t=keep.find(k=>nm(k.no)===nm(q.no)&&nm(k.client)===nm(q.client)&&Math.abs((+k.grand||0)-(+q.grand||0))<1)||null;
+   if(!t&&nn(q.no))t=keep.find(k=>nn(k.no)===nn(q.no)&&nm(k.client)===nm(q.client)&&Math.abs((+k.grand||0)-(+q.grand||0))<1)||null;
    if(!t){keep.push(q);if(q.id)byId[q.id]=q;return;}
    const ks=(t.kinds||[]).slice();(q.kinds||[]).forEach(k=>{if(ks.indexOf(k)<0)ks.push(k);});t.kinds=ks;
    if(!t.sig&&q.sig)t.sig=q.sig;
@@ -11193,8 +11228,8 @@ const App={
   const type=this.INV_TYPES[this._invType]?this._invType:320;
   const grand=+q.grand||0;const amt=Math.round((+this._invAmt>0?+this._invAmt:Math.max(0,grand-this.invPaid(q))||grand)*100)/100;
   if(!(amt>0)){this.toast('הסכום חייב להיות גדול מ-0');return;}
-  if(amt>grand+1&&!confirm('הסכום גדול מסה"כ ההצעה ('+nisR(grand)+'). להמשיך?'))return;
-  if(!confirm('להפיק '+this.INV_TYPES[type]+' על '+nisR(amt)+' ל'+(q.client||'')+'?\n\nמסמך מס — אי אפשר למחוק אותו, רק לבטל בחשבונית ירוקה.'))return;
+  if(amt>grand+1&&!(await this.askOk('הסכום גדול מסה"כ ההצעה','סה"כ ההצעה: '+nisR(grand)+'\nהסכום במסמך: '+nisR(amt),'להמשיך')))return;
+  if(!(await this.askOk('להפיק '+this.INV_TYPES[type]+'?',nisR(amt)+' · '+(q.client||'')+'\n\nמסמך מס — אי אפשר למחוק אותו, רק לבטל בחשבונית ירוקה.','🧾 הפק')))return;
   const sc=(q.snap&&q.snap.client)||{};
   const full=Math.abs(amt-grand)<1;const item=this.invItemized(q);
   const useItems=(type===305||type===300)&&full&&item&&this._invItems!==false;
@@ -12026,7 +12061,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   const adds=qs.filter(q=>q&&q.addonOf===root);
   return {parent:parent,adds:adds,addSum:adds.reduce((a,q)=>a+(+q.grand||0),0)};
  },
- startAddon(id){
+ async startAddon(id){
   const qs=Store.get('quotes',[])||[];
   const q=qs.find(x=>x&&x.id===id);
   if(!q||!q.snap){this.toast('להצעה הזו אין נתונים שמורים');return;}
@@ -12034,7 +12069,7 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
   if(!root){this.toast('להצעה אין מספר');return;}
   const parent=qs.find(x=>x&&x.no===root)||q;
   const pc=(parent.snap&&parent.snap.client)||{name:parent.client,phone:parent.phone,project:parent.project};
-  if(this.chosen().length&&!confirm('ההצעה שפתוחה עכשיו תתאפס (היא שמורה ב"כל ההצעות" אם נשלחה).\nלהתחיל תוספת להצעה '+root+'?'))return;
+  if(this.chosen().length&&!(await this.askOk('➕ תוספת להצעה \u2066'+String(root).replace(/-/g,'\u2011')+'\u2069','ההצעה שפתוחה עכשיו תתאפס.\nאם היא נשלחה — היא שמורה ב"כל ההצעות".','התחל תוספת')))return;
   const hadModal=!!this.state.modal;
   this.resetCurrentQuote();
   const n=qs.filter(x=>x&&x.addonOf===root).reduce((m,x)=>{const k=+(String(x.no||'').split('-T')[1]||0);return Math.max(m,k);},0)+1;
