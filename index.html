@@ -3387,7 +3387,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='25.9';
+const VERSION='26.0';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4046,6 +4046,7 @@ const AI=(()=>{
   // כותרות הקטגוריות — נחשפות דרך AI.catTitles
  const CAT_TITLES={demo:'הריסה ופינוי',plumb:'אינסטלציה',floor:'ריצוף, חיפוי ואיטום',drywall:'גבס ותקרות',paint:'שפכטל וצבע',elec:'חשמל',comm:'תקשורת ומולטימדיה',finish:'עבודות גמר ועיצוב פנים',alum:'נגרות, מסגרות ואלומיניום',plan:'תכנון, ניהול ורישוי',struct:'שלד ותשתית כבדה',outdoor:'פיתוח חוץ וסביבה',custom:'אחר (מותאם אישית)'};
  let _cIdx=null,_cTxt='',_cSig='';
+ const CAT_MAX=700;   // תקרת סעיפים שנשלחים ל-AI בכל קריאה (v26.0: מוצג בהגדרות ← מערכת)
 
  function buildCatalog(){
   const cats=Store.get('catalog',null)||(typeof CATALOG!=='undefined'?CATALOG:[]);
@@ -4053,7 +4054,7 @@ const AI=(()=>{
   const cus=Store.get('customItems',[])||[];
   const idx={},lines=[];let n=0;
   const push=(cid,it)=>{
-   if(n>=700||!it||!it.name)return;
+   if(n>=CAT_MAX||!it||!it.name)return;
    const ref=String(it.id||'');if(!ref||idx[ref])return;
    idx[ref]={ref:ref,name:it.name,price:+it.price||0,unit:it.unit||'גלובלי',cid:cid};
    lines.push(ref+'|'+it.name+'|'+(+it.price||0)+'|'+(it.unit||'גלובלי')+'|'+cid);n++;
@@ -4290,7 +4291,7 @@ const AI=(()=>{
   return out.length?out.join(' | '):'אין שימוש החודש';
  }
 
- return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,catTitles:CAT_TITLES,
+ return{run,json,parse,check,caps,cancel,claude,gemini,has,anyKey,nameOf,report,models:M,catalogText,resolveRef,catalogStats,CAT_MAX,catTitles:CAT_TITLES,
   listModels,gChain,gPrimary,gFreeName,last:()=>LAST,blocked:pBlocked,trace:()=>TRACE.slice(),health:gHealth};
 })();
 
@@ -8032,7 +8033,8 @@ const App={
    {k:'לינקי משוב',n:rl,max:200,note:''},
    {k:'לקוחות',n:cl,max:0,note:'ללא הגבלה'},
    {k:'סעיפים מ-AI בקריאה',n:0,max:60,note:'צילום · PDF · הקלטה'},
-   {k:'מחירון שנשלח ל-AI',n:Math.min(this.catalogCount(),400),max:400,note:''},
+   (()=>{let n=0;try{n=AI.catalogStats().items;}catch(e){}const M=AI.CAT_MAX||700;   // v26.0 — המספר האמיתי (היה 400 קבוע בתצוגה בלבד)
+     return {k:'מחירון שנשלח ל-AI',n:n,max:M,note:n>=M?'הגעת לתקרה — סעיפים מעבר ל-'+M+' לא נשלחים ל-AI':'כל הסעיפים נשלחים ל-AI (תקרה '+M+')'};})(),
    {k:'אחסון במכשיר',n:Math.round(bytes/1024),max:5120,note:'ק״ב — מעל 90% הישנים נגזמים'},
   ];
  },
