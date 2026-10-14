@@ -3387,7 +3387,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.0';
+const VERSION='26.1';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4351,7 +4351,7 @@ const Sync=(()=>{
          Object.keys(rem).forEach(cid=>{
            if(!Array.isArray(out[cid]))out[cid]=[];
            const seen={};out[cid].forEach(x=>{if(x&&x.id)seen[x.id]=1;});
-           (rem[cid]||[]).forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]){out[cid].push(rx);seen[rx.id]=1;}});});
+           (rem[cid]||[]).forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]&&!dead(rx)){out[cid].push(rx);seen[rx.id]=1;}});});   // v26.0 — סעיף זמני שנמחק לא חוזר
          if(JSON.stringify(loc)!==JSON.stringify(out)){Store.set('subItems',out);changed++;}
          return;
        }catch(e){}
@@ -7171,12 +7171,13 @@ const App={
       if(!existing){const bc=this.state.catalog.find(c=>c.id===cid);
         if(bc)existing=(bc.items||[]).find(i=>i&&String(i.name).trim()===nm);}
     }
-    if(existing){if(price>0)existing.price=price;existing.qty=x.qty||existing.qty||1;
-      if(x.unit)existing.unit=x.unit;existing.selected=true;if(!x.temp)existing.perm=true;updated++;
+    // v26.0 — מחיר/יחידה מה-AI הם להצעה הזו בלבד: המחיר של יהודה נשמר ב-aiBase וחוזר באיפוס ההצעה
+    if(existing){this.aiPriceForQuote(existing,price,x.unit);existing.qty=x.qty||existing.qty||1;
+      existing.selected=true;updated++;
       landed.push({name:nm,cid:cid});return;}
-    // perm:true — הסעיף נשמר לצמיתות בקטגוריה ושורד איפוס הצעה
-    // כתב כמויות (temp) — סעיף של הפרויקט בלבד: לא perm, ונעלם באיפוס ההצעה הבאה
-    const item={id:uid(),name:nm,price:price,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1,perm:!x.temp};
+    // v26.0 — סעיף חדש מה-AI (וגם מכתב כמויות) הוא של ההצעה הזו בלבד: לא perm, נעלם באיפוס ההצעה הבאה
+    // ולא נכנס למחשבון לצמיתות. כדי לשמור סעיף לצמיתות — מוסיפים אותו ידנית במחשבון.
+    const item={id:uid(),name:nm,price:price,unit:x.unit||'גלובלי',selected:true,qty:x.qty||1,perm:false,ai:true};
     if(cid==='custom'){this.state.custom.push(item);toCustom++;}
     else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;if(!x.temp)this.learnCat(nm,cid);}
     added++;landed.push({name:nm,cid:cid});});
@@ -7196,7 +7197,7 @@ const App={
   }else if(missing.length){
     this.toast('⚠️ '+missing.length+' מתוך '+arr.length+' לא נקלטו — נסה שוב');
   }else{
-    this.toast('✓ '+arr.length+' סעיפים בהצעה'+(updated?' ('+updated+' עודכנו)':'')+(Store._trimmed?' · פונה מקום באחסון':''));
+    this.toast('✓ '+arr.length+' סעיפים בהצעה'+(updated?' ('+updated+' עודכנו)':'')+' · להצעה הזו בלבד'+(Store._trimmed?' · פונה מקום באחסון':''));
   }
   Store._trimmed=false;this.render();
  },
@@ -8360,10 +8361,27 @@ const App={
    cl.status=toCol;if(toCol==='done'&&!cl.doneAt)cl.doneAt=Date.now();
    Store.set('clients',clients);try{Sync.push&&Sync.push();}catch(e){}this.haptic(15);this.render();
  },
+ /** v26.0 — מחיר/יחידה שה-AI נתן לסעיף שכבר קיים במחשבון: חל על ההצעה הזו בלבד.
+     המקור נשמר ב-aiBase; באיפוס ההצעה הוא חוזר — אלא אם יהודה שינה ידנית אחרי ה-AI (אז השינוי שלו נשאר). */
+ aiPriceForQuote(it,price,unit){if(!it)return;
+   const p=+price||0,u=unit?String(unit):'';
+   const chP=p>0&&p!==(+it.price||0),chU=!!u&&u!==(it.unit||'');
+   if(!chP&&!chU)return;
+   if(!it.aiBase)it.aiBase={price:+it.price||0,unit:it.unit||'גלובלי'};
+   if(chP)it.price=p;if(chU)it.unit=u;
+   it.aiBase.aiPrice=+it.price||0;it.aiBase.aiUnit=it.unit||'';},
+ aiRestore(it){const b=it&&it.aiBase;if(!b)return;
+   if((+it.price||0)===(+b.aiPrice||0))it.price=b.price;
+   if((it.unit||'')===(b.aiUnit||''))it.unit=b.unit;
+   delete it.aiBase;},
  resetCurrentQuote(){
-   this.allCats().forEach(c=>{(c.items||[]).forEach(i=>{i.selected=false;i.qty=0;});});
+   this.allCats().forEach(c=>{(c.items||[]).forEach(i=>{i.selected=false;i.qty=0;this.aiRestore(i);});});
    this.save();
    // סעיפים קבועים (perm) נשמרים לצמיתות — רק הבחירה והכמות מתאפסות
+   // v26.0 — הסעיפים הזמניים שנמחקים מקבלים מצבה, כדי שהסנכרון מהענן/ממכשיר אחר לא יחזיר אותם למחשבון
+   try{const gone=[];(this.state.custom||[]).forEach(i=>{if(i&&!i.perm&&i.id)gone.push(i.id);});
+     Object.keys(this.state.subItems||{}).forEach(cid=>(this.state.subItems[cid]||[]).forEach(i=>{if(i&&!i.perm&&i.id)gone.push(i.id);}));
+     if(gone.length)Tomb.add(gone);}catch(e){}
    this.state.custom=(this.state.custom||[]).filter(i=>i&&i.perm).map(i=>Object.assign({},i,{selected:false,qty:0}));
    Store.set('customItems',this.state.custom);
    const _si={};Object.keys(this.state.subItems||{}).forEach(cid=>{
@@ -10062,7 +10080,6 @@ const App={
     if(f==='name'){const v=String(el.value||'').trim();if(!v){this.toast('תיאור לא יכול להיות ריק');this.render();return;}it.name=v;}
     else if(f==='unit')it.unit=el.value;
     else{const v=+el.value||0;if(f==='qty'&&v<=0){this.toast('כמות חייבת להיות גדולה מאפס');this.render();return;}it[f]=v;}
-    it.perm=true;
     this.saveActive(c);this.render();
   });
 
@@ -10449,9 +10466,9 @@ const App={
       const pool=(cid==='custom')?this.state.custom:(this.state.subItems[cid]||[]);
       let ex=pool.find(i=>i&&String(i.name).trim()===String(it.name).trim());
       if(!ex&&cid!=='custom'){const bc=this.state.catalog.find(c=>c.id===cid);if(bc)ex=(bc.items||[]).find(i=>i&&String(i.name).trim()===String(it.name).trim());}
-      if(ex){if(price>0)ex.price=price;ex.qty=qty;ex.unit=unit;ex.selected=true;updated++;return;}
-      // 3. סעיף חדש — id אמיתי + perm כדי שיישמר לצמיתות
-      const item={id:uid(),name:it.name,price:price,qty:qty,unit:unit,selected:true,perm:true};
+      if(ex){this.aiPriceForQuote(ex,price,unit);ex.qty=qty;ex.selected=true;updated++;return;}
+      // 3. סעיף חדש — v26.0: להצעה הזו בלבד (לא perm) — לא נשמר במחשבון
+      const item={id:uid(),name:it.name,price:price,qty:qty,unit:unit,selected:true,perm:false,ai:true};
       if(cid==='custom'){this.state.custom.push(item);}
       else{if(!this.state.subItems[cid])this.state.subItems[cid]=[];item.sub=true;this.state.subItems[cid].push(item);this.state.open[cid]=true;this.learnCat(it.name,cid);toCat++;}
       added++;
@@ -10459,7 +10476,7 @@ const App={
     this.save();Store.set('customItems',this.state.custom);Store.set('subItems',this.state.subItems);
     try{Sync.push&&Sync.push();}catch(e){}
     this._missingItems=null;this.state.modal=null;this.haptic(20);
-    this.toast((added?added+' נוספו':'')+(updated?(added?' · ':'')+updated+' עודכנו':'')+' ✓ — נשמרו לצמיתות');this.render();};
+    this.toast((added?added+' נוספו':'')+(updated?(added?' · ':'')+updated+' עודכנו':'')+' ✓ — להצעה הזו בלבד');this.render();};
   const mskip=document.getElementById('miss-skip');if(mskip)mskip.onclick=()=>{this._missingItems=null;this.state.modal=null;this.render();};
   const gc=document.getElementById('gen-contract');if(gc)gc.onclick=()=>{this.captureQuote();this.saveClient();this.state.docType='contract';this.generatePDF(false);};
   on('[data-lang]','click',e=>{this.captureQuote();this.state.lang=e.currentTarget.dataset.lang;Store.set('lang',this.state.lang);this.render();});
@@ -12005,21 +12022,21 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
     // מבנה חדש: מנקים בחירה ומחילים רק את הסעיפים ששמורים בהצעה.
     // המחירון הנוכחי נשאר כמו שהוא — טעינת הצעה ישנה לא מחזירה מחירים ישנים.
     try{
-      this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(i){i.selected=false;i.qty=0;}}));
+      this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(i){i.selected=false;i.qty=0;this.aiRestore(i);}}));
       const byId={};this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(i&&i.id)byId[i.id]=i;}));
       d.lines.forEach(L=>{
         let it=byId[L.id];
         if(!it){
           // סעיף שכבר לא קיים במחירון — מוחזר לקטגוריה שלו כדי שההצעה תישאר שלמה
-          const item={id:L.id,name:L.name,price:L.price,unit:L.unit,selected:true,qty:L.qty,perm:true,sub:true};
+          const item={id:L.id,name:L.name,price:L.price,unit:L.unit,selected:true,qty:L.qty,perm:!!L.perm,sub:true};   // v26.0 — סעיף זמני (AI) נשאר זמני
+          try{Tomb.remove([L.id]);}catch(e){}   // חוזר לעריכה — מסירים את המצבה, אחרת הסנכרון ימחק אותו
           if(L.laborMode){item.laborMode=true;if(L.laborPct)item.laborPct=L.laborPct;if(L.fullPrice)item.fullPrice=L.fullPrice;}
           if(L.cid==='custom'){this.state.custom.push(item);}
           else{if(!this.state.subItems[L.cid])this.state.subItems[L.cid]=[];this.state.subItems[L.cid].push(item);}
           this.state.open[L.cid]=true;return;
         }
         it.selected=true;it.qty=L.qty;
-        if(L.price>0)it.price=L.price;
-        if(L.unit)it.unit=L.unit;
+        this.aiPriceForQuote(it,L.price,L.unit);   // v26.0 — מחיר ההצעה הישנה חל עליה בלבד; המחיר במחשבון חוזר באיפוס
         it.laborMode=!!L.laborMode;
         if(L.laborPct)it.laborPct=L.laborPct; else delete it.laborPct;
         if(L.fullPrice)it.fullPrice=L.fullPrice; else delete it.fullPrice;
