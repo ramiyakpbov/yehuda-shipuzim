@@ -1753,6 +1753,24 @@ input:focus,textarea:focus,select:focus{outline:none;}
 .tk-acts.tk-acts5>[data-invq]{grid-column:span 2;}
 .tk-acts.tk-acts5>.tk-ib{width:auto;justify-self:stretch;}
 .tk-acts.tk-acts5:has(>:nth-child(6))>[data-invq]{grid-column:auto;}
+/* v26.2 — 7 כפתורים (עם "חתימה"): הפח בשורה משלו, ממורכז */
+.tk-acts.tk-acts5:has(>:nth-child(7))>.tk-ib{grid-column:1/-1;justify-self:center;width:64px;}
+/* v26.2 — מסירה ותעודת אחריות */
+.ho-sub{font-size:12.5px;color:var(--muted);margin:-4px 0 14px;line-height:1.6;}
+.ho-cats{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+.ho-cat{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:10px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+.ho-cat b{display:block;font-size:13.5px;}
+.ho-cat small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;line-height:1.45;overflow-wrap:anywhere;}
+.ho-cat label{display:flex;flex-direction:column;gap:3px;font-size:10.5px;color:var(--muted);text-align:center;}
+.ho-cat input{text-align:center;padding:9px 6px;}
+.ho-sigwrap{position:relative;margin-bottom:8px;}
+.ho-sigwrap .sig-canvas{height:150px;}
+.ho-sighint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9a9a9a;font-size:13px;pointer-events:none;}
+.ho-sighint[hidden]{display:none;}
+.wr-grid{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.wr-row{display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:10px;align-items:center;font-size:13px;}
+.wr-row input{text-align:center;padding:8px 6px;}
+.tk-kind.ho{color:var(--ok);}
 /* אייקוני קו במסכים היומיים — יורשים צבע מהטקסט */
 .icon-btn .ico{color:var(--txt);}
 .hm-wrap .hm-quick .hm-q .q-ic .ico{color:rgba(255,255,255,.92);}
@@ -3387,7 +3405,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.1';
+const VERSION='26.2';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3891,7 +3909,7 @@ try{
    if(L.length>30)L.length=30;
    // K — עם הקידומת, כמו Store.get. בלי זה היומן נכתב למפתח אחר ומסך ההגדרות תמיד הראה ריק.
    const s=JSON.stringify(L);try{if(ok)localStorage.setItem(K('errLog'),s);else mem[K('errLog')]=s;}catch(x){}}catch(x){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','gModel','gModels','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','gModel','gModels','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','warrMonths','warrTerms','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
 })();
 
 
@@ -4296,7 +4314,7 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','warrMonths','warrTerms','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
 /* ═══ מצבות — מזהים שנמחקו ═══
    הסנכרון ממזג רשימות כאיחוד: פריט שקיים בענן ולא מקומית מתווסף בחזרה.
    בלי סימון מחיקה, פריט שנמחק במכשיר אחד חזר מהמכשיר השני בדחיפה הבאה
@@ -6172,6 +6190,7 @@ const App={
    <div class="cc-acts">
      <button class="mini go" data-loadclient='${JSON.stringify(cl).replace(/'/g,"&#39;")}'>↩︎ טען לתוך הצעה חדשה</button>
      ${phd?`<button class="mini" onclick="location.href='tel:${phd}'">📞 חיוג</button>`:''}
+     ${String(cl.address||'').trim()?`<button class="mini" data-waze="${esc(String(cl.address).trim())}">🧭 Waze</button>`:''}
      <button class="mini" data-review="${esc(cl.id)}">📩 משוב</button>
      <button class="mini" data-photos="${esc(cl.id)}">📷 תמונות</button>
    </div>
@@ -7914,15 +7933,16 @@ const App={
  /* v24.5 — "קוד שגוי" בחלון של האפליקציה. confirm של הדפדפן הוסיף "האתר … אומר" (רמי, 11.10). */
  /* v25.0 — חלון שליחה אחרי יצירת ה-PDF. כל כפתור הוא לחיצה חדשה של המשתמש,
     ולכן window.open / navigator.share לא נחסמים (הם דורשים מגע משתמש טרי). */
- sendDlg(pdf,blob,fname){
+ sendDlg(pdf,blob,fname,o){
+  o=o||{};   // v26.2 — גם למסמכים אחרים (תעודת מסירה): title, waDoc, shareText, client
   document.querySelectorAll('.code-dlg').forEach(x=>x.remove());
-  const c=this.state.client||{};
+  const c=o.client||this.state.client||{};
   const okPh=phoneValid(c.phone);
   const first=String(c.name||'').trim().split(' ')[0]||'';
   let canFile=false;
   try{canFile=!!(navigator.canShare&&navigator.canShare({files:[new File([blob],fname,{type:'application/pdf'})]}));}catch(e){}
   const d=document.createElement('div');d.className='code-dlg';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-labelledby','sd-t');
-  d.innerHTML='<div class="code-card sd-card"><div class="sd-t" id="sd-t">✓ ההצעה מוכנה</div>'+
+  d.innerHTML='<div class="code-card sd-card"><div class="sd-t" id="sd-t">'+esc(o.title||'✓ ההצעה מוכנה')+'</div>'+
     '<div class="sd-f">📄 '+esc(fname.replace(/\.pdf$/i,''))+' · PDF</div>'+
     (okPh?'<button type="button" class="tk-btn pri sd-b" id="sd-wa">💬 שלח ל'+esc(c.name)+' ב-WhatsApp<small>נפתח הצ\'אט שלו ישירות · הקובץ נשמר בטלפון — בצ\'אט: 📎 ← מסמך ← הקובץ</small></button>'
          :'<div class="sd-note">⚠️ אין טלפון תקין ללקוח — מלא טלפון בפרטי ההצעה, ואז הצ\'אט שלו ייפתח אוטומטית.</div>')+
@@ -7938,7 +7958,7 @@ const App={
     try{pdf.save(fname);}catch(e){}
     const NL=String.fromCharCode(10);
     const pr=String(c.project||'').trim();
-    const msg='שלום'+(first?' '+first:'')+' 👋'+NL+(this.state.addonOf?'מצורפת תוספת להצעת המחיר '+this.state.addonOf:'מצורפת הצעת המחיר')+(pr?' — '+pr:'')+' 📄'+NL+'לכל שאלה אני זמין 🙏';
+    const msg='שלום'+(first?' '+first:'')+' 👋'+NL+(o.waDoc?o.waDoc:(this.state.addonOf?'מצורפת תוספת להצעת המחיר '+this.state.addonOf:'מצורפת הצעת המחיר'))+(pr?' — '+pr:'')+' 📄'+NL+'לכל שאלה אני זמין 🙏';
     end();
     try{window.open(waLink(c.phone,msg),'_blank');}catch(e){}
     this.toast('הקובץ נשמר · בצ\'אט: 📎 ← מסמך');
@@ -7947,7 +7967,7 @@ const App={
   if(sh)sh.addEventListener('click',async()=>{
     end();
     try{const file=new File([blob],fname,{type:'application/pdf'});
-      await navigator.share({files:[file],title:fname.replace(/\.pdf$/,''),text:'הצעת מחיר · יהודה שיפוצים'+(c.name?' · '+c.name:'')});}
+      await navigator.share({files:[file],title:fname.replace(/\.pdf$/,''),text:(o.shareText||'הצעת מחיר')+' · יהודה שיפוצים'+(c.name?' · '+c.name:'')});}
     catch(e){if(!(e&&e.name==='AbortError')){pdf.save(fname);this.toast('השיתוף נכשל — הקובץ נשמר בטלפון');}}
   });
   d.querySelector('#sd-save').addEventListener('click',()=>{end();try{pdf.save(fname);}catch(e){}this.toast('ה-PDF נשמר ✓');});
@@ -8071,7 +8091,7 @@ const App={
       <span class="val">${nis(total)}</span></div></div>`;
  },
 
- modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',aitools:'aiToolsModal',boq:'boqModal',aitool:'aiToolModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal',invoice:'invoiceModal'};
+ modalView(){const m=this.state.modal;const map={follow:'followModal',clientcard:'clientCardModal',priceimport:'priceImportModal',preflight:'preflightModal',quote:'quoteModal',settings:'settingsModal',clients:'clientsModal',stats:'statsModal',addcustom:'addCustomModal',sign:'signModal',photos:'photosModal',reminders:'remindersModal',calendar:'calendarModal',templates:'templatesModal',portfolio:'portfolioModal',preview:'previewModal',sentquotes:'sentQuotesModal',tracking:'trackingModal',snaps:'snapsModal',sigview:'sigViewModal',drill:'drillModal',reviews:'reviewsModal',v2q:'v2qModal',v2qreview:'v2qReviewModal',aitools:'aiToolsModal',boq:'boqModal',aitool:'aiToolModal',caladd:'calAddModal',aihub:'aiHubModal',aiphoto:'aiPhotoModal',aipdf:'aiPdfModal',menu:'menuModal',backup:'backupModal',missing:'missingModal',pricefresh:'priceFreshModal',gemini:'geminiModal',collage:'collageModal',gallery:'galleryModal',wacenter:'waCenterModal',aiaudio:'aiAudioModal',washot:'waShotModal',oneshot:'oneShotModal',mystyle:'styleModal',guide:'guideModal',gtopic:'guideTopicModal',annex:'annexModal',invoice:'invoiceModal',handover:'handoverModal'};
   return `<div class="overlay" data-close><div class="sheet" onclick="event.stopPropagation()">${this[map[m]]()}</div></div>`;},
 
  quoteModal(){const c=this.state.client,s=this.state;
@@ -8196,6 +8216,7 @@ const App={
    <div style="font-size:11.5px;color:var(--muted);margin:-2px 2px 8px;line-height:1.55">המפתחות של חשבונית ירוקה שמורים בשרת (Netlify), לא בטלפון. כאן רק <b>קוד החיבור</b> — אותו קוד שהוגדר ב-Netlify בשם INVOICE_TOKEN.</div>
    <div class="field"><label>קוד חיבור לחשבוניות</label><input id="inv-token" type="password" autocomplete="off" value="${esc(Store.get('invToken',''))}" placeholder="הקוד מ-Netlify"/></div>
    <div class="row2"><button class="btn-ghost" id="inv-save">💾 שמור</button><button class="btn-ghost" id="inv-ping">🔌 בדוק חיבור</button></div>
+   ${this.warrSettings()}
    <div class="sec-title">🔔 צלילים</div>
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="snd-off" ${Store.get('soundOff',0)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>השתק צלילי סימון סעיפים</span></label></div>`),
    ai:()=>locked(`
@@ -8967,7 +8988,8 @@ const App={
       acts.push('<button class="tk-btn pri" data-loadq="'+esc(q.id)+'">'+ico('pencil',16)+'ערוך</button>');
       acts.push('<button class="tk-btn" data-dupq="'+esc(q.id)+'">'+ico('copy',16)+'עותק</button>');
       acts.push('<button class="tk-btn" data-addonq="'+esc(q.id)+'" title="תוספת עבודה להצעה הזו">'+ico('plus',16)+'תוספת</button>');
-      if(+q.grand>0)acts.push('<button class="tk-btn" data-invq="'+esc(q.id)+'" title="חשבונית / קבלה בחשבונית ירוקה">'+ico('file-text',16)+'חשבונית</button>');}
+      if(+q.grand>0)acts.push('<button class="tk-btn" data-invq="'+esc(q.id)+'" title="חשבונית / קבלה בחשבונית ירוקה">'+ico('file-text',16)+'חשבונית</button>');
+      if(!q.addonOf&&((q.snap.lines||[]).length))acts.push('<button class="tk-btn" data-hoq="'+esc(q.id)+'" title="מסירת עבודה ותעודת אחריות">'+ico('shield-check',16)+'מסירה</button>');}
     if(q.sig||(q.snap&&q.snap.clientSig))acts.push('<button class="tk-btn" data-qsig="'+esc(q.id)+'">'+ico('pen-line',16)+'חתימה</button>');
     acts.push('<button class="tk-ib danger" data-delq="'+esc(q.id)+'" aria-label="מחק את ההצעה של '+nm+'" title="מחק מההיסטוריה">'+ico('trash-2',17)+'</button>');
     return '<article class="tk-card" data-tone="'+(signed?'ok':'neutral')+'" aria-label="'+nm+'">'+
@@ -8976,7 +8998,7 @@ const App={
         '<p class="tk-meta"><span dir="ltr">'+esc(q.no||'')+'</span><span aria-hidden="true">·</span><span>'+dt(q.ts)+'</span>'+
           (q.project?'<span aria-hidden="true">·</span><span>'+esc(q.project)+'</span>':'')+'</p></div>'+
         '<div class="tk-amt">'+nisR(q.grand)+'</div></header>'+
-      '<div class="tk-kinds">'+tags+'</div>'+
+      '<div class="tk-kinds">'+tags+(q.handover?'<span class="tk-kind ok ho">'+ico('shield-check',13)+'נמסר '+new Date(q.handover.at||q.handover.ts).toLocaleDateString('he-IL')+'</span>':'')+'</div>'+
       (()=>{// v25.4 — קשר בין הצעה לתוספות שלה
         if(q.addonOf)return '<p class="ao-rel">'+ico('plus',13)+'תוספת להצעה <b dir="ltr">'+esc(q.addonOf)+'</b></p>';
         const inf=this.addonInfo(q.no);if(!inf.adds.length)return '';
@@ -9744,6 +9766,146 @@ const App={
   .lx-sl{border-bottom:1px solid #333;height:34px;margin-bottom:6px;}
   .lx-date{margin-top:16px;font-size:11px;color:#666;}
  `;},
+ /* ═══ v26.2 — מסירת עבודה ותעודת אחריות ═══
+    מתוך כרטיס הצעה ("מסירה"). תקופות אחריות לפי קטגוריה: הגדרות ← עסק (warrMonths); ריק = מהנספח המשפטי (annexWarranty).
+    תנאים: warrTerms, ברירת מחדל = נוסח סעיף 5 בנספח. חתימת הלקוח על המסך. נשמר בהצעה: q.handover. */
+ WARR_TERMS_DEF:'האחריות אינה חלה על בלאי טבעי, נזק שנגרם בשימוש לא נאות, עבודות שבוצעו על ידי גורם אחר, או על חומרים שסיפק המזמין. אחריות יצרן על מוצרים תעבור למזמין.',
+ warrDefault(){return String(Store.get('annexWarranty','12')||'12').trim()||'12';},
+ warrFor(cid){const W=Store.get('warrMonths',{})||{};const v=W[cid];return (v!==undefined&&v!==null&&String(v)!=='')?String(v):this.warrDefault();},
+ warrTerms(){const t=String(Store.get('warrTerms','')||'').trim();return t||this.WARR_TERMS_DEF;},
+ warrSettings(){
+  const W=Store.get('warrMonths',{})||{};const def=this.warrDefault();
+  const cats=this.allCats().filter(c=>c&&c.id);
+  return `<div class="sec-title" style="margin-top:16px">🛡️ תעודת מסירה ואחריות</div>
+   <div style="font-size:11.5px;color:var(--muted);margin:-2px 2px 8px;line-height:1.55">חודשי אחריות לכל קטגוריה — ממלאים פעם אחת. שדה ריק = כמו בנספח המשפטי (<b>${esc(def)} חודשים</b>). בכל תעודה אפשר לשנות.</div>
+   <div class="wr-grid">${cats.map(c=>`<label class="wr-row"><span>${c.emoji?c.emoji+' ':''}${esc(c.title||c.id)}</span><input type="number" inputmode="numeric" min="0" data-wrcat="${esc(c.id)}" value="${W[c.id]!==undefined?esc(String(W[c.id])):''}" placeholder="${esc(def)}" aria-label="חודשי אחריות — ${esc(c.title||c.id)}"/></label>`).join('')}</div>
+   <div class="field"><label>תנאי האחריות (יופיעו בתעודה)</label><textarea id="wr-terms" rows="3" placeholder="${esc(this.WARR_TERMS_DEF)}">${esc(String(Store.get('warrTerms','')||''))}</textarea></div>
+   <button class="btn-ghost" id="wr-save">💾 שמור הגדרות אחריות</button>`;
+ },
+ hoQuote(){return (Store.get('quotes',[])||[]).find(x=>x&&x.id===this._hoQ)||null;},
+ /** קבוצות עבודה מההצעה (כולל התוספות שלה): [{cid,title,items:[{name,qty,unit}]}] */
+ hoGroups(q){
+  const qs=(Store.get('quotes',[])||[]);
+  const all=[q].concat(qs.filter(x=>x&&x!==q&&x.addonOf&&x.addonOf===q.no&&x.snap));
+  const titles={};this.allCats().forEach(c=>{if(c&&c.id)titles[c.id]=(c.emoji?c.emoji+' ':'')+(c.title||c.id);});
+  const map={},order=[];
+  all.forEach(x=>((x.snap&&x.snap.lines)||[]).forEach(L=>{if(!L||!(+L.qty>0))return;const cid=L.cid||'custom';
+    if(!map[cid]){map[cid]={cid:cid,title:titles[cid]||cid,items:[]};order.push(cid);}
+    map[cid].items.push({name:String(L.name||''),qty:+L.qty,unit:L.unit||''});}));
+  return order.map(k=>map[k]);
+ },
+ handoverModal(){
+  const q=this.hoQuote();
+  if(!q||!q.snap)return `<h2>מסירה <button class="x" data-close>✕</button></h2><div class="empty">ההצעה לא נמצאה</div>`;
+  const cl=q.snap.client||{};const G=this.hoGroups(q);const prev=q.handover||{};
+  const today=new Date();const iso=d=>{const z=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate());};
+  const dflt=prev.at?iso(new Date(prev.at)):iso(today);
+  return `<h2>🛡️ מסירה ותעודת אחריות <button class="x" data-close>✕</button></h2>
+   <div class="ho-sub">${esc(cl.name||q.client||'')}${(cl.project||q.project)?' · '+esc(cl.project||q.project):''} · <span dir="ltr">${esc(q.no||'')}</span>${prev.ts?'<br>✅ הופקה תעודה ב-'+new Date(prev.ts).toLocaleDateString('he-IL')+' — הפקה חוזרת תעדכן אותה':''}</div>
+   <div class="field"><label>תאריך מסירה</label><input id="ho-date" type="date" value="${dflt}"/></div>
+   <div class="sec-title" style="margin-top:6px">עבודות שבוצעו · חודשי אחריות</div>
+   <div class="ho-cats">${G.map(g=>{const m=(prev.months&&prev.months[g.cid]!==undefined)?prev.months[g.cid]:this.warrFor(g.cid);
+     const nm=g.items.map(i=>i.name).slice(0,4).join(' · ')+(g.items.length>4?' · ועוד '+(g.items.length-4):'');
+     return `<div class="ho-cat"><div><b>${esc(g.title)}</b><small>${esc(nm)}</small></div><label>חודשים<input type="number" inputmode="numeric" min="0" data-hocat="${esc(g.cid)}" value="${esc(String(m))}" aria-label="חודשי אחריות — ${esc(g.title)}"/></label></div>`;}).join('')}</div>
+   <div class="field"><label>תנאי האחריות</label><textarea id="ho-terms" rows="3">${esc(prev.terms||this.warrTerms())}</textarea></div>
+   <div class="field"><label>הערות / ליקויים פתוחים (לא חובה)</label><textarea id="ho-notes" rows="2" placeholder="למשל: החלפת ידית בדלת השירותים — עד 20.10">${esc(prev.notes||'')}</textarea></div>
+   <div class="sec-title">✍️ חתימת הלקוח — מאשר שקיבל את העבודה</div>
+   <div class="ho-sigwrap"><canvas id="ho-sig" class="sig-canvas"></canvas><div class="ho-sighint" id="ho-sighint">חתום כאן באצבע</div></div>
+   <button class="btn-ghost" id="ho-clear">🧹 נקה חתימה</button>
+   <button class="btn-block" id="ho-pdf" style="margin-top:12px">📄 הפק תעודת מסירה ואחריות — PDF</button>
+   <div class="g-note stop" style="margin-top:16px"><b>לפני שמשתמשים</b><br>זו תבנית, לא ייעוץ משפטי. תקופות האחריות והתנאים נקבעים על ידי יהודה — מומלץ שעורך דין יעבור על הנוסח פעם אחת.</div>`;
+ },
+ hoBind(){
+  const cv=document.getElementById('ho-sig');this._hoHas=false;
+  if(cv){const r=cv.getBoundingClientRect();cv.width=Math.max(10,r.width*2);cv.height=Math.max(10,r.height*2);
+   const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';
+   let d=false;const hint=document.getElementById('ho-sighint');
+   const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};
+   const st=ev=>{d=true;this._hoHas=true;if(hint)hint.hidden=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};
+   const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};
+   const en=()=>{d=false;};
+   cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);cv.addEventListener('mouseup',en);cv.addEventListener('mouseleave',en);
+   cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);
+   const cb=document.getElementById('ho-clear');if(cb)cb.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);this._hoHas=false;if(hint)hint.hidden=false;};}
+  const pb=document.getElementById('ho-pdf');if(pb)pb.onclick=()=>this.hoPdf();
+ },
+ /** קורא את הטופס. מחזיר null + הודעה אם חסר משהו. */
+ hoRead(q){
+  const G=this.hoGroups(q);const months={};let bad='';
+  document.querySelectorAll('[data-hocat]').forEach(i=>{const v=String(i.value||'').trim();
+    if(v===''||!(+v>=0)){if(!bad){const g=G.find(x=>x.cid===i.dataset.hocat);bad=g?g.title:i.dataset.hocat;}return;}
+    months[i.dataset.hocat]=Math.round(+v);});
+  if(bad){this.toast('חסרים חודשי אחריות: '+bad);return null;}
+  const dv=(document.getElementById('ho-date')||{}).value||'';
+  const at=dv?new Date(dv+'T12:00:00').getTime():Date.now();
+  if(!(at>0)){this.toast('תאריך מסירה לא תקין');return null;}
+  const cv=document.getElementById('ho-sig');
+  const sig=(cv&&this._hoHas)?cv.toDataURL('image/png'):'';
+  return {at:at,months:months,terms:String((document.getElementById('ho-terms')||{}).value||'').trim(),
+    notes:String((document.getElementById('ho-notes')||{}).value||'').trim(),sig:sig,groups:G};
+ },
+ hoHtml(q,f){
+  const cl=q.snap.client||{};const fmt=ms=>new Date(ms).toLocaleDateString('he-IL');
+  const until=(ms,m)=>{const d=new Date(ms);const day=d.getDate();d.setMonth(d.getMonth()+m);if(d.getDate()!==day)d.setDate(0);return d.getTime();};
+  const rows=f.groups.map(g=>{const m=f.months[g.cid]||0;
+    return '<tr><td><b>'+esc(g.title)+'</b><div class="ho-it">'+g.items.map(i=>esc(i.name)+(i.qty&&i.unit&&i.unit!=='גלובלי'?' ('+(+i.qty)+' '+esc(i.unit)+')':'')).join(' · ')+'</div></td>'+
+      '<td class="c">'+(m>0?(m===1?'חודש אחד':m+' חודשים'):'ללא')+'</td><td class="c">'+(m>0?fmt(until(f.at,m)):'—')+'</td></tr>';}).join('');
+  return `<div class="lx">
+   <div class="lx-top"><div class="lx-title">תעודת מסירה ואחריות</div>
+     <div class="lx-sub">להצעת מחיר מס׳ ${esc(q.no||'')} · תאריך מסירה ${fmt(f.at)}</div></div>
+   <div class="lx-parties">
+     <div><b>הקבלן:</b> יהודה שיפוצים · ח.פ 311834998 · קבלן רשום 134094 · 054-5718316</div>
+     <div><b>המזמין:</b> ${esc(cl.name||q.client||'')||'________'} ${(cl.phone||q.phone)?'· '+esc(cl.phone||q.phone):''}</div>
+     ${(cl.project||q.project)?'<div><b>הפרויקט:</b> '+esc(cl.project||q.project)+'</div>':''}
+     <div><b>כתובת האתר:</b> ${esc(cl.address||'')||'________'}</div>
+   </div>
+   <div class="lx-c"><div class="lx-h"><span class="lx-n">1</span>מסירת העבודה</div><p>המזמין מאשר כי ביום ${fmt(f.at)} נמסרו לו העבודות המפורטות להלן, שבוצעו על ידי הקבלן לפי הצעת המחיר${f.notes?', בכפוף להערות שבסעיף 3':''}.</p></div>
+   <div class="lx-c"><div class="lx-h"><span class="lx-n">2</span>העבודות ותקופות האחריות</div>
+     <table class="ho-t"><thead><tr><th>העבודה</th><th class="c">אחריות</th><th class="c">בתוקף עד</th></tr></thead><tbody>${rows}</tbody></table></div>
+   ${f.notes?'<div class="lx-c"><div class="lx-h"><span class="lx-n">3</span>הערות וליקויים פתוחים</div><p>'+esc(f.notes).replace(/\n/g,'<br>')+'</p></div>':''}
+   <div class="lx-c"><div class="lx-h"><span class="lx-n">${f.notes?4:3}</span>תנאי האחריות</div><p>האחריות מתחילה ממועד המסירה. ${esc(f.terms||this.WARR_TERMS_DEF)}</p></div>
+   <div class="lx-sign">
+     <div class="lx-sb"><div class="lx-sl"></div>חתימת הקבלן<br><span>יהודה שיפוצים</span></div>
+     <div class="lx-sb">${f.sig?'<img class="ho-sigimg" src="'+f.sig+'"/>':'<div class="lx-sl"></div>'}חתימת המזמין<br><span>${esc(cl.name||q.client||'')}</span></div>
+   </div>
+   <div class="lx-date">הופק: ${fmt(Date.now())}</div>
+  </div>`;
+ },
+ async hoPdf(){
+  const q=this.hoQuote();if(!q||!q.snap){this.toast('ההצעה לא נמצאה');return;}
+  const f=this.hoRead(q);if(!f)return;
+  if(!f.sig&&!(await this.askOk('להפיק בלי חתימת הלקוח?','אפשר להחתים את הלקוח על המסך לפני ההפקה.','הפק בלי חתימה')))return;
+  this.haptic(15);this.busy('מכין תעודת מסירה…');
+  try{
+    const host=document.createElement('div');
+    host.style.cssText='position:fixed;left:-9999px;top:0;width:794px;background:#fff;';
+    host.innerHTML='<style>'+this.annexCss()+`
+      .ho-t{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:4px;}
+      .ho-t th{background:#f6f2ea;text-align:right;padding:7px 8px;border:1px solid #e0d9cc;font-weight:800;}
+      .ho-t td{padding:7px 8px;border:1px solid #e0d9cc;vertical-align:top;}
+      .ho-t .c{text-align:center;white-space:nowrap;width:86px;}
+      .ho-it{color:#555;font-size:10.5px;line-height:1.6;margin-top:2px;}
+      .ho-sigimg{display:block;height:46px;max-width:100%;object-fit:contain;margin-bottom:4px;border-bottom:1px solid #333;}
+    </style>`+this.hoHtml(q,f);
+    document.body.appendChild(host);
+    await new Promise(r=>setTimeout(r,120));
+    const canvas=await html2canvas(host,{scale:2,backgroundColor:'#ffffff',useCORS:true});
+    document.body.removeChild(host);
+    const {jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');
+    const pw=210,ph=297,iw=pw,ih=canvas.height*(pw/canvas.width);
+    let left=ih,pos=0,first=true;
+    while(left>0){if(!first)pdf.addPage();pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',0,pos,iw,ih);left-=ph;pos-=ph;first=false;}
+    const cl=Object.assign({},q.snap.client||{});if(!cl.name)cl.name=q.client||'';if(!cl.phone)cl.phone=q.phone||'';if(!cl.project)cl.project=q.project||'';
+    const fname=this.docFileName('תעודת מסירה ואחריות',cl);
+    const blob=pdf.output('blob');
+    // נשמר בהצעה (בלי תמונת החתימה — רק שנחתם)
+    const qs=Store.get('quotes',[])||[];const x=qs.find(z=>z&&z.id===q.id);
+    if(x){x.handover={at:f.at,ts:Date.now(),months:f.months,terms:f.terms,notes:f.notes,signed:!!f.sig};Store.set('quotes',qs);try{Sync.push&&Sync.push();}catch(e){}}
+    this.idle();this.haptic(25);
+    this.state.modal=this._navStack&&this._navStack.length?this._navStack.pop():null;this.render();
+    this.sendDlg(pdf,blob,fname,{title:'✓ תעודת המסירה מוכנה',waDoc:'מצורפת תעודת המסירה והאחריות',shareText:'תעודת מסירה ואחריות',client:cl});
+  }catch(e){this.idle();try{Store.logErr('hoPdf',e);}catch(x){}this.toast('הפקת התעודה נכשלה');}
+ },
  galleryModal(){
   const clients=Store.get('clients',[]);
   const pick=this.state.galPick||'';
@@ -10616,6 +10778,13 @@ const App={
   on('[data-addonq]','click',e=>this.startAddon(e.currentTarget.dataset.addonq));
   on('[data-addonexit]','click',()=>this.addonExit());
   on('[data-invq]','click',e=>{this._invQ=e.currentTarget.dataset.invq;this._invRes=null;this._invAmt=0;this._invItems=true;if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='invoice';this.render();});
+  {const wsv=document.getElementById('wr-save');if(wsv)wsv.onclick=()=>{const W={};
+     document.querySelectorAll('[data-wrcat]').forEach(i=>{const v=String(i.value||'').trim();if(v!==''&&+v>=0)W[i.dataset.wrcat]=Math.round(+v);});
+     Store.set('warrMonths',W);const t=document.getElementById('wr-terms');if(t)Store.set('warrTerms',String(t.value||'').trim());
+     try{Sync.push&&Sync.push();}catch(e){}this.toast('הגדרות האחריות נשמרו ✓');};}
+  on('[data-waze]','click',e=>{const a=e.currentTarget.dataset.waze||'';if(!a)return;try{window.open('https://waze.com/ul?q='+encodeURIComponent(a)+'&navigate=yes','_blank');}catch(x){}});   // v26.2
+  on('[data-hoq]','click',e=>{this._hoQ=e.currentTarget.dataset.hoq;if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='handover';this.render();});
+  if(this.state.modal==='handover')this.hoBind();
   {const isv=document.getElementById('inv-save');if(isv)isv.onclick=()=>{Store.set('invToken',(document.getElementById('inv-token').value||'').trim());this.toast('קוד החיבור נשמר ✓');};
    const ipg=document.getElementById('inv-ping');if(ipg)ipg.onclick=()=>{const v=(document.getElementById('inv-token').value||'').trim();if(v)Store.set('invToken',v);this.invPing();};
    on('[data-invtype]','click',e=>{this._invType=+e.currentTarget.dataset.invtype;this.invKeep();this.render();});
@@ -11848,8 +12017,8 @@ proposalView(data){data=data||{};const nf=n=>Math.round(n).toLocaleString('he-IL
    stage.innerHTML='';const label=this.state.docType==='contract'?'חוזה':(this.state.addonOf?'תוספת '+String(this.state.quoteNo||'').split('-').pop():'הצעת מחיר');return{pdf,blob:pdf.output('blob'),fname:this.docFileName(label)};},
  /* v25.0 — שם הקובץ: לקוח - פרויקט - סוג המסמך (בקשת רמי: "תמיד שם לקוח / פרויקט").
     "/" אסור בשם קובץ, לכן " - ". תווים אסורים (\ / : * ? " < > |) מוסרים. בלי שם לקוח — מספר ההצעה. */
- docFileName(label){
-  const c=this.state.client||{};
+ docFileName(label,cl){
+  const c=cl||this.state.client||{};
   const clean=v=>String(v==null?'':v).replace(/[\\/:*?"<>|\u0000-\u001f]+/g,' ').replace(/\s+/g,' ').trim();
   const nm=clean(c.name),pr=clean(c.project);
   const parts=[];
