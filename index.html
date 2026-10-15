@@ -98,6 +98,9 @@ input,select,textarea{font-family:inherit;}
 .voice-big{background:var(--red);color:#fff;border:none;border-radius:18px;padding:18px 28px;font-size:16px;font-weight:800;box-shadow:0 8px 22px rgba(0,0,0,0.35);cursor:pointer;}
 .voice-big.on{animation:pulse 1s infinite;}
 .mic.rec{background:var(--red);border-color:var(--red);animation:pulse 1s infinite;}
+/* v26.3 — אין תוצאות → הוספה עם AI */
+.srch-ai{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:2px 0 12px;padding:11px 14px;border-radius:14px;border:1px dashed var(--line);background:var(--bg2);color:var(--txt);font:inherit;font-weight:700;font-size:14px;text-align:start;cursor:pointer;}
+.srch-ai small{font-weight:400;font-size:11.5px;color:var(--muted);}
 @keyframes pulse{50%{opacity:.55;}}
 .chips{display:flex;flex-wrap:wrap;gap:9px;padding:11px 12px 8px;align-items:center;
   position:sticky;top:0;z-index:40;background:var(--bg);
@@ -3405,7 +3408,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.2';
+const VERSION='26.3';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -7459,15 +7462,49 @@ const App={
 
  itemMatch(name,catTitle,words){
   if(!words||!words.length)return true;
-  const hay=this.normTxt(name)+' '+this.normTxt(catTitle);
-  for(let i=0;i<words.length;i++){if(hay.indexOf(words[i])<0)return false;}
-  return true;
+  return this.itemScore(name,catTitle,words)===words.length;
  },
+ /* v26.3 — חיפוש סלחני בעברית. מילה "נמצאת" בסעיף אם אחת הצורות שלה מופיעה בו:
+    אותיות סופיות (ך=כ…), תחיליות ו/ה/ב/ל/מ/ש/כ ("והריצוף"→"ריצוף"), רבים ים/ות ("שקעים"→"שקע"),
+    וטעות של אות אחת במילה של 4+ אותיות ("הריסה"≈"הריסת", "פורצלאן"≈"פורצלן"). מחזיר כמה מהמילים נמצאו. */
+ heFin(s){return String(s||'').replace(/ך/g,'כ').replace(/ם/g,'מ').replace(/ן/g,'נ').replace(/ף/g,'פ').replace(/ץ/g,'צ');},
+ wordForms(w){const f=[w];let x=w;
+   for(let k=0;k<2&&x.length>3&&/^[והבלמשכ]/.test(x);k++){x=x.slice(1);f.push(x);}
+   f.slice().forEach(v=>{if(v.length>=5&&/(ימ|ות)$/.test(v))f.push(v.slice(0,-2));});
+   return f;},
+ ed1(a,b){if(a===b)return true;const la=a.length,lb=b.length;if(Math.abs(la-lb)>1)return false;
+   let i=0,j=0,d=0;while(i<la&&j<lb){if(a[i]===b[j]){i++;j++;continue;}if(++d>1)return false;
+     if(la>lb)i++;else if(lb>la)j++;else{i++;j++;}}
+   return d+(la-i)+(lb-j)<=1;},
+ _hayCache:null,
+ hayOf(name,catTitle){const k=name+'\u0001'+catTitle;const C=this._hayCache||(this._hayCache={});
+   if(C[k])return C[k];const s=this.heFin(this.normTxt(name)+' '+this.normTxt(catTitle));
+   const toks=s.split(' ').filter(Boolean);const o={s:s,toks:toks};
+   if(Object.keys(C).length>4000)this._hayCache={};(this._hayCache)[k]=o;return o;},
+ wordHit(w,hay){const fs=this.wordForms(w);
+   for(const f of fs){if(f.length>=1&&hay.s.indexOf(f)>=0)return true;}
+   // טעות של אות אחת — רק בין המילה המלאה (או צורת היחיד שלה) למילה בסעיף, ורק כשהאות הראשונה זהה.
+   // (בלי זה "שקעים" → "קעים" ≈ "קיים" והחיפוש מחזיר סעיפים לא קשורים)
+   if(w.length>=4){const full=[w];if(w.length>=5&&/(ימ|ות)$/.test(w))full.push(w.slice(0,-2));
+     for(const t of hay.toks){if(t.length<4)continue;
+       for(const f of full){if(f.length>=4&&f[0]===t[0]&&this.ed1(f,t))return true;}}}
+   return false;},
+ itemScore(name,catTitle,words){if(!words||!words.length)return 0;const hay=this.hayOf(name,catTitle);let n=0;
+   for(let i=0;i<words.length;i++){if(this.wordHit(words[i],hay))n++;}return n;},
+ /** תוכנית חיפוש: קודם כל המילים; אם אין אף תוצאה — הכי קרובים (הכי הרבה מילים שנמצאו). */
+ searchPlan(q){const W=this.searchWords(q);if(!W.length)return {W:W,min:0,partial:false};
+   const all=[];this.allCats().forEach(c=>(c.items||[]).forEach(i=>all.push([i.name,c.title])));
+   let best=0,full=0;all.forEach(x=>{const s=this.itemScore(x[0],x[1],W);if(s===W.length)full++;if(s>best)best=s;});
+   if(full||W.length<2||best===0)return {W:W,min:W.length,partial:false};
+   return {W:W,min:best,partial:true};},
  normTxt(s){return String(s||'').toLowerCase()
    .replace(/["\u05f4\u201c\u201d]/g,'').replace(/['\u05f3\u2019]/g,'')
    .replace(/[\-\u05be\u2013\u2014_.,\/()]/g,' ')
    .replace(/\s+/g,' ').trim();},
- searchWords(q){const n=this.normTxt(q);return n?n.split(' ').filter(Boolean):[];},
+ SEARCH_STOP:{'את':1,'של':1,'עם':1,'על':1,'לי':1,'אני':1,'רוצה':1,'תמצא':1,'מצא':1,'חפש':1,'תחפש':1,'תביא':1,'צריך':1,'צריכה':1,'בבקשה':1,'גם':1,'כל':1,'או':1,'זה':1,'יש':1,'אולי':1,'איפה':1,'סעיף':1,'סעיפים':1,'תוסיף':1,'הוסף':1,'תראה':1,'שלי':1,'משהו':1,'בשביל':1},
+ searchWords(q){const n=this.heFin(this.normTxt(q));if(!n)return [];const all=n.split(' ').filter(Boolean);
+   // מילות מילוי (בעיקר בדיבור: "תמצא לי ריצוף") — מוסרות רק אם נשארת מילה אחרת
+   const S=this.SEARCH_STOP;const kept=all.filter(w=>!S[w]);return kept.length?kept:all;},
 
  view(){
   const tab=this.state.tab||'home';
@@ -7535,7 +7572,7 @@ const App={
  },
 
  buildView(){const s=this.state,q=s.search.trim();
-  const W=this.searchWords(q);
+  const SP=this.searchPlan(q);const W=SP.W;
   const onlySel=!!s.onlySel;
   // סדר קבוע לפי המחירון עצמו. קודם מיינו לפי דגל hot, שהשתנה בין מכשירים
   // וגרם לקטגוריות לקפוץ ממקום למקום — ונראה כאילו משהו נעלם.
@@ -7545,7 +7582,7 @@ const App={
     ((ORD[a.id]==null?900:ORD[a.id])-(ORD[b.id]==null?900:ORD[b.id])) ||
     String(a.title||'').localeCompare(String(b.title||''),'he'));
   const cats=ordered.map(c=>{
-    let items=c.items.filter(i=>this.itemMatch(i.name,c.title,W));
+    let items=W.length?c.items.filter(i=>this.itemScore(i.name,c.title,W)>=SP.min):c.items.slice();
     if(onlySel)items=items.filter(i=>i.selected&&(+i.qty>0));
     // סדר קבוע: החמים קודם, ובתוך כל קבוצה — סדר המחירון.
     // המיון תלוי רק בתכונות קבועות של הסעיף, לעולם לא במה שנבחר.
@@ -7553,6 +7590,8 @@ const App={
     // שלחיצה נוספת על + באותו מקום הוסיפה כמות לסעיף אחר.
     // לראות רק את הנבחרים: "👁 רק ה-X שבחרתי" או פס "מה בחרתי".
     items=items.slice().sort((a,b)=>(b.hot?1:0)-(a.hot?1:0));
+    // v26.3 — בחיפוש: קודם סעיפים שהמילים בשם שלהם (לא רק בשם הקטגוריה). תלוי רק בחיפוש, לא במה שנבחר.
+    if(W.length){const ns=new Map();items.forEach(i=>ns.set(i,this.itemScore(i.name,'',W)));items.sort((a,b)=>ns.get(b)-ns.get(a));}
     if(!items.length&&(!c.custom||onlySel||W.length))return '';
     const open=s.open[c.id]||!!q||onlySel;const t=this.catTotal(c);
     return `<div data-cid="${c.id}" class="cat ${open?'open':''}"><div class="cat-head" data-cat="${c.id}">
@@ -7574,7 +7613,7 @@ const App={
     ${this.liveIsland()}${this.addonBanner()}
     <div class="searchwrap"><span class="mag">🔍</span>
       <input id="search" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
-      <button class="mic" id="mic">🎤</button></div></div>
+      <button class="mic" id="mic" aria-label="חיפוש קולי" aria-pressed="false">🎤</button></div></div>
   <div class="chips chips-fill">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       if(!n&&!onlySel)return '';
@@ -7593,9 +7632,10 @@ const App={
       if(onlySel){const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
         return `<div class="srch-info"><span>מציג <b>${n}</b> סעיפים שבחרת</span><button id="srch-clear">✕ הצג הכל</button></div>`;}
       if(!q)return '';
-      let hits=0,inCats=0;this.allCats().forEach(c=>{const k=(c.items||[]).filter(i=>this.itemMatch(i.name,c.title,W)).length;if(k){hits+=k;inCats++;}});
+      let hits=0,inCats=0;this.allCats().forEach(c=>{const k=(c.items||[]).filter(i=>W.length&&this.itemScore(i.name,c.title,W)>=SP.min).length;if(k){hits+=k;inCats++;}});
       const tot=this.allCats().reduce((a,c)=>a+(c.items||[]).length,0);
-      return `<div class="srch-info"><span>${hits?`<b>${hits}</b> מתוך ${tot} סעיפים · ${inCats} קטגוריות`:`אין תוצאות עבור "${esc(s.search)}"`}</span><button id="srch-clear">✕ נקה</button></div>`;})()}${cats||(onlySel?'<div class="empty">עוד לא בחרת סעיפים.<br>לחץ "✕ הצג הכל" וסמן מה שצריך.</div>':'<div class="empty">לא נמצאו תוצאות.<br>נסה מילה אחת במקום כמה, או שם קטגוריה.</div>')}</div>
+      return `<div class="srch-info"><span>${hits?(SP.partial?`לא נמצא סעיף עם כל המילים — <b>${hits}</b> הכי קרובים`:`<b>${hits}</b> מתוך ${tot} סעיפים · ${inCats} קטגוריות`):`אין תוצאות עבור "${esc(s.search)}"`}</span><button id="srch-clear">✕ נקה</button></div>`+
+        (!hits||SP.partial?`<button class="srch-ai" id="srch-ai">🤖 הוסף עם AI: "${esc(q.slice(0,40))}"<small>ה-AI ינסח סעיף עם מחיר — להצעה הזו בלבד</small></button>`:'');})()}${cats||(onlySel?'<div class="empty">עוד לא בחרת סעיפים.<br>לחץ "✕ הצג הכל" וסמן מה שצריך.</div>':'<div class="empty">לא נמצאו תוצאות.<br>נסה מילה אחת במקום כמה, או שם קטגוריה.</div>')}</div>
   ${(()=>{const sg=this.suggestions();return sg.length?`<div class="suggest-bar"><div class="sg-head">💡 אולי חסר לך:</div><div class="sg-chips">${sg.map(x=>`<button class="sg-chip" data-suggest="${esc(x.cid)}|${esc(x.iid)}">+ ${esc(x.name)}</button>`).join('')}<button class="sg-chip sg-ai" data-suggest-ai="1">🤖 עוד רעיונות</button></div></div>`:'';})()}
   <div class="dockwrap"><div class="bottombar">${(()=>{
       /* פס אחד במקום שניים: הכמות והסכום הופיעו גם בפס "מה בחרתי"
@@ -10002,6 +10042,7 @@ const App={
   on('[data-chip]','click',e=>{this.state.showAll=e.currentTarget.dataset.chip==='all';this.render();});
   const sb=document.getElementById('search');if(sb)sb.addEventListener('input',e=>{this.state.search=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}});
   const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
+  const sai=document.getElementById('srch-ai');if(sai)sai.onclick=()=>{const t=String(this.state.search||'').trim();if(!t)return;this.captureQuote();this._v2qText=t;this.state.search='';this.v2qConvert();};
   const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
   const v2b=document.getElementById('v2q-btn');if(v2b)v2b.onclick=()=>{this._v2qOn?this.v2qStop():this.v2qStart();};
   const v2c=document.getElementById('v2q-convert');if(v2c)v2c.onclick=()=>this.v2qConvert();
@@ -11092,7 +11133,34 @@ const App={
   draw('before',document.getElementById('ph-before'));draw('after',document.getElementById('ph-after'));
  },
 
- voiceSearch(btn){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){this.toast('חיפוש קולי לא נתמך בדפדפן זה');return;}const r=new SR();r.lang='he-IL';r.interimResults=false;btn.classList.add('rec');r.onresult=e=>{this.state.search=e.results[0][0].transcript;this.render();};r.onerror=()=>{this.toast('לא זוהה קול');btn.classList.remove('rec');};r.onend=()=>{const b=document.getElementById('mic');if(b)b.classList.remove('rec');};try{r.start();}catch(e){}},
+ /* v26.3 — מיקרופון בחיפוש: הטקסט מופיע תוך כדי דיבור, נבחרת החלופה שמוצאת הכי הרבה סעיפים,
+    מילות מילוי מוסרות, לחיצה נוספת עוצרת, והודעה ברורה לכל תקלה. */
+ voiceSearch(btn){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){this.toast('חיפוש קולי לא נתמך בדפדפן הזה — נסה בכרום');return;}
+  if(this._vsRec){try{this._vsRec.stop();}catch(e){}return;}
+  const r=new SR();this._vsRec=r;r.lang='he-IL';r.interimResults=true;r.continuous=false;try{r.maxAlternatives=4;}catch(e){}
+  let got=false,err='';const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.setAttribute('aria-pressed',on?'true':'false');}};
+  mark(true);this.toast('🎙️ מקשיב… אמור את שם הסעיף');this.haptic(10);
+  r.onresult=e=>{let fin=null,interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){const R=e.results[i];if(R.isFinal)fin=R;else interim+=R[0].transcript;}
+    const inp=document.getElementById('search');
+    if(!fin){if(inp)inp.value=interim;return;}
+    got=true;const alts=[];for(let k=0;k<fin.length;k++)alts.push(String(fin[k].transcript||'').trim());
+    // החלופה שמוצאת הכי הרבה סעיפים (המלאה קודם; אחר כך הכי קרובים)
+    let best=alts[0]||'',bs=-1;alts.forEach((t,k)=>{const P=this.searchPlan(t);let n=0;
+      if(P.W.length)this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(this.itemScore(i.name,c.title,P.W)>=P.min)n++;}));
+      const sc=(P.partial?0:1e6)+n*10-k;if(n&&sc>bs){bs=sc;best=t;}});
+    this.state.search=best;this.render();};
+  r.onerror=e=>{err=(e&&e.error)||'';};
+  r.onend=()=>{this._vsRec=null;mark(false);
+    if(got)return;
+    const M={'not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן','service-not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן',
+      'no-speech':'לא שמעתי — לחץ שוב ודבר קרוב לטלפון','audio-capture':'לא נמצא מיקרופון פעיל (אולי אפליקציה אחרת משתמשת בו)',
+      'network':'זיהוי דיבור צריך אינטרנט — בדוק חיבור','aborted':''};
+    const m=(err in M)?M[err]:'לא זוהה דיבור — נסה שוב';if(m)this.toast(m);};
+  try{r.start();}catch(e){this._vsRec=null;mark(false);this.toast('המיקרופון לא נפתח — נסה שוב');}
+ },
 
  initSigPad(){const cv=document.getElementById('sigpad');if(!cv)return;const r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';let d=false,has=false;const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);const cl=document.getElementById('sig-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);has=false;};const sv=document.getElementById('sig-save');if(sv)sv.onclick=()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.toast('החתימה נשמרה ✓');this.render();};const ss=document.getElementById('sig-send');if(ss)ss.onclick=async()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.render();await this.sendSignedConfirmation();};},
 
