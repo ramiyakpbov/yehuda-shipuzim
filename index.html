@@ -3408,7 +3408,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.3';
+const VERSION='26.4';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -11140,21 +11140,26 @@ const App={
   if(!SR){this.toast('חיפוש קולי לא נתמך בדפדפן הזה — נסה בכרום');return;}
   if(this._vsRec){try{this._vsRec.stop();}catch(e){}return;}
   const r=new SR();this._vsRec=r;r.lang='he-IL';r.interimResults=true;r.continuous=false;try{r.maxAlternatives=4;}catch(e){}
-  let got=false,err='';const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.setAttribute('aria-pressed',on?'true':'false');}};
+  let got=false,err='',last='';const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.setAttribute('aria-pressed',on?'true':'false');}};
+  // v26.4 — באנדרואיד לפעמים לא מגיעה תוצאה "סופית" — רק טקסט ביניים ואז סיום. לכן הטקסט נכנס לחיפוש כבר תוך כדי,
+  // ובסיום משתמשים בטקסט האחרון ששמענו. עצירה אוטומטית אחרי 10 שניות.
+  const live=t=>{t=String(t||'').trim();if(!t)return;last=t;this.state.search=t;this.render();mark(true);
+    const inp=document.getElementById('search');if(inp){try{inp.setSelectionRange(t.length,t.length);}catch(x){}}};
+  clearTimeout(this._vsT);this._vsT=setTimeout(()=>{try{r.stop();}catch(x){}},10000);
   mark(true);this.toast('🎙️ מקשיב… אמור את שם הסעיף');this.haptic(10);
   r.onresult=e=>{let fin=null,interim='';
     for(let i=e.resultIndex;i<e.results.length;i++){const R=e.results[i];if(R.isFinal)fin=R;else interim+=R[0].transcript;}
-    const inp=document.getElementById('search');
-    if(!fin){if(inp)inp.value=interim;return;}
-    got=true;const alts=[];for(let k=0;k<fin.length;k++)alts.push(String(fin[k].transcript||'').trim());
+    if(!fin){live(interim);return;}
+    got=true;clearTimeout(this._vsT);const alts=[];for(let k=0;k<fin.length;k++)alts.push(String(fin[k].transcript||'').trim());
     // החלופה שמוצאת הכי הרבה סעיפים (המלאה קודם; אחר כך הכי קרובים)
     let best=alts[0]||'',bs=-1;alts.forEach((t,k)=>{const P=this.searchPlan(t);let n=0;
       if(P.W.length)this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(this.itemScore(i.name,c.title,P.W)>=P.min)n++;}));
       const sc=(P.partial?0:1e6)+n*10-k;if(n&&sc>bs){bs=sc;best=t;}});
     this.state.search=best;this.render();};
   r.onerror=e=>{err=(e&&e.error)||'';};
-  r.onend=()=>{this._vsRec=null;mark(false);
+  r.onend=()=>{this._vsRec=null;clearTimeout(this._vsT);mark(false);
     if(got)return;
+    if(last){this.state.search=last;this.render();return;}   // רק טקסט ביניים — משתמשים בו
     const M={'not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן','service-not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן',
       'no-speech':'לא שמעתי — לחץ שוב ודבר קרוב לטלפון','audio-capture':'לא נמצא מיקרופון פעיל (אולי אפליקציה אחרת משתמשת בו)',
       'network':'זיהוי דיבור צריך אינטרנט — בדוק חיבור','aborted':''};
