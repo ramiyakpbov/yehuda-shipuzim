@@ -101,6 +101,31 @@ input,select,textarea{font-family:inherit;}
 /* v26.3 — אין תוצאות → הוספה עם AI */
 .srch-ai{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin:2px 0 12px;padding:11px 14px;border-radius:14px;border:1px dashed var(--line);background:var(--bg2);color:var(--txt);font:inherit;font-weight:700;font-size:14px;text-align:start;cursor:pointer;}
 .srch-ai small{font-weight:400;font-size:11.5px;color:var(--muted);}
+/* v26.5 — שדרוגי חיפוש ומיקרופון */
+.searchwrap input.has-x{padding-left:44px;}
+.srch-x{position:absolute;inset-inline-end:62px;top:24px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--bg2);color:var(--muted);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.srch-x:active{transform:translateY(-50%) scale(.92);}
+.mic{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;}
+.mic.hold{box-shadow:0 0 0 4px rgba(237,28,36,.35);}
+.vs-heard{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin:0 0 10px;font-size:13px;}
+.vs-heard .q{flex:1;min-width:0;overflow-wrap:anywhere;}
+.vs-heard .q b{color:var(--txt);}
+.vs-heard button{background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:6px 10px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+.vs-prop{background:var(--bg2);border:1px solid var(--red);border-radius:14px;padding:12px;margin:0 0 10px;display:flex;flex-direction:column;gap:8px;}
+.vs-prop .t{font-weight:800;font-size:14px;overflow-wrap:anywhere;}
+.vs-prop .d{font-size:12.5px;color:var(--muted);}
+.vs-prop .b{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+.vs-prop .b button{border-radius:11px;padding:10px 6px;font:inherit;font-weight:800;font-size:13px;border:1px solid var(--line);background:var(--bg3);color:var(--txt);cursor:pointer;}
+.vs-prop .b .ok{background:var(--red);border-color:var(--red);color:#fff;}
+.srch-top{display:flex;flex-direction:column;gap:6px;margin:0 0 10px;}
+.srch-top .h{font-size:11.5px;color:var(--muted);}
+.srch-top button{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;text-align:start;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--txt);font:inherit;font-size:13.5px;cursor:pointer;}
+.srch-top button span{overflow-wrap:anywhere;}
+.srch-top button small{color:var(--muted);font-size:11.5px;display:block;}
+.srch-top button i{font-style:normal;font-weight:800;background:var(--red);color:#fff;border-radius:9px;padding:5px 10px;white-space:nowrap;}
+.srch-recent{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 10px;font-size:12px;color:var(--muted);}
+.srch-recent button{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.srch-recent .clr{color:var(--muted);background:none;border:0;padding:6px 4px;}
 @keyframes pulse{50%{opacity:.55;}}
 .chips{display:flex;flex-wrap:wrap;gap:9px;padding:11px 12px 8px;align-items:center;
   position:sticky;top:0;z-index:40;background:var(--bg);
@@ -3408,7 +3433,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.4';
+const VERSION='26.5';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -7612,8 +7637,9 @@ const App={
       <button class="icon-btn" data-modal="menu" aria-label="תפריט והגדרות">${ico('settings',20)}</button></div>
     ${this.liveIsland()}${this.addonBanner()}
     <div class="searchwrap"><span class="mag">🔍</span>
-      <input id="search" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
-      <button class="mic" id="mic" aria-label="חיפוש קולי" aria-pressed="false">🎤</button></div></div>
+      <input id="search" class="${q?'has-x':''}" placeholder="חיפוש ב-${this.catalogCount()} סעיפים — אפשר כמה מילים" value="${s.search.replace(/"/g,'&quot;')}"/>
+      ${q?`<button class="srch-x" id="srch-x" type="button" aria-label="נקה חיפוש">✕</button>`:''}
+      <button class="mic" id="mic" aria-label="חיפוש קולי · לחיצה ארוכה = מקשיב כל עוד מחזיקים" aria-pressed="false">🎤</button></div></div>
   <div class="chips chips-fill">
     ${(()=>{const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
       if(!n&&!onlySel)return '';
@@ -7628,7 +7654,7 @@ const App={
       return n?`<button class="chip chip-danger" id="chip-reset">🔄 איפוס</button>`:'';})()}</div></div>
   ${Sync.status==='err'?`<div class="sync-err-banner" id="sync-err-banner">⚠️ הסנכרון לענן נכשל — הנתונים נשמרים במכשיר. <button id="sync-retry">נסה שוב</button></div>`:''}
   ${this.summaryBanner()}
-  <div class="wrap">${(()=>{
+  <div class="wrap">${this.vsPanel(q,SP)}${(()=>{
       if(onlySel){const n=this.chosen().reduce((a,g)=>a+g.lines.length,0);
         return `<div class="srch-info"><span>מציג <b>${n}</b> סעיפים שבחרת</span><button id="srch-clear">✕ הצג הכל</button></div>`;}
       if(!q)return '';
@@ -10040,8 +10066,21 @@ const App={
     el.addEventListener('mousedown',start);el.addEventListener('mouseup',cancel);el.addEventListener('mouseleave',cancel);
   });
   on('[data-chip]','click',e=>{this.state.showAll=e.currentTarget.dataset.chip==='all';this.render();});
-  const sb=document.getElementById('search');if(sb)sb.addEventListener('input',e=>{this.state.search=e.target.value;const p=e.target.selectionStart;this.render();const n=document.getElementById('search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}});
-  const mic=document.getElementById('mic');if(mic)mic.addEventListener('click',()=>this.voiceSearch(mic));
+  const sb=document.getElementById('search');if(sb)sb.addEventListener('input',e=>{this.state.search=e.target.value;this._srchUsed=false;this._vsHeard=null;this._vsProp=null;const p=e.target.selectionStart;this.render();const n=document.getElementById('search');if(n){n.focus();try{n.setSelectionRange(p,p);}catch(x){}}});
+  const mic=document.getElementById('mic');if(mic)this.micBind(mic);
+  const sx=document.getElementById('srch-x');if(sx)sx.onclick=()=>this.srchClear(true);
+  if(sb)sb.addEventListener('focus',()=>{if(this._srchUsed&&String(this.state.search||'').trim()){this.srchClear(true);}});
+  on('[data-rsq]','click',e=>{this.state.search=e.currentTarget.dataset.rsq||'';this._srchUsed=false;this._vsHeard=null;this.render();});
+  {const rc=document.getElementById('rs-clear');if(rc)rc.onclick=()=>{try{localStorage.removeItem('ys_recentSearch');}catch(x){}this.render();};}
+  on('[data-qadd]','click',e=>{const[c,i,n]=(e.currentTarget.dataset.qadd||'').split('|');this.vsAdd(c,i,n?+n:0,null);});
+  {const ok=document.getElementById('vs-ok');if(ok)ok.onclick=()=>{const P=this._vsProp;if(P)this.vsAdd(P.cid,P.iid,P.qty,P.price);};
+   const ot=document.getElementById('vs-other');if(ot)ot.onclick=()=>{this._vsProp=null;this.render();};
+   const un=document.getElementById('vs-undo');if(un)un.onclick=()=>this.vsUndo();
+   const hx=document.getElementById('vs-hx');if(hx)hx.onclick=()=>{this._vsHeard=null;this._vsProp=null;this.render();};}
+  if(!this._srchHook){this._srchHook=true;const root=document.getElementById('root');
+    const mark=ev=>{try{if(this.state.tab!=='build'||!String(this.state.search||'').trim())return;const t=ev.target;if(!t||!t.closest)return;
+      if(t.closest('.item [data-sel],.item [data-step],.item [data-fld],.item [data-labor]'))this.srchUsed();}catch(x){}};
+    if(root){root.addEventListener('click',mark,true);root.addEventListener('input',mark,true);}}
   const sai=document.getElementById('srch-ai');if(sai)sai.onclick=()=>{const t=String(this.state.search||'').trim();if(!t)return;this.captureQuote();this._v2qText=t;this.state.search='';this.v2qConvert();};
   const vb=document.getElementById('voice-btn');if(vb)vb.onclick=()=>{this._voiceOn?this.voiceStop():this.voiceStart();};
   const v2b=document.getElementById('v2q-btn');if(v2b)v2b.onclick=()=>{this._v2qOn?this.v2qStop():this.v2qStart();};
@@ -11133,40 +11172,151 @@ const App={
   draw('before',document.getElementById('ph-before'));draw('after',document.getElementById('ph-after'));
  },
 
- /* v26.3 — מיקרופון בחיפוש: הטקסט מופיע תוך כדי דיבור, נבחרת החלופה שמוצאת הכי הרבה סעיפים,
-    מילות מילוי מוסרות, לחיצה נוספת עוצרת, והודעה ברורה לכל תקלה. */
- voiceSearch(btn){
+ /* ═══ v26.3–26.5 — מיקרופון וחיפוש בלשונית הצעה ═══
+    voiceParse: פקודות (מחק / נקה / בלי… / מחק מילה / בטל), כמות ומחיר מתוך המשפט ("ריצוף פורצלן 40 מטר במחיר 180"),
+    מספרים במילים ("מאה ועשרים", "שלושה וחצי"), יחידות לא נספרות כמילות חיפוש.
+    הצעה להוספה: התאמה ברורה אחת → כרטיס אישור; כמה → 3 הכי טובות ככפתורים. "שמעתי:" + ביטול. לחיצה ארוכה = מקשיב כל עוד מחזיקים. */
+ HE_NUMS:{'אפס':0,'אחת':1,'אחד':1,'שתיים':2,'שתים':2,'שניים':2,'שני':2,'שתי':2,'שלוש':3,'שלושה':3,'ארבע':4,'ארבעה':4,'חמש':5,'חמישה':5,'שש':6,'שישה':6,'שבע':7,'שבעה':7,'שמונה':8,'תשע':9,'תשעה':9,
+   'עשר':10,'עשרה':10,'אחתעשרה':11,'שתיםעשרה':12,'עשרים':20,'שלושים':30,'ארבעים':40,'חמישים':50,'שישים':60,'שבעים':70,'שמונים':80,'תשעים':90,'מאה':100,'מאתיים':200,'מאות':100,'אלף':1000,'אלפיים':2000,'אלפים':1000,'חצי':0.5},
+ VS_UNITS:{'מטר':1,'מטרים':1,'מר':1,'מטר רבוע':1,'רבוע':1,'רבועים':1,'מא':1,'רץ':1,'אורך':1,'יחידה':1,'יחידות':1,'יח':1,'נקודה':1,'נקודות':1,'קוב':1,'מק':1,'יום':1,'ימים':1,'חודש':1,'חודשים':1,'טון':1,'קילו':1,'קג':1,'שעה':1,'שעות':1,'פעמים':1},
+ VS_CUR:{'שח':1,'שקל':1,'שקלים':1,'₪':1,'שקלים חדשים':1},
+ /** מספר מרצף מילים/ספרות. מחזיר {n,len} או null. */
+ vsMap(k){const C=this._vsMaps||(this._vsMaps={});if(!C[k]){const o={};Object.keys(this[k]).forEach(x=>{o[this.heFin(x)]=this[k][x];});C[k]=o;}return C[k];},   // מפתחות בלי אותיות סופיות (כמו הטקסט)
+ vsNum(toks,i){const N=this.vsMap('HE_NUMS');let j=i,tot=0,cur=0,got=false;
+   const strip=t=>t.replace(/^ו(?=.)/,'');
+   while(j<toks.length){let t=toks[j];const d=t.replace(/,/g,'');
+     if(/^\d+(\.\d+)?$/.test(d)){if(got)break;cur+=parseFloat(d);got=true;j++;break;}   // מספר בספרות — שלם, לא מחברים אליו מילים
+     const s=(t in N)?t:strip(t);
+     if(s in N){const v=N[s];
+       if(s==='אלפ'||s==='אלפימ'){cur=(cur||1)*1000;tot+=cur;cur=0;}
+       else if(s==='מאות'){cur=(cur||1)*100;}
+       else if(s==='מאה'&&cur>0&&cur<10){cur=cur*100;}
+       else cur+=v;
+       got=true;j++;continue;}
+     break;}
+   return got?{n:tot+cur,len:j-i}:null;},
+ voiceParse(text){
+   const raw=String(text||'').trim();const n0=this.normTxt(raw).replace(/["'״׳]/g,'');const n=this.heFin(n0);
+   if(!n)return {q:'',cmd:null};
+   if(/^(תמחק|מחק|נקה|תנקה|למחוק)( את)?( הכל| החיפוש| חיפוש)?$/.test(n))return {cmd:'clear',q:''};
+   if(/^(תמחק|מחק|למחוק)( את)?(( ה?מילה)( ה?אחרונה| ה?אחרונ)?|( ה?אחרונה| ה?אחרונ))$/.test(n))return {cmd:'pop',q:''};
+   if(/^(בטל|תבטל|ביטול)$/.test(n))return {cmd:'undo',q:''};
+   const wo=n0.match(/^(בלי|ללא|תוריד|הורד|בלעדי)\s+(.+)$/);if(wo)return {cmd:'without',w:wo[2],q:''};
+   const U=this.vsMap('VS_UNITS'),CU=this.vsMap('VS_CUR'),HN=this.vsMap('HE_NUMS');
+   const toks=n.split(' ').filter(Boolean);const orig=n0.split(' ').filter(Boolean);const keep=[];let qty=null,price=null;   // toks לזיהוי, orig לתצוגה (אותיות סופיות)
+   for(let i=0;i<toks.length;){const t=toks[i];
+     if(/^(במחיר|מחיר|בעלות|עלות)$/.test(t)){const m=this.vsNum(toks,i+1);if(m){price=m.n;i+=1+m.len;if(i<toks.length&&CU[toks[i]])i++;continue;}i++;continue;}
+     const m=this.vsNum(toks,i);
+     // מידות ("60 על 60", "120 x 60") — חלק משם הסעיף, לא כמות
+     if(m&&/^(על|x|איקס|כפול)$/.test(toks[i+m.len]||'')){const m2=this.vsNum(toks,i+m.len+1);if(m2){keep.push(String(m.n),String(m2.n));i+=m.len+1+m2.len;continue;}}
+     if(m){let k=i+m.len;const nx=toks[k]||'';
+       if(CU[nx]){price=m.n;i=k+1;continue;}
+       if(qty===null){qty=m.n;i=k;while(i<toks.length&&U[toks[i]])i++;continue;}
+       keep.push(orig[i]||t);i++;continue;}
+     if(U[t]&&(qty!==null)){i++;continue;}
+     if(t==='כמות'){i++;continue;}
+     keep.push(orig[i]||t);i++;}
+   // מילות פתיחה ("תמצא לי…") לא נכנסות לשדה — נשאר מה שמחפשים
+   const S=this.SEARCH_STOP;while(keep.length>1&&S[this.heFin(this.normTxt(keep[0]))])keep.shift();
+   return {cmd:null,q:keep.join(' '),qty:qty,price:price};},
+ /** סעיפים שמתאימים, מדורגים: קודם כל המילים בשם, אחר כך הסדר. */
+ vsRank(q){const P=this.searchPlan(q);if(!P.W.length)return [];const out=[];
+   this.allCats().forEach(c=>(c.items||[]).forEach(i=>{const s=this.itemScore(i.name,c.title,P.W);if(s>=P.min)out.push({cid:c.id,iid:i.id,name:i.name,unit:i.unit,price:i.price,cat:c.title,s:s,ns:this.itemScore(i.name,'',P.W),partial:P.partial});}));
+   // שוויון: קודם קטגוריה שהשם שלה מתאים ("ריצוף" → קטגוריית ריצוף, לא "פירוק ריצוף"), אחר כך שם שמתחיל במילה, אחר כך שם קצר
+   const w0=P.W[0];const cs={};out.forEach(o=>{if(cs[o.cat]===undefined)cs[o.cat]=this.itemScore('',o.cat,P.W);o.cs=cs[o.cat];
+     o.st=this.heFin(this.normTxt(o.name)).indexOf(w0)===0?1:0;});
+   out.sort((a,b)=>b.ns-a.ns||b.cs-a.cs||b.st-a.st||b.s-a.s||String(a.name).length-String(b.name).length);return out;},
+ recentSearches(){try{return JSON.parse(localStorage.getItem('ys_recentSearch')||'[]')||[];}catch(e){return [];}},
+ pushRecent(q){q=String(q||'').trim();if(!q||q.length<2)return;try{const a=this.recentSearches().filter(x=>x!==q);a.unshift(q);localStorage.setItem('ys_recentSearch',JSON.stringify(a.slice(0,5)));}catch(e){}},
+ srchUsed(){if(this._srchUsed)return;this._srchUsed=true;this.pushRecent(this.state.search);},
+ srchClear(focus){const q=String(this.state.search||'').trim();if(q&&this._srchUsed)this.pushRecent(q);
+   this.state.search='';this._srchUsed=false;this._vsHeard=null;this._vsProp=null;this.render();
+   if(focus){const n=document.getElementById('search');if(n){try{n.focus();}catch(e){}}}},
+ /** הוספה מהחיפוש/מהקול: מסמן, קובע כמות (או +1), מחיר אם נאמר. שומר מה היה — ל"בטל". */
+ vsAdd(cid,iid,qty,price){const it=this.find(cid,iid);if(!it){this.toast('הסעיף לא נמצא');return;}
+   this._vsUndo={search:this.state.search,cid:cid,iid:iid,qty:it.qty,sel:!!it.selected,price:it.price};
+   const q=(+qty>0)?+qty:((+it.qty||0)+1);it.qty=Math.round(q*100)/100;it.selected=true;
+   if(+price>0)it.price=+price;
+   this.saveActive(cid);this.state.open[cid]=true;this._vsProp=null;this.srchUsed();
+   this._vsHeard=Object.assign({},this._vsHeard||{},{added:it.name+' · '+it.qty+' '+(it.unit||'')});
+   this.haptic(18);this.toast('✓ נוסף: '+it.name+' · כמות '+it.qty+(+price>0?' · ₪'+price:''));this.render();},
+ vsUndo(){const U=this._vsUndo;
+   if(U){const it=this.find(U.cid,U.iid);if(it){it.qty=U.qty;it.selected=U.sel;it.price=U.price;this.saveActive(U.cid);}
+     this.state.search=U.search||'';this._vsUndo=null;}
+   else if(this._vsHeard&&this._vsHeard.prev!==undefined){this.state.search=this._vsHeard.prev;}
+   this._vsHeard=null;this._vsProp=null;this._srchUsed=false;this.toast('↩︎ בוטל');this.render();},
+ /** פאנל מתחת לכותרת: "שמעתי", כרטיס אישור, 3 הכי טובות, חיפושים אחרונים. */
+ vsPanel(q,SP){if(this.state.onlySel)return '';let out='';const H=this._vsHeard;
+   if(H&&H.text)out+=`<div class="vs-heard" role="status"><span class="q">🎙️ שמעתי: <b>«${esc(H.text)}»</b>${H.added?'<br>✓ נוסף: '+esc(H.added):''}${H.note?'<br>'+esc(H.note):''}</span><button type="button" id="vs-undo">↩︎ בטל</button><button type="button" id="vs-hx" aria-label="סגור">✕</button></div>`;
+   const P=this._vsProp;
+   if(P)out+=`<div class="vs-prop"><div class="t">${esc(P.name)}</div><div class="d">${esc(P.cat)} · כמות <b>${P.qty>0?P.qty:1}</b> ${esc(P.unit||'')}${P.price>0?' · מחיר ₪'+P.price:' · ₪'+(+P.cur||0)}</div>
+     <div class="b"><button type="button" class="ok" id="vs-ok">✓ הוסף</button><button type="button" id="vs-other">בחר אחר</button><button type="button" id="vs-undo2" onclick="App.vsUndo()">↩︎ בטל</button></div></div>`;
+   if(q&&!P){const R=this.vsRank(q).slice(0,3);const qn=(H&&H.qty>0)?H.qty:0;
+     if(R.length)out+=`<div class="srch-top"><div class="h">${SP.partial?'הכי קרובים':'הכי מתאימים'} — לחיצה מוסיפה להצעה</div>${R.map(r=>{const it=this.find(r.cid,r.iid)||{};
+       return `<button type="button" data-qadd="${esc(r.cid)}|${esc(r.iid)}|${qn||''}"><span>${esc(r.name)}<small>${esc(r.cat)} · ₪${+r.price||0} / ${esc(r.unit||'')}${it.selected&&+it.qty>0?' · כבר בהצעה: '+it.qty:''}</small></span><i>+ ${qn?qn:(it.selected&&+it.qty>0?'1':'הוסף')}</i></button>`;}).join('')}</div>`;}
+   if(!q){const rs=this.recentSearches();if(rs.length)out+=`<div class="srch-recent"><span>🕘 אחרונים:</span>${rs.map(x=>`<button type="button" data-rsq="${esc(x)}">${esc(x)}</button>`).join('')}<button type="button" class="clr" id="rs-clear" aria-label="מחק חיפושים אחרונים">✕</button></div>`;}
+   return out;},
+ /** מה עושים עם טקסט ששמענו. fin=סופי. מחזיר true אם זו פקודה שממשיכים אחריה להקשיב. */
+ vsApply(text,fin,base){const V=this.voiceParse(text);const prev=String(base!==undefined&&base!==null?base:(this.state.search||''));
+   if(V.cmd){if(!fin)return false;
+     if(V.cmd==='clear'){this.state.search='';this._vsProp=null;this._srchUsed=false;this._vsHeard={text:text,prev:prev,note:'החיפוש נוקה — המשך לדבר'};this.render();return true;}
+     if(V.cmd==='undo'){this.vsUndo();return false;}
+     if(V.cmd==='pop'){const w=prev.trim().split(/\s+/);w.pop();this.state.search=w.join(' ');this._vsHeard={text:text,prev:prev,note:'המילה האחרונה נמחקה'};this.render();return true;}
+     if(V.cmd==='without'){const rm=this.searchWords(V.w);const keep=prev.trim().split(/\s+/).filter(x=>{const xn=this.searchWords(x)[0]||'';return !rm.some(r=>r===xn||this.wordForms(xn).indexOf(r)>=0||this.wordForms(r).indexOf(xn)>=0||this.ed1(r,xn));});
+       this.state.search=keep.join(' ');this._vsHeard={text:text,prev:prev,note:keep.length<prev.trim().split(/\s+/).length?'הוצאתי: '+V.w:'לא מצאתי את "'+V.w+'" בחיפוש'};this.render();return true;}}
+   if(!V.q){if(fin&&(V.qty||V.price))this._vsHeard={text:text,prev:prev,note:'שמעתי מספר בלי שם סעיף — אמור גם מה לחפש'};this.render();return false;}
+   this.state.search=V.q;this._srchUsed=false;this._vsProp=null;
+   if(fin){this._vsHeard={text:text,prev:prev,qty:V.qty||0,price:V.price||0};this.pushRecent(V.q);
+     if(V.qty||V.price){const R=this.vsRank(V.q);
+       const clear=R.length&&!R[0].partial&&(R.length===1||R[0].ns>R[1].ns);
+       if(clear){const r=R[0];this._vsProp={cid:r.cid,iid:r.iid,name:r.name,cat:r.cat,unit:r.unit,qty:V.qty||0,price:V.price||0,cur:r.price};}}}
+   this.render();return false;},
+ micBind(mic){
+   mic.addEventListener('contextmenu',e=>e.preventDefault());
+   mic.addEventListener('pointerdown',e=>{if(this._vsRec)return;clearTimeout(this._vsHoldT);this._vsHoldFired=false;
+     this._vsHoldT=setTimeout(()=>{this._vsHoldFired=true;this.voiceSearch(mic,{hold:true});
+       const up=()=>{document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);
+         if(this._vsRec&&this._vsHold){try{this._vsRec.stop();}catch(x){}}};
+       document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},450);});
+   const cancel=()=>clearTimeout(this._vsHoldT);
+   mic.addEventListener('pointerup',cancel);mic.addEventListener('pointerleave',cancel);mic.addEventListener('pointercancel',cancel);
+   mic.addEventListener('click',e=>{if(this._vsHoldFired){this._vsHoldFired=false;e.preventDefault();return;}this.voiceSearch(mic);});},
+ voiceSearch(btn,opt){opt=opt||{};
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){this.toast('חיפוש קולי לא נתמך בדפדפן הזה — נסה בכרום');return;}
   if(this._vsRec){try{this._vsRec.stop();}catch(e){}return;}
-  const r=new SR();this._vsRec=r;r.lang='he-IL';r.interimResults=true;r.continuous=false;try{r.maxAlternatives=4;}catch(e){}
-  let got=false,err='',last='';const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.setAttribute('aria-pressed',on?'true':'false');}};
-  // v26.4 — באנדרואיד לפעמים לא מגיעה תוצאה "סופית" — רק טקסט ביניים ואז סיום. לכן הטקסט נכנס לחיפוש כבר תוך כדי,
-  // ובסיום משתמשים בטקסט האחרון ששמענו. עצירה אוטומטית אחרי 10 שניות.
-  const live=t=>{t=String(t||'').trim();if(!t)return;last=t;this.state.search=t;this.render();mark(true);
-    const inp=document.getElementById('search');if(inp){try{inp.setSelectionRange(t.length,t.length);}catch(x){}}};
-  clearTimeout(this._vsT);this._vsT=setTimeout(()=>{try{r.stop();}catch(x){}},10000);
-  mark(true);this.toast('🎙️ מקשיב… אמור את שם הסעיף');this.haptic(10);
-  r.onresult=e=>{let fin=null,interim='';
+  // לפני הקשבה חדשה: אם כבר עבדת על סעיף מהחיפוש — מתחילים נקי
+  if(this._srchUsed&&String(this.state.search||'').trim()){this.pushRecent(this.state.search);this.state.search='';this._srchUsed=false;this._vsProp=null;this._vsHeard=null;this.render();}
+  const r=new SR();this._vsRec=r;this._vsHold=!!opt.hold;r.lang='he-IL';r.interimResults=true;r.continuous=!!opt.hold;try{r.maxAlternatives=4;}catch(e){}
+  let got=false,err='',last='',again=false;const base=String(this.state.search||'');
+  const CMDW=/^(בלי|ללא|תוריד|הורד|מחק|תמחק|למחוק|נקה|תנקה|בטל|תבטל|ביטול)$/;
+  const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.classList.toggle('hold',on&&this._vsHold);b.setAttribute('aria-pressed',on?'true':'false');}};
+  const live=t=>{t=String(t||'').trim();if(!t)return;last=t;if(CMDW.test(this.heFin(this.normTxt(t)).split(' ')[0]||''))return;const V=this.voiceParse(t);if(V.cmd)return;if(V.q){this.state.search=V.q;this.render();mark(true);
+      const inp=document.getElementById('search');if(inp){try{inp.setSelectionRange(inp.value.length,inp.value.length);}catch(x){}}}};
+  clearTimeout(this._vsT);if(!opt.hold)this._vsT=setTimeout(()=>{try{r.stop();}catch(x){}},10000);
+  mark(true);this.toast(opt.hold?'🎙️ מקשיב כל עוד מחזיקים…':'🎙️ מקשיב… אמור סעיף, כמות או "מחק"');this.haptic(10);
+  r.onresult=e=>{
+    if(this._vsHold){const full=Array.from(e.results).map(R=>R[0].transcript).join(' ').replace(/\s+/g,' ').trim();live(full);return;}
+    let fin=null,interim='';
     for(let i=e.resultIndex;i<e.results.length;i++){const R=e.results[i];if(R.isFinal)fin=R;else interim+=R[0].transcript;}
     if(!fin){live(interim);return;}
     got=true;clearTimeout(this._vsT);const alts=[];for(let k=0;k<fin.length;k++)alts.push(String(fin[k].transcript||'').trim());
-    // החלופה שמוצאת הכי הרבה סעיפים (המלאה קודם; אחר כך הכי קרובים)
-    let best=alts[0]||'',bs=-1;alts.forEach((t,k)=>{const P=this.searchPlan(t);let n=0;
+    // פקודה בכל אחת מהחלופות קודמת; אחרת — החלופה שמוצאת הכי הרבה סעיפים
+    let best=alts[0]||'';const cmdAlt=alts.find(t=>this.voiceParse(t).cmd);
+    if(cmdAlt)best=cmdAlt;else{let bs=-1;alts.forEach((t,k)=>{const V=this.voiceParse(t);const P=this.searchPlan(V.q);let n=0;
       if(P.W.length)this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(this.itemScore(i.name,c.title,P.W)>=P.min)n++;}));
-      const sc=(P.partial?0:1e6)+n*10-k;if(n&&sc>bs){bs=sc;best=t;}});
-    this.state.search=best;this.render();};
+      const sc=(P.partial?0:1e6)+n*10-k;if(n&&sc>bs){bs=sc;best=t;}});}
+    last=best;again=this.vsApply(best,true,base);};
   r.onerror=e=>{err=(e&&e.error)||'';};
-  r.onend=()=>{this._vsRec=null;clearTimeout(this._vsT);mark(false);
-    if(got)return;
-    if(last){this.state.search=last;this.render();return;}   // רק טקסט ביניים — משתמשים בו
+  r.onend=()=>{this._vsRec=null;clearTimeout(this._vsT);const wasHold=this._vsHold;this._vsHold=false;mark(false);
+    if(!got&&last){again=this.vsApply(last,true,base);got=true;}   // רק טקסט ביניים (אנדרואיד) או לחיצה ארוכה — זה מה שנאמר
+    if(got){if(again&&!wasHold){setTimeout(()=>{const b=document.getElementById('mic');if(b&&!this._vsRec)this.voiceSearch(b);},250);}return;}
     const M={'not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן','service-not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן',
       'no-speech':'לא שמעתי — לחץ שוב ודבר קרוב לטלפון','audio-capture':'לא נמצא מיקרופון פעיל (אולי אפליקציה אחרת משתמשת בו)',
       'network':'זיהוי דיבור צריך אינטרנט — בדוק חיבור','aborted':''};
     const m=(err in M)?M[err]:'לא זוהה דיבור — נסה שוב';if(m)this.toast(m);};
-  try{r.start();}catch(e){this._vsRec=null;mark(false);this.toast('המיקרופון לא נפתח — נסה שוב');}
+  try{r.start();}catch(e){this._vsRec=null;this._vsHold=false;mark(false);this.toast('המיקרופון לא נפתח — נסה שוב');}
  },
-
  initSigPad(){const cv=document.getElementById('sigpad');if(!cv)return;const r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';let d=false,has=false;const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);const cl=document.getElementById('sig-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);has=false;};const sv=document.getElementById('sig-save');if(sv)sv.onclick=()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.toast('החתימה נשמרה ✓');this.render();};const ss=document.getElementById('sig-send');if(ss)ss.onclick=async()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.render();await this.sendSignedConfirmation();};},
 
  async loadPortfolio(){const grid=document.getElementById('pf-grid');if(!grid)return;const list=await Photos.list('__portfolio__');grid.innerHTML=list.length?list.map(p=>`<div class="ph"><img loading="lazy" src="${p.data}"/><button class="del" data-delpf="${p.id}">🗑️</button></div>`).join(''):'<div class="empty" style="grid-column:1/-1;padding:14px">אין עדיין תמונות עבודה</div>';grid.querySelectorAll('[data-delpf]').forEach(b=>b.addEventListener('click',async e=>{if(!confirm('למחוק תמונת עבודה זו?'))return;await Photos.del(e.currentTarget.dataset.delpf);this.loadPortfolio();}));},
