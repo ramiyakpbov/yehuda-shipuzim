@@ -12,7 +12,7 @@
 //
 // API:
 //   GET  /api/notify?pk=1          → {publicKey}   (המפתח הציבורי להרשמה — נגזר מ-PUSH_SECRET)
-//   POST /api/notify  (text/plain JSON) {subs:[subscription...], ev:'view'|'approve'|'comment'|'test', cn, no, tot}
+//   POST /api/notify  (text/plain JSON) {subs:[subscription...], ev:'view'|'hot'|'approve'|'comment'|'test', cn, no, tot}
 //        → {sent, results:[status...]}
 // הכותרת והטקסט נבנים כאן — מהבקשה מגיעים רק שם לקוח, מספר הצעה וסכום (מקוצרים ומנוקים).
 // שליחה רק לשרתי push מוכרים (Google / Mozilla / Apple / Microsoft).
@@ -81,6 +81,7 @@ export function message(b) {
   const tail = [no, tot].filter(Boolean).join(' · ');
   if (b.ev === 'approve') return { title: '✅ ' + cn + ' אישר/ה את ההצעה', body: tail || 'ההצעה אושרה' };
   if (b.ev === 'comment') return { title: '💬 ' + cn + ' השאיר/ה הערה', body: tail || 'יש הערה חדשה בהצעה' };
+  if (b.ev === 'hot') { const n = Math.max(3, Math.min(99, Math.round(+b.n || 3))); return { title: '🤔 ' + cn + ' פתח/ה את ההצעה ' + n + ' פעמים', body: (tail ? tail + ' · ' : '') + 'מתלבט/ת — זה הזמן להתקשר' }; }   // v26.6
   if (b.ev === 'test') return { title: '🔔 התראות פועלות', body: 'מעכשיו תקבל התראה כשלקוח פותח או מאשר הצעה' };
   return { title: '👀 ' + cn + ' פתח/ה את ההצעה', body: tail ? tail + ' · זה זמן טוב להתקשר' : 'זה זמן טוב להתקשר' };
 }
