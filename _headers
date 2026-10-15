@@ -6,3 +6,10 @@
 
 /sw.js
   Cache-Control: no-cache, must-revalidate
+
+/yehuda.vcf
+  Content-Type: text/vcard; charset=utf-8
+  Content-Disposition: attachment; filename="yehuda-shipuzim.vcf"
+
+/card.html
+  Cache-Control: no-cache, must-revalidate

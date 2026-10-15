@@ -1504,3 +1504,11 @@ Gemini 1.5 ו-2.0 הושבתו. Google ממליצה לפרויקטים חדשי�
 - **#11 תוקף מתקרב**: `expSoon()` — הצעות (`uniqQuotes`) עם `snap.valid` (dd/mm/yyyy, `parseValid`) שנגמר בעוד 0–3 ימים; לא חתומות/נמסרו/אושרו. בית (`expSoonHome`) + תזכורות (`expSoonHtml`), "תזכורת תוקף" → וואטסאפ עם מספר ההצעה והתאריך (`expNudge`, `q.expNudgeAt`).
 - **#12 משימות**: `cl.tasks=[{id,t,done,ts,doneAt}]` על הלקוח (מסתנכרן עם clients). בכרטיס לקוח (`tasksHtml`): הוספה (כפתור/Enter), ✓, מחיקה עם "בטל". מונה "📝 N" במאגר הלקוחות.
 - בדיקות: t_v266.py (38). העלאה: 6 קבצים לשורש (כולל yehuda.vcf) + `netlify/functions/notify.mjs`.
+
+## #79 — לינקים ללקוחות בלי ramiyakpbov + דף כרטיס ביקור (v26.7, בקשת רמי 15.10.2026)
+- `YS_PUB='https://yehuda-shipuzim-134094.netlify.app'` (אתר ה-Netlify המחובר לריפו, לשעבר silver-donut-6ac12a — רמי משנה שם ב-Netlify: Project configuration ← General ← Change project name). `ysPubBase()` = Store `pubBase` (הגדרות ← מערכת, חייב https) או YS_PUB. כל הלינקים ללקוח (`#L=`, `#id=`, `#p=`, `#r=`, תזכורות) נבנים ממנו — במקום `location.origin+location.pathname`. `YSPUSH_DEFAULT=YS_PUB`.
+- האפליקציה עצמה ממשיכה לרוץ מ-github.io; רק מה שיוצא ללקוח עבר לכתובת החדשה. לינקים ישנים (github.io) ממשיכים לעבוד. לינקים שנשלחו עם pushFn של silver-donut — ההתראות מהם לא יגיעו אחרי שינוי השם.
+- לא נבדק: האם מפתח Firebase מוגבל לדומיינים (אם כן — לינק בכתובת החדשה לא ייטען; פתרון מיידי: pubBase = כתובת github.io בהגדרות).
+- `card.html` (שורש הריפו) — כרטיס ביקור דיגיטלי: לוגו (`logo_card.png` = LOGO_APP), יהודה יעקובוב, חותמת "קבלן רשום 134094 · ח.פ 311834998", תחומים, סלוגן מהאתר העסקי, חיוג / וואטסאפ (הודעה מוכנה) / שמירה (`yehuda.vcf`) / מייל / העבודות שלנו / שיתוף / QR לעצמו. OG: `og-card.png` 1200×630 (תצוגה מקדימה בוואטסאפ). `_headers`: yehuda.vcf כ-text/vcard + attachment.
+- באפליקציה: QR בהגדרות → `cardUrl()`; "📇 כרטיס ביקור" בכרטיס לקוח → וואטסאפ ללקוח עם לינק לכרטיס; "שלח כרטיס" בהגדרות → שיתוף לינק.
+- בדיקות: t_v267.py (28); t_v266/255/256 עודכנו לכתובת החדשה.

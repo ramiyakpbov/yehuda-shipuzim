@@ -3453,7 +3453,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.6';
+const VERSION='26.7';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4661,7 +4661,11 @@ const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith(
 /* v25.5 — התראות לטלפון (Web Push). הפונקציה בשרת: netlify/functions/notify.mjs (נתיב /api/notify).
    מנוי ההתראות של המכשיר של יהודה נשמר ב-Store 'pushSub', ונכתב לכל לינק שנוצר (push, pushFn).
    דף הלקוח שולח לפונקציה "נפתח" / "אושר" / "הערה" — שקט לגמרי כשאין מנוי או כשהשרת לא זמין. */
-const YSPUSH_DEFAULT='https://silver-donut-6ac12a.netlify.app';   // v25.9 — אתר Netlify נפרד לפונקציות (האתר העסקי yehuda-shipuzim.netlify.app לא מכיל אותן)
+/* v26.7 — כתובת ציבורית ללקוחות: לינקים, כרטיס ביקור, פונקציות השרת. אתר ה-Netlify שמחובר לריפו (שם: יהודה שיפוצים + קבלן רשום).
+   ללקוח לא מגיע יותר ramiyakpbov.github.io. Store 'pubBase' עוקף (הגדרות ← מערכת) — אם משהו לא עובד בכתובת החדשה. */
+const YS_PUB='https://yehuda-shipuzim-134094.netlify.app';
+function ysPubBase(){try{const o=String(Store.get('pubBase','')||'').trim();if(/^https:\/\/[^\s#?]+$/.test(o))return o.replace(/\/*$/,'/');}catch(e){}return YS_PUB+'/';}
+const YSPUSH_DEFAULT=YS_PUB;   // v25.9 — אתר Netlify נפרד לפונקציות (האתר העסקי yehuda-shipuzim.netlify.app לא מכיל אותן)
 function ysPushBase(){try{const o=String(Store.get('fnBase','')||'').trim().replace(/\/+$/,'');if(/^https:\/\//.test(o))return o;
   return /\.netlify\.app$/.test(location.hostname)?location.origin:YSPUSH_DEFAULT;}catch(e){return YSPUSH_DEFAULT;}}
 function ysNotify(ev,extra){try{
@@ -8373,6 +8377,9 @@ const App={
    ${(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone?'':`<button class="btn-block" id="install-app" style="margin-top:0;margin-bottom:14px">📲 התקן את האפליקציה במכשיר</button>`}
    <div class="sec-title">גרסה ועדכונים</div>
    <div class="toggle"><div><div style="font-weight:700">גרסה נוכחית</div><div style="font-size:12px;color:var(--muted)">v${VERSION}</div></div><button class="mini2" id="check-update">בדוק עדכון</button></div>
+   <div class="field"><label>כתובת הלינקים ללקוחות</label><input id="pub-base" dir="ltr" placeholder="${esc(YS_PUB)}" value="${esc(String(Store.get('pubBase','')||''))}"/></div>
+   <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px;line-height:1.5">ריק = <span dir="ltr">${esc(YS_PUB.replace(/^https:\/\//,''))}</span>. לשנות רק אם לינקים ללקוחות לא נפתחים.</div>
+   <button class="btn-ghost" id="pub-save" style="margin-bottom:10px">💾 שמור כתובת</button>
    <button class="btn-ghost" id="diag-copy" style="margin-bottom:10px">📋 העתק אבחון הצעות (לשליחה לרמי)</button>
    <div class="field"><label>מגבלות המערכת</label>
      <div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:4px 12px 8px">${this.limitsCard()}</div></div>
@@ -10044,27 +10051,28 @@ const App={
  vcardText(){const B=this.BIZ;const tel='+972'+B.phone.replace(/\D/g,'').replace(/^0/,'');
   return ['BEGIN:VCARD','VERSION:3.0','N:'+B.last+';'+B.first+';;;','FN:'+B.first+' '+B.last+' - '+B.org,'ORG:'+B.org,'TITLE:קבלן רשום '+B.lic,
     'TEL;TYPE=CELL,VOICE:'+tel,'EMAIL;TYPE=INTERNET:'+B.email,'URL:'+B.site,'NOTE:ח.פ '+B.hp+' · קבלן רשום '+B.lic,'END:VCARD'].join('\r\n')+'\r\n';},
- vcardUrl(){try{return new URL('yehuda.vcf',location.href.split('#')[0]).href;}catch(e){return 'https://ramiyakpbov.github.io/yehuda-shipuzim/yehuda.vcf';}},
+ vcardUrl(){return ysPubBase()+'yehuda.vcf';},
+ cardUrl(){return ysPubBase()+'card.html';},
  bizCardSettings(){const B=this.BIZ;
   return `<div class="sec-title" style="margin-top:16px">📇 כרטיס ביקור דיגיטלי</div>
-   <div class="bc-vc">${esc(B.first+' '+B.last)} · ${esc(B.org)} · <span dir="ltr">${esc(B.phone)}</span> · ${esc(B.email)} · קבלן רשום ${esc(B.lic)}</div>
-   <div class="bc-qr" id="bc-qr" aria-label="QR לשמירת איש קשר"></div>
-   <div style="font-size:11.5px;color:var(--muted);margin:0 2px 8px;line-height:1.55">סורקים במצלמה ← נפתח קובץ איש קשר ← "שמור". אפשר להדפיס על הרכב או על שלט באתר.</div>
-   <div class="row2"><button class="btn-ghost" id="bc-share">📤 שלח כרטיס</button><button class="btn-ghost" id="bc-qrsave">⬇️ שמור QR</button></div>`;},
+   <div class="bc-vc">דף נחיתה של יהודה: חיוג, וואטסאפ, שמירה באנשי הקשר, קבלן רשום ${esc(B.lic)}. הלינק בלי שם של אף אחד אחר:<br><b dir="ltr" style="color:var(--txt)">${esc(this.cardUrl().replace(/^https:\/\//,''))}</b></div>
+   <div class="bc-qr" id="bc-qr" aria-label="QR לכרטיס הביקור"></div>
+   <div style="font-size:11.5px;color:var(--muted);margin:0 2px 8px;line-height:1.55">סורקים במצלמה ← נפתח הכרטיס. אפשר להדפיס על הרכב, על שלט באתר או על כרטיס ביקור מודפס.</div>
+   <div class="row2"><button class="btn-ghost" id="bc-share">📤 שלח כרטיס</button><button class="btn-ghost" id="bc-open">👁 פתח כרטיס</button></div>
+   <button class="btn-ghost" id="bc-qrsave" style="margin-top:8px">⬇️ שמור QR</button>`;},
  bizCardBind(){const box=document.getElementById('bc-qr');
-  if(box&&!box.firstChild){try{new QRCode(box,{text:this.vcardUrl(),width:360,height:360,correctLevel:QRCode.CorrectLevel.M});}catch(e){box.textContent='QR לא זמין כרגע';}}
+  if(box&&!box.firstChild){try{new QRCode(box,{text:this.cardUrl(),width:360,height:360,correctLevel:QRCode.CorrectLevel.M});}catch(e){box.textContent='QR לא זמין כרגע';}}
   const sh=document.getElementById('bc-share');if(sh)sh.onclick=()=>this.sendVCard(null);
+  const op=document.getElementById('bc-open');if(op)op.onclick=()=>{try{window.open(this.cardUrl(),'_blank');}catch(e){}};
   const sv=document.getElementById('bc-qrsave');if(sv)sv.onclick=()=>{try{const c=box&&box.querySelector('canvas');const url=c?c.toDataURL('image/png'):((box.querySelector('img')||{}).src||'');
     if(!url){this.toast('QR לא זמין');return;}const a=document.createElement('a');a.href=url;a.download='QR כרטיס ביקור - יהודה שיפוצים.png';document.body.appendChild(a);a.click();a.remove();this.toast('ה-QR נשמר ✓');}catch(e){this.toast('השמירה נכשלה');}};},
- async sendVCard(cl){const B=this.BIZ;const fname=B.org+'.vcf';const blob=new Blob([this.vcardText()],{type:'text/vcard'});
-  let shared=false;
-  try{const f=new File([blob],fname,{type:'text/vcard'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:B.org});shared=true;}}
-  catch(e){if(e&&e.name==='AbortError')return;}
-  if(shared){this.toast('הכרטיס נשלח ✓');return;}
-  // אין שיתוף קבצים — הודעת וואטסאפ עם הפרטים + לינק לשמירה
-  const NL=String.fromCharCode(10);
-  const msg=(cl&&cl.name?'שלום '+String(cl.name).trim().split(' ')[0]+' 👋'+NL:'')+'📇 '+B.first+' '+B.last+' · '+B.org+NL+'📞 '+B.phone+NL+'✉️ '+B.email+NL+'קבלן רשום '+B.lic+NL+'לשמירה באנשי הקשר: '+this.vcardUrl();
-  try{window.open(waLink(cl&&cl.phone||'',msg),'_blank');}catch(e){}
+ /** v26.7 — שולחים לינק לדף הכרטיס (וואטסאפ מציג תצוגה מקדימה עם הלוגו ומספר הקבלן). */
+ async sendVCard(cl){const B=this.BIZ;const url=this.cardUrl();const NL=String.fromCharCode(10);
+  const first=cl&&cl.name?String(cl.name).trim().split(' ')[0]:'';
+  const msg=(first?'שלום '+first+' 👋'+NL:'')+'📇 כרטיס הביקור של '+B.org+' · קבלן רשום '+B.lic+NL+'חיוג, וואטסאפ ושמירה באנשי הקשר בלחיצה:'+NL+url;
+  if(cl&&phoneValid(cl.phone)){try{window.open(waLink(cl.phone,msg),'_blank');}catch(e){}return;}
+  try{if(navigator.share){await navigator.share({title:B.org+' · קבלן רשום '+B.lic,text:msg.replace(url,'').trim(),url:url});return;}}catch(e){if(e&&e.name==='AbortError')return;}
+  try{window.open(waLink('',msg),'_blank');}catch(e){}
  },
  /* — משימות לפרויקט (בכרטיס הלקוח, נשמר על הלקוח ומסתנכרן) — */
  tasksHtml(cl){const T=(cl.tasks||[]).filter(Boolean);const open=T.filter(t=>!t.done).length;
@@ -10885,7 +10893,7 @@ const App={
   const db=document.getElementById('drill-back');if(db)db.onclick=()=>{this.state.modal='stats';this.render();};
   const rvr=document.getElementById('rev-refresh');if(rvr)rvr.onclick=()=>{this._revData=null;this.toast('מרענן…');this.loadReviews();};
   on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){(Tomb.add([id]),Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id)));this.render();}});
-  on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
+  on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=ysPubBase();window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
   // תוכנית → שטח. captureQuote לפני בחירת הקובץ: ה-render שאחרי הקריאה בונה
   // את החלון מהמצב, ובלי זה מה שהוקלד בשדות ולא נשמר היה נמחק.
@@ -10991,7 +10999,7 @@ const App={
   const trf=document.getElementById('trk-refresh');if(trf)trf.onclick=()=>{this._trackData=null;this.toast('מרענן…');this.loadTracking();};
    const trc=document.getElementById('trk-recover');if(trc)trc.onclick=()=>this.recoverLinks();
   on('[data-trkdel]','click',e=>{const id=e.currentTarget.dataset.trkdel;if(confirm('להסיר את הלינק מהמעקב?\n\nהלקוח וההצעה נשארים באפליקציה.\nמחיקה מלאה של לקוח — במסך הלקוחות 👥')){Tomb.add([id]);Store.set('sentLinks',Store.get('sentLinks',[]).filter(x=>x.id!==id));this.invalidate('links');this.render();}});
-  on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=location.origin+location.pathname;const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
+  on('[data-trknudge]','click',e=>{const id=e.currentTarget.dataset.trknudge;const l=Store.get('sentLinks',[]).find(x=>x.id===id);if(!l)return;const base=ysPubBase();const msg='שלום'+(l.client?' '+l.client:'')+' 👋\nרק מוודא שההצעה הגיעה. אשמח לשמוע מה דעתך:\n'+base+'#id='+id;window.open(waLink(l.phone,msg),'_blank');});
   on('[data-qsig]','click',e=>{const id=e.currentTarget.dataset.qsig;const q=Store.get('quotes',[]).find(x=>x.id===id);if(!q)return;const img=q.sig||(q.snap&&q.snap.clientSig)||'';this._sigView={img:img,client:q.client,no:q.no,at:q.ts,quoteId:id};this.state.modal='sigview';this.render();});
   on('[data-loadq]','click',e=>this.loadQuote(e.currentTarget.dataset.loadq));
   on('[data-dupq]','click',e=>this.duplicateQuoteAsNew(e.currentTarget.dataset.dupq));
@@ -11013,6 +11021,8 @@ const App={
    if(ta&&ti){ta.onclick=add;ti.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add();}});}}
   on('[data-expnudge]','click',e=>this.expNudge(e.currentTarget.dataset.expnudge));
   if(this.state.modal==='settings'){try{this.ownerSigBind();this.bizCardBind();}catch(e){}}
+  {const ps=document.getElementById('pub-save');if(ps)ps.onclick=()=>{const v=String((document.getElementById('pub-base')||{}).value||'').trim();
+     if(v&&!/^https:\/\/[^\s#?]+$/.test(v)){this.toast('כתובת לא תקינה — צריכה להתחיל ב-https://');return;}Store.set('pubBase',v);this.toast(v?'הכתובת נשמרה ✓':'חזרה לכתובת הרגילה ✓');this.render();};}
   on('[data-hoq]','click',e=>{this._hoQ=e.currentTarget.dataset.hoq;if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='handover';this.render();});
   if(this.state.modal==='handover')this.hoBind();
   {const isv=document.getElementById('inv-save');if(isv)isv.onclick=()=>{Store.set('invToken',(document.getElementById('inv-token').value||'').trim());this.toast('קוד החיבור נשמר ✓');};
@@ -11953,7 +11963,7 @@ const App={
   let link=null;
   if(window._db){try{const id=this.shortId();
     await window._db.collection('reviews').doc(id).set({client:cl.name||'',phone:cl.phone||'',project:cl.project||'',gmb:Store.get('googleReview','')||Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:0,text:'',doneAt:null});
-    link=location.origin+location.pathname+'#r='+id;
+    link=ysPubBase()+'#r='+id;
     const rl=Store.get('reviewLinks',[]);rl.unshift({id:id,client:cl.name||'',phone:cl.phone||'',ts:Date.now()});Store.set('reviewLinks',rl.slice(0,200));
     cl.reviewId=id;
   }catch(e){}}
@@ -12023,7 +12033,7 @@ const App={
  async saveToCloud(data){if(!window._db)return null;try{const id=this.shortId();await window._db.collection('proposals').doc(id).set({data:data,createdAt:Date.now(),viewedAt:null,owner:'yehuda',...this.pushFields()});return id;}catch(e){return null;}},
  async makeReviewLink(clientId){const cl=Store.get('clients',[]).find(c=>c.id===clientId);if(!cl){this.toast('לקוח לא נמצא');return;}
   this.toast('יוצר לינק משוב…');
-  const base=location.origin+location.pathname;let link=null;
+  const base=ysPubBase();let link=null;
   if(window._db){try{const id=this.shortId();
     await window._db.collection('reviews').doc(id).set({client:cl.name||'',clientId:cl.id,phone:cl.phone||'',project:cl.project||'',createdAt:Date.now(),stars:null,text:'',doneAt:null});
     link=base+'#r='+id;
@@ -12200,7 +12210,7 @@ const App={
       data:data,live:true,createdAt:Date.now(),viewedAt:null,...this.pushFields(),
       events:[],curTotal:this.grand(),owner:'yehuda'
     });
-    const link=location.origin+location.pathname+'#L='+id;
+    const link=ysPubBase()+'#L='+id;
     const sent=Store.get('sentLinks',[]);
     sent.unshift({id:id,live:true,client:cl.name,phone:cl.phone||'',ts:Date.now(),total:this.grand(),no:s.quoteNo});
     // שליחה חוזרת של אותה הצעה מחליפה את הכרטיס במקום להוסיף עוד אחד
@@ -12227,7 +12237,7 @@ const App={
   const mb=matRow(s.blackOn,s.blackInc!==false,s.blackPrice,s.blackItems,'חומר שחור');
   if(mw)items.push(mw); if(mb)items.push(mb);
   const data={ao:s.addonOf||'',cn:c.name||'',pr:c.project||'',ph:c.phone||'',ad:c.address||'',no:s.quoteNo,dt:new Date().toLocaleDateString('he-IL'),vd:s.valid,it:items,sub:this.subtotal(),dis:+s.discount||0,adv:+s.advance||0,vat:s.vatOn?s.vatPct:0,tot:this.grand(),terms:(s.showTerms?this.termsText():'')||'',plan:s.planMode?1:0,psqm:+s.planPerSqm||0,tsqm:+s.planTotalSqm||0};
-  const base=location.origin+location.pathname;
+  const base=ysPubBase();
   this.toast('יוצר לינק…');
   let link,short=false;
   const id=await this.saveToCloud(data);
