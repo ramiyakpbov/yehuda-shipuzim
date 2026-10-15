@@ -1,4 +1,4 @@
-# יהודה שיפוצים — PWA הצעות מחיר · v26.5
+# יהודה שיפוצים — PWA הצעות מחיר · v26.6
 
 יהודה יעקובוב · 054-5718316 · ח.פ 311834998 · yuda090581@gmail.com
 yehuda-shipuzim.netlify.app · Firebase: yehuda-shipuzim · מסמך סנכרון: yehuda
@@ -70,3 +70,7 @@ JSON ישן עדיין עובד · JSON קטוע מזוהה · markdown ופסי
 ## חוקי עבודה
 כל שינוי → בדיקת JS + איזון div → VERSION + CACHE ב-sw.js + version.json → ZIP.
 אסור לכתוב "קבלן רשום" בשום מקום.
+
+### v26.6 — קבצים נוספים
+- `yehuda.vcf` — כרטיס הביקור (ה-QR בהגדרות מפנה אליו).
+- `netlify/functions/notify.mjs` עודכן — התראת "מתלבט".

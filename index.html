@@ -126,6 +126,26 @@ input,select,textarea{font-family:inherit;}
 .srch-recent{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 10px;font-size:12px;color:var(--muted);}
 .srch-recent button{background:var(--bg3);border:1px solid var(--line);color:var(--txt);border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .srch-recent .clr{color:var(--muted);background:none;border:0;padding:6px 4px;}
+/* v26.6 — משימות, כרטיס ביקור, חתימת קבלן, תוקף מתקרב */
+.tk-cnt{font-size:11px;font-weight:700;background:var(--bg3);border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--warn);vertical-align:middle;}
+.tasks{margin:14px 0 4px;display:flex;flex-direction:column;gap:6px;}
+.tasks .tk-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:9px 11px;}
+.tasks .tk-row.done .tt{text-decoration:line-through;color:var(--muted);}
+.tasks .tk-chk{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);background:none;color:var(--ok);font-weight:900;cursor:pointer;padding:0;}
+.tasks .tk-row.done .tk-chk{border-color:var(--ok);background:rgba(46,194,107,.15);}
+.tasks .tx{font-size:14px;overflow-wrap:anywhere;}
+.tasks .tx small{display:block;color:var(--muted);font-size:11px;}
+.tasks .tk-del{background:none;border:0;color:var(--muted);font-size:16px;cursor:pointer;padding:4px;}
+.tasks .tk-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+.tasks .tk-add input{padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg3);color:var(--txt);font:inherit;font-size:14px;min-width:0;}
+.tasks .tk-add button{border-radius:12px;border:0;background:var(--red);color:#fff;font:inherit;font-weight:800;padding:0 16px;cursor:pointer;}
+.own-pad{position:relative;}
+.own-pad .sig-canvas{height:140px;}
+.own-prev{background:#fff;border-radius:10px;padding:8px;display:flex;justify-content:center;margin-bottom:8px;}
+.own-prev img{max-height:70px;max-width:100%;}
+.bc-qr{background:#fff;border-radius:12px;padding:12px;display:flex;justify-content:center;margin:6px 0 8px;}
+.bc-qr img,.bc-qr canvas{width:180px;height:180px;}
+.bc-vc{font-size:12px;color:var(--muted);line-height:1.6;margin:-2px 2px 8px;}
 @keyframes pulse{50%{opacity:.55;}}
 .chips{display:flex;flex-wrap:wrap;gap:9px;padding:11px 12px 8px;align-items:center;
   position:sticky;top:0;z-index:40;background:var(--bg);
@@ -3433,7 +3453,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.5';
+const VERSION='26.6';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3937,7 +3957,7 @@ try{
    if(L.length>30)L.length=30;
    // K — עם הקידומת, כמו Store.get. בלי זה היומן נכתב למפתח אחר ומסך ההגדרות תמיד הראה ריק.
    const s=JSON.stringify(L);try{if(ok)localStorage.setItem(K('errLog'),s);else mem[K('errLog')]=s;}catch(x){}}catch(x){}},
- keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','gModel','gModels','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','warrMonths','warrTerms','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
+ keys(){return['catalog','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','gClientId','remindDays','lang','pin','geminiKey','claudeKey','aiProvider','gModel','gModels','theme','targetQuotes','subItems','includeGallery','userTemplates','syncOn','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','learnedCats','annexCure','warrMonths','warrTerms','ownerSig','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','aiUsage','aiSetup122','catalogSig','pinH','laborFix149','followLog','errLog','syncDirty','catSplit136','soundOff','dedup145'];}};
 })();
 
 
@@ -4342,7 +4362,7 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','warrMonths','warrTerms','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','warrMonths','warrTerms','ownerSig','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
 /* ═══ מצבות — מזהים שנמחקו ═══
    הסנכרון ממזג רשימות כאיחוד: פריט שקיים בענן ולא מקומית מתווסף בחזרה.
    בלי סימון מחיקה, פריט שנמחק במכשיר אחד חזר מהמכשיר השני בדחיפה הבאה
@@ -4652,6 +4672,17 @@ function ysNotify(ev,extra){try{
   const body=JSON.stringify(Object.assign({subs:p.subs.slice(0,5),ev:ev,cn:p.cn||'',no:p.no||'',tot:+p.tot||0},extra||{}));
   fetch(String(p.fn||YSPUSH_DEFAULT).replace(/\/+$/,'')+'/api/notify',{method:'POST',body:body,keepalive:true,headers:{'Content-Type':'text/plain;charset=UTF-8'}}).catch(()=>{});
   return true;}catch(e){return false;}}
+/* v26.6 — כל פתיחה של הלקוח נספרת (פעם אחת לכל ביקור בדפדפן). בפתיחה השלישית בלי אישור — התראת "מתלבט" במקום "פתח".
+   המכשיר של יהודה/רמי (יש בו נתוני אפליקציה) לא נספר. */
+function ysOpen(id,dd){try{
+  let mine=false;try{mine=!!(localStorage.getItem('ys:pushSub')||localStorage.getItem('ys:clients'));}catch(e){}
+  if(mine||!id||!window._db){if(!mine)ysNotify('view');return;}
+  let first=true;try{const k='yso:'+id;if(sessionStorage.getItem(k))first=false;else sessionStorage.setItem(k,'1');}catch(e){}
+  if(!first)return;
+  const n=(+(dd&&dd.opens)||0)+1;const up={opens:firebase.firestore.FieldValue.increment(1)};
+  if(n>=3&&!(dd&&dd.approvedAt)&&!(dd&&dd.hotAt)){up.hotAt=Date.now();ysNotify('hot',{n:n});}else ysNotify('view');
+  window._db.collection('proposals').doc(id).update(up).catch(()=>{});
+}catch(e){}}
 function ysPushSet(dd){try{const d=(dd&&dd.data)||{};window.__ysPush={subs:Array.isArray(dd&&dd.push)?dd.push:[],fn:(dd&&dd.pushFn)||'',cn:d.cn||'',no:d.no||'',tot:+d.tot||0};}catch(e){}}
 function nextQuoteNo(){let seq=Store.get('qseq',0)+1;const ymd=new Date().toISOString().slice(0,10).replace(/-/g,'');return 'YS-'+ymd+'-'+String(seq).padStart(3,'0');}
 
@@ -6221,7 +6252,9 @@ const App={
      ${String(cl.address||'').trim()?`<button class="mini" data-waze="${esc(String(cl.address).trim())}">🧭 Waze</button>`:''}
      <button class="mini" data-review="${esc(cl.id)}">📩 משוב</button>
      <button class="mini" data-photos="${esc(cl.id)}">📷 תמונות</button>
+     <button class="mini" data-vcard="${esc(cl.id)}">📇 כרטיס ביקור</button>
    </div>
+   ${this.tasksHtml(cl)}
    ${quotes.length?`<div class="cc-sec">ההצעות שלו</div>
      ${quotes.slice(0,6).map(q=>`<div class="cc-row">
        <div style="flex:1;min-width:0"><b>${esc(q.no||'—')}</b>
@@ -6797,9 +6830,10 @@ const App={
   const rem=this.reminders().length;
   const card=(x)=>{
    const d=(this._trackData||{})[x.l.id]||{};
-   const lbl=x.kind==='live'?('🔥 קורא את ההצעה '+(x.mins<2?'עכשיו':('לפני '+x.mins+' דק׳'))):
+   const hes=+(d.opens||0)>=3&&!d.approvedAt;   // v26.6 — מתלבט: פתח 3+ פעמים ולא אישר
+   const lbl=x.kind==='live'?('🔥 קורא את ההצעה '+(x.mins<2?'עכשיו':('לפני '+x.mins+' דק׳'))):hes?('🤔 מתלבט · נפתחה '+d.opens+' פעמים'):
      (x.kind==='expired'?'⏰ פג תוקף':(x.kind==='viewed'?'👁 נצפתה ולא אושרה':'🕐 ממתינה'))+(x.pdf?' · PDF':'');
-   const cls=x.kind==='live'?'live':(x.kind==='expired'?'hot':(x.kind==='viewed'?'warn':''));
+   const cls=x.kind==='live'?'live':((x.kind==='expired'||hes)?'hot':(x.kind==='viewed'?'warn':''));
    const age=this.relTime(+x.l.ts||Date.now());
    const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
    /* כרטיס קומפקטי: חיוג ותזכורת כאייקונים בשורת השם, ולחיצה על
@@ -6851,6 +6885,7 @@ const App={
       </div>
     </div>
 
+    ${this.expSoonHome()}
     ${st.openQuote?`<button class="hm-resume" data-gotab="build">
        <div><b>הצעה פתוחה</b><span>${st.openQuote} סעיפים · ${nisR(st.openTotal)}</span></div>
        <span class="hm-go">המשך ←</span></button>`:''}
@@ -8283,6 +8318,8 @@ const App={
    <div class="field"><label>קוד חיבור לחשבוניות</label><input id="inv-token" type="password" autocomplete="off" value="${esc(Store.get('invToken',''))}" placeholder="הקוד מ-Netlify"/></div>
    <div class="row2"><button class="btn-ghost" id="inv-save">💾 שמור</button><button class="btn-ghost" id="inv-ping">🔌 בדוק חיבור</button></div>
    ${this.warrSettings()}
+   ${this.ownerSigSettings()}
+   ${this.bizCardSettings()}
    <div class="sec-title">🔔 צלילים</div>
    <div class="field"><label style="display:flex;align-items:center;gap:9px;cursor:pointer;font-weight:400"><input type="checkbox" id="snd-off" ${Store.get('soundOff',0)?'checked':''} style="width:18px;height:18px;flex:0 0 auto"> <span>השתק צלילי סימון סעיפים</span></label></div>`),
    ai:()=>locked(`
@@ -8402,7 +8439,7 @@ const App={
      return `<div class="cl-card">
        <div class="cl-top">
          <div style="flex:1;min-width:0">
-           <div class="cl-name">${esc(cl.name)||'—'}</div>
+           <div class="cl-name">${esc(cl.name)||'—'}${(()=>{const n=(cl.tasks||[]).filter(t=>t&&!t.done).length;return n?` <span class="tk-cnt" title="משימות פתוחות">📝 ${n}</span>`:'';})()}</div>
            <div class="cl-meta">${[cl.phone?esc(cl.phone):'',cl.project?esc(cl.project):'',cl.address?esc(cl.address):''].filter(Boolean).join(' · ')||'ללא פרטים'}</div>
          </div>
          <span class="cl-pill" style="background:${st.cur.c}">${st.cur.i} ${st.cur.n}</span>
@@ -8973,7 +9010,9 @@ const App={
   // undefined, ומסך המעקב מנסה לטעון שוב בכל רינדור — לולאה אינסופית.
   if(!links.length||!window._db){this._trackData=this._trackData||{};return;}
   const out={};
-  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||'',live:!!v.live,events:v.events||[],curTotal:v.curTotal||null,lastSeen:v.lastSeen||null};}}catch(e){}}));}catch(e){}
+  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('proposals').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={viewedAt:v.viewedAt||null,approvedAt:v.approvedAt||null,comment:v.comment||'',commentAt:v.commentAt||null,signature:v.signature||'',live:!!v.live,events:v.events||[],curTotal:v.curTotal||null,lastSeen:v.lastSeen||null,opens:+v.opens||0,hotAt:v.hotAt||null,
+          // v26.6 — מסך הבית/הלקוחות קוראים openedAt/views/lastOpenAt — שדות שלא מולאו כאן, אז "נצפו" לא נספר מלינקים
+          openedAt:v.viewedAt||null,views:+v.opens||(v.viewedAt?1:0),lastOpenAt:v.lastSeen||v.viewedAt||null};}}catch(e){}}));}catch(e){}
   this._trackData=out;
   // סנכרון: לקוח שההצעה שלו אושרה בענן — מעדכנים את הסטטוס המקומי ל'בוצע' כדי שלא יופיע בתזכורות
   try{const clients=Store.get('clients',[]);let changed=false;
@@ -9449,7 +9488,7 @@ const App={
   const sec=(t,n,tn)=>'<h3 class="tk-sec">'+(tn?'<i class="tk-dot" data-tone="'+tn+'"></i>':'')+'<span>'+t+'</span><b>'+n+'</b></h3>';
   const hint='לקוח נכנס לכאן אוטומטית כשמפיקים לו הצעה או שולחים לינק.';
   return '<h2>'+ico('bell',20)+' מעקב ותזכורות <button class="x" data-close>✕</button></h2>'+
-   ((expired.length||open.length)?'<p class="tk-hint start">'+hint+'</p>':'')+
+   ((expired.length||open.length)?'<p class="tk-hint start">'+hint+'</p>':'')+this.hesitantHtml()+this.expSoonHtml()+
    (expired.length?sec('פג תוקף — מעל 14 יום',expired.length,'red')+'<div class="tk-list">'+expired.map(c=>card(c,true)).join('')+'</div>':'')+
    (open.length?sec('מעקב שוטף',open.length,'')+'<div class="tk-list">'+open.map(c=>card(c,false)).join('')+'</div>':'')+
    ((!expired.length&&!open.length)?'<div class="tk-empty">'+ico('check',22)+'<p>אין הצעות פתוחות במעקב</p><p class="tk-hint">'+hint+'</p></div>':'');
@@ -9763,7 +9802,7 @@ const App={
    ${C('10','\u05d9\u05e9\u05d5\u05d1 \u05de\u05d7\u05dc\u05d5\u05e7\u05d5\u05ea','<p>\u05d4\u05e6\u05d3\u05d3\u05d9\u05dd \u05d9\u05e4\u05e2\u05dc\u05d5 \u05dc\u05d9\u05d9\u05e9\u05d5\u05d1 \u05db\u05dc \u05de\u05d7\u05dc\u05d5\u05e7\u05ea \u05d1\u05d3\u05e8\u05da \u05e9\u05dc \u05d3\u05d9\u05df \u05d5\u05d3\u05d1\u05e8\u05d9\u05dd. \u05dc\u05d0 \u05d4\u05d5\u05e9\u05d2\u05d4 \u05d4\u05e1\u05db\u05de\u05d4, \u05ea\u05d5\u05e4\u05e0\u05d4 \u05d4\u05de\u05d7\u05dc\u05d5\u05e7\u05ea \u05dc\u05d1\u05d9\u05ea \u05d4\u05de\u05e9\u05e4\u05d8 \u05d4\u05de\u05d5\u05e1\u05de\u05da.</p>')}
 
    <div class="lx-sign">
-     <div class="lx-sb"><div class="lx-sl"></div>\u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05e7\u05d1\u05dc\u05df<br><span>\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</span></div>
+     <div class="lx-sb">${this.ownerSigHtml()}\u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05e7\u05d1\u05dc\u05df<br><span>\u05d9\u05d4\u05d5\u05d3\u05d4 \u05e9\u05d9\u05e4\u05d5\u05e6\u05d9\u05dd</span></div>
      <div class="lx-sb"><div class="lx-sl"></div>\u05d7\u05ea\u05d9\u05de\u05ea \u05d4\u05de\u05d6\u05de\u05d9\u05df<br><span>${esc(cl.name)||''}</span></div>
    </div>
    <div class="lx-date">\u05ea\u05d0\u05e8\u05d9\u05da: ${today}</div>
@@ -9830,6 +9869,7 @@ const App={
   .lx-sb{flex:1;font-size:11.5px;font-weight:700;}
   .lx-sb span{font-weight:400;color:#666;font-size:10.5px;}
   .lx-sl{border-bottom:1px solid #333;height:34px;margin-bottom:6px;}
+  .lx-own{display:block;height:46px;max-width:100%;object-fit:contain;object-position:right bottom;margin-bottom:4px;border-bottom:1px solid #333;}
   .lx-date{margin-top:16px;font-size:11px;color:#666;}
  `;},
  /* ═══ v26.2 — מסירת עבודה ותעודת אחריות ═══
@@ -9931,7 +9971,7 @@ const App={
    ${f.notes?'<div class="lx-c"><div class="lx-h"><span class="lx-n">3</span>הערות וליקויים פתוחים</div><p>'+esc(f.notes).replace(/\n/g,'<br>')+'</p></div>':''}
    <div class="lx-c"><div class="lx-h"><span class="lx-n">${f.notes?4:3}</span>תנאי האחריות</div><p>האחריות מתחילה ממועד המסירה. ${esc(f.terms||this.WARR_TERMS_DEF)}</p></div>
    <div class="lx-sign">
-     <div class="lx-sb"><div class="lx-sl"></div>חתימת הקבלן<br><span>יהודה שיפוצים</span></div>
+     <div class="lx-sb">${this.ownerSigHtml()}חתימת הקבלן<br><span>יהודה שיפוצים</span></div>
      <div class="lx-sb">${f.sig?'<img class="ho-sigimg" src="'+f.sig+'"/>':'<div class="lx-sl"></div>'}חתימת המזמין<br><span>${esc(cl.name||q.client||'')}</span></div>
    </div>
    <div class="lx-date">הופק: ${fmt(Date.now())}</div>
@@ -9972,6 +10012,106 @@ const App={
     this.sendDlg(pdf,blob,fname,{title:'✓ תעודת המסירה מוכנה',waDoc:'מצורפת תעודת המסירה והאחריות',shareText:'תעודת מסירה ואחריות',client:cl});
   }catch(e){this.idle();try{Store.logErr('hoPdf',e);}catch(x){}this.toast('הפקת התעודה נכשלה');}
  },
+ /* ═══ v26.6 — חתימת קבלן · כרטיס ביקור · משימות · מתלבטים · תוקף מתקרב ═══ */
+ ownerSigHtml(){const o=Store.get('ownerSig','');return o?'<img class="lx-own" src="'+o+'" alt=""/>':'<div class="lx-sl"></div>';},
+ ownerSigSettings(){const o=Store.get('ownerSig','');
+  return `<div class="sec-title" style="margin-top:16px">✍️ חתימת הקבלן (יהודה)</div>
+   <div style="font-size:11.5px;color:var(--muted);margin:-2px 2px 8px;line-height:1.55">נכנסת אוטומטית לכל PDF — הצעה, חוזה, נספח ותעודת מסירה — מעל "חתימת הקבלן". רק יהודה חותם כאן.</div>
+   ${o?`<div class="own-prev"><img src="${o}" alt="החתימה השמורה"/></div><button class="btn-ghost" id="own-del">🗑️ מחק חתימה</button>`:
+   `<div class="own-pad"><canvas id="own-sig" class="sig-canvas"></canvas></div>
+    <div class="row2"><button class="btn-ghost" id="own-clear">🧹 נקה</button><button class="btn-ghost" id="own-save">💾 שמור חתימה</button></div>`}`;},
+ ownerSigBind(){const cv=document.getElementById('own-sig');
+  if(cv){const r=cv.getBoundingClientRect();cv.width=Math.max(10,r.width*2);cv.height=Math.max(10,r.height*2);const ctx=cv.getContext('2d');ctx.scale(2,2);
+   ctx.lineWidth=2.4;ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='#0b2a6b';let d=false;this._ownHas=false;
+   const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};
+   const st=ev=>{d=true;this._ownHas=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};
+   const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};
+   cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);cv.addEventListener('mouseup',en);cv.addEventListener('mouseleave',en);
+   cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);
+   const c1=document.getElementById('own-clear');if(c1)c1.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);this._ownHas=false;};
+   const s1=document.getElementById('own-save');if(s1)s1.onclick=()=>{if(!this._ownHas){this.toast('חתום קודם במשטח');return;}
+     const url=this.trimSig(cv);Store.set('ownerSig',url);try{Sync.push&&Sync.push();}catch(e){}this.toast('החתימה נשמרה ✓ — תופיע בכל PDF');this.render();};}
+  const dl=document.getElementById('own-del');if(dl)dl.onclick=async()=>{if(!(await this.askOk('למחוק את החתימה?','מסמכים חדשים ייצאו עם קו ריק לחתימה.','מחק',true)))return;Store.set('ownerSig','');try{Sync.push&&Sync.push();}catch(e){}this.render();};},
+ /** חותך שוליים ריקים ומקטין — קובץ קטן שמסתנכרן מהר */
+ trimSig(cv){try{const ctx=cv.getContext('2d');const W=cv.width,H=cv.height;const px=ctx.getImageData(0,0,W,H).data;let x0=W,y0=H,x1=0,y1=0;
+   for(let y=0;y<H;y+=2)for(let x=0;x<W;x+=2){if(px[(y*W+x)*4+3]>20){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}}
+   if(x1<=x0||y1<=y0)return cv.toDataURL('image/png');const pad=8;x0=Math.max(0,x0-pad);y0=Math.max(0,y0-pad);x1=Math.min(W,x1+pad);y1=Math.min(H,y1+pad);
+   const w=x1-x0,h2=y1-y0,sc=Math.min(1,400/w,140/h2);const o=document.createElement('canvas');o.width=Math.max(1,Math.round(w*sc));o.height=Math.max(1,Math.round(h2*sc));
+   o.getContext('2d').drawImage(cv,x0,y0,w,h2,0,0,o.width,o.height);return o.toDataURL('image/png');}catch(e){return cv.toDataURL('image/png');}},
+ /* — כרטיס ביקור — הפרטים כמו בהצעות (README/כותרת ה-PDF). ה-QR מפנה לקובץ yehuda.vcf באתר:
+      ב-QR עברית עוברת עם BOM שחלק מהסורקים לא מבינים, ולינק תמיד נסרק. */
+ BIZ:{first:'יהודה',last:'יעקובוב',org:'יהודה שיפוצים',phone:'054-5718316',email:'yuda090581@gmail.com',site:'https://yehuda-shipuzim.netlify.app',hp:'311834998',lic:'134094'},
+ vcardText(){const B=this.BIZ;const tel='+972'+B.phone.replace(/\D/g,'').replace(/^0/,'');
+  return ['BEGIN:VCARD','VERSION:3.0','N:'+B.last+';'+B.first+';;;','FN:'+B.first+' '+B.last+' - '+B.org,'ORG:'+B.org,'TITLE:קבלן רשום '+B.lic,
+    'TEL;TYPE=CELL,VOICE:'+tel,'EMAIL;TYPE=INTERNET:'+B.email,'URL:'+B.site,'NOTE:ח.פ '+B.hp+' · קבלן רשום '+B.lic,'END:VCARD'].join('\r\n')+'\r\n';},
+ vcardUrl(){try{return new URL('yehuda.vcf',location.href.split('#')[0]).href;}catch(e){return 'https://ramiyakpbov.github.io/yehuda-shipuzim/yehuda.vcf';}},
+ bizCardSettings(){const B=this.BIZ;
+  return `<div class="sec-title" style="margin-top:16px">📇 כרטיס ביקור דיגיטלי</div>
+   <div class="bc-vc">${esc(B.first+' '+B.last)} · ${esc(B.org)} · <span dir="ltr">${esc(B.phone)}</span> · ${esc(B.email)} · קבלן רשום ${esc(B.lic)}</div>
+   <div class="bc-qr" id="bc-qr" aria-label="QR לשמירת איש קשר"></div>
+   <div style="font-size:11.5px;color:var(--muted);margin:0 2px 8px;line-height:1.55">סורקים במצלמה ← נפתח קובץ איש קשר ← "שמור". אפשר להדפיס על הרכב או על שלט באתר.</div>
+   <div class="row2"><button class="btn-ghost" id="bc-share">📤 שלח כרטיס</button><button class="btn-ghost" id="bc-qrsave">⬇️ שמור QR</button></div>`;},
+ bizCardBind(){const box=document.getElementById('bc-qr');
+  if(box&&!box.firstChild){try{new QRCode(box,{text:this.vcardUrl(),width:360,height:360,correctLevel:QRCode.CorrectLevel.M});}catch(e){box.textContent='QR לא זמין כרגע';}}
+  const sh=document.getElementById('bc-share');if(sh)sh.onclick=()=>this.sendVCard(null);
+  const sv=document.getElementById('bc-qrsave');if(sv)sv.onclick=()=>{try{const c=box&&box.querySelector('canvas');const url=c?c.toDataURL('image/png'):((box.querySelector('img')||{}).src||'');
+    if(!url){this.toast('QR לא זמין');return;}const a=document.createElement('a');a.href=url;a.download='QR כרטיס ביקור - יהודה שיפוצים.png';document.body.appendChild(a);a.click();a.remove();this.toast('ה-QR נשמר ✓');}catch(e){this.toast('השמירה נכשלה');}};},
+ async sendVCard(cl){const B=this.BIZ;const fname=B.org+'.vcf';const blob=new Blob([this.vcardText()],{type:'text/vcard'});
+  let shared=false;
+  try{const f=new File([blob],fname,{type:'text/vcard'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:B.org});shared=true;}}
+  catch(e){if(e&&e.name==='AbortError')return;}
+  if(shared){this.toast('הכרטיס נשלח ✓');return;}
+  // אין שיתוף קבצים — הודעת וואטסאפ עם הפרטים + לינק לשמירה
+  const NL=String.fromCharCode(10);
+  const msg=(cl&&cl.name?'שלום '+String(cl.name).trim().split(' ')[0]+' 👋'+NL:'')+'📇 '+B.first+' '+B.last+' · '+B.org+NL+'📞 '+B.phone+NL+'✉️ '+B.email+NL+'קבלן רשום '+B.lic+NL+'לשמירה באנשי הקשר: '+this.vcardUrl();
+  try{window.open(waLink(cl&&cl.phone||'',msg),'_blank');}catch(e){}
+ },
+ /* — משימות לפרויקט (בכרטיס הלקוח, נשמר על הלקוח ומסתנכרן) — */
+ tasksHtml(cl){const T=(cl.tasks||[]).filter(Boolean);const open=T.filter(t=>!t.done).length;
+  return `<div class="cc-sec">📝 משימות${T.length?` <span style="color:var(--muted);font-weight:400">· ${open} פתוחות מתוך ${T.length}</span>`:''}</div>
+   <div class="tasks">${T.slice().sort((a,b)=>(a.done?1:0)-(b.done?1:0)||(a.ts||0)-(b.ts||0)).map(t=>`<div class="tk-row${t.done?' done':''}">
+     <button type="button" class="tk-chk" data-tktog="${esc(cl.id)}|${esc(t.id)}" aria-label="${t.done?'סמן כפתוח':'סמן כבוצע'}" aria-pressed="${t.done?'true':'false'}">${t.done?'✓':''}</button>
+     <div class="tx"><span class="tt">${esc(t.t)}</span><small>${new Date(t.ts||Date.now()).toLocaleDateString('he-IL')}${t.done&&t.doneAt?' · בוצע '+new Date(t.doneAt).toLocaleDateString('he-IL'):''}</small></div>
+     <button type="button" class="tk-del" data-tkdel="${esc(cl.id)}|${esc(t.id)}" aria-label="מחק משימה">🗑️</button></div>`).join('')}
+    <div class="tk-add"><input id="tk-in" maxlength="140" placeholder="משימה חדשה — למשל: להזמין מכולה" aria-label="משימה חדשה"/><button type="button" id="tk-addb" data-tkadd="${esc(cl.id)}">הוסף</button></div></div>`;},
+ taskEdit(cid,fn){const cs=Store.get('clients',[])||[];const c=cs.find(x=>x&&x.id===cid);if(!c)return;c.tasks=(c.tasks||[]).filter(Boolean);fn(c);c.updatedAt=Date.now();
+  Store.set('clients',cs);try{Sync.push&&Sync.push();}catch(e){}this.render();},
+ /* — מתלבטים: לקוח פתח את ההצעה 3 פעמים ומעלה ולא אישר (opens נספר בדף הלקוח) — */
+ hesitant(){const td=this._trackData||{};const seen={};
+  return (Store.get('sentLinks',[])||[]).filter(l=>{if(!l||!l.id)return false;const d=td[l.id]||{};const k=l.no||l.id;if(seen[k])return false;
+    if(+(d.opens||0)>=3&&!d.approvedAt){seen[k]=1;return true;}return false;}).map(l=>({l:l,n:+td[l.id].opens}));},
+ hesitantHtml(){const H=this.hesitant();if(!H.length)return '';
+  return '<h3 class="tk-sec"><i class="tk-dot" data-tone="red"></i><span>🤔 מתלבטים — פתחו 3 פעמים ומעלה ולא אישרו</span><b>'+H.length+'</b></h3><div class="tk-list">'+H.map(x=>{const ph=String(x.l.phone||'').replace(/[^0-9+]/g,'');
+    return '<article class="tk-card" data-tone="red"><header class="tk-head">'+this.avatar(x.l.client,40)+'<div class="tk-id"><h3 class="tk-name">'+(esc(x.l.client)||'—')+'</h3><p class="tk-meta">נפתחה '+x.n+' פעמים · '+esc(x.l.no||'')+(x.l.total?' · '+nisR(x.l.total):'')+'</p><p class="tk-meta">זה הזמן להתקשר — לשאול מה מעכב</p></div></header>'+
+      '<footer class="tk-acts">'+(ph?'<a class="tk-btn pri" href="tel:'+ph+'">'+ico('phone',16)+'חיוג</a>':'')+(x.l.phone?'<button class="tk-btn" data-trknudge="'+esc(x.l.id)+'">'+ico('message-circle',16)+'וואטסאפ</button>':'')+'</footer></article>';}).join('')+'</div>';},
+ /* — תוקף מתקרב: הצעות שתוקפן נגמר בעוד 0–3 ימים ועוד לא אושרו — */
+ parseValid(v){v=String(v||'').trim();let m=v.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{2,4})$/);
+  if(m){let y=+m[3];if(y<100)y+=2000;const d=new Date(y,+m[2]-1,+m[1],23,59,59);return isNaN(d)?null:d;}
+  m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m){const d=new Date(+m[1],+m[2]-1,+m[3],23,59,59);return isNaN(d)?null:d;}return null;},
+ expSoon(){const now=Date.now(),DAY=864e5;const clients=Store.get('clients',[])||[];const td=this._trackData||{};const links=Store.get('sentLinks',[])||[];
+  const approvedNo={};links.forEach(l=>{const d=td[l&&l.id]||{};if(l&&d.approvedAt&&l.no)approvedNo[l.no]=1;});
+  const out=[];const seen={};
+  (this.uniqQuotes?this.uniqQuotes(Store.get('quotes',[])||[]):(Store.get('quotes',[])||[])).forEach(q=>{
+    if(!q||!q.snap||!q.no||seen[q.no])return;seen[q.no]=1;
+    if(q.sig||(q.snap.clientSig)||(q.kinds||[]).indexOf('signed')>=0||q.handover||approvedNo[q.no])return;
+    const cl=clients.find(c=>c&&String(c.name||'').trim()===String(q.client||'').trim());
+    if(cl&&(cl.approvedAt||cl.status==='done'))return;
+    const v=this.parseValid(q.snap.valid);if(!v)return;const left=Math.floor((v.getTime()-now)/DAY);
+    if(v.getTime()<now||left>3)return;
+    out.push({q:q,left:left,valid:q.snap.valid,phone:q.phone||(q.snap.client||{}).phone||'',client:q.client||(q.snap.client||{}).name||''});});
+  return out.sort((a,b)=>a.left-b.left);},
+ expLbl(x){return x.left<=0?'התוקף נגמר היום':(x.left===1?'נגמר מחר':'נגמר בעוד '+x.left+' ימים');},
+ expSoonHtml(){const L=this.expSoon();if(!L.length)return '';
+  return '<h3 class="tk-sec"><i class="tk-dot" data-tone="warn"></i><span>⏳ תוקף ההצעה נגמר בקרוב</span><b>'+L.length+'</b></h3><div class="tk-list">'+L.map(x=>{
+    return '<article class="tk-card" data-tone="warn"><header class="tk-head">'+this.avatar(x.client,40)+'<div class="tk-id"><h3 class="tk-name">'+(esc(x.client)||'—')+'</h3><p class="tk-meta">'+esc(x.q.no)+' · '+nisR(+x.q.grand||0)+'</p><p class="tk-meta">בתוקף עד '+esc(x.valid)+' — '+this.expLbl(x)+'</p></div></header>'+
+      '<footer class="tk-acts">'+(phoneValid(x.phone)?'<button class="tk-btn pri" data-expnudge="'+esc(x.q.id)+'">'+ico('message-circle',16)+'תזכורת תוקף</button>':'<span class="tk-meta">אין טלפון</span>')+'</footer></article>';}).join('')+'</div>';},
+ expSoonHome(){const L=this.expSoon();if(!L.length)return '';
+  return `<button class="hm-resume" data-modal="reminders" style="border-color:var(--warn)"><div><b>⏳ ${L.length===1?'הצעה אחת':L.length+' הצעות'} — התוקף נגמר בקרוב</b><span>${L.slice(0,2).map(x=>esc(x.client||'—')+' · '+this.expLbl(x)).join(' · ')}</span></div><span class="hm-go">תזכורת ←</span></button>`;},
+ expNudge(qid){const x=this.expSoon().find(z=>z.q.id===qid);if(!x){this.toast('ההצעה לא נמצאה');return;}
+  const NL=String.fromCharCode(10);const first=String(x.client||'').trim().split(' ')[0];
+  const msg='שלום'+(first?' '+first:'')+' 👋'+NL+'רק להזכיר שהצעת המחיר '+x.q.no+' בתוקף עד '+x.valid+'.'+NL+'אם יש שאלות או משהו לשנות — אשמח לעזור 🙏'+NL+'יהודה שיפוצים';
+  try{const qs=Store.get('quotes',[])||[];const q=qs.find(z=>z&&z.id===qid);if(q){q.expNudgeAt=Date.now();Store.set('quotes',qs);}}catch(e){}
+  try{window.open(waLink(x.phone,msg),'_blank');}catch(e){}},
  galleryModal(){
   const clients=Store.get('clients',[]);
   const pick=this.state.galPick||'';
@@ -10863,6 +11003,16 @@ const App={
      Store.set('warrMonths',W);const t=document.getElementById('wr-terms');if(t)Store.set('warrTerms',String(t.value||'').trim());
      try{Sync.push&&Sync.push();}catch(e){}this.toast('הגדרות האחריות נשמרו ✓');};}
   on('[data-waze]','click',e=>{const a=e.currentTarget.dataset.waze||'';if(!a)return;try{window.open('https://waze.com/ul?q='+encodeURIComponent(a)+'&navigate=yes','_blank');}catch(x){}});   // v26.2
+  on('[data-vcard]','click',e=>{const id=e.currentTarget.dataset.vcard;const cl=(Store.get('clients',[])||[]).find(x=>x&&x.id===id)||null;this.sendVCard(cl);});
+  on('[data-tktog]','click',e=>{const[c,t]=(e.currentTarget.dataset.tktog||'').split('|');this.taskEdit(c,cl=>{const x=cl.tasks.find(z=>z.id===t);if(x){x.done=!x.done;x.doneAt=x.done?Date.now():null;}});this.haptic(10);});
+  on('[data-tkdel]','click',e=>{const[c,t]=(e.currentTarget.dataset.tkdel||'').split('|');let gone=null;this.taskEdit(c,cl=>{gone=cl.tasks.find(z=>z.id===t);cl.tasks=cl.tasks.filter(z=>z.id!==t);});
+    if(gone)this.toastUndo('המשימה נמחקה',()=>this.taskEdit(c,cl=>{cl.tasks.push(gone);}));});
+  {const ta=document.getElementById('tk-addb');const ti=document.getElementById('tk-in');
+   const add=()=>{const v=String(ti.value||'').trim();if(!v){ti.focus();return;}const cid=ta.dataset.tkadd;this.taskEdit(cid,cl=>{cl.tasks.push({id:uid(),t:v.slice(0,140),done:false,ts:Date.now()});});
+     const n=document.getElementById('tk-in');if(n)n.focus();};
+   if(ta&&ti){ta.onclick=add;ti.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();add();}});}}
+  on('[data-expnudge]','click',e=>this.expNudge(e.currentTarget.dataset.expnudge));
+  if(this.state.modal==='settings'){try{this.ownerSigBind();this.bizCardBind();}catch(e){}}
   on('[data-hoq]','click',e=>{this._hoQ=e.currentTarget.dataset.hoq;if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='handover';this.render();});
   if(this.state.modal==='handover')this.hoBind();
   {const isv=document.getElementById('inv-save');if(isv)isv.onclick=()=>{Store.set('invToken',(document.getElementById('inv-token').value||'').trim());this.toast('קוד החיבור נשמר ✓');};
@@ -11861,7 +12011,7 @@ const App={
      <div class="p-sumtotal"><span>${L.grand}</span><span class="v">${nis(this.grand())}</span></div>
      ${(+s.advance>0)?`<div class="p-sumrow"><span>\u05de\u05e7\u05d3\u05de\u05d4 (${s.advance}%)</span><span class="v">${nis(Math.round(this.grand()*(+s.advance)/100))}</span></div>`:''}</div></div>`}
    ${extra?`<div class="p-extra">${extra}</div>`:''}
-   <div class="p-sign"><div class="s"><div class="sh">${L.signc}</div><div class="sigimg"></div><div class="sl">יהודה יעקובוב</div></div>
+   <div class="p-sign"><div class="s"><div class="sh">${L.signc}</div><div class="sigimg">${(()=>{const o=Store.get('ownerSig','');return o?`<img src="${o}" alt=""/>`:'';})()}</div><div class="sl">יהודה יעקובוב</div></div>
      <div class="s"><div class="sh">${L.signk}</div><div class="sigimg">${s.clientSig?`<img src="${s.clientSig}"/>`:''}</div><div class="sl">${esc(c.name)||'—'}</div></div></div>
    ${(this._galleryImgs&&this._galleryImgs.length)?`<div class="p-gallery"><div class="pg-title">📸 עבודות אחרונות שלנו</div><div class="pg-sub">כך נראית עבודה מקצועית של יהודה שיפוצים</div><div class="pg-grid">${this._galleryImgs.map(p=>`<img loading="lazy" src="${p.data}"/>`).join('')}</div></div>`:''}
    <div class="p-cta"><div><div class="t">${L.cta}</div><div class="u">yehuda-shipuzim.netlify.app</div><div class="s">${L.ctas}</div></div><div class="qr" id="pdf-qr"></div></div>
@@ -12783,7 +12933,7 @@ document.addEventListener('DOMContentLoaded',()=>{
          const dd=doc.data();
          document.getElementById('root').innerHTML=App.liveView(dd.data,lid);
          try{initLiveUI(lid,dd.data);}catch(e){}
-         ysPushSet(dd);ysNotify('view');   // v25.5
+         ysPushSet(dd);ysOpen(lid,dd);   // v25.5 · v26.6 ספירת פתיחות
          try{if(!dd.viewedAt)window._db.collection('proposals').doc(lid).update({viewedAt:Date.now()});}catch(e){}
        }else{
          document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">\u05d4\u05d4\u05e6\u05e2\u05d4 \u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d4.<br>\u05d1\u05e7\u05e9/\u05d9 \u05dc\u05d9\u05e0\u05e7 \u05d7\u05d3\u05e9.</div>';
@@ -12799,7 +12949,7 @@ document.addEventListener('DOMContentLoaded',()=>{
    document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;font-size:16px">טוען הצעה…</div>';
    if(window._db){window._db.collection('proposals').doc(id).get().then(doc=>{
      if(doc.exists){const d=doc.data();window.__pid=id;document.getElementById('root').innerHTML=App.proposalView(d.data);try{initProposalUI(id,d.data);}catch(e){}
-       ysPushSet(d);ysNotify('view');   // v25.5
+       ysPushSet(d);ysOpen(id,d);   // v25.5 · v26.6 ספירת פתיחות
        try{if(!d.viewedAt)window._db.collection('proposals').doc(id).update({viewedAt:Date.now()});}catch(e){}
      }else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">ההצעה לא נמצאה או שפג תוקפה.<br>אנא בקש/י לינק חדש מיהודה שיפוצים.</div>';}
    }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסה/י לרענן את הדף.</div>';});}
