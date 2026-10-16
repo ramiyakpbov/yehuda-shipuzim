@@ -3459,7 +3459,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.1';
+const VERSION='27.4';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4673,7 +4673,7 @@ const YS_PUB='https://yehuda-shipuzim-134094.netlify.app';
 function ysPubBase(){try{const o=String(Store.get('pubBase','')||'').trim();if(/^https:\/\/[^\s#?]+$/.test(o))return o.replace(/\/*$/,'/');}catch(e){}return YS_PUB+'/';}
 const YSPUSH_DEFAULT=YS_PUB;
 /* v27.1 — דף המשוב הוא קובץ נפרד (review.html) עם תצוגה מקדימה בוואטסאפ */
-function reviewUrl(id){return ysPubBase()+'review.html#r='+id;}   // v25.9 — אתר Netlify נפרד לפונקציות (האתר העסקי yehuda-shipuzim.netlify.app לא מכיל אותן)
+function reviewUrl(id){return ysPubBase()+'review.html?v=4#r='+id;}   // v27.4: ?v=4 — שוואטסאפ לא יציג תצוגה מקדימה ישנה מהמטמון   // v25.9 — אתר Netlify נפרד לפונקציות (האתר העסקי yehuda-shipuzim.netlify.app לא מכיל אותן)
 function ysPushBase(){try{const o=String(Store.get('fnBase','')||'').trim().replace(/\/+$/,'');if(/^https:\/\//.test(o))return o;
   return /\.netlify\.app$/.test(location.hostname)?location.origin:YSPUSH_DEFAULT;}catch(e){return YSPUSH_DEFAULT;}}
 function ysNotify(ev,extra){try{

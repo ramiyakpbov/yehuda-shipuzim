@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="איך היינו? ⭐ יהודה שיפוצים">
 <meta property="og:description" content="משוב קצר על העבודה — 30 שניות · קבלן רשום 134094">
-<meta property="og:image" content="https://yehuda-shipuzim-134094.netlify.app/og-review.png">
+<meta property="og:image" content="https://yehuda-shipuzim-134094.netlify.app/og-review-red.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="he_IL">
@@ -19,12 +19,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&family=Secular+One&display=swap">
 <style>
-/* דף משוב ללקוח — יהודה שיפוצים · v27.1
+/* דף משוב ללקוח — יהודה שיפוצים · v27.1 · v27.3 שחור וזהב מתכתי · v27.4 מסגרת אדומה
    שפה אחת עם כרטיס הביקור: לילה, לוגו זוהר, חותמת קבלן רשום.
    זרימה: כוכבים בלבד ← (אחרי בחירה) תגיות, טקסט/הקלטה, אישורים ← שליחה ← מסך תודה חכם לפי הדירוג. */
 :root{
-  --ink:#0b0b0d;--panel:#151519;--panel2:#1c1c22;--line:#2a2a31;--fg:#f4f4f6;--muted:#a3a3ad;
-  --red:#ed1c24;--red2:#ff3b42;--redGlow:rgba(237,28,36,.32);--gold:#f5b301;--gold2:#ffd54a;--ok:#2ec26b;--wa:#25d366;
+  --ink:#050505;--panel:#151519;--panel2:#1c1c22;--line:#2a2a31;--fg:#f4f4f6;--muted:#a3a3ad;
+  --red:#ed1c24;--red2:#ff3b42;--redGlow:rgba(237,28,36,.32);/* v27.3 — זהב מתכתי אמיתי (שמפניה/עתיק), לא צהוב, על שחור */
+  --gold:#d4b36a;--gold2:#ecd8a4;--gold3:#b8924a;--goldDk:#7d5e26;--goldLine:rgba(201,166,90,.42);
+  --goldText:linear-gradient(180deg,#f8ecc4 0%,#e2c47e 30%,#b58d43 56%,#8a6a2e 70%,#d9bd7a 88%,#f3e2ae 100%);
+  --goldMetal:linear-gradient(180deg,#f3e2ae 0%,#d4b36a 34%,#a98340 68%,#c9a65c 100%);--ok:#2ec26b;--wa:#25d366;
   --disp:"Secular One","Heebo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   --body:"Heebo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   color-scheme:dark;
@@ -34,28 +37,32 @@ html,body{margin:0}
 body{background:var(--ink);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(30px + env(safe-area-inset-bottom,0px));min-height:100vh;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:-20% -20% auto;height:70vh;background:radial-gradient(60% 55% at 50% 25%,var(--redGlow),transparent 70%);pointer-events:none;z-index:0;transition:background .6s}
-body.happy::before{background:radial-gradient(60% 55% at 50% 30%,rgba(245,179,1,.22),transparent 70%)}
-.topline{position:fixed;top:0;left:0;right:0;height:4px;background:var(--red);z-index:5}
+body::before{content:"";position:fixed;inset:-20% -20% auto;height:70vh;background:radial-gradient(50% 42% at 50% 28%,rgba(212,179,106,.09),transparent 72%);pointer-events:none;z-index:0;transition:opacity .6s}
+body::after{content:"";position:fixed;inset:8px;border:2px solid var(--red);border-radius:22px;pointer-events:none;z-index:4;box-shadow:0 0 14px rgba(237,28,36,.4),inset 0 0 12px rgba(237,28,36,.18),inset 0 0 0 5px rgba(5,5,5,.7),inset 0 0 0 6px rgba(237,28,36,.45)}
+body.happy::before{filter:brightness(1.6)}
+.topline{position:fixed;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#5e4519,#f3e2ae 28%,#b8924a 50%,#f3e2ae 72%,#5e4519);z-index:5}
 .wrap{position:relative;z-index:1;max-width:460px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px;padding-top:28px}
 .logo{width:min(190px,50vw);height:auto;filter:drop-shadow(0 8px 30px rgba(237,28,36,.45));animation:rise .7s cubic-bezier(.2,.8,.2,1) both}
 .co{display:flex;align-items:center;gap:10px;margin-top:-4px;animation:rise .7s .06s both}
 .co b{font-family:var(--disp);font-weight:400;font-size:20px}
-.stamp{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--red);border-radius:8px;padding:2px 9px;color:var(--red2);transform:rotate(-3deg);font-size:12px;font-weight:800;background:rgba(237,28,36,.06)}
+.stamp{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--gold3);border-radius:8px;padding:2px 9px;color:var(--gold2);transform:rotate(-3deg);font-size:12px;font-weight:800;background:rgba(201,166,90,.06)}
 .stamp span{font-family:var(--disp);font-weight:400;font-size:16px;letter-spacing:.05em;direction:ltr}
-h1{font-family:var(--disp);font-weight:400;font-size:clamp(30px,9vw,40px);line-height:1.1;margin:8px 0 0;text-align:center;animation:rise .7s .1s both}
+h1{font-family:var(--disp);font-weight:400;font-size:clamp(30px,9vw,40px);line-height:1.15;margin:8px 0 0;text-align:center;animation:rise .7s .1s both}
+h1 .gt,.done h2 .gt{background:var(--goldText);-webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{color:var(--muted);text-align:center;margin:2px 0 0;font-size:15.5px;animation:rise .7s .14s both}
-.proj{display:inline-flex;align-items:center;gap:6px;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--fg)}
-.card{width:100%;background:linear-gradient(170deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:22px;padding:20px 16px;box-shadow:0 20px 50px rgba(0,0,0,.45);animation:rise .7s .18s both}
+.proj{display:inline-flex;align-items:center;gap:6px;font-size:13px;background:rgba(201,166,90,.06);border:1px solid var(--goldLine);border-radius:999px;padding:4px 12px;color:var(--fg)}
+.card{width:100%;background:linear-gradient(170deg,#121110,#0a0a0a 60%);border:1px solid var(--goldLine);border-radius:22px;padding:20px 16px;box-shadow:0 20px 50px rgba(0,0,0,.6),inset 0 1px 0 rgba(243,226,174,.10);animation:rise .7s .18s both}
 /* פרצוף + כוכבים */
-.face{font-size:54px;line-height:1;text-align:center;height:60px;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
+.wreath{position:relative;width:150px;height:92px;margin:0 auto}
+.wreath svg{position:absolute;inset:0;width:100%;height:100%}
+.face{position:absolute;left:0;right:0;top:16px;font-size:54px;line-height:1;text-align:center;height:60px;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
 .face.pop{transform:scale(1.22) rotate(-6deg)}
 .stars{display:flex;justify-content:center;gap:4px;direction:ltr;margin:6px 0 4px}
 .st{appearance:none;border:0;background:none;padding:4px;cursor:pointer;-webkit-tap-highlight-color:transparent;border-radius:12px;line-height:0}
 .st svg{width:min(54px,14vw);height:min(54px,14vw);transition:transform .3s cubic-bezier(.3,1.7,.5,1),filter .3s}
-.st path{fill:#2b2b33;stroke:#4a4a54;stroke-width:1;transition:fill .25s,stroke .25s}
-.st.on path{fill:url(#gold);stroke:#e09a00}
-.st.on svg{filter:drop-shadow(0 4px 14px rgba(245,179,1,.55))}
+.st path{fill:#141312;stroke:rgba(201,166,90,.42);stroke-width:1;transition:fill .25s,stroke .25s}
+.st.on path{fill:url(#gold);stroke:#f3e2ae;stroke-width:.6}
+.st.on svg{filter:drop-shadow(0 4px 12px rgba(212,179,106,.38))}
 .st.bump svg{transform:scale(1.28) rotate(8deg)}
 .st:focus-visible{outline:3px solid var(--gold2);outline-offset:2px}
 .lbl{text-align:center;font-weight:800;font-size:17px;min-height:26px;color:var(--muted);transition:color .2s}
@@ -64,12 +71,12 @@ h1{font-family:var(--disp);font-weight:400;font-size:clamp(30px,9vw,40px);line-h
 /* החלק שנפתח אחרי בחירת כוכבים */
 .more{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.8,.2,1)}
 .more.open{grid-template-rows:1fr}
-.more>div{overflow:hidden;min-height:0;padding:0 2px 16px;margin:0 -2px -16px}
+.more>div{overflow:hidden;min-height:0;padding:0 14px 24px;margin:0 -14px -24px}
 .q{font-weight:800;font-size:15px;margin:18px 2px 8px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{appearance:none;font:inherit;font-size:14px;font-weight:600;color:var(--fg);background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 13px;cursor:pointer;transition:background .2s,border-color .2s,transform .12s}
 .chip:active{transform:scale(.95)}
-.chip[aria-pressed="true"]{background:rgba(245,179,1,.14);border-color:var(--gold);color:#fff}
+.chip[aria-pressed="true"]{background:rgba(212,179,106,.12);border-color:var(--gold);color:var(--gold2)}
 .neg .chip[aria-pressed="true"]{background:rgba(237,28,36,.14);border-color:var(--red2)}
 .tx{position:relative}
 textarea{width:100%;min-height:104px;border:1px solid var(--line);border-radius:14px;padding:12px 14px 44px;font:inherit;font-size:15.5px;line-height:1.55;background:var(--ink);color:var(--fg);resize:vertical}
@@ -89,18 +96,18 @@ textarea:focus{outline:none;border-color:#55555f;box-shadow:0 0 0 3px rgba(255,2
 .tog input:focus-visible+.sw{outline:3px solid var(--gold2);outline-offset:2px}
 .tog b{display:block;font-size:14.5px}
 .tog small{display:block;color:var(--muted);font-size:12.5px;line-height:1.45;margin-top:1px}
-.send{width:100%;min-height:58px;margin-top:16px;border:0;border-radius:16px;font:inherit;font-weight:800;font-size:18px;color:#fff;cursor:pointer;
-  background:linear-gradient(180deg,var(--red2),var(--red));box-shadow:0 10px 30px rgba(237,28,36,.35);transition:transform .12s,opacity .2s}
+.send{width:100%;min-height:58px;margin-top:16px;border:0;border-radius:16px;font:inherit;font-weight:800;font-size:18px;color:#0d0b07;cursor:pointer;
+  background:var(--goldMetal);box-shadow:0 10px 28px rgba(212,179,106,.22),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 0 rgba(94,69,25,.35);transition:transform .12s,opacity .2s}
 .send:active{transform:scale(.98)}
 .send:disabled{opacity:.6}
 .err{color:#ffb4b4;font-size:13.5px;text-align:center;margin-top:8px;min-height:1px}
 /* מסך תודה */
 .done{text-align:center}
-.check{width:84px;height:84px;margin:4px auto 6px;border-radius:50%;background:rgba(46,194,107,.14);display:grid;place-items:center;animation:press .55s cubic-bezier(.3,1.6,.5,1) both}
+.check{width:84px;height:84px;margin:4px auto 6px;border-radius:50%;background:radial-gradient(circle,rgba(46,194,107,.18),rgba(46,194,107,.06));box-shadow:0 0 0 2px var(--gold3),0 0 0 7px rgba(201,166,90,.12),0 0 28px rgba(212,179,106,.18);display:grid;place-items:center;animation:press .55s cubic-bezier(.3,1.6,.5,1) both}
 .check svg{width:46px;height:46px;stroke:var(--ok);stroke-width:3;fill:none;stroke-dasharray:40;stroke-dashoffset:40;animation:draw .6s .25s forwards}
 .done h2{font-family:var(--disp);font-weight:400;font-size:28px;margin:6px 0 2px}
 .done p{color:var(--muted);margin:0 0 4px}
-.mine{display:inline-flex;direction:ltr;gap:2px;font-size:22px;color:var(--gold);letter-spacing:2px;margin:4px 0}
+.mine{display:inline-flex;direction:ltr;gap:2px;font-size:26px;color:var(--gold);letter-spacing:2px;margin:4px 0;text-shadow:0 2px 10px rgba(212,179,106,.4)}
 .quote{background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--fg);font-size:14.5px;text-align:right;margin-top:8px;white-space:pre-wrap}
 .acts{display:grid;gap:10px;margin-top:16px}
 .btn{display:flex;align-items:center;justify-content:center;gap:9px;min-height:54px;border-radius:15px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);
@@ -129,7 +136,7 @@ textarea:focus{outline:none;border-color:#55555f;box-shadow:0 0 0 3px rgba(255,2
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd54a"/><stop offset="1" stop-color="#f5a300"/></linearGradient></defs></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e9bd"/><stop offset=".45" stop-color="#d8b86c"/><stop offset="1" stop-color="#9c7431"/></linearGradient></defs></svg>
 <div class="topline" aria-hidden="true"></div>
 <canvas id="fx" aria-hidden="true"></canvas>
 <main class="wrap" id="app">
@@ -173,6 +180,18 @@ var I={
   phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>'
 };
 
+var WREATH=(function(){ // ענפי דפנה זהובים סביב הפרצוף
+  var h='<svg viewBox="0 0 150 92"><defs><linearGradient id="lf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6e7b8"/><stop offset="1" stop-color="#9c7431"/></linearGradient></defs>';
+  [1,-1].forEach(function(m){var P0=[75+m*20,88],P1=[75+m*70,74],P2=[75+m*50,10];
+    var pt=function(t){return [(1-t)*(1-t)*P0[0]+2*(1-t)*t*P1[0]+t*t*P2[0],(1-t)*(1-t)*P0[1]+2*(1-t)*t*P1[1]+t*t*P2[1]];};
+    var tg=function(t){return [2*(1-t)*(P1[0]-P0[0])+2*t*(P2[0]-P1[0]),2*(1-t)*(P1[1]-P0[1])+2*t*(P2[1]-P1[1])];};
+    h+='<path d="M'+P0+' Q'+P1+' '+P2+'" stroke="url(#lf)" stroke-width="1.6" fill="none" stroke-linecap="round"/>';
+    for(var k=0;k<6;k++){var t=.12+k*.15,q=pt(t),d=tg(t),a=Math.atan2(d[1],d[0])*180/Math.PI,L=13*(1-k*.06);
+      [-1,1].forEach(function(sd){var ang=a+sd*42,cx=q[0]+Math.cos(ang*Math.PI/180)*L*.55,cy=q[1]+Math.sin(ang*Math.PI/180)*L*.55;
+        h+='<ellipse cx="'+cx.toFixed(1)+'" cy="'+cy.toFixed(1)+'" rx="'+(L*.62).toFixed(1)+'" ry="'+(L*.24).toFixed(1)+'" fill="url(#lf)" transform="rotate('+ang.toFixed(1)+' '+cx.toFixed(1)+' '+cy.toFixed(1)+')"/>';});}
+  });
+  return h+'</svg>';
+})();
 var D={};             // מסמך המשוב מהענן
 var S={stars:0,tags:[],text:'',cb:true,pub:false,photo:false};
 var DK='ysrv:'+rid;   // טיוטה מקומית — אם הלקוח יוצא באמצע
@@ -191,11 +210,11 @@ function summaryText(){
 /* ===== טופס ===== */
 function formView(){
   var nm=firstName(D.client);
-  var h='<h1>'+(nm?'שלום '+esc(nm)+' 👋':'שלום 👋')+'</h1>'+
+  var h='<h1><span class="gt">'+(nm?'שלום '+esc(nm):'שלום')+'</span> 👋</h1>'+
     '<p class="sub">תודה שבחרתם בנו! איך היינו?</p>'+
     (D.project?'<div style="text-align:center"><span class="proj">🏠 '+esc(D.project)+'</span></div>':'')+
     '<div class="card">'+
-      '<div class="face" id="face" aria-hidden="true">'+FACES[S.stars]+'</div>'+
+      '<div class="wreath" aria-hidden="true">'+WREATH+'<div class="face" id="face">'+FACES[S.stars]+'</div></div>'+
       '<div class="stars" role="radiogroup" aria-label="דירוג מ-1 עד 5 כוכבים" id="stars">'+
         [1,2,3,4,5].map(function(i){return '<button type="button" class="st" role="radio" aria-checked="false" aria-label="'+i+' כוכבים" data-s="'+i+'">'+STAR+'</button>';}).join('')+
       '</div>'+
@@ -295,7 +314,7 @@ function thanks(fresh){
   var nm=firstName(D.client);
   var h='<div class="card done">'+
     '<div class="check"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'+
-    '<h2>'+(fresh?'תודה'+(nm?' '+esc(nm):'')+'!':'המשוב שלך התקבל')+'</h2>'+
+    '<h2><span class="gt">'+(fresh?'תודה'+(nm?' '+esc(nm):'')+'!':'המשוב שלך התקבל')+'</span></h2>'+
     '<div class="mine" aria-label="'+n+' כוכבים">'+'★'.repeat(n)+'<span style="color:#3a3a42">'+'★'.repeat(5-n)+'</span></div>'+
     '<p>'+(good?'שימחת אותנו מאוד 🙏':(D.callback?'יהודה קיבל את הפנייה ויחזור אליך בהקדם':'קיבלנו, ונעבוד להשתפר'))+'</p>'+
     ((D.tags&&D.tags.length)||D.text?'<div class="quote">'+esc([(D.tags||[]).join(' · '),D.text||''].filter(Boolean).join('\n'))+'</div>':'')+
@@ -323,7 +342,7 @@ function confetti(){
   try{if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;}catch(e){}
   var c=$('fx'),x=c.getContext('2d');if(!x)return;var dpr=Math.min(2,window.devicePixelRatio||1);
   var W=c.width=innerWidth*dpr,H=c.height=innerHeight*dpr;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
-  var cols=['#ed1c24','#ff3b42','#f5b301','#ffd54a','#ffffff'],P=[];
+  var cols=['#f6e7b8','#d4b36a','#b8924a','#8a6a2e','#ffffff','#e2c47e'],P=[];
   for(var i=0;i<150;i++)P.push({x:W/2+(Math.random()-.5)*W*.3,y:H*.32,vx:(Math.random()-.5)*16*dpr,vy:(-Math.random()*15-5)*dpr,s:(Math.random()*7+4)*dpr,r:Math.random()*6,vr:(Math.random()-.5)*.35,c:cols[i%cols.length],star:i%7===0});
   var t0=performance.now();
   (function f(t){var k=(t-t0)/1000;x.clearRect(0,0,W,H);
