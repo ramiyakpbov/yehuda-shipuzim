@@ -3453,7 +3453,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.7';
+const VERSION='26.9';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -3800,7 +3800,7 @@ const GUIDE=[
    <li><b>לשונית הצעה — הכותרת קבועה</b> — הלוגו, החיפוש והשבבים נשארים למעלה גם בגלילה.</li>
    <li><b>קרא שטח — "החל"</b> — כתוב שהשטח ופרטי הלקוח נכנסים להצעה רק אחרי "החל", והכפתור ברוחב מלא.</li>
    <li><b>אין עדיין סעיפים</b> — הסבר מה זה סעיף, וכפתור ישיר "מכתב כמויות (AI)".</li>
-   <li><b>קוד שגוי</b> — הודעה בחלון של האפליקציה, עם "התקשר לרמי" ו"סגור".</li>
+   <li><b>קוד שגוי</b> — הודעה בחלון של האפליקציה, עם "התקשר ליהודה" ו"סגור".</li>
    <li><b>שבבי לשונית הצעה</b> — קטגוריות והצעות מהירות ממלאים את רוחב המסך.</li>
    <li><b>הצעת תכנון — הסכום במסך</b> — שטח × מחיר למ"ר, מע"מ וסה"כ לתשלום מופיעים בפרטי ההצעה ובסרגל התחתון, כמו ב-PDF. בלי שטח — רק המחיר למ"ר. בבדיקה לפני שליחה: סעיף בלי מחיר תקין בתכנון; חסר מחיר למ"ר — מסומן.</li>
    <li><b>בחירת קבצים מתוך קבצים שמורים</b> — "קרא שטח" על סט עם כמה קבצים שואל אילו לשלוח, וזוכר את הבחירה. פחות קבצים — תשובה מהירה יותר.</li>
@@ -8380,7 +8380,7 @@ const App={
    <div class="field"><label>כתובת הלינקים ללקוחות</label><input id="pub-base" dir="ltr" placeholder="${esc(YS_PUB)}" value="${esc(String(Store.get('pubBase','')||''))}"/></div>
    <div style="font-size:11.5px;color:var(--muted);margin:-4px 2px 10px;line-height:1.5">ריק = <span dir="ltr">${esc(YS_PUB.replace(/^https:\/\//,''))}</span>. לשנות רק אם לינקים ללקוחות לא נפתחים.</div>
    <button class="btn-ghost" id="pub-save" style="margin-bottom:10px">💾 שמור כתובת</button>
-   <button class="btn-ghost" id="diag-copy" style="margin-bottom:10px">📋 העתק אבחון הצעות (לשליחה לרמי)</button>
+   <button class="btn-ghost" id="diag-copy" style="margin-bottom:10px">📋 העתק אבחון הצעות (לשליחה ליהודה)</button>
    <div class="field"><label>מגבלות המערכת</label>
      <div style="background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:4px 12px 8px">${this.limitsCard()}</div></div>
    ${locked(`
@@ -10314,7 +10314,7 @@ const App={
    const nb=document.getElementById('noitems-boq');if(nb)nb.onclick=()=>{try{this.captureQuote();}catch(e){}
      this.aiGate(()=>{if(this.state.modal)this._navStack.push(this.state.modal);this.state.modal='boq';this.render();});};}
   {const dg=document.getElementById('diag-copy');if(dg)dg.onclick=async()=>{const t=this.diagQuotes();
-     try{await navigator.clipboard.writeText(t);this.toast('הועתק ✓ — הדבק לרמי בצ\'אט');}catch(e){prompt('העתק את הטקסט:',t);}};}
+     try{await navigator.clipboard.writeText(t);this.toast('הועתק ✓ — הדבק ושלח ליהודה');}catch(e){prompt('העתק את הטקסט:',t);}};}
   {const pt=document.getElementById('push-toggle');if(pt)pt.onclick=()=>{if((Store.get('pushSub',null)||{}).endpoint)this.pushDisable();else this.pushEnable();};
    const pte=document.getElementById('push-test');if(pte)pte.onclick=()=>this.pushTest(false);}
   on('[data-settab]','click',e=>{this.state.setTab=e.currentTarget.dataset.settab;this.haptic(8);this.render();
