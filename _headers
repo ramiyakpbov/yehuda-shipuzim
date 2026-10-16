@@ -13,3 +13,6 @@
 
 /card.html
   Cache-Control: no-cache, must-revalidate
+
+/review.html
+  Cache-Control: no-cache, must-revalidate

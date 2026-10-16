@@ -1184,6 +1184,11 @@ input:focus,textarea:focus,select:focus{outline:none;}
 
 .rv-consent{display:flex;align-items:flex-start;gap:10px;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:12px;margin:12px 0;cursor:pointer;font-size:12.5px;line-height:1.5;text-align:right;transition:border-color .25s,background .25s;}
 .rv-consent:has(input:checked){border-color:var(--red);background:rgba(237,28,36,.07);}
+/* v27.1 — רשימת המשובים: תגיות ותגים */
+.rv-bs,.rv-tg{flex-basis:100%;display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.rv-b{font-size:11.5px;font-weight:700;border:1px solid var(--line);background:var(--bg3);border-radius:999px;padding:2px 9px;}
+.rv-b.cb{border-color:var(--red);color:var(--red);background:rgba(237,28,36,.08);}
+.rv-tg span{font-size:11.5px;color:var(--muted);background:var(--bg2);border-radius:6px;padding:2px 7px;}
 .rv-consent input{width:20px;height:20px;accent-color:var(--red);flex:none;margin-top:1px;}
 .rv-card{box-shadow:0 20px 60px rgba(0,0,0,.5),0 4px 16px rgba(0,0,0,.3);}
 .rv-hdr img{filter:none;}
@@ -3454,7 +3459,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.0';
+const VERSION='27.1';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4666,7 +4671,9 @@ const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith(
    ללקוח לא מגיע יותר ramiyakpbov.github.io. Store 'pubBase' עוקף (הגדרות ← מערכת) — אם משהו לא עובד בכתובת החדשה. */
 const YS_PUB='https://yehuda-shipuzim-134094.netlify.app';
 function ysPubBase(){try{const o=String(Store.get('pubBase','')||'').trim();if(/^https:\/\/[^\s#?]+$/.test(o))return o.replace(/\/*$/,'/');}catch(e){}return YS_PUB+'/';}
-const YSPUSH_DEFAULT=YS_PUB;   // v25.9 — אתר Netlify נפרד לפונקציות (האתר העסקי yehuda-shipuzim.netlify.app לא מכיל אותן)
+const YSPUSH_DEFAULT=YS_PUB;
+/* v27.1 — דף המשוב הוא קובץ נפרד (review.html) עם תצוגה מקדימה בוואטסאפ */
+function reviewUrl(id){return ysPubBase()+'review.html#r='+id;}   // v25.9 — אתר Netlify נפרד לפונקציות (האתר העסקי yehuda-shipuzim.netlify.app לא מכיל אותן)
 function ysPushBase(){try{const o=String(Store.get('fnBase','')||'').trim().replace(/\/+$/,'');if(/^https:\/\//.test(o))return o;
   return /\.netlify\.app$/.test(location.hostname)?location.origin:YSPUSH_DEFAULT;}catch(e){return YSPUSH_DEFAULT;}}
 function ysNotify(ev,extra){try{
@@ -10894,7 +10901,7 @@ const App={
   const db=document.getElementById('drill-back');if(db)db.onclick=()=>{this.state.modal='stats';this.render();};
   const rvr=document.getElementById('rev-refresh');if(rvr)rvr.onclick=()=>{this._revData=null;this.toast('מרענן…');this.loadReviews();};
   on('[data-revdel]','click',e=>{const id=e.currentTarget.dataset.revdel;if(confirm('להסיר מהרשימה?')){(Tomb.add([id]),Store.set('reviewLinks',Store.get('reviewLinks',[]).filter(x=>x.id!==id)));this.render();}});
-  on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=ysPubBase();window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+base+'#r='+id),'_blank');});
+  on('[data-revnudge]','click',e=>{const id=e.currentTarget.dataset.revnudge;const l=Store.get('reviewLinks',[]).find(x=>x.id===id);if(!l)return;const base=ysPubBase();window.open(waLink(l.phone,'שלום'+(l.client?' '+l.client:'')+' 🙏\nרק מזכיר — נשמח מאוד למשוב קצר:\n'+reviewUrl(id)),'_blank');});
   on('[data-trktab]','click',e=>{this.state.trkTab=e.currentTarget.dataset.trktab;this.render();});
   // תוכנית → שטח. captureQuote לפני בחירת הקובץ: ה-render שאחרי הקריאה בונה
   // את החלון מהמצב, ובלי זה מה שהוקלד בשדות ולא נשמר היה נמחק.
@@ -11963,8 +11970,8 @@ const App={
   this.toast('יוצר לינק משוב…');
   let link=null;
   if(window._db){try{const id=this.shortId();
-    await window._db.collection('reviews').doc(id).set({client:cl.name||'',phone:cl.phone||'',project:cl.project||'',gmb:Store.get('googleReview','')||Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:0,text:'',doneAt:null});
-    link=ysPubBase()+'#r='+id;
+    await window._db.collection('reviews').doc(id).set({client:cl.name||'',phone:cl.phone||'',project:cl.project||'',gmb:Store.get('googleReview','')||Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:0,text:'',doneAt:null,...this.pushFields()});
+    link=reviewUrl(id);
     const rl=Store.get('reviewLinks',[]);rl.unshift({id:id,client:cl.name||'',phone:cl.phone||'',ts:Date.now()});Store.set('reviewLinks',rl.slice(0,200));
     cl.reviewId=id;
   }catch(e){}}
@@ -12036,8 +12043,8 @@ const App={
   this.toast('יוצר לינק משוב…');
   const base=ysPubBase();let link=null;
   if(window._db){try{const id=this.shortId();
-    await window._db.collection('reviews').doc(id).set({client:cl.name||'',clientId:cl.id,phone:cl.phone||'',project:cl.project||'',createdAt:Date.now(),stars:null,text:'',doneAt:null});
-    link=base+'#r='+id;
+    await window._db.collection('reviews').doc(id).set({client:cl.name||'',clientId:cl.id,phone:cl.phone||'',project:cl.project||'',gmb:Store.get('googleReview','')||Store.get('gmbUrl','')||'',createdAt:Date.now(),stars:null,text:'',doneAt:null,...this.pushFields()});
+    link=reviewUrl(id);
     const rl=Store.get('reviewLinks',[]);rl.unshift({id:id,client:cl.name||'',phone:cl.phone||'',project:cl.project||'',ts:Date.now()});Store.set('reviewLinks',rl.slice(0,200));
     // mark client as awaiting feedback
     const list=Store.get('clients',[]);const c2=list.find(x=>x.id===clientId);if(c2){c2.status='sent';c2.reviewId=id;Store.set('clients',list);}
@@ -12274,15 +12281,19 @@ const App={
    <button class="btn-ghost" id="rev-refresh" style="margin-bottom:12px">🔄 רענן מהענן</button>
    ${links.length?links.map(l=>{const d=live[l.id]||{};
      const st=d.doneAt?('★'.repeat(d.stars||0)+'☆'.repeat(5-(d.stars||0))):'⏳ ממתין';
+     const badges=[d.callback?'<span class="rv-b cb">📞 ביקש/ה שיחזרו אליו</span>':'',d.publicOK?'<span class="rv-b">🌐 מאשר/ת לפרסם את המשוב</span>':'',d.photoConsent?'<span class="rv-b">📸 מאשר/ת תמונות</span>':''].join('');
      return `<div class="list-item">
        <div class="info"><div class="t">${esc(l.client)||'—'} <span style="color:#f5b301">${d.doneAt?st:''}</span></div>
-         <div class="s">${d.doneAt?('התקבל '+ago(d.doneAt)):('נשלח '+ago(l.ts)+' · ממתין לתשובה')}</div></div>
+         <div class="s">${d.doneAt?('התקבל '+ago(d.doneAt)):(d.openedAt?('👀 נפתח '+ago(d.openedAt)+' · עוד לא מילא/ה'):('נשלח '+ago(l.ts)+' · ממתין לתשובה'))}</div></div>
+       ${(d.callback&&l.phone)?`<a class="mini" href="tel:${esc(l.phone)}">📞 חיוג</a>`:''}
        ${(!d.doneAt&&l.phone)?`<button class="mini" data-revnudge="${l.id}">📲 תזכורת</button>`:''}
        <button class="del" data-revdel="${l.id}">🗑️</button>
+       ${badges?`<div class="rv-bs">${badges}</div>`:''}
+       ${(d.tags&&d.tags.length)?`<div class="rv-tg">${d.tags.map(t=>'<span>'+esc(t)+'</span>').join('')}</div>`:''}
        ${d.text?`<div class="trk-comment">💬 ${esc(d.text)}</div>`:''}</div>`;}).join(''):this.emptyState('⭐','עדיין לא נשלחו בקשות משוב','אחרי שפרויקט מסתיים אפשר לבקש מהלקוח ביקורת.',{attr:"data-modal=\"clients\"",label:'👥 פתח מאגר לקוחות'})}`;
  },
  async loadReviews(){const links=Store.get('reviewLinks',[]);if(!links.length||!window._db)return;const out={};
-  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null};}}catch(e){}}));}catch(e){}
+  try{await Promise.all(links.slice(0,50).map(async l=>{try{const d=await window._db.collection('reviews').doc(l.id).get();if(d.exists){const v=d.data();out[l.id]={stars:v.stars||0,text:v.text||'',doneAt:v.doneAt||null,openedAt:v.openedAt||null,tags:Array.isArray(v.tags)?v.tags:[],callback:!!v.callback,publicOK:!!v.publicOK,photoConsent:!!v.photoConsent};}}catch(e){}}));}catch(e){}
   this._revData=out;if(this.state.modal==='reviews')this.render();
  },
  reviewView(id,d){d=d||{};const gmb=d.gmb||Store.get('googleReview','')||Store.get('gmbUrl','');
@@ -12924,12 +12935,14 @@ document.addEventListener('DOMContentLoaded',()=>{
    const rid=location.hash.slice(3).replace(/[^A-Za-z0-9]/g,'');
    const sp0=document.getElementById('splash');if(sp0)sp0.style.display='none';
    document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888">טוען…</div>';
-   if(window._db){window._db.collection('reviews').doc(rid).get().then(doc=>{
+   // v27.1 — לינקים ישנים (#r=) עוברים לדף המשוב החדש; אם הוא לא קיים בשרת — הדף הישן כגיבוי
+   const oldRev=()=>{if(window._db){window._db.collection('reviews').doc(rid).get().then(doc=>{
      const d=doc.exists?doc.data():{};
      document.getElementById('root').innerHTML=App.reviewView(rid,d);
      try{initReviewUI(rid,d);}catch(e){}
    }).catch(()=>{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888;padding:24px;text-align:center">שגיאת חיבור. נסו לרענן.</div>';});}
-   else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888">לא ניתן לטעון כרגע.</div>';}
+   else{document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;color:#888">לא ניתן לטעון כרגע.</div>';}};
+   try{fetch('review.html',{method:'HEAD',cache:'no-store'}).then(r=>{if(r&&r.ok)location.replace('review.html#r='+rid);else oldRev();}).catch(oldRev);}catch(e){oldRev();}
    return;
  }
 
