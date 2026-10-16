@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta name="theme-color" content="#0d0d0f" />
 <title>מחשבון הצעת מחיר יהודה שיפוצים</title>
-<link rel="manifest" href="manifest.webmanifest" />
+<script>
+/* v27.5 — דפי לקוח (#L= #id= #p= #r=) לא "אפליקציה": בלי manifest כרום לא מציע ללקוח להתקין את האפליקציה של יהודה */
+(function(){var h=location.hash||'';window.__ysClient=/^#(L|id|p|r)=/.test(h);
+  if(window.__ysClient){document.title='הצעת מחיר · יהודה שיפוצים';}
+  else{var l=document.createElement('link');l.rel='manifest';l.href='manifest.webmanifest';document.head.appendChild(l);}})();
+</script>
 <link rel="apple-touch-icon" href="icon-180.png" />
 <link rel="icon" type="image/png" href="icon-192.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3459,7 +3464,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.4';
+const VERSION='27.5';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -12117,7 +12122,7 @@ const App={
      '<div class="lv-items">'+pb+'</div>'+
      '<div class="lv-sum">'+
        ((+d.tsqm)?'<div class="r"><span>\u05e9\u05d8\u05d7 \u05db\u05d5\u05dc\u05dc</span><b>'+(+d.tsqm).toLocaleString('he-IL')+' \u05de"\u05e8</b></div>':'')+
-       '<div class="r"><span>\u05de\u05d7\u05d9\u05e8 \u05dc\u05de"\u05e8</span><b>'+nf(d.psqm)+'</b></div>'+
+       ((+d.psqm>0)?'<div class="r"><span>\u05de\u05d7\u05d9\u05e8 \u05dc\u05de"\u05e8</span><b>'+nf(d.psqm)+'</b></div>':'')+   // v27.5: בלי "0 ₪" ללקוח
        ((+d.tsqm&&+d.psqm)?'<div class="r tot"><span>\u05e1\u05d4"\u05db '+(vat?'\u05dc\u05e4\u05e0\u05d9 \u05de\u05e2"\u05de':'')+'</span><b>'+nf(totAll)+'</b></div>'+
          (vat?'<div class="r"><span>\u05de\u05e2"\u05de '+vat+'%</span><b>'+nf(totAll*vat/100)+'</b></div>'+
               '<div class="r tot"><span>\u05e1\u05d4"\u05db \u05db\u05d5\u05dc\u05dc \u05de\u05e2"\u05de</span><b>'+nf(totAll*(1+vat/100))+'</b></div>':'')
@@ -12686,7 +12691,7 @@ let deferredPrompt=null;
 const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
 const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
 // מצב תצוגת לקוח: הצעה (#p= / #id=) או דף משוב (#r=) — לעולם לא מציגים כפתור התקנה ללקוח
-const isClientView=()=>{const h=location.hash||'';return h.indexOf('#p=')===0||h.indexOf('#id=')===0||h.indexOf('#r=')===0;};
+const isClientView=()=>{const h=location.hash||'';return !!window.__ysClient||h.indexOf('#p=')===0||h.indexOf('#id=')===0||h.indexOf('#r=')===0||h.indexOf('#L=')===0;};   // v27.5: גם #L= (לינק חי)
 function showInstallUI(){if(isStandalone()||isClientView())return;let b=document.getElementById('install-fab');if(!b){b=document.createElement('button');b.id='install-fab';b.className='install-fab';b.innerHTML='📲 התקן אפליקציה';b.onclick=doInstall;document.body.appendChild(b);}b.style.display='flex';}
 function hideInstallUI(){const b=document.getElementById('install-fab');if(b)b.style.display='none';}
 async function doInstall(){
@@ -12855,7 +12860,10 @@ document.getElementById('splash-logo').innerHTML=logoBlock(true,1);
 })();
 
 /* ===== Service Worker: offline + auto-update ===== */
-if('serviceWorker' in navigator){
+// v27.5 — בדף לקוח לא רושמים Service Worker. אם נרשם בעבר במכשיר של לקוח (לא של יהודה) — מסירים, כדי שלא יוצע להתקין.
+if('serviceWorker' in navigator&&isClientView()){try{let mine=false;try{mine=!!(localStorage.getItem('ys:pushSub')||localStorage.getItem('ys:clients'));}catch(e){}
+  if(!mine)navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(g=>g.unregister())).catch(()=>{});}catch(e){}}
+else if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('sw.js').then(reg=>{
       // check for updates each launch
