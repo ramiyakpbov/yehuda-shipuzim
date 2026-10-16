@@ -1344,7 +1344,8 @@ input:focus,textarea:focus,select:focus{outline:none;}
 }
 
 /* ריחוף עדין מתמשך — הדף "נושם" באוויר */
-.sheet{animation:sheetFloat .58s cubic-bezier(.2,1.1,.3,1),gentleFloat 5s ease-in-out .6s infinite!important;}
+/* v27.0: בוטל הריחוף המתמשך (gentleFloat) — transform חי על אזור גלילה גרם באנדרואיד לתחתית חתוכה עד גלילה/רענון. נשארה רק אנימציית הכניסה. */
+.sheet{animation:sheetFloat .58s cubic-bezier(.2,1.1,.3,1)!important;}
 @keyframes gentleFloat{
   0%,100%{transform:translateY(0);}
   50%{transform:translateY(-5px);}
@@ -3453,7 +3454,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='26.9';
+const VERSION='27.0';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
