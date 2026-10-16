@@ -1,4 +1,4 @@
-// יהודה שיפוצים — התראות לטלפון (Web Push) · v25.5
+// יהודה שיפוצים — התראות לטלפון (Web Push) · v25.5 · v27.1 משוב
 // ------------------------------------------------------------------
 // מה זה: כשלקוח פותח לינק הצעה או מאשר אותו, דף הלקוח שולח לכאן בקשה,
 // והפונקציה שולחת התראה לטלפון של יהודה — גם כשהאפליקציה סגורה.
@@ -12,7 +12,7 @@
 //
 // API:
 //   GET  /api/notify?pk=1          → {publicKey}   (המפתח הציבורי להרשמה — נגזר מ-PUSH_SECRET)
-//   POST /api/notify  (text/plain JSON) {subs:[subscription...], ev:'view'|'hot'|'approve'|'comment'|'test', cn, no, tot}
+//   POST /api/notify  (text/plain JSON) {subs:[subscription...], ev:'view'|'hot'|'approve'|'comment'|'review'|'test', cn, no, tot, n, cb, txt}
 //        → {sent, results:[status...]}
 // הכותרת והטקסט נבנים כאן — מהבקשה מגיעים רק שם לקוח, מספר הצעה וסכום (מקוצרים ומנוקים).
 // שליחה רק לשרתי push מוכרים (Google / Mozilla / Apple / Microsoft).
@@ -82,6 +82,11 @@ export function message(b) {
   if (b.ev === 'approve') return { title: '✅ ' + cn + ' אישר/ה את ההצעה', body: tail || 'ההצעה אושרה' };
   if (b.ev === 'comment') return { title: '💬 ' + cn + ' השאיר/ה הערה', body: tail || 'יש הערה חדשה בהצעה' };
   if (b.ev === 'hot') { const n = Math.max(3, Math.min(99, Math.round(+b.n || 3))); return { title: '🤔 ' + cn + ' פתח/ה את ההצעה ' + n + ' פעמים', body: (tail ? tail + ' · ' : '') + 'מתלבט/ת — זה הזמן להתקשר' }; }   // v26.6
+  if (b.ev === 'review') {   // v27.1 — הלקוח מילא משוב
+    const n = Math.max(1, Math.min(5, Math.round(+b.n || 0) || 1)), stars = '★'.repeat(n) + '☆'.repeat(5 - n), txt = clean(b.txt, 90);
+    if (b.cb) return { title: '📞 ' + cn + ' ביקש/ה שתחזור אליו · ' + stars, body: txt || 'משוב חדש — כדאי להתקשר היום' };
+    return { title: (n >= 4 ? '⭐ ' : '📝 ') + cn + ' דירג/ה ' + n + ' כוכבים', body: txt || (n >= 4 ? 'משוב חיובי חדש' : 'משוב חדש — כדאי לבדוק') };
+  }
   if (b.ev === 'test') return { title: '🔔 התראות פועלות', body: 'מעכשיו תקבל התראה כשלקוח פותח או מאשר הצעה' };
   return { title: '👀 ' + cn + ' פתח/ה את ההצעה', body: tail ? tail + ' · זה זמן טוב להתקשר' : 'זה זמן טוב להתקשר' };
 }
