@@ -16,15 +16,18 @@
       'html.ys-cv #root:empty::before{content:"טוען הצעה…";display:flex;min-height:100vh;align-items:center;justify-content:center;color:#888;font:16px Heebo,Arial,sans-serif}';
     document.head.appendChild(st);}
   else{
-    /* v27.6 — בכתובת של הלקוחות (Netlify) האפליקציה לא נפתחת למי שאינו יהודה/רמי:
-       מי שמוחק את סוף הלינק מגיע לכרטיס הביקור, לא למסך הכניסה של האפליקציה.
-       האפליקציה עצמה גרה ב-ramiyakpbov.github.io. מכשיר שכבר יש בו נתוני האפליקציה — ממשיך כרגיל. */
+    /* v27.6–27.7 — בכתובת של הלקוחות (Netlify) האפליקציה לא נפתחת אף פעם, לאף מכשיר.
+       האפליקציה גרה רק ב-ramiyakpbov.github.io. מי שמוחק את סוף הלינק:
+       · מכשיר זר → כרטיס הביקור.
+       · מכשיר שכבר היו בו נתוני האפליקציה בכתובת הזו (הטלפון של רמי/יהודה) → הודעה קצרה + כפתור לכתובת הקבועה.
+         v27.6 נתן לו את האפליקציה המלאה — רמי צילם (22.10) מסך בית עם כל הנתונים + "התקן אפליקציה". */
     var host=location.hostname||'';
     var appHost=!host||host==='ramiyakpbov.github.io'||host==='localhost'||host==='127.0.0.1';
     var mine=false;try{mine=!!(localStorage.getItem('ys:clients')||localStorage.getItem('ys:quotes')||localStorage.getItem('ys:pushSub'));}catch(e){}
-    if(!appHost&&!mine){window.__ysAway=true;document.documentElement.className+=' ys-away';
+    if(!appHost){window.__ysAway=true;window.__ysMoved=mine;document.documentElement.className+=' ys-away';
       var sa=document.createElement('style');sa.textContent='html.ys-away body{display:none}html.ys-away{background:#0d0d0f}';document.head.appendChild(sa);
-      location.replace('card.html');return;}
+      if(!mine)location.replace('card.html');
+      return;}
     var l=document.createElement('link');l.rel='manifest';l.href='manifest.webmanifest';document.head.appendChild(l);}})();
 </script>
 <link rel="apple-touch-icon" href="icon-180.png" />
@@ -3481,7 +3484,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.6';
+const VERSION='27.7';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4456,7 +4459,10 @@ const Sync=(()=>{
    applying=false;return changed;};
  return{
   status:'off',
-  enabled(){return !!(window._db&&Store.get('syncOn',true));},
+  /* v27.7 — דף לקוח / כתובת הלקוחות לא מסנכרנים אף פעם. עד עכשיו כל לקוח שפתח לינק במכשיר חדש
+     דחף לענן (appdata/yehuda) "תמונת מצב" כמעט ריקה (customItems, subItems, aiFallback) — doc.set דורס את כל המסמך,
+     והעותק בענן נשאר בלי לקוחות והצעות עד הדחיפה הבאה מהטלפון של יהודה. (המיזוג במכשירים מנע אובדן מקומי.) */
+  enabled(){return !!(window._db&&Store.get('syncOn',true)&&!window.__ysClient&&!window.__ysAway);},
   deviceId(){let id=Store.get('deviceId','');if(!id){id='d'+Math.random().toString(36).slice(2,9);Store.set('deviceId',id);}return id;},
   async init(onChange){
     if(!this.enabled()){this.status='off';return false;}
@@ -4692,6 +4698,7 @@ const waLink=(phone,text)=>{let p=(phone||'').replace(/\D/g,'');if(p.startsWith(
 /* v26.7 — כתובת ציבורית ללקוחות: לינקים, כרטיס ביקור, פונקציות השרת. אתר ה-Netlify שמחובר לריפו (שם: יהודה שיפוצים + קבלן רשום).
    ללקוח לא מגיע יותר ramiyakpbov.github.io. Store 'pubBase' עוקף (הגדרות ← מערכת) — אם משהו לא עובד בכתובת החדשה. */
 const YS_PUB='https://yehuda-shipuzim-134094.netlify.app';
+const YS_APP_URL='https://ramiyakpbov.github.io/yehuda-shipuzim/';   // v27.7 — הכתובת הקבועה של האפליקציה (רק להודעה במכשיר של רמי/יהודה בכתובת הלקוחות)
 function ysPubBase(){try{const o=String(Store.get('pubBase','')||'').trim();if(/^https:\/\/[^\s#?]+$/.test(o))return o.replace(/\/*$/,'/');}catch(e){}return YS_PUB+'/';}
 const YSPUSH_DEFAULT=YS_PUB;
 /* v27.1 — דף המשוב הוא קובץ נפרד (review.html) עם תצוגה מקדימה בוואטסאפ */
@@ -12709,7 +12716,7 @@ const isStandalone=()=>window.matchMedia('(display-mode: standalone)').matches||
 const isIOS=()=>/iphone|ipad|ipod/i.test(navigator.userAgent);
 // מצב תצוגת לקוח: הצעה (#p= / #id=) או דף משוב (#r=) — לעולם לא מציגים כפתור התקנה ללקוח
 const isClientView=()=>{const h=location.hash||'';return !!window.__ysClient||h.indexOf('#p=')===0||h.indexOf('#id=')===0||h.indexOf('#r=')===0||h.indexOf('#L=')===0;};   // v27.5: גם #L= (לינק חי)
-function showInstallUI(){if(isStandalone()||isClientView())return;let b=document.getElementById('install-fab');if(!b){b=document.createElement('button');b.id='install-fab';b.className='install-fab';b.innerHTML='📲 התקן אפליקציה';b.onclick=doInstall;document.body.appendChild(b);}b.style.display='flex';}
+function showInstallUI(){if(isStandalone()||isClientView()||window.__ysAway)return;let b=document.getElementById('install-fab');if(!b){b=document.createElement('button');b.id='install-fab';b.className='install-fab';b.innerHTML='📲 התקן אפליקציה';b.onclick=doInstall;document.body.appendChild(b);}b.style.display='flex';}
 function hideInstallUI(){const b=document.getElementById('install-fab');if(b)b.style.display='none';}
 async function doInstall(){
   if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice;}catch(e){}deferredPrompt=null;hideInstallUI();return;}
@@ -12720,7 +12727,7 @@ async function doInstall(){
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(!isClientView())showInstallUI();});
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;hideInstallUI();try{App.toast('האפליקציה הותקנה ✓');}catch(e){}});
 // iOS: show a hint FAB (no native prompt there) — but never on a client-facing page
-if(isIOS()&&!isStandalone()&&!isClientView())setTimeout(showInstallUI,2200);
+if(isIOS()&&!isStandalone()&&!isClientView()&&!window.__ysAway)setTimeout(showInstallUI,2200);
 
 /* ===== ניווט אחורה: סוגר מסך במקום לצאת מהאפליקציה ===== */
 App._pushedModal=false;App._ignorePop=false;App._navStack=[];App._exitAt=0;
@@ -12855,7 +12862,7 @@ try{if(Store.get('gClientId','')&&window.Drive&&Drive.token){setTimeout(()=>{try
 document.getElementById('splash-logo').innerHTML=logoBlock(true,1);
 /* ═══ תיקון עצמי: אם הוגשה גרסה ישנה מהמטמון — רענון אוטומטי חד-פעמי ═══ */
 (function(){
-  if(typeof isClientView==='function' && isClientView())return;   // לא בדפי לקוח
+  if((typeof isClientView==='function' && isClientView())||window.__ysAway)return;   // לא בדפי לקוח ולא בכתובת הלקוחות
   setTimeout(async function(){
     try{
       var r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});
@@ -12954,7 +12961,18 @@ function initProposalUI(pid,data){
   };
 }
 document.addEventListener('DOMContentLoaded',()=>{
- if(window.__ysAway)return;   // v27.6 — מועבר לכרטיס הביקור: לא טוענים את האפליקציה ולא מסנכרנים
+ if(window.__ysAway){   // v27.6–27.7 — כתובת הלקוחות בלי לינק: לא טוענים את האפליקציה ולא מסנכרנים
+   if(window.__ysMoved){try{
+     const sp=document.getElementById('splash');if(sp)sp.remove();
+     document.getElementById('root').innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:28px 22px;text-align:center;font-family:Heebo,Arial,sans-serif;color:#f3f3f5">'+
+       '<div style="font-size:44px">🔒</div>'+
+       '<div style="font-size:20px;font-weight:800;line-height:1.4">האפליקציה לא נפתחת מהכתובת של הלקוחות</div>'+
+       '<div style="font-size:14.5px;color:#a9a9b3;line-height:1.7;max-width:340px">הכתובת הזו מיועדת רק ללינקים שנשלחים ללקוחות. את האפליקציה פותחים מהכתובת הקבועה. אם הותקן מכאן אייקון — למחוק אותו ולהתקין מהכתובת הקבועה.</div>'+
+       '<a id="moved-go" href="'+YS_APP_URL+'" style="margin-top:6px;display:inline-block;padding:14px 26px;border-radius:14px;background:#ed1c24;color:#fff;font-weight:800;font-size:16px;text-decoration:none">פתח את האפליקציה</a></div>';
+     document.documentElement.classList.remove('ys-away');
+   }catch(e){}}
+   return;
+ }
  // client-facing REVIEW page (#r=XXXX)
  // client-facing REVIEW page (#r=XXXX)
  if(location.hash&&location.hash.indexOf('#r=')===0){
