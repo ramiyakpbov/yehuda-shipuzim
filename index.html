@@ -3484,7 +3484,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.8';
+const VERSION='27.9';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -11394,7 +11394,24 @@ const App={
        got=true;j++;continue;}
      break;}
    return got?{n:tot+cur,len:j-i}:null;},
- voiceParse(text){
+ /* v27.9 — פקודה באמצע המשפט, כמו שמדברים באמת (צ'קליסט 23.10: «ריצוף גבס בלי גבס» נשאר כמו שהוא):
+    "ריצוף גבס בלי גבס" → "ריצוף" · "ריצוף מחק דלת" → "דלת" · "ריצוף פורצלן גדל מחק מילה" → "ריצוף פורצלן" · "ריצוף מחק" → מחיקה.
+    "ללא" רק כשהמילים שאחריו נאמרו קודם — כי יש סעיפים עם "ללא" בשם ("קומה ללא מעלית"). */
+ vsRewrite(raw){const toks=String(raw||'').trim().split(/\s+/).filter(Boolean);if(toks.length<2)return String(raw||'');
+   const N=t=>this.heFin(this.normTxt(t));const CLR=/^(תמחק|תמחקי|מחק|מחקי|נקה|נקי|תנקה|תנקי|למחוק)$/;
+   let k=-1;toks.forEach((t,i)=>{if(CLR.test(N(t)))k=i;});
+   if(k>0){const tail=toks.slice(k+1);const tn=tail.map(N).filter(w=>w&&!/^(את|בבקשה)$/.test(w));
+     if(tn.length&&/^ה?מילה$/.test(tn[0])&&tn.slice(1).every(w=>/^ה?אחרונ(ה)?$/.test(w))){const head=toks.slice(0,k);head.pop();return head.length?head.join(' '):'מחק';}
+     if(!tn.length||tn.every(w=>/^(הכל|החיפוש|חיפוש)$/.test(w)))return 'מחק';
+     return this.vsRewrite(tail.join(' '));}
+   let b=-1;toks.forEach((t,i)=>{if(i>0&&b<0&&/^(בלי|ללא)$/.test(N(t)))b=i;});
+   if(b>0&&b<toks.length-1){const X=toks.slice(0,b),Y=toks.slice(b+1);const rm=this.searchWords(Y.join(' '));
+     const hit=x=>{const xn=this.searchWords(x)[0]||'';return !!xn&&rm.some(r=>r===xn||this.wordForms(xn).indexOf(r)>=0||this.wordForms(r).indexOf(xn)>=0||this.ed1(r,xn));};
+     const keep=X.filter(x=>!hit(x));
+     if(keep.length<X.length)return keep.join(' ')||'מחק';
+     if(N(toks[b])==='בלי')return X.join(' ');}
+   return String(raw||'');},
+ voiceParse(text){text=this.vsRewrite(text);
    /* v27.8 — מה שאנדרואיד באמת כותב: "3.5" (נקודה עשרונית), "1,500" (אלפים), "60x60" / "60/60" (מידה), סימני פיסוק בסוף */
    const raw=String(text||'').trim().replace(/(\d),(\d{3})(?!\d)/g,'$1$2').replace(/(\d)\.(\d)/g,'$1\u066b$2').replace(/(\d+)\s*[x×*X\/]\s*(\d+)/g,'$1 על $2').replace(/[?!:;]+/g,' ');
    const n0=this.normTxt(raw).replace(/["'״׳]/g,'');const n=this.heFin(n0);
