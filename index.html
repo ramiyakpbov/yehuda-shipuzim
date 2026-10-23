@@ -3484,7 +3484,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.7';
+const VERSION='27.8';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -7589,6 +7589,8 @@ const App={
    if(w.length>=4){const full=[w];if(w.length>=5&&/(ימ|ות)$/.test(w))full.push(w.slice(0,-2));
      for(const t of hay.toks){if(t.length<4)continue;
        for(const f of full){if(f.length>=4&&f[0]===t[0]&&this.ed1(f,t))return true;}}}
+   // v27.8 — כתיב מלא/חסר: אותה מילה בלי ו/י ("גודל"="גדל", "פרצלן"="פורצלן"). רק כשנשארות 3 אותיות לפחות.
+   {const sv=x=>x.replace(/[וי]/g,'');const ws=sv(w);if(ws.length>=3){for(const t of hay.toks){if(t.length>=3&&sv(t)===ws)return true;}}}
    return false;},
  itemScore(name,catTitle,words){if(!words||!words.length)return 0;const hay=this.hayOf(name,catTitle);let n=0;
    for(let i=0;i<words.length;i++){if(this.wordHit(words[i],hay))n++;}return n;},
@@ -11375,13 +11377,13 @@ const App={
     הצעה להוספה: התאמה ברורה אחת → כרטיס אישור; כמה → 3 הכי טובות ככפתורים. "שמעתי:" + ביטול. לחיצה ארוכה = מקשיב כל עוד מחזיקים. */
  HE_NUMS:{'אפס':0,'אחת':1,'אחד':1,'שתיים':2,'שתים':2,'שניים':2,'שני':2,'שתי':2,'שלוש':3,'שלושה':3,'ארבע':4,'ארבעה':4,'חמש':5,'חמישה':5,'שש':6,'שישה':6,'שבע':7,'שבעה':7,'שמונה':8,'תשע':9,'תשעה':9,
    'עשר':10,'עשרה':10,'אחתעשרה':11,'שתיםעשרה':12,'עשרים':20,'שלושים':30,'ארבעים':40,'חמישים':50,'שישים':60,'שבעים':70,'שמונים':80,'תשעים':90,'מאה':100,'מאתיים':200,'מאות':100,'אלף':1000,'אלפיים':2000,'אלפים':1000,'חצי':0.5},
- VS_UNITS:{'מטר':1,'מטרים':1,'מר':1,'מטר רבוע':1,'רבוע':1,'רבועים':1,'מא':1,'רץ':1,'אורך':1,'יחידה':1,'יחידות':1,'יח':1,'נקודה':1,'נקודות':1,'קוב':1,'מק':1,'יום':1,'ימים':1,'חודש':1,'חודשים':1,'טון':1,'קילו':1,'קג':1,'שעה':1,'שעות':1,'פעמים':1},
+ VS_UNITS:{'מ':1,'מטר':1,'מטרים':1,'מר':1,'מטר רבוע':1,'רבוע':1,'רבועים':1,'מא':1,'רץ':1,'אורך':1,'יחידה':1,'יחידות':1,'יח':1,'נקודה':1,'נקודות':1,'קוב':1,'מק':1,'יום':1,'ימים':1,'חודש':1,'חודשים':1,'טון':1,'קילו':1,'קג':1,'שעה':1,'שעות':1,'פעמים':1},
  VS_CUR:{'שח':1,'שקל':1,'שקלים':1,'₪':1,'שקלים חדשים':1},
  /** מספר מרצף מילים/ספרות. מחזיר {n,len} או null. */
  vsMap(k){const C=this._vsMaps||(this._vsMaps={});if(!C[k]){const o={};Object.keys(this[k]).forEach(x=>{o[this.heFin(x)]=this[k][x];});C[k]=o;}return C[k];},   // מפתחות בלי אותיות סופיות (כמו הטקסט)
  vsNum(toks,i){const N=this.vsMap('HE_NUMS');let j=i,tot=0,cur=0,got=false;
    const strip=t=>t.replace(/^ו(?=.)/,'');
-   while(j<toks.length){let t=toks[j];const d=t.replace(/,/g,'');
+   while(j<toks.length){let t=toks[j];const d=t.replace(/,/g,'').replace(/\u066b/g,'.');
      if(/^\d+(\.\d+)?$/.test(d)){if(got)break;cur+=parseFloat(d);got=true;j++;break;}   // מספר בספרות — שלם, לא מחברים אליו מילים
      const s=(t in N)?t:strip(t);
      if(s in N){const v=N[s];
@@ -11393,16 +11395,20 @@ const App={
      break;}
    return got?{n:tot+cur,len:j-i}:null;},
  voiceParse(text){
-   const raw=String(text||'').trim();const n0=this.normTxt(raw).replace(/["'״׳]/g,'');const n=this.heFin(n0);
+   /* v27.8 — מה שאנדרואיד באמת כותב: "3.5" (נקודה עשרונית), "1,500" (אלפים), "60x60" / "60/60" (מידה), סימני פיסוק בסוף */
+   const raw=String(text||'').trim().replace(/(\d),(\d{3})(?!\d)/g,'$1$2').replace(/(\d)\.(\d)/g,'$1\u066b$2').replace(/(\d+)\s*[x×*X\/]\s*(\d+)/g,'$1 על $2').replace(/[?!:;]+/g,' ');
+   const n0=this.normTxt(raw).replace(/["'״׳]/g,'');const n=this.heFin(n0);
    if(!n)return {q:'',cmd:null};
-   if(/^(תמחק|מחק|נקה|תנקה|למחוק)( את)?( הכל| החיפוש| חיפוש)?$/.test(n))return {cmd:'clear',q:''};
-   if(/^(תמחק|מחק|למחוק)( את)?(( ה?מילה)( ה?אחרונה| ה?אחרונ)?|( ה?אחרונה| ה?אחרונ))$/.test(n))return {cmd:'pop',q:''};
-   if(/^(בטל|תבטל|ביטול)$/.test(n))return {cmd:'undo',q:''};
+   if(/^(תמחק|תמחקי|מחק|מחקי|נקה|נקי|תנקה|תנקי|למחוק)( את)?( הכל| החיפוש| חיפוש)?( בבקשה)?$/.test(n))return {cmd:'clear',q:''};
+   if(/^(תמחק|תמחקי|מחק|מחקי|למחוק)( את)?(( ה?מילה)( ה?אחרונה| ה?אחרונ)?|( ה?אחרונה| ה?אחרונ))( בבקשה)?$/.test(n))return {cmd:'pop',q:''};
+   if(/^(בטל|תבטל|תבטלי|בטלי|ביטול)( בבקשה)?$/.test(n))return {cmd:'undo',q:''};
    const wo=n0.match(/^(בלי|ללא|תוריד|הורד|בלעדי)\s+(.+)$/);if(wo)return {cmd:'without',w:wo[2],q:''};
    const U=this.vsMap('VS_UNITS'),CU=this.vsMap('VS_CUR'),HN=this.vsMap('HE_NUMS');
    const toks=n.split(' ').filter(Boolean);const orig=n0.split(' ').filter(Boolean);const keep=[];let qty=null,price=null;   // toks לזיהוי, orig לתצוגה (אותיות סופיות)
    for(let i=0;i<toks.length;){const t=toks[i];
-     if(/^(במחיר|מחיר|בעלות|עלות)$/.test(t)){const m=this.vsNum(toks,i+1);if(m){price=m.n;i+=1+m.len;if(i<toks.length&&CU[toks[i]])i++;continue;}i++;continue;}
+     if(/^(במחיר|מחיר|בעלות|עלות)$/.test(t)){let j2=i+1;while(j2<toks.length&&/^(של|ב|כ|בערכ|בסביבות|זה)$/.test(toks[j2]))j2++;   // "במחיר של 190"
+       const m=this.vsNum(toks,j2);if(m){price=m.n;i=j2+m.len;if(i<toks.length&&CU[toks[i]])i++;continue;}i++;continue;}
+     if(t==='ב'&&qty!==null&&price===null){const m=this.vsNum(toks,i+1);if(m){price=m.n;i+=1+m.len;if(i<toks.length&&CU[toks[i]])i++;continue;}}   // "40 מטר ב-190"
      const m=this.vsNum(toks,i);
      // מידות ("60 על 60", "120 x 60") — חלק משם הסעיף, לא כמות
      if(m&&/^(על|x|איקס|כפול)$/.test(toks[i+m.len]||'')){const m2=this.vsNum(toks,i+m.len+1);if(m2){keep.push(String(m.n),String(m2.n));i+=m.len+1+m2.len;continue;}}
@@ -11468,6 +11474,18 @@ const App={
        const clear=R.length&&!R[0].partial&&(R.length===1||R[0].ns>R[1].ns);
        if(clear){const r=R[0];this._vsProp={cid:r.cid,iid:r.iid,name:r.name,cat:r.cat,unit:r.unit,qty:V.qty||0,price:V.price||0,cur:r.price};}}}
    this.render();return false;},
+ /* v27.8 — אנדרואיד, במצב לחיצה ארוכה (continuous), מחזיר תוצאות מצטברות/כפולות:
+    "ריצוף פורצלן גודל 40 מטר 40 מטר" (צילום של רמי, 23.10). מאחדים לפני שמפענחים. */
+ vsDedupe(s){const w=String(s||'').split(/\s+/).filter(Boolean);
+   for(let L=Math.min(8,Math.floor(w.length/2));L>=1;L--){
+     for(let i=0;i+2*L<=w.length;){let same=true;for(let k=0;k<L;k++){if(w[i+k]!==w[i+L+k]){same=false;break;}}
+       if(same&&!(L===1&&/^\d/.test(w[i])))w.splice(i+L,L);else i++;}}
+   return w.join(' ');},
+ vsMerge(list){let acc='';(list||[]).forEach(t=>{t=String(t||'').replace(/\s+/g,' ').trim();if(!t)return;
+     if(!acc){acc=t;return;}if(t.indexOf(acc)===0){acc=t;return;}if(acc.indexOf(t)>=0)return;acc=acc+' '+t;});
+   return this.vsDedupe(acc);},
+ /** יומן קול — 12 ההקשבות האחרונות, רק במכשיר הזה. נכנס ל"העתק אבחון", כדי לראות בדיוק מה הטלפון שמע. */
+ vsLog(o){try{const a=JSON.parse(localStorage.getItem('ys_voiceLog')||'[]')||[];a.unshift(o);localStorage.setItem('ys_voiceLog',JSON.stringify(a.slice(0,12)));}catch(e){}},
  micBind(mic){
    mic.addEventListener('contextmenu',e=>e.preventDefault());
    mic.addEventListener('pointerdown',e=>{if(this._vsRec)return;clearTimeout(this._vsHoldT);this._vsHoldFired=false;
@@ -11486,27 +11504,29 @@ const App={
   if(this._srchUsed&&String(this.state.search||'').trim()){this.pushRecent(this.state.search);this.state.search='';this._srchUsed=false;this._vsProp=null;this._vsHeard=null;this.render();}
   const r=new SR();this._vsRec=r;this._vsHold=!!opt.hold;r.lang='he-IL';r.interimResults=true;r.continuous=!!opt.hold;try{r.maxAlternatives=4;}catch(e){}
   let got=false,err='',last='',again=false;const base=String(this.state.search||'');
-  const CMDW=/^(בלי|ללא|תוריד|הורד|מחק|תמחק|למחוק|נקה|תנקה|בטל|תבטל|ביטול)$/;
+  const LG={t:Date.now(),m:opt.hold?'h':'s',ev:[]};const lgEv=e=>{try{if(LG.ev.length>=24)return;const o=[];for(let i=0;i<e.results.length;i++){const R=e.results[i];const a=[];for(let k=0;k<R.length&&k<3;k++)a.push(String(R[k].transcript||''));o.push((R.isFinal?'F:':'i:')+a.join(' | '));}LG.ev.push(o);}catch(x){}};
+  const CMDW=/^(בלי|ללא|תוריד|הורד|מחק|מחקי|תמחק|תמחקי|למחוק|נקה|נקי|תנקה|תנקי|בטל|בטלי|תבטל|תבטלי|ביטול)$/;
   const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.classList.toggle('hold',on&&this._vsHold);b.setAttribute('aria-pressed',on?'true':'false');}};
   const live=t=>{t=String(t||'').trim();if(!t)return;last=t;if(CMDW.test(this.heFin(this.normTxt(t)).split(' ')[0]||''))return;const V=this.voiceParse(t);if(V.cmd)return;if(V.q){this.state.search=V.q;this.render();mark(true);
       const inp=document.getElementById('search');if(inp){try{inp.setSelectionRange(inp.value.length,inp.value.length);}catch(x){}}}};
   clearTimeout(this._vsT);if(!opt.hold)this._vsT=setTimeout(()=>{try{r.stop();}catch(x){}},10000);
   mark(true);this.toast(opt.hold?'🎙️ מקשיב כל עוד מחזיקים…':'🎙️ מקשיב… אמור סעיף, כמות או "מחק"');this.haptic(10);
-  r.onresult=e=>{
-    if(this._vsHold){const full=Array.from(e.results).map(R=>R[0].transcript).join(' ').replace(/\s+/g,' ').trim();live(full);return;}
+  r.onresult=e=>{lgEv(e);
+    if(this._vsHold){const full=this.vsMerge(Array.from(e.results).map(R=>R[0].transcript));live(full);return;}
     let fin=null,interim='';
     for(let i=e.resultIndex;i<e.results.length;i++){const R=e.results[i];if(R.isFinal)fin=R;else interim+=R[0].transcript;}
     if(!fin){live(interim);return;}
-    got=true;clearTimeout(this._vsT);const alts=[];for(let k=0;k<fin.length;k++)alts.push(String(fin[k].transcript||'').trim());
+    got=true;clearTimeout(this._vsT);const alts=[];for(let k=0;k<fin.length;k++)alts.push(this.vsDedupe(String(fin[k].transcript||'').trim()));
     // פקודה בכל אחת מהחלופות קודמת; אחרת — החלופה שמוצאת הכי הרבה סעיפים
     let best=alts[0]||'';const cmdAlt=alts.find(t=>this.voiceParse(t).cmd);
     if(cmdAlt)best=cmdAlt;else{let bs=-1;alts.forEach((t,k)=>{const V=this.voiceParse(t);const P=this.searchPlan(V.q);let n=0;
       if(P.W.length)this.allCats().forEach(c=>(c.items||[]).forEach(i=>{if(this.itemScore(i.name,c.title,P.W)>=P.min)n++;}));
       const sc=(P.partial?0:1e6)+n*10-k;if(n&&sc>bs){bs=sc;best=t;}});}
     last=best;again=this.vsApply(best,true,base);};
-  r.onerror=e=>{err=(e&&e.error)||'';};
+  r.onerror=e=>{err=(e&&e.error)||'';LG.err=err;};
   r.onend=()=>{this._vsRec=null;clearTimeout(this._vsT);const wasHold=this._vsHold;this._vsHold=false;mark(false);
     if(!got&&last){again=this.vsApply(last,true,base);got=true;}   // רק טקסט ביניים (אנדרואיד) או לחיצה ארוכה — זה מה שנאמר
+    try{LG.used=last;const V=this.voiceParse(last);LG.p={q:V.q,qty:V.qty,price:V.price,cmd:V.cmd};LG.s=this.state.search;LG.card=!!this._vsProp;LG.again=!!again;this.vsLog(LG);}catch(x){}
     if(got){if(again&&!wasHold){setTimeout(()=>{const b=document.getElementById('mic');if(b&&!this._vsRec)this.voiceSearch(b);},250);}return;}
     const M={'not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן','service-not-allowed':'אין הרשאה למיקרופון — אשר מיקרופון לאתר בהגדרות הדפדפן',
       'no-speech':'לא שמעתי — לחץ שוב ודבר קרוב לטלפון','audio-capture':'לא נמצא מיקרופון פעיל (אולי אפליקציה אחרת משתמשת בו)',
@@ -11684,7 +11704,8 @@ const App={
  /** v25.8 — אבחון: מה יש באחסון (בלי סעיפים ובלי פרטים אישיים מעבר לשם) — להעתקה לרמי */
  diagQuotes(){const qs=Store.get('quotes',[])||[];
   return JSON.stringify({v:VERSION,o:location.host,dev:(Sync.deviceId?Sync.deviceId():''),n:qs.length,tombs:Object.keys(Store.get('tombs',{})||{}).length,
-   q:qs.slice(0,40).map(q=>({id:q&&q.id,no:q&&q.no,c:q&&q.client,g:q&&q.grand,ts:q&&q.ts,k:q&&q.kinds,s:!!(q&&q.snap),a:q&&q.addonOf||undefined}))});},
+   q:qs.slice(0,40).map(q=>({id:q&&q.id,no:q&&q.no,c:q&&q.client,g:q&&q.grand,ts:q&&q.ts,k:q&&q.kinds,s:!!(q&&q.snap),a:q&&q.addonOf||undefined})),
+   vl:(()=>{try{return JSON.parse(localStorage.getItem('ys_voiceLog')||'[]');}catch(e){return [];}})()});},   // v27.8 — יומן קול
  dedupeQuotes(){
   const qs=Store.get('quotes',[])||[];if(qs.length<2)return 0;
   const nm=x=>String(x==null?'':x).replace(/\s+/g,' ').trim();
