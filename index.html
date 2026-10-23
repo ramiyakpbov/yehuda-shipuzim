@@ -3484,7 +3484,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='27.9';
+const VERSION='28.0';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -4393,7 +4393,43 @@ const AI=(()=>{
 })();
 
 /* ===== Cloud Sync (Firebase) — keeps all devices in sync ===== */
-const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','warrMonths','warrTerms','ownerSig','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH'];
+const SYNC_KEYS=['tombs','catalog','priceDrift','vatOn','vatPct','clients','quotes','customItems','terms','qseq','whiteCustom','blackCustom','remindDays','lang','theme','targetQuotes','subItems','includeGallery','userTemplates','sentLinks','reviewLinks','googleReview','myStyle','annexWarranty','annexDays','reminders','followLog','learnedCats','annexCure','warrMonths','warrTerms','ownerSig','planMode','planPerSqm','planTotalSqm','trans_ar','trans_en','trans_ru','aiFallback','pinH','wipeAt'];
+/* ═══ v28.0 — מעבר לפרודקשן שמגיע לכל הטלפונים ═══
+   עד v27.9 המחיקה קרתה רק בטלפון שלחץ. טלפון שני שמר את נתוני הבדיקה (המיזוג הוא איחוד, ולא היו מצבות),
+   ובדחיפה הבאה שלו החזיר אותם לענן ומשם לכולם. עכשיו:
+   • 'wipeAt' (מסונכרן) — רגע המחיקה. כל רשומת לקוח שנוצרה לפניו נחשבת מחוקה, בכל מכשיר ובכל מיזוג.
+   • 'wipeSeen' (מקומי) — המחיקה האחרונה שהמכשיר הזה כבר ביצע אצלו.
+   • כל המזהים שנמחקו נכנסים גם למצבות (Tomb) — שכבת הגנה שנייה.
+   זמן של רשומה: createdAt / ts / הזמן שבתוך המזהה (uid). רשומה בלי שום זמן נחשבת ישנה.
+   לא נוגעים במחירון, בהגדרות, בתבניות ובתמונות העבודות (__portfolio__). */
+const Wipe={
+ KEYS:['quotes','clients','sentLinks','reviewLinks','reminders','customItems'],
+ /** הזמן שבתוך מזהה: uid() = Date.now() בבסיס 36 + 4 תווים; 'd'+uid (קבצים שמורים); 'r'+Date.now() (תזכורות) */
+ idAt(id){const s=String(id||'');let m=/^r(\d{13})$/.exec(s);if(m)return +m[1];
+   m=/^d?([0-9a-z]{8})[0-9a-z]{0,4}$/.exec(s);
+   if(m){const t=parseInt(m[1],36);if(t>1.4e12&&t<Date.now()+864e5)return t;}
+   return 0;},
+ at(x){if(!x||typeof x!=='object')return 0;return Math.max(+x.createdAt||0,+x.ts||0,Wipe.idAt(x.id));},
+ old(x,W){return !!(W&&x&&typeof x==='object'&&Wipe.at(x)<W);},
+ /** מוחק מהמכשיר הזה את מה שנוצר לפני W. מחזיר כמה רשומות נמחקו (קבצים ותמונות — ברקע). */
+ local(W){if(!W)return 0;let n=0;
+  Wipe.KEYS.forEach(k=>{try{const L=Store.get(k,null);if(!Array.isArray(L))return;
+    const keep=L.filter(x=>!Wipe.old(x,W));if(keep.length!==L.length){n+=L.length-keep.length;Store.set(k,keep);}}catch(e){}});
+  try{const si=Store.get('subItems',null);if(si&&typeof si==='object'){let c=0;const o={};
+    Object.keys(si).forEach(cid=>{const a=Array.isArray(si[cid])?si[cid]:[];const b=a.filter(x=>!Wipe.old(x,W));c+=a.length-b.length;if(b.length)o[cid]=b;});
+    if(c){n+=c;Store.set('subItems',o);}}}catch(e){}
+  try{const fl=Store.get('followLog',null);if(fl&&typeof fl==='object'){let c=0;const o={};
+    Object.keys(fl).forEach(id=>{const r=fl[id]||{};if(Math.max(+r.at||0,+r.t||0)>=W)o[id]=r;else c++;});if(c){n+=c;Store.set('followLog',o);}}}catch(e){}
+  try{const L=Store.get('boqProjects',null);if(Array.isArray(L)){const keep=L.filter(p=>!Wipe.old(p,W));
+    if(keep.length!==L.length){n+=L.length-keep.length;Store.set('boqProjects',keep);
+      const a=Store.get('boqActive',null);if(a&&!keep.some(p=>p&&p.id===a))Store.set('boqActive',null);}}
+    const bp=Store.get('boqProject',null);if(bp&&Wipe.old(bp,W))Store.set('boqProject',null);}catch(e){}
+  try{const raw=localStorage.getItem(NS+'ys_autobackup');if(raw){let bk=null;try{bk=JSON.parse(raw);}catch(e){}
+    if(!bk||!(+bk.t>=W))localStorage.removeItem(NS+'ys_autobackup');}}catch(e){}
+  try{Promise.all([DocLib.purge(W),Photos.purge(W)]).then(r=>{if((r[0]||0)+(r[1]||0)){
+    try{if(typeof App!=='undefined'){App._lib=null;App.libLoad&&App.libLoad();}}catch(e){}}}).catch(()=>{});}catch(e){}
+  return n;}
+};
 /* ═══ מצבות — מזהים שנמחקו ═══
    הסנכרון ממזג רשימות כאיחוד: פריט שקיים בענן ולא מקומית מתווסף בחזרה.
    בלי סימון מחיקה, פריט שנמחק במכשיר אחד חזר מהמכשיר השני בדחיפה הבאה
@@ -4415,7 +4451,9 @@ const Sync=(()=>{
    // הגרסה המלאה נשמרת מקומית; לענן דוחפים רק מטא-דאטה ל-50 ההצעות האחרונות
    if(Array.isArray(o.quotes)){o.quotes=o.quotes.slice(0,50).map(q=>({id:q.id,ts:q.ts,no:q.no,client:q.client,phone:q.phone||'',project:q.project||'',grand:q.grand}));}
    return o;};
- const applyRemote=(data)=>{if(!data)return 0;applying=true;let changed=0;
+ /* מצבות + מחיקת פרודקשן מהענן. נקרא גם כשיש שינוי מקומי שלא נשלח (ואז שאר הענן לא מוחל).
+    behind = הענן עוד לא יודע על מחיקה שהמכשיר הזה כבר יודע עליה (טלפון ישן דחף). */
+ const applyWipe=(data)=>{let changed=0;
    // מצבות קודם: איחוד מקומי + ענן (הזמן המאוחר מנצח)
    const TB=(()=>{try{const a=Store.get('tombs',{})||{};
      const b=(data.tombs&&typeof data.tombs==='object'&&!Array.isArray(data.tombs))?data.tombs:{};
@@ -4423,21 +4461,41 @@ const Sync=(()=>{
      const p=Tomb.prune(o);
      if(JSON.stringify(p)!==JSON.stringify(a)){Store.set('tombs',p);changed++;}
      return p;}catch(e){return {};}})();
+   const lW=+Store.get('wipeAt',0)||0, rW=+data.wipeAt||0, W=Math.max(lW,rW);
+   if(W>lW){Store.set('wipeAt',W);changed++;}
+   if(W&&W>(+Store.get('wipeSeen',0)||0)){
+     const n=Wipe.local(W);
+     // מונה ההצעות: לא חוזרים למספר שכבר תפוס בטלפון שמחק (שם אולי כבר נוצרו הצעות אמיתיות)
+     try{const q=(Store.get('quotes',[])||[]).filter(x=>x&&!x.addonOf).length;const v=Math.max(q,+data.qseq||0);
+       if(+Store.get('qseq',0)!==v)Store.set('qseq',v);}catch(e){}
+     Store.set('wipeSeen',W);
+     if(n){changed++;try{window.__wipeApplied=(window.__wipeApplied||0)+n;}catch(e){}}
+   }
+   return {TB:TB,W:W,behind:rW<W,changed:changed};};
+ let healTimer=null;
+ const applyRemote=(data)=>{if(!data)return 0;applying=true;let changed=0;let heal=false;
+   const WP=applyWipe(data);changed+=WP.changed;const TB=WP.TB,W=WP.W;if(WP.behind)heal=true;
    const dead=x=>!!(x&&x.id&&TB[x.id]);
-   SYNC_KEYS.forEach(k=>{if(k==='tombs')return;if(k in data||['clients','sentLinks','quotes','reviewLinks','customItems','userTemplates'].indexOf(k)>=0){
+   // v28.0 — רשומת לקוח מלפני מעבר לפרודקשן = מחוקה, גם אם הגיעה מטלפון שעוד לא שמע על המחיקה
+   const WK={quotes:1,clients:1,sentLinks:1,reviewLinks:1,reminders:1,customItems:1,subItems:1};
+   const gone=(k,x)=>dead(x)||(!!WK[k]&&Wipe.old(x,W));
+   const rgone=(k,x)=>{const g=gone(k,x);if(g)heal=true;return g;};   // מת והגיע מהענן — הענן מאחור, נשלח לו גרסה נקייה
+   SYNC_KEYS.forEach(k=>{if(k==='tombs'||k==='wipeAt')return;
+     if(WP.behind&&(k==='qseq'||k==='followLog'))return;   // מונה/יומן מטלפון שלא שמע על המחיקה — לא מחזירים
+     if(k in data||['clients','sentLinks','quotes','reviewLinks','customItems','userTemplates'].indexOf(k)>=0){
      if(!(k in data)){   // הענן בלי המפתח — עדיין מנקים מקומית מה שנמחק במכשיר אחר
-       try{const loc=Store.get(k,null);if(Array.isArray(loc)&&loc.some(dead)){Store.set(k,loc.filter(x=>!dead(x)));changed++;}}catch(e){}
+       try{const loc=Store.get(k,null);if(Array.isArray(loc)&&loc.some(x=>gone(k,x))){Store.set(k,loc.filter(x=>!gone(k,x)));changed++;}}catch(e){}
        return;}
      // quotes: לא לדרוס גרסה מקומית מלאה (עם חתימות) בגרסה רזה מהענן. ממזגים לפי id — מקומי מנצח.
-     if(k==='quotes'){try{const loc=(Store.get('quotes',[])||[]).filter(q=>!dead(q));const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(rq&&!locIds[rq.id]&&!dead(rq)){merged.push(rq);if(rq.id)locIds[rq.id]=1;}});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
+     if(k==='quotes'){try{const loc=(Store.get('quotes',[])||[]).filter(q=>!gone(k,q));const locIds={};loc.forEach(q=>locIds[q.id]=1);const merged=loc.slice();(data.quotes||[]).forEach(rq=>{if(rq&&!locIds[rq.id]&&!rgone(k,rq)){merged.push(rq);if(rq.id)locIds[rq.id]=1;}});merged.sort((a,b)=>(b.ts||0)-(a.ts||0));const capped=merged.slice(0,200);if(JSON.stringify(Store.get('quotes',[]))!==JSON.stringify(capped)){Store.set('quotes',capped);changed++;}}catch(e){}return;}
      // רשימות עם מזהה: ממזגים במקום לדרוס. רשומה מקומית מנצחת, רשומה שקיימת רק בענן מתווספת.
      if(k==='clients'||k==='sentLinks'||k==='reviewLinks'||k==='customItems'||k==='userTemplates'){
        try{const loc0=Store.get(k,[])||[];
          if(Array.isArray(loc0)&&Array.isArray(data[k])){
-           const loc=loc0.filter(x=>!dead(x));
+           const loc=loc0.filter(x=>!gone(k,x));
            const seen={};loc.forEach(x=>{if(x&&x.id)seen[x.id]=1;});
            const merged=loc.slice();
-           data[k].forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]&&!dead(rx)){merged.push(rx);seen[rx.id]=1;}});
+           data[k].forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]&&!rgone(k,rx)){merged.push(rx);seen[rx.id]=1;}});
            if(JSON.stringify(loc0)!==JSON.stringify(merged)){Store.set(k,merged);changed++;}
            return;}
        }catch(e){}
@@ -4448,15 +4506,22 @@ const Sync=(()=>{
          Object.keys(rem).forEach(cid=>{
            if(!Array.isArray(out[cid]))out[cid]=[];
            const seen={};out[cid].forEach(x=>{if(x&&x.id)seen[x.id]=1;});
-           (rem[cid]||[]).forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]&&!dead(rx)){out[cid].push(rx);seen[rx.id]=1;}});});   // v26.0 — סעיף זמני שנמחק לא חוזר
+           (rem[cid]||[]).forEach(rx=>{if(rx&&rx.id&&!seen[rx.id]&&!rgone(k,rx)){out[cid].push(rx);seen[rx.id]=1;}});});   // v26.0 — סעיף זמני שנמחק לא חוזר
          if(JSON.stringify(loc)!==JSON.stringify(out)){Store.set('subItems',out);changed++;}
          return;
        }catch(e){}
      }
-     const cur=JSON.stringify(Store.get(k,null));const nxt=JSON.stringify(data[k]);if(cur!==nxt){Store.set(k,data[k]);changed++;}
+     let val=data[k];
+     // תזכורות נדרסות מהענן — אבל לא מחזירים תזכורות של לקוחות שנמחקו
+     if(WK[k]&&Array.isArray(val))val=val.filter(x=>!rgone(k,x));
+     if(k==='followLog'&&W&&val&&typeof val==='object'){const o={};Object.keys(val).forEach(id=>{const r=val[id]||{};if(Math.max(+r.at||0,+r.t||0)>=W)o[id]=r;else heal=true;});val=o;}
+     const cur=JSON.stringify(Store.get(k,null));const nxt=JSON.stringify(val);if(cur!==nxt){Store.set(k,val);changed++;}
    }});
    try{if(typeof App!=='undefined'&&App.dedupeQuotes&&App.dedupeQuotes())changed++;}catch(e){}   // v25.8 — אחרי כל סנכרון
-   applying=false;return changed;};
+   applying=false;
+   // v28.0 — הענן קיבל נתונים שכבר נמחקו (טלפון ישן / דף לקוח בגרסה ישנה) → שולחים לו את הגרסה הנקייה
+   if(heal){clearTimeout(healTimer);healTimer=setTimeout(()=>{try{Sync.push(true);}catch(e){}},1500+Math.floor(Math.random()*2500));}
+   return changed;};
  return{
   status:'off',
   /* v27.7 — דף לקוח / כתובת הלקוחות לא מסנכרנים אף פעם. עד עכשיו כל לקוח שפתח לינק במכשיר חדש
@@ -4475,10 +4540,15 @@ const Sync=(()=>{
    // אם יש שינוי מקומי שטרם נשלח, לא דורסים אותו בגרסת הענן
    const dirty=Store.get('syncDirty',0);
    if(dirty&&dirty>remoteAt){try{Store.logErr('sync','שינוי מקומי חדש יותר — הענן לא הוחל');}catch(e){}
-     try{await this.push(true);}catch(e){} return;}
-        if(remoteAt>localAt&&d.payload){applyRemote(d.payload);Store.set('syncLocalAt',remoteAt);}
+     // v28.0 — גם אז: מצבות ומחיקת פרודקשן מהענן נקלטות לפני הדחיפה. אחרת טלפון כזה דחף לענן את נתוני הבדיקה.
+     if(d.payload){let wc=0;applying=true;try{wc=applyWipe(d.payload).changed;}catch(e){}applying=false;if(wc&&onChange)onChange(wc);}
+     try{await this.push(true);}catch(e){}
+     // v28.0 — עד עכשיו כאן היה return: המכשיר לא האזין לשינויים מהענן עד הפתיחה הבאה
+   }
+        else if(remoteAt>localAt&&d.payload){applyRemote(d.payload);Store.set('syncLocalAt',remoteAt);}
         else if(localAt>remoteAt){await this.push(true);}
       }else{await this.push(true);}
+      if(unsub){try{unsub();}catch(e){}unsub=null;}   // v28.0 — "נסה שוב"/"סנכרן עכשיו" לא מוסיפים מאזין כפול
       unsub=doc.onSnapshot(s=>{
         if(!s.exists)return;const d=s.data()||{};
         if(d.device===this.deviceId())return;
@@ -4537,9 +4607,16 @@ const Sync=(()=>{
     if(!window._db)return false;
     try{const d=await window._db.collection('backups').doc(day).get();if(!d.exists)return false;
       const p=(d.data()||{}).payload;if(!p)return false;
-      applying=true;SYNC_KEYS.forEach(k=>{if(k in p)Store.set(k,p[k]);});Store.set('syncDirty',0);applying=false;
+      const keepT=Store.get('tombs',{})||{}, keepW=+Store.get('wipeAt',0)||0;
+      applying=true;SYNC_KEYS.forEach(k=>{if(k in p)Store.set(k,p[k]);});
+      // v28.0 — גיבוי לא מחזיר נתוני בדיקה: המצבות מתאחדות, וזמן המחיקה המאוחר נשאר
+      try{applyWipe({tombs:keepT,wipeAt:keepW});const W=+Store.get('wipeAt',0)||0;if(W)Wipe.local(W);}catch(e){}
+      Store.set('syncDirty',0);applying=false;
       await this.push(true);return true;}catch(e){return false;}
   },
+  /** v28.0 — מה שיש עכשיו בענן (למעבר לפרודקשן: לסמן כמחוק גם מה שרק טלפון אחר הכיר) */
+  async remote(){if(!this.enabled())return null;const doc=DOC();if(!doc)return null;
+    try{const s=await doc.get();return s.exists?((s.data()||{}).payload||null):null;}catch(e){return null;}},
   stop(){if(unsub){try{unsub();}catch(e){}unsub=null;}this.status='off';}
  };
 })();
@@ -4555,6 +4632,12 @@ const Photos=(()=>{let db=null;
   async add(rec){const d=await open();if(!d)return;return new Promise(r=>{const tx=d.transaction('p','readwrite');tx.objectStore('p').put(rec);tx.oncomplete=()=>r();tx.onerror=()=>r();});},
   async list(clientId){const d=await open();if(!d)return[];return new Promise(r=>{const out=[];const tx=d.transaction('p','readonly');const cur=tx.objectStore('p').openCursor();cur.onsuccess=e=>{const c=e.target.result;if(c){if(c.value.clientId===clientId)out.push(c.value);c.continue();}else r(out.sort((a,b)=>a.ts-b.ts));};cur.onerror=()=>r([]);});},
   async del(id){const d=await open();if(!d)return;return new Promise(r=>{const tx=d.transaction('p','readwrite');tx.objectStore('p').delete(id);tx.oncomplete=()=>r();tx.onerror=()=>r();});},
+  /** v28.0 — מעבר לפרודקשן: תמונות לקוחות שצולמו לפני before. תמונות העבודות (__portfolio__) נשארות. מחזיר כמה נמחקו. */
+  async purge(before){const d=await open();if(!d)return 0;return new Promise(r=>{let n=0;
+    try{const tx=d.transaction('p','readwrite');const cur=tx.objectStore('p').openCursor();
+      cur.onsuccess=e=>{const c=e.target.result;if(!c)return;const v=c.value||{};
+        if(v.clientId!=='__portfolio__'&&(+v.ts||0)<before){c.delete();n++;}c.continue();};
+      tx.oncomplete=()=>r(n);tx.onerror=()=>r(n);tx.onabort=()=>r(n);}catch(e){r(n);}});},
  };
 })();
 /* ===== IndexedDB — קבצים שמורים (תוכניות, כתבי כמויות) =====
@@ -4576,7 +4659,10 @@ const DocLib=(()=>{let db=null;const MAX_SETS=12,MAX_BYTES=150*1048576;
  async function del(id){const d=await open();if(!d)return false;
    return new Promise(r=>{try{const tx=d.transaction(['meta','data'],'readwrite');tx.objectStore('meta').delete(id);tx.objectStore('data').delete(id);
      tx.oncomplete=()=>r(true);tx.onerror=()=>r(false);}catch(e){r(false);}});}
- return {list:list,del:del,sig:sig,
+ /** v28.0 — מעבר לפרודקשן: סטים שנשמרו לפני before (הזמן שבתוך המזהה). מחזיר כמה נמחקו. */
+ async function purge(before){const L=await list();let n=0;
+   for(const m of L){const t=Wipe.idAt(m.id)||0;if(t<before){if(await del(m.id))n++;}}return n;}
+ return {list:list,del:del,sig:sig,purge:purge,
   /** שומר סט קבצים. אותם קבצים (שם+גודל) — אותו סט, רק מתעדכן התאריך. מחזיר id או null. */
   async save(docs,name){
    docs=(docs||[]).filter(x=>x&&x.data);if(!docs.length)return null;const d=await open();if(!d)return null;
@@ -6489,6 +6575,7 @@ const App={
   const r=log[id]||{n:0};
   if(done){r.done=true;}
   else{r.n=(+r.n||0)+1;r.at=Date.now();r.done=false;}
+  r.t=Date.now();   // v28.0 — זמן העדכון האחרון (גם ל"סומן כטופל"), כדי שמעבר לפרודקשן יבדיל ישן מחדש
   log[id]=r;Store.set('followLog',log);
   try{Sync.push&&Sync.push();}catch(e){}
  },
@@ -9031,11 +9118,13 @@ const App={
    const cur=Store.get('sentLinks',[])||[];
    const have={};cur.forEach(l=>{if(l&&l.id)have[l.id]=1;});
    const add=[];let total=0;
+   const W=+Store.get('wipeAt',0)||0,TB=Store.get('tombs',{})||{};
    snap.forEach(doc=>{
     total++;
     if(have[doc.id])return;
     const v=doc.data()||{};const d=v.data||{};
     if(v.owner&&v.owner!=='yehuda')return;
+    if(TB[doc.id]||(W&&(+v.createdAt||0)<W))return;   // v28.0 — לינק בדיקה מלפני מעבר לפרודקשן לא חוזר
     add.push({id:doc.id,live:!!v.live,client:d.cn||'',phone:d.ph||'',
       project:d.pr||'',no:d.no||'',total:(v.curTotal!=null?v.curTotal:(d.tot||0)),
       ts:v.createdAt||Date.now()});
@@ -10442,15 +10531,32 @@ const App={
   const rab=document.getElementById('restore-auto');if(rab)rab.onclick=()=>{try{const raw=localStorage.getItem(NS+'ys_autobackup');if(!raw){this.toast('אין גיבוי אוטומטי');return;}const bk=JSON.parse(raw);const when=new Date(bk.t).toLocaleString('he-IL');if(!confirm('לשחזר את הנתונים מהגיבוי מ-'+when+'? הנתונים הנוכחיים יוחלפו.'))return;Object.keys(bk.data).forEach(k=>{if(bk.data[k]!==null)Store.set(k,bk.data[k]);});this.toast('שוחזר מגיבוי ✓');setTimeout(()=>location.reload(),700);}catch(e){this.toast('שחזור נכשל');}};
   
   const gop=document.getElementById('go-production');if(gop)gop.onclick=async()=>{
-    const c=prompt('🚀 מעבר לפרודקשן — מחיקה סופית\n\nיימחקו לצמיתות, כולל מהענן:\n• כל הלקוחות\n• כל ההצעות\n• כל לינקי המעקב והמשובים\n• כל התזכורות\n• גיבוי ההצלה המקומי\n\nלא ניתן לשחזר. גם לא מגיבוי.\n\nהמחירון, המחירים וההגדרות יישמרו.\n\nהזן קוד אישור:');
+    const c=prompt('🚀 מעבר לפרודקשן — מחיקה סופית\n\nיימחקו לצמיתות, מהענן ומכל הטלפונים שמחוברים לסנכרון:\n• כל הלקוחות ותמונות הלקוחות\n• כל ההצעות\n• כל לינקי המעקב והמשובים\n• כל התזכורות\n• פריטים שהוספת ידנית למחירון ותתי-סעיפים\n• פרויקטים בכתב כמויות וקבצים שמורים\n• גיבוי ההצלה המקומי\n\nלא ניתן לשחזר. גם לא מגיבוי.\n\nנשמרים: המחירון, המחירים, ההגדרות ותמונות העבודות.\nלינקים שכבר נשלחו ימשיכו להיפתח אצל מי שקיבל אותם.\n\nהזן קוד אישור:');
     if(c===null)return;
     if(!this.gateOk(c)){this.gateDenied();return;}
-    if(!confirm('מחיקה סופית של כל נתוני הלקוחות.\nאין שחזור. להמשיך?'))return;
+    if(!confirm('מחיקה סופית של כל נתוני הלקוחות, בכל הטלפונים.\nאין שחזור. להמשיך?'))return;
     if(!confirm('אישור אחרון — הכל יימחק לצמיתות.'))return;
     this.busy('מוחק נתוני לקוחות…');
+    /* v28.0 — עד עכשיו המחיקה הייתה רק בטלפון הזה: טלפון אחר שמר את נתוני הבדיקה והחזיר אותם לענן.
+       עכשיו: כל מזהה שנמחק (מקומי + מה שבענן) נכנס למצבות, ו-wipeAt אומר לכל מכשיר
+       "כל רשומת לקוח מלפני הרגע הזה — מחוקה". */
+    const W=Date.now();
+    const ids=[];const grab=x=>{if(x&&x.id)ids.push(x.id);};
+    const grabAll=src=>{if(!src)return;Wipe.KEYS.forEach(k=>{const L=src[k];if(Array.isArray(L))L.forEach(grab);});
+      const si=src.subItems;if(si&&typeof si==='object')Object.keys(si).forEach(cid=>{if(Array.isArray(si[cid]))si[cid].forEach(grab);});};
+    const loc={};Wipe.KEYS.concat(['subItems']).forEach(k=>loc[k]=Store.get(k,null));grabAll(loc);
+    try{grabAll(await Promise.race([Sync.remote(),new Promise(r=>setTimeout(()=>r(null),6000))]));}catch(e){}   // בלי רשת — לא נתקעים
+    Tomb.add(ids);                                     // לפני המחיקה — מיזוג באמצע כבר מכיר אותם
+    Store.set('wipeSeen',W);Store.set('wipeAt',W);
     ['quotes','clients','sentLinks','reviewLinks','reminders','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));
+    Store.set('followLog',{});
     this.state.custom=[];Store.set('customItems',[]);
     this.state.subItems={};Store.set('subItems',{});
+    // כתב כמויות וקבצים שמורים — נשמרים רק בטלפון, ולכן לא נמחקו עד עכשיו
+    Store.set('boqProjects',[]);Store.set('boqActive',null);Store.set('boqProject',null);this._boqDocs=[];this._docs=[];
+    try{await DocLib.purge(Infinity);}catch(e){}
+    try{await Photos.purge(Infinity);}catch(e){}
+    this._lib=null;this._libKey=null;
     this._trackData=null;
     // אין שחזור: מוחקים גם את גיבוי ההצלה המקומי ואת תמונות הענן
     try{localStorage.removeItem(NS+'ys_autobackup');}catch(e){}
@@ -10458,16 +10564,20 @@ const App={
       const dels=[];s.forEach(d=>dels.push(d.ref.delete()));await Promise.all(dels);}}catch(e){try{Store.logErr('wipe',e);}catch(x){}}
     this.state.client={name:'',project:'',phone:'',address:'',source:'',notes:'',dueDate:''};
     this.state.quoteNo=nextQuoteNo();
-    try{await Sync.push(true);}catch(e){}
+    let sent=false;try{sent=await Sync.push(true);}catch(e){}
     Store.set('isProduction',true);
     this.idle();this.haptic(30);
-    this.toast('✅ נמחק לצמיתות · המערכת מוכנה לפרודקשן');
+    this.toast(sent?'✅ נמחק לצמיתות · שאר הטלפונים יימחקו כשיתחברו':
+      (Sync.enabled()?'✅ נמחק בטלפון הזה · אין חיבור — הענן והטלפונים האחרים יימחקו כשתתחבר':'✅ נמחק לצמיתות · המערכת מוכנה לפרודקשן'));
     this.state.modal=null;this.render();
   };
   const rd=document.getElementById('reset-data');if(rd)rd.onclick=()=>{const c=prompt('♻️ איפוס רגיל — הפיך\\n\\nיימחקו ההצעות והלקוחות, ונשמר גיבוי שניתן לשחזר ממנו.\\nלינקי מעקב ומשובים יישארו.\\n\\nלמחיקה סופית שאי אפשר לשחזר — השתמש ב"מעבר לפרודקשן".\\n\\nהזן קוד אישור:');if(c===null)return;if(!this.gateOk(c)){this.gateDenied();return;}try{const snap={};Store.keys().forEach(k=>snap[k]=Store.get(k,null));localStorage.setItem(NS+'ys_autobackup',JSON.stringify({t:Date.now(),data:snap}));this.toast('גיבוי נשמר לפני האיפוס ✓');}catch(e){}['quotes','clients','qseq'].forEach(k=>Store.set(k,k==='qseq'?0:[]));this.state.quoteNo=nextQuoteNo();this.haptic(20);this.toast('הנתונים אופסו · ניתן לשחזר מגיבוי ✓');this.render();};
   const grvS=document.getElementById('grev-save');if(grvS)grvS.onclick=()=>{Store.set('googleReview',(document.getElementById('g-review').value||'').trim());this.toast('קישור הביקורת נשמר ✓');};
   const gemS=document.getElementById('gem-save');if(gemS)gemS.onclick=()=>{Store.set('geminiKey',(document.getElementById('gem-key').value||'').trim());Store.set('claudeKey',(document.getElementById('cla-key').value||'').trim());Store.set('aiProvider',document.getElementById('ai-provider').value);this.toast('מפתחות AI נשמרו ✓');};
   const claEye=document.getElementById('cla-eye');if(claEye)claEye.onclick=()=>{const t=document.getElementById('cla-key');if(t)t.type=t.type==='password'?'text':'password';};
+  if(window.__wipeApplied){const nw=window.__wipeApplied;window.__wipeApplied=0;   // v28.0
+    this.state.custom=Store.get('customItems',[])||[];this.state.subItems=Store.get('subItems',{})||{};
+    setTimeout(()=>this.toast('🧹 מעבר לפרודקשן: נמחקו גם כאן '+nw+' רשומות בדיקה'),900);}
   if(window.__dedup145&&!this._dedupShown){this._dedupShown=true;
     const n=window.__dedup145;window.__dedup145=null;
     setTimeout(()=>this.toast('🧹 אוחדו '+n+' רשומות כפולות'),1100);}
