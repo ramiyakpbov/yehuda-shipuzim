@@ -129,7 +129,7 @@ input,select,textarea{font-family:inherit;}
 .searchwrap input.has-x{padding-left:44px;}
 .srch-x{position:absolute;inset-inline-end:62px;top:24px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--bg2);color:var(--muted);font-size:15px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .srch-x:active{transform:translateY(-50%) scale(.92);}
-.mic{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;}
+.mic{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:none;}
 .mic.hold{box-shadow:0 0 0 4px rgba(237,28,36,.35);}
 .vs-heard{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bg3);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin:0 0 10px;font-size:13px;}
 .vs-heard .q{flex:1;min-width:0;overflow-wrap:anywhere;}
@@ -3484,7 +3484,7 @@ try{firebase.initializeApp({apiKey:"AIzaSyCItKDpq69SVN2SMMsjC37UglQSHw_nh0A",aut
 <div id="pdf-stage"></div>
 
 <script>
-const VERSION='28.0';
+const VERSION='28.1';
 /* תיקיית סרטוני המדריך. ריק = שורש האתר, ליד index.html.
    v23.2: רמי מעלה עדכונים ל-GitHub מהטלפון — שם התיקייה guide/ לא נשמרת והקבצים עולים
    לשורש (אומת בצילום המאגר). הנתיב guide/x.mp4 החזיר 404 ב-Netlify, והסרטונים לא התנגנו. */
@@ -11615,31 +11615,39 @@ const App={
  vsLog(o){try{const a=JSON.parse(localStorage.getItem('ys_voiceLog')||'[]')||[];a.unshift(o);localStorage.setItem('ys_voiceLog',JSON.stringify(a.slice(0,12)));}catch(e){}},
  micBind(mic){
    mic.addEventListener('contextmenu',e=>e.preventDefault());
-   mic.addEventListener('pointerdown',e=>{if(this._vsRec)return;clearTimeout(this._vsHoldT);this._vsHoldFired=false;
-     this._vsHoldT=setTimeout(()=>{this._vsHoldFired=true;this.voiceSearch(mic,{hold:true});
+   /* v28.1 — צ'קליסט 24.10: «אין השפעה ללחיצה, הכפתור תלוי בזמן».
+      1. touch-action:manipulation נתן לדפדפן להתחיל גלילה מתזוזה קטנה של האצבע → pointercancel → ההקשבה נעצרה. עכשיו none.
+      2. אנדרואיד מסיים הקשבה אחרי הפסקה קצרה גם עם continuous=true. _vsDown זוכר שהאצבע עדיין על הכפתור,
+         ו-onend פותח הקשבה חדשה וממשיך את הטקסט (voiceSearch עם seg/pre/base). עזיבה — עוצרת ומחפשת. */
+   mic.addEventListener('pointerdown',e=>{if(this._vsRec)return;clearTimeout(this._vsHoldT);this._vsHoldFired=false;this._vsDown=true;
+     this._vsHoldT=setTimeout(()=>{if(!this._vsDown)return;this._vsHoldFired=true;this.voiceSearch(mic,{hold:true});
        const up=()=>{document.removeEventListener('pointerup',up,true);document.removeEventListener('pointercancel',up,true);
+         this._vsDown=false;
          if(this._vsRec&&this._vsHold){try{this._vsRec.stop();}catch(x){}}};
        document.addEventListener('pointerup',up,true);document.addEventListener('pointercancel',up,true);},450);});
-   const cancel=()=>clearTimeout(this._vsHoldT);
+   const cancel=()=>{clearTimeout(this._vsHoldT);if(!this._vsHoldFired)this._vsDown=false;};
    mic.addEventListener('pointerup',cancel);mic.addEventListener('pointerleave',cancel);mic.addEventListener('pointercancel',cancel);
    mic.addEventListener('click',e=>{if(this._vsHoldFired){this._vsHoldFired=false;e.preventDefault();return;}this.voiceSearch(mic);});},
  voiceSearch(btn,opt){opt=opt||{};
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){this.toast('חיפוש קולי לא נתמך בדפדפן הזה — נסה בכרום');return;}
   if(this._vsRec){try{this._vsRec.stop();}catch(e){}return;}
+  const seg=+opt.seg||0;   // v28.1 — המשך של לחיצה ארוכה (אנדרואיד סגר את ההקשבה והאצבע עדיין על הכפתור)
   // לפני הקשבה חדשה: אם כבר עבדת על סעיף מהחיפוש — מתחילים נקי
-  if(this._srchUsed&&String(this.state.search||'').trim()){this.pushRecent(this.state.search);this.state.search='';this._srchUsed=false;this._vsProp=null;this._vsHeard=null;this.render();}
+  if(!seg&&this._srchUsed&&String(this.state.search||'').trim()){this.pushRecent(this.state.search);this.state.search='';this._srchUsed=false;this._vsProp=null;this._vsHeard=null;this.render();}
   const r=new SR();this._vsRec=r;this._vsHold=!!opt.hold;r.lang='he-IL';r.interimResults=true;r.continuous=!!opt.hold;try{r.maxAlternatives=4;}catch(e){}
-  let got=false,err='',last='',again=false;const base=String(this.state.search||'');
-  const LG={t:Date.now(),m:opt.hold?'h':'s',ev:[]};const lgEv=e=>{try{if(LG.ev.length>=24)return;const o=[];for(let i=0;i<e.results.length;i++){const R=e.results[i];const a=[];for(let k=0;k<R.length&&k<3;k++)a.push(String(R[k].transcript||''));o.push((R.isFinal?'F:':'i:')+a.join(' | '));}LG.ev.push(o);}catch(x){}};
+  const pre=String(opt.pre||'');
+  let got=false,err='',last=pre,again=false;const base=seg?String(opt.base||''):String(this.state.search||'');
+  const t0=seg?(+opt.t0||Date.now()):Date.now();
+  const LG={t:Date.now(),m:opt.hold?'h':'s',ev:[]};if(seg)LG.seg=seg;const lgEv=e=>{try{if(LG.ev.length>=24)return;const o=[];for(let i=0;i<e.results.length;i++){const R=e.results[i];const a=[];for(let k=0;k<R.length&&k<3;k++)a.push(String(R[k].transcript||''));o.push((R.isFinal?'F:':'i:')+a.join(' | '));}LG.ev.push(o);}catch(x){}};
   const CMDW=/^(בלי|ללא|תוריד|הורד|מחק|מחקי|תמחק|תמחקי|למחוק|נקה|נקי|תנקה|תנקי|בטל|בטלי|תבטל|תבטלי|ביטול)$/;
   const mark=on=>{const b=document.getElementById('mic');if(b){b.classList.toggle('rec',on);b.classList.toggle('hold',on&&this._vsHold);b.setAttribute('aria-pressed',on?'true':'false');}};
   const live=t=>{t=String(t||'').trim();if(!t)return;last=t;if(CMDW.test(this.heFin(this.normTxt(t)).split(' ')[0]||''))return;const V=this.voiceParse(t);if(V.cmd)return;if(V.q){this.state.search=V.q;this.render();mark(true);
       const inp=document.getElementById('search');if(inp){try{inp.setSelectionRange(inp.value.length,inp.value.length);}catch(x){}}}};
   clearTimeout(this._vsT);if(!opt.hold)this._vsT=setTimeout(()=>{try{r.stop();}catch(x){}},10000);
-  mark(true);this.toast(opt.hold?'🎙️ מקשיב כל עוד מחזיקים…':'🎙️ מקשיב… אמור סעיף, כמות או "מחק"');this.haptic(10);
+  mark(true);if(!seg){this.toast(opt.hold?'🎙️ מקשיב כל עוד מחזיקים…':'🎙️ מקשיב… אמור סעיף, כמות או "מחק"');this.haptic(10);}
   r.onresult=e=>{lgEv(e);
-    if(this._vsHold){const full=this.vsMerge(Array.from(e.results).map(R=>R[0].transcript));live(full);return;}
+    if(this._vsHold){const full=this.vsMerge([pre].concat(Array.from(e.results).map(R=>R[0].transcript)));live(full);return;}
     let fin=null,interim='';
     for(let i=e.resultIndex;i<e.results.length;i++){const R=e.results[i];if(R.isFinal)fin=R;else interim+=R[0].transcript;}
     if(!fin){live(interim);return;}
@@ -11651,7 +11659,14 @@ const App={
       const sc=(P.partial?0:1e6)+n*10-k;if(n&&sc>bs){bs=sc;best=t;}});}
     last=best;again=this.vsApply(best,true,base);};
   r.onerror=e=>{err=(e&&e.error)||'';LG.err=err;};
-  r.onend=()=>{this._vsRec=null;clearTimeout(this._vsT);const wasHold=this._vsHold;this._vsHold=false;mark(false);
+  r.onend=()=>{this._vsRec=null;clearTimeout(this._vsT);const wasHold=this._vsHold;
+    // v28.1 — האצבע עדיין על הכפתור: אנדרואיד סגר מעצמו → ממשיכים להקשיב (עד דקה / 12 קטעים; לא כשאין הרשאה או רשת)
+    // שני קטעים רצופים בלי מילה חדשה — עוצרים (גם אם העזיבה לא נקלטה)
+    const idle=(last===pre)?(+opt.idle||0)+1:0;
+    if(wasHold&&this._vsDown&&!/not-allowed|audio-capture|network/.test(err)&&seg<12&&idle<2&&Date.now()-t0<60000){
+      try{LG.used=last;LG.cont=true;this.vsLog(LG);}catch(x){}
+      this.voiceSearch(btn,{hold:true,seg:seg+1,pre:last,base:base,t0:t0,idle:idle});return;}
+    this._vsHold=false;mark(false);
     if(!got&&last){again=this.vsApply(last,true,base);got=true;}   // רק טקסט ביניים (אנדרואיד) או לחיצה ארוכה — זה מה שנאמר
     try{LG.used=last;const V=this.voiceParse(last);LG.p={q:V.q,qty:V.qty,price:V.price,cmd:V.cmd};LG.s=this.state.search;LG.card=!!this._vsProp;LG.again=!!again;this.vsLog(LG);}catch(x){}
     if(got){if(again&&!wasHold){setTimeout(()=>{const b=document.getElementById('mic');if(b&&!this._vsRec)this.voiceSearch(b);},250);}return;}
@@ -11659,7 +11674,9 @@ const App={
       'no-speech':'לא שמעתי — לחץ שוב ודבר קרוב לטלפון','audio-capture':'לא נמצא מיקרופון פעיל (אולי אפליקציה אחרת משתמשת בו)',
       'network':'זיהוי דיבור צריך אינטרנט — בדוק חיבור','aborted':''};
     const m=(err in M)?M[err]:'לא זוהה דיבור — נסה שוב';if(m)this.toast(m);};
-  try{r.start();}catch(e){this._vsRec=null;this._vsHold=false;mark(false);this.toast('המיקרופון לא נפתח — נסה שוב');}
+  try{r.start();}catch(e){this._vsRec=null;this._vsHold=false;mark(false);
+    if(seg){if(pre)this.vsApply(pre,true,base);return;}   // המשך שלא נפתח — מחפשים את מה שכבר נאמר
+    this.toast('המיקרופון לא נפתח — נסה שוב');}
  },
  initSigPad(){const cv=document.getElementById('sigpad');if(!cv)return;const r=cv.getBoundingClientRect();cv.width=r.width*2;cv.height=r.height*2;const ctx=cv.getContext('2d');ctx.scale(2,2);ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle='#111';let d=false,has=false;const pos=ev=>{const b=cv.getBoundingClientRect();const t=ev.touches?ev.touches[0]:ev;return{x:t.clientX-b.left,y:t.clientY-b.top};};const st=ev=>{d=true;has=true;const p=pos(ev);ctx.beginPath();ctx.moveTo(p.x,p.y);ev.preventDefault();};const mv=ev=>{if(!d)return;const p=pos(ev);ctx.lineTo(p.x,p.y);ctx.stroke();ev.preventDefault();};const en=()=>{d=false;};cv.addEventListener('mousedown',st);cv.addEventListener('mousemove',mv);window.addEventListener('mouseup',en);cv.addEventListener('touchstart',st,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',en);const cl=document.getElementById('sig-clear');if(cl)cl.onclick=()=>{ctx.clearRect(0,0,cv.width,cv.height);has=false;};const sv=document.getElementById('sig-save');if(sv)sv.onclick=()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.toast('החתימה נשמרה ✓');this.render();};const ss=document.getElementById('sig-send');if(ss)ss.onclick=async()=>{if(!has){this.toast('החתם קודם');return;}this.state.clientSig=cv.toDataURL('image/png');this.state.modal='quote';this.render();await this.sendSignedConfirmation();};},
 
